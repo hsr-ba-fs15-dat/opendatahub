@@ -18,7 +18,6 @@ default_task = ['install_dependencies', 'analyze', 'publish']
 def initialize(project):
     project.depends_on_requirements('requirements.txt')
     project.build_depends_on_requirements('requirements_dev.txt')
-    project.set_property('install_dependencies_upgrade', True)
 
     project.set_property('django_project', 'opendatahub')
     project.set_property('django_apps', ['home'])

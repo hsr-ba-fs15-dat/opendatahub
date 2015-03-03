@@ -18,7 +18,6 @@ before_script:
 script:
 - pyb -v
 
-
 notifications:
   slack:
     on_failure: always
