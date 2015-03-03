@@ -52,12 +52,15 @@ class Pipeline(object):
         self.nodes = nodes
 
     def run(self):
-        prev = None
+        prev = []
 
         for node in self.nodes:
             if isinstance(node, Input):
-                prev = node.read()
+                prev.append(node.read())
+            elif isinstance(node, Merge):
+                res = node.merge(prev)
+                prev = [res]
             elif isinstance(node, Transformation):
-                prev = node.transform(prev)
+                prev.append(node.transform(prev.pop()))
             elif isinstance(node, Output):
-                node.write(prev)
+                node.write(prev.pop())

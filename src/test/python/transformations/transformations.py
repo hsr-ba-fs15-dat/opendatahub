@@ -25,6 +25,15 @@ class CsvInput(home.models.Transformation):
             yield row
 
 
+class SequentialMerger(home.models.Merge):
+    def __init__(self):
+        super(SequentialMerger, self).__init__()
+
+    def merge(self, readers):
+        for reader in readers:
+            for row in reader:
+                yield row
+
 class NormalizedAddressToGarbageTransform(home.models.Transformation):
     def __init__(self):
         super(NormalizedAddressToGarbageTransform, self).__init__()
@@ -54,10 +63,17 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 fileIn = FileInput(os.path.join(basedir, 'test-addresses.csv'))
 csvIn = CsvInput()
+
+fileIn2 = FileInput(os.path.join(basedir, 'test-addresses2.csv'))
+csvIn2 = CsvInput()
+
+merger = SequentialMerger()
+
 transform = NormalizedAddressToGarbageTransform()
 csvOut = CsvOutput(os.path.join(basedir, 'test-addresses-output.csv'), ('Name', 'Street', 'City'))
 
-p = home.models.Pipeline('TestPipeline', 'Example pipeline to test the api', [fileIn, csvIn, transform, csvOut])
+p = home.models.Pipeline('TestPipeline', 'Example pipeline to test the api',
+                         [fileIn, csvIn, fileIn2, csvIn2, merger, transform, csvOut])
 p.run()
 
 # Anrede, Vorname, Name, Strasse, Hausnummer, PLZ, Ort
