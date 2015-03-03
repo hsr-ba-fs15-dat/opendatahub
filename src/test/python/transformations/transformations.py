@@ -1,5 +1,3 @@
-__author__ = 'chuesler'
-
 import home.models
 import os
 import csv
@@ -34,6 +32,7 @@ class SequentialMerger(home.models.Merge):
             for row in reader:
                 yield row
 
+
 class NormalizedAddressToGarbageTransform(home.models.Transformation):
     def __init__(self):
         super(NormalizedAddressToGarbageTransform, self).__init__()
@@ -63,22 +62,17 @@ class CsvOutput(home.models.Output):
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-fileIn = FileInput(os.path.join(basedir, 'test-addresses.csv'))
-csvIn = CsvInput()
+file_in = FileInput(os.path.join(basedir, 'test-addresses.csv'))
+csv_in = CsvInput()
 
-fileIn2 = FileInput(os.path.join(basedir, 'test-addresses2.csv'))
-csvIn2 = CsvInput()
+file_in_2 = FileInput(os.path.join(basedir, 'test-addresses2.csv'))
+csv_in_2 = CsvInput()
 
 merger = SequentialMerger()
 
 transform = NormalizedAddressToGarbageTransform()
-csvOut = CsvOutput(os.path.join(basedir, 'test-addresses-output.csv'), ('Name', 'Street', 'City'))
+csv_out = CsvOutput(os.path.join(basedir, 'test-addresses-output.csv'), ('Name', 'Street', 'City'))
 
 p = home.models.Pipeline('TestPipeline', 'Example pipeline to test the api',
-                         [fileIn, csvIn, fileIn2, csvIn2, merger, transform, csvOut])
+                         [file_in, csv_in, file_in_2, csv_in_2, merger, transform, csv_out])
 p.run()
-
-# Anrede, Vorname, Name, Strasse, Hausnummer, PLZ, Ort
-# Name, Strasse, Ort
-
-
