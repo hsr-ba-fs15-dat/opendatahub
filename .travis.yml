@@ -1,0 +1,25 @@
+language: python
+
+python:
+  - 2.7
+
+addons:
+  postgresql: 9.3
+
+install:
+- pip install pybuilder
+
+before_script:
+  - psql -c "CREATE USER opendatahub WITH PASSWORD 'opendatahub';" -U postgres
+  - psql -c 'create database opendatahub;' -U postgres
+  - psql -c 'GRANT ALL PRIVILEGES ON DATABASE opendatahub to opendatahub;' -U postgres
+  - psql -c 'ALTER USER opendatahub CREATEDB;' -U postgres
+
+script:
+- pyb -v
+
+notifications:
+  slack:
+    secure: O7gnh73zV9VmQjm5zg/pS3BoxOt7h4gm+xHSeZSwXLnsVt6QwnegCRGz6MKwKVzyNIEH0x9EfSGMcum6uMBRPD35HKCcRHE/NwdKTq5/l2kG7j1nMFG86uL+ijoTxw5JH7y2FiA/iIeQ9+BhAAavQC4p2lkvXSaz7eXb4hQRT2Q=
+    on_success: change
+    on_failure: always
