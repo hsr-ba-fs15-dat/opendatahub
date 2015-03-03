@@ -55,6 +55,8 @@ class CsvOutput(home.models.Output):
     def write(self, reader):
         with open(self.parameters['filename'], 'w') as output:
             csv_writer = csv.DictWriter(output, self.parameters['field_names'])
+            csv_writer.writeheader()
+
             for row in reader:
                 csv_writer.writerow(row)
 
