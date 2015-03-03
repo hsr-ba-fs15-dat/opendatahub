@@ -2,14 +2,14 @@
 
 /**
  * @ngdoc overview
- * @name frontendApp
+ * @name opendatahubApp
  * @description
- * # frontendApp
+ * # opendatahubApp
  *
  * Main module of the application.
  */
 angular
-  .module('frontendApp', [
+  .module('opendatahubApp', [
     'ngAnimate',
     'ngAria',
     'ngCookies',

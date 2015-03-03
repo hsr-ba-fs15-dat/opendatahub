@@ -2,12 +2,12 @@
 
 /**
  * @ngdoc function
- * @name frontendApp.controller:MainCtrl
+ * @name opendatahubApp.controller:MainCtrl
  * @description
  * # MainCtrl
- * Controller of the frontendApp
+ * Controller of the opendatahubApp
  */
-angular.module('frontendApp')
+angular.module('opendatahubApp')
   .controller('MainCtrl', function ($scope) {
     $scope.awesomeThings = [
       'HTML5 Boilerplate',
