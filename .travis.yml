@@ -18,8 +18,10 @@ before_script:
 script:
 - pyb -v
 
+
 notifications:
   slack:
-    secure: O7gnh73zV9VmQjm5zg/pS3BoxOt7h4gm+xHSeZSwXLnsVt6QwnegCRGz6MKwKVzyNIEH0x9EfSGMcum6uMBRPD35HKCcRHE/NwdKTq5/l2kG7j1nMFG86uL+ijoTxw5JH7y2FiA/iIeQ9+BhAAavQC4p2lkvXSaz7eXb4hQRT2Q=
-    on_success: change
     on_failure: always
+    on_success: change
+    rooms:
+      - hsrdat:kFUd9okBkUuXn6L66bB9w65f#webapp
