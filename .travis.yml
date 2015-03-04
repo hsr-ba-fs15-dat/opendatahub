@@ -20,8 +20,9 @@ script:
  - cd src/main/webapp/
  - npm install -g bower grunt-cli
  - bower install
- - touch testasdf
  - cd $TRAVIS_BUILD_DIR
+ - git add -f .
+ - git commit -m 'deploy to heroku'
 
 notifications:
   slack:
