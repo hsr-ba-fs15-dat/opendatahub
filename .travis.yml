@@ -7,7 +7,7 @@ addons:
   postgresql: 9.3
 
 install:
-- pip install pybuilder
+  - pip install pybuilder
 
 before_script:
   - psql -c "CREATE USER opendatahub WITH PASSWORD 'opendatahub';" -U postgres
@@ -16,7 +16,9 @@ before_script:
   - psql -c 'ALTER USER opendatahub CREATEDB;' -U postgres
 
 script:
-- pyb -v
+ - pyb -v
+ - npm install -g bower grunt-cli
+ - bower install
 
 notifications:
   slack:
@@ -24,3 +26,11 @@ notifications:
     on_success: change
     rooms:
       - hsrdat:kFUd9okBkUuXn6L66bB9w65f#webapp
+
+deploy:
+  provider: heroku
+  skip_cleanup: true
+  api_key:
+    secure: Qb2O3PviVvKvxUxDuxxz8bxbVniNHgBYJxCzDBpLC56d7i5/yiZX9X2sBrFvBhFyh2naidzp0s9EgoN3U2HISaoThzM8/075pIlTnI7dir6R1623ngv7+COXAqoFRNME0A6ghJhTIfxEnDdNrztfQ8WcnVXuNU37kWIHGYryiJk=
+  app:
+    master: opendatahub-hsr
