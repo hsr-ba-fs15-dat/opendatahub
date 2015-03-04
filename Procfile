@@ -1,1 +1,1 @@
-web: cd src/main/python/ && gunicorn opendatahub.wsgi:application --pythonpath=./
+web: cd $HOME/src/main/python/ && gunicorn opendatahub.wsgi:application --pythonpath=$HOME/src/main/python/
