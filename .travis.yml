@@ -17,6 +17,7 @@ before_script:
 
 script:
  - pyb -v
+ - cd src/main/webapp/
  - npm install -g bower grunt-cli
  - bower install
 
