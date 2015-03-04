@@ -6,10 +6,12 @@ from pybuilder.core import use_plugin, after, init, task, description
 from pybuilder.utils import assert_can_execute
 from pybuilder.errors import BuildFailedException
 from pybuilder.pluginhelper.external_command import ExternalCommandBuilder
-from pybuilder_django_enhanced_plugin.tasks.common import get_django_command_args
 from django.core.management import execute_from_command_line
 
+import os, sys
 
+base_dir = os.path.abspath(os.path.dirname(__file__))
+#sys.path.append(os.path.join(base_dir, 'src', 'unittest', 'python'))
 
 use_plugin("analysis")
 use_plugin('python.core')
@@ -47,6 +49,7 @@ def initialize(project):
 @task
 @description("Runs django dbshell")
 def django_dbshell(project, logger):
+    from pybuilder_django_enhanced_plugin.tasks.common import get_django_command_args
     args = ['dbshell']
     args += get_django_command_args(project)
     logger.info("Running django dbshell {} ".format(args))

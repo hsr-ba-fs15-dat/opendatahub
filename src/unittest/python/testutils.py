@@ -16,8 +16,6 @@ class TestBase(unittest.TestCase):
 
     """
 
-
     @classmethod
     def get_test_file_path(cls, file_name):
         return os.path.join(base_dir, 'testdata', file_name)
-
