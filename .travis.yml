@@ -8,6 +8,8 @@ addons:
 
 install:
   - pip install pybuilder
+  - gem update --system
+  - gem install compass
 
 before_script:
   - psql -c "CREATE USER opendatahub WITH PASSWORD 'opendatahub';" -U postgres
@@ -19,7 +21,9 @@ script:
  - pyb -v
  - cd src/main/webapp/
  - npm install -g bower grunt-cli
+ - npm install
  - bower install
+ - grunt compass
  - cd $TRAVIS_BUILD_DIR
 
 notifications:
