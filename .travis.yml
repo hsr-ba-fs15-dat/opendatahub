@@ -20,6 +20,7 @@ script:
  - cd src/main/webapp/
  - npm install -g bower grunt-cli
  - bower install
+ - touch testasdf
  - cd $TRAVIS_BUILD_DIR
 
 notifications:
@@ -31,8 +32,9 @@ notifications:
 
 deploy:
   provider: heroku
+  strategy: git
   skip_cleanup: true
   api_key:
     secure: Qb2O3PviVvKvxUxDuxxz8bxbVniNHgBYJxCzDBpLC56d7i5/yiZX9X2sBrFvBhFyh2naidzp0s9EgoN3U2HISaoThzM8/075pIlTnI7dir6R1623ngv7+COXAqoFRNME0A6ghJhTIfxEnDdNrztfQ8WcnVXuNU37kWIHGYryiJk=
   app:
-    master: opendatahub-hsr
+    master: opendatahub-hsr-dev
