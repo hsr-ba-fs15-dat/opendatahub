@@ -21,8 +21,6 @@ script:
  - npm install -g bower grunt-cli
  - bower install
  - cd $TRAVIS_BUILD_DIR
- - git add -f .
- - git commit -m 'deploy to heroku'
 
 notifications:
   slack:
@@ -30,6 +28,12 @@ notifications:
     on_success: change
     rooms:
       - hsrdat:kFUd9okBkUuXn6L66bB9w65f#webapp
+
+before_deploy:
+ - git config --global user.email 'build@travis-ci.com'
+ - git config --global user.name 'Tavis CI'
+ - git add -f .
+ - git commit -m 'deploy to heroku'
 
 deploy:
   provider: heroku
