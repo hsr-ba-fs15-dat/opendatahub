@@ -8,7 +8,7 @@ addons:
 
 install:
   - pip install pybuilder
-  - sudo apt-get install nodejs nodejs-legacy npm -y
+  - sudo apt-get install nodejs npm -y
   - sudo npm install -g bower grunt-cli
   - sudo npm install -g npm@latest
   - gem update --system
