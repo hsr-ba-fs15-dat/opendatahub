@@ -41,6 +41,19 @@ def initialize(project):
 
 
 
+@task('django_migrate')
+def django_migrate_fix(project, logger):
+    from pybuilder_django_enhanced_plugin.tasks.common import run_django_manage_command
+
+    args = ['migrate']
+    command_result = run_django_manage_command(project, logger, 'django_migrate', args)
+    if command_result.exit_code != 0:
+        error_message = ''.join(command_result.error_report_lines)
+        logger.error('Django migrate failed: {}'.format(error_message))
+        raise BuildFailedException('Django migrate failed')
+    return command_result
+
+
 @task
 @description("Runs django dbshell")
 def django_dbshell(project, logger):
