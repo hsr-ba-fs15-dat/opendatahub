@@ -5,7 +5,7 @@ from django.test import TestCase
 import django
 
 
-
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'opendatahub.settings')
 django.setup()
 
 base_dir = os.path.abspath(os.path.dirname(__file__))
