@@ -21,7 +21,7 @@ class PipelineSetupTest(TestCase):
         csv_out = models.NodeModel(pipeline=pipeline,
                                    node_class='hub.nodes.CsvOutput',
                                    params={
-                                       'filename': '/vagrant/opendatahub/src/main/python/hub/test-addresses-out.csv',
+                                       'filename': os.path.join(base_dir, 'test-addresses-out.csv'),
                                        'fields': ('Name', 'Street', 'City')
                                    })
         csv_out.save()
@@ -37,14 +37,14 @@ class PipelineSetupTest(TestCase):
         csv_in = models.NodeModel(pipeline=pipeline, node_class='hub.nodes.CsvInput', successor=merger)
         csv_in.save()
         file_in = models.NodeModel(pipeline=pipeline, node_class='hub.nodes.FileInput',
-                                   params={'filename': '/vagrant/opendatahub/src/main/python/hub/test-addresses2.csv'},
+                                   params={'filename':  os.path.join(base_dir, 'test-addresses.csv')},
                                    successor=csv_in)
         file_in.save()
 
         csv_in_2 = models.NodeModel(pipeline=pipeline, node_class='hub.nodes.CsvInput', successor=merger)
         csv_in_2.save()
         file_in_2 = models.NodeModel(pipeline=pipeline, node_class='hub.nodes.FileInput',
-                                     params={'filename': '/vagrant/opendatahub/src/main/python/hub/test-addresses2.csv'},
+                                     params={'filename':  os.path.join(base_dir, 'test-addresses2.csv')},
                                      successor=csv_in_2)
         file_in_2.save()
 
