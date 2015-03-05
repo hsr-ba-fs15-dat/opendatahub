@@ -25,7 +25,6 @@ class Pipeline(object):
             if node.model.successor and nodes[node.model.successor.id]:
                 node.successor = nodes[node.model.successor.id]
 
-
     def run(self):
         prev = []
 

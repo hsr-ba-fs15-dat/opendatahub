@@ -2,7 +2,7 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 
 from rest_framework import routers
-from home.views import PipelineViewSet, NodeViewSet
+from hub.views import PipelineViewSet, NodeViewSet
 
 
 router = routers.DefaultRouter()
@@ -11,7 +11,7 @@ router.register(r'nodes', NodeViewSet)
 
 urlpatterns = patterns('',
     # Examples:
-    # url(r'^$', 'opendatahub.views.home', name='home'),
+    # url(r'^$', 'opendatahub.views.hub', name='hub'),
     # url(r'^blog/', include('blog.urls')),
 
     url(r'^$', 'django.views.static.serve', {'path': 'index.html', 'document_root': '../webapp/app'}),

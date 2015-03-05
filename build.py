@@ -16,7 +16,7 @@ use_plugin('python.flake8')
 use_plugin('python.install_dependencies')
 use_plugin('pypi:pybuilder_django_enhanced_plugin')
 
-default_task = ['install_dependencies', 'analyze', 'publish']
+default_task = ['install_dependencies', 'django_makemigrations', 'django_migrate', 'analyze', 'publish']
 
 @init
 def initialize(project):
@@ -25,7 +25,7 @@ def initialize(project):
     project.build_depends_on_requirements('requirements_dev.txt')
 
     project.set_property('django_project', 'opendatahub')
-    project.set_property('django_apps', ['home'])
+    project.set_property('django_apps', ['hub'])
 
 
     project.set_property('coverage_break_build', False)
