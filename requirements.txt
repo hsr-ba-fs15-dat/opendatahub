@@ -3,3 +3,4 @@ argparse==1.2.1
 wsgiref==0.1.2
 psycopg2==2.4.5
 django-picklefield==0.3.1
+djangorestframework==3.0.5
