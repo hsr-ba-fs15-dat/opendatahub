@@ -10,6 +10,8 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import dj_database_url
+
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
@@ -58,14 +60,8 @@ WSGI_APPLICATION = 'opendatahub.wsgi.application'
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'opendatahub',
-        'USER': 'opendatahub',
-        'PASSWORD': 'opendatahub',
-        'HOST': 'localhost',
-        'PORT': '',
-    }
+    # Heroku compliance
+    'default': dj_database_url.config(default='postgres://opendatahub:opendatahub@localhost:5432/opendatahub')
 }
 
 # Internationalization

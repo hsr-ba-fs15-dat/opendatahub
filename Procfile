@@ -1,0 +1,1 @@
+web: cd $HOME/src/main/python/ && gunicorn opendatahub.wsgi:application --pythonpath=$HOME/src/main/python/ --log-file -
