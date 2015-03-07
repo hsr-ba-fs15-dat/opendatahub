@@ -1,0 +1,227 @@
+<script src="../../bower_components/jquery/dist/jquery.js"></script>
+<script src="../../bower_components/jsPlumb/dist/js/dom.jsPlumb-1.7.3.js"></script>
+<script src="../../bower_components/jsPlumb/dist/js/jquery.jsPlumb-1.7.3.js"></script>
+<script src="../../bower_components/jquery-ui/jquery-ui.js"></script>
+<script src="../scripts/hubPlumb.js"></script>
+<script>
+    var demoData = {};
+    jsPlumb.ready(function () {
+
+        var instance = jsPlumb.getInstance({
+            // default drag options
+            DragOptions: {cursor: 'pointer', zIndex: 2000},
+            // the overlays to decorate each connection with.  note that the label overlay uses a function to generate the label text; in this
+            // case it returns the 'labelText' member that we set on each connection in the 'init' method below.
+            ConnectionOverlays: [
+                ["Arrow", {location: 1}],
+                ["Label", {
+                    location: 0.1,
+                    id: "label",
+                    cssClass: "aLabel"
+                }]
+            ],
+            Container: "flowchart-demo"
+        });
+        hubPlumb.instance = instance;
+        var basicType = {
+            connector: "StateMachine",
+            paintStyle: {strokeStyle: "red", lineWidth: 4},
+            hoverPaintStyle: {strokeStyle: "blue"},
+            overlays: [
+                "Arrow"
+            ]
+        };
+        instance.registerConnectionType("basic", basicType);
+
+        // this is the paint style for the connecting lines..
+
+        // suspend drawing and initialise.
+        instance.batch(function () {
+
+            hubPlumb.addEndpoints("Window4", 4, 2);
+            hubPlumb.addEndpoints("Window2", 2, 0);
+            hubPlumb.addEndpoints("Window3", 1, 2);
+            hubPlumb.addEndpoints("Window1", 3, 3);
+
+            // listen for new connections; initialise them the same way we initialise the connections at startup.
+            instance.bind("connection", function (connInfo, originalEvent) {
+                init(connInfo.connection);
+            });
+
+            // make all the window divs draggable
+            instance.draggable(jsPlumb.getSelector(".flowchart-demo .window"), {grid: [20, 20]});
+            // THIS DEMO ONLY USES getSelector FOR CONVENIENCE. Use your library's appropriate selector
+            // method, or document.querySelectorAll:
+            //jsPlumb.draggable(document.querySelectorAll(".window"), { grid: [20, 20] });
+
+            // connect a few up
+
+            //
+
+            //
+            // listen for clicks on connections, and offer to delete connections on click.
+            //
+            instance.bind("click", function (conn, originalEvent) {
+                // if (confirm("Delete connection from " + conn.sourceId + " to " + conn.targetId + "?"))
+                //   instance.detach(conn);
+                conn.toggleType("basic");
+            });
+
+            instance.bind("connectionDrag", function (connection) {
+                console.log("connection " + connection.id + " is being dragged. suspendedElement is ", connection.suspendedElement, " of type ", connection.suspendedElementType);
+            });
+
+            instance.bind("connectionDragStop", function (connection) {
+                console.log("connection " + connection.id + " was dragged");
+            });
+
+            instance.bind("connectionMoved", function (params) {
+                console.log("connection " + params.connection.id + " was moved");
+            });
+        });
+
+        jsPlumb.fire("jsPlumbDemoLoaded", instance);
+
+    });</script>
+<div class="demo flowchart-demo" id="flowchart-demo">
+    <div class="window _jsPlumb_endpoint_anchor jsplumb-draggable _jsPlumb_connected" id="flowchartWindow1">
+        <strong>1</strong><br><br></div>
+    <div class="window jsplumb-draggable _jsPlumb_connected" id="flowchartWindow2" style="left: 440px; top: 60px;">
+        <strong>2</strong><br><br></div>
+    <div class="window jsplumb-draggable _jsPlumb_connected" id="flowchartWindow3"><strong>3</strong><br><br></div>
+    <div class="window _jsPlumb_endpoint_anchor jsplumb-draggable _jsPlumb_connected" id="flowchartWindow4">
+        <strong>4</strong><br><br></div>
+</div>
+<style>
+    .window {
+        background-color: white;
+        border: 1px solid #346789;
+        box-shadow: 2px 2px 19px #e0e0e0;
+        -o-box-shadow: 2px 2px 19px #e0e0e0;
+        -webkit-box-shadow: 2px 2px 19px #e0e0e0;
+        -moz-box-shadow: 2px 2px 19px #e0e0e0;
+        -moz-border-radius: 0.5em;
+        border-radius: 0.5em;
+        width: 5em;
+        height: 5em;
+        position: absolute;
+        color: black;
+        padding: 0.5em;
+        width: 80px;
+        height: 80px;
+        line-height: 80px;
+        -webkit-transition: -webkit-box-shadow 0.15s ease-in;
+        -moz-transition: -moz-box-shadow 0.15s ease-in;
+        -o-transition: -o-box-shadow 0.15s ease-in;
+        transition: box-shadow 0.15s ease-in;
+    }
+
+    .window:hover {
+        border: 1px solid #123456;
+        box-shadow: 2px 2px 19px #444;
+        -o-box-shadow: 2px 2px 19px #444;
+        -webkit-box-shadow: 2px 2px 19px #444;
+        -moz-box-shadow: 2px 2px 19px #fff;
+        opacity: 0.9;
+        filter: alpha(opacity=90);
+    }
+
+    .window a {
+        font-family: helvetica;
+    }
+
+    .flowchart-demo .window {
+        border: 1px solid #346789;
+        box-shadow: 2px 2px 19px #aaa;
+        -o-box-shadow: 2px 2px 19px #aaa;
+        -webkit-box-shadow: 2px 2px 19px #aaa;
+        -moz-box-shadow: 2px 2px 19px #aaa;
+        -moz-border-radius: 0.5em;
+        border-radius: 0.5em;
+        opacity: 0.8;
+        filter: alpha(opacity=80);
+
+        text-align: center;
+        z-index: 20;
+        position: absolute;
+        background-color: #eeeeef;
+        color: black;
+        font-family: helvetica;
+        padding: 0.5em;
+        font-size: 0.9em;
+    }
+
+    .flowchart-demo .window:hover {
+        box-shadow: 2px 2px 19px #444;
+        -o-box-shadow: 2px 2px 19px #444;
+        -webkit-box-shadow: 2px 2px 19px #444;
+        -moz-box-shadow: 2px 2px 19px #444;
+        opacity: 0.6;
+        filter: alpha(opacity=60);
+    }
+
+    .flowchart-demo .active {
+        border: 1px dotted green;
+    }
+
+    .flowchart-demo .hover {
+        border: 1px dotted red;
+    }
+
+    #flowchartWindow1 {
+        top: 34em;
+        left: 5em;
+    }
+
+    #flowchartWindow2 {
+        top: 7em;
+        left: 36em;
+    }
+
+    #flowchartWindow3 {
+        top: 27em;
+        left: 48em;
+    }
+
+    #flowchartWindow4 {
+        top: 23em;
+        left: 22em;
+    }
+
+    .flowchart-demo ._jsPlumb_connector {
+        z-index: 4;
+    }
+
+    .flowchart-demo ._jsPlumb_endpoint, .endpointTargetLabel, .endpointSourceLabel {
+        z-index: 21;
+        cursor: pointer;
+    }
+
+    .flowchart-demo .aLabel {
+        background-color: white;
+        padding: 0.4em;
+        font: 12px sans-serif;
+        color: #444;
+        z-index: 21;
+        border: 1px dotted gray;
+        opacity: 0.8;
+        filter: alpha(opacity=80);
+        cursor: pointer;
+    }
+
+    .flowchart-demo .aLabel._jsPlumb_hover {
+        background-color: #5C96BC;
+        color: white;
+        border: 1px solid white;
+    }
+
+    .window._jsPlumb_connected {
+        border: 2px solid green;
+    }
+
+    .jsplumb-drag {
+        border: 4px solid pink !important;
+    }
+
+
+</style>
