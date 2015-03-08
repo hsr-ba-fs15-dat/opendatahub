@@ -2,9 +2,8 @@
 
 cd "$(dirname "$0")"/..
 
-
-virtualenv env
-source env/bin/activate
+virtualenv ~/env
+source ~/env/bin/activate
 pip install pybuilder
 pyb install_dependencies
 
