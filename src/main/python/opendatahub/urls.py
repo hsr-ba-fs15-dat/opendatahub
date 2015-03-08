@@ -38,4 +38,4 @@ else:
     ) + urlpatterns
 
 
-urlpatterns = patterns('',*urlpatterns)
+urlpatterns = patterns('', *urlpatterns)
