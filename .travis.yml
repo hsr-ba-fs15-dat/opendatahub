@@ -30,7 +30,7 @@ script:
 before_deploy:
  - git config --global user.email 'build@travis-ci.com'
  - git config --global user.name 'Tavis CI'
- - git add -f $TRAVIS_BUILD_DIR/src/main/webapp/bower_components $TRAVIS_BUILD_DIR/src/main/webapp/.tmp
+ - git add -f $TRAVIS_BUILD_DIR/src/main/webapp/bower_components $TRAVIS_BUILD_DIR/src/main/webapp/dist
  - git commit -q -m 'deploy to heroku'
  - cd $TRAVIS_BUILD_DIR
 
