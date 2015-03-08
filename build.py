@@ -87,7 +87,7 @@ def install_npm_packages(project, logger):
 
 
 @task
-@depends('install_build_dependencies')
+@depends('install_build_dependencies','install_runtime_dependencies')
 @after(('run_unit_tests',), only_once=True)
 def grunt(project, logger):
     custom_exec(project, logger, ['grunt'], cwd=WEBAPP_DIR, fail_error=True)
