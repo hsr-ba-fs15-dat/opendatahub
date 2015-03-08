@@ -2,7 +2,7 @@
 PyBuilder configuration file
 """
 
-from pybuilder.core import use_plugin, after, init, task, description
+from pybuilder.core import use_plugin, after, init, task, description, depends
 from pybuilder.utils import assert_can_execute, execute_command, read_file
 from pybuilder.plugins.python.python_plugin_helper import log_report
 from pybuilder.errors import BuildFailedException
@@ -81,13 +81,13 @@ def install_bower_packages(project, logger):
 
 
 @task('install_build_dependencies')
-def install_bower_packages(project, logger):
+def install_npm_packages(project, logger):
     custom_exec(project, logger, ['npm', 'install'], cwd=WEBAPP_DIR, fail_error=False)
 
 
-@task('grunt')
+@task
 @after(('run_unit_tests',), only_once=True)
-def install_bower_packages(project, logger):
+def grunt(project, logger):
     custom_exec(project, logger, ['grunt'], cwd=WEBAPP_DIR, fail_error=True)
 
 
