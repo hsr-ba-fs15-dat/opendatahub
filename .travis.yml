@@ -25,7 +25,7 @@ script:
  - cd $TRAVIS_BUILD_DIR/src/main/webapp/
  - npm install
  - bower install
- - grunt compass
+ - grunt
 
 before_deploy:
  - git config --global user.email 'build@travis-ci.com'

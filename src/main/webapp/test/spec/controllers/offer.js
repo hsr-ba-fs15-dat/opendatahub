@@ -1,22 +1,22 @@
 'use strict';
 
-describe('Controller: PlumbdemoCtrl', function () {
+describe('Controller: OfferCtrl', function () {
 
   // load the controller's module
   beforeEach(module('opendatahubApp'));
 
-  var PlumbdemoCtrl,
+  var OfferCtrl,
     scope;
 
   // Initialize the controller and a mock scope
   beforeEach(inject(function ($controller, $rootScope) {
     scope = $rootScope.$new();
-    PlumbdemoCtrl = $controller('PlumbdemoCtrl', {
+    OfferCtrl = $controller('OfferCtrl', {
       $scope: scope
     });
   }));
 
-  it('should attach a list of awesomeThings to the scope', function () {
-    expect(scope.awesomeThings.length).toBe(3);
+  it('should ... todo', function () {
+    expect(true).toBe(true);
   });
 });
