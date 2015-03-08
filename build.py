@@ -3,9 +3,15 @@ PyBuilder configuration file
 """
 
 from pybuilder.core import use_plugin, after, init, task, description
-from pybuilder.utils import assert_can_execute
+from pybuilder.utils import assert_can_execute, execute_command, read_file
+from pybuilder.plugins.python.python_plugin_helper import log_report
 from pybuilder.errors import BuildFailedException
 from pybuilder.pluginhelper.external_command import ExternalCommandBuilder
+
+
+import os
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+WEBAPP_DIR = os.path.join(BASE_DIR, 'src', 'main', 'webapp')
 
 
 use_plugin("analysis")
@@ -41,6 +47,50 @@ def initialize(project):
 
 
 
+
+def custom_exec(project, logger, args, name=None, cwd=None, fail_error=True):
+    cmd = args[0]
+    name = name or cmd
+    logger.debug('Checking availability of ' + cmd)
+    assert_can_execute((cmd,), cmd, 'plugin opendatahub.' + name)
+    logger.debug(name + ' has been found')
+
+    report_file = project.expand_path('$dir_reports/{0}'.format('bower'))
+    error_report_file = '{0}.err'.format(report_file)
+
+    exit_code = execute_command(args, report_file, cwd=cwd)
+    report_lines = read_file(report_file)
+    error_report_lines = read_file(error_report_file)
+
+    verbose = project.get_property('verbose')
+    if error_report_lines:
+        msg = 'Errors while running {0}, see {1}'.format(name, error_report_file)
+        if verbose:
+            logger.info(''.join(error_report_lines))
+        if fail_error:
+            raise BuildFailedException(msg)
+
+    if verbose:
+        logger.info(''.join(report_lines))
+
+
+
+@task('install_runtime_dependencies')
+def install_bower_packages(project, logger):
+    custom_exec(project, logger, ['bower', 'install', '--config.analytics=false', '--allow-root', '--no-interactive'], cwd=WEBAPP_DIR)
+
+
+@task('install_build_dependencies')
+def install_bower_packages(project, logger):
+    custom_exec(project, logger, ['npm', 'install'], cwd=WEBAPP_DIR, fail_error=False)
+
+
+@task('grunt')
+@after(('run_unit_tests',), only_once=True)
+def install_bower_packages(project, logger):
+    custom_exec(project, logger, ['grunt'], cwd=WEBAPP_DIR, fail_error=True)
+
+
 @task('django_migrate')
 def django_migrate_fix(project, logger):
     from pybuilder_django_enhanced_plugin.tasks.common import run_django_manage_command
@@ -55,14 +105,14 @@ def django_migrate_fix(project, logger):
 
 
 @task
-@description("Runs django dbshell")
+@description('Runs django dbshell')
 def django_dbshell(project, logger):
     from pybuilder_django_enhanced_plugin.tasks.common import get_django_command_args
     from django.core.management import execute_from_command_line
 
     args = ['dbshell']
     args += get_django_command_args(project)
-    logger.info("Running django dbshell {} ".format(args))
+    logger.info('Running django dbshell {} '.format(args))
     execute_from_command_line([''] + args)
 
 @task

@@ -6,6 +6,10 @@ python:
 addons:
   postgresql: 9.3
 
+env:
+  global:
+    - CI=true
+
 install:
   - pip install pybuilder
   - npm install -g npm@latest
@@ -22,10 +26,6 @@ before_script:
 
 script:
  - pyb -v
- - cd $TRAVIS_BUILD_DIR/src/main/webapp/
- - npm install
- - bower install
- - grunt
 
 before_deploy:
  - git config --global user.email 'build@travis-ci.com'
