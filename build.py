@@ -58,6 +58,7 @@ def custom_exec(project, logger, args, name=None, cwd=None, fail_error=True):
     report_file = project.expand_path('$dir_reports/{0}'.format('bower'))
     error_report_file = '{0}.err'.format(report_file)
 
+    logger.info('Running {}'.format(args))
     exit_code = execute_command(args, report_file, cwd=cwd)
     report_lines = read_file(report_file)
     error_report_lines = read_file(error_report_file)
@@ -86,6 +87,7 @@ def install_npm_packages(project, logger):
 
 
 @task
+@depends('install_build_dependencies')
 @after(('run_unit_tests',), only_once=True)
 def grunt(project, logger):
     custom_exec(project, logger, ['grunt'], cwd=WEBAPP_DIR, fail_error=True)
