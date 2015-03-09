@@ -14,6 +14,7 @@ import dj_database_url
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
+PRODUCTION = os.getenv('CONFIGURATION') == 'PRODUCTION'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
@@ -38,8 +39,17 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'hub'
+    'rest_framework',
+    'hub',
 )
+
+# Dev. only, not required
+try:
+    import django_extensions
+    INSTALLED_APPS += ('django_extensions',)
+except:
+    pass
+
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',

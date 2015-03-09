@@ -15,25 +15,34 @@ angular
         'ngCookies',
         'ngMessages',
         'ngResource',
-        'ngRoute',
         'ngSanitize',
-        'ngTouch'
+        'ngTouch',
+        'ui.router',
+        'ui.utils',
+        'ui.select',
+        'ngToast'
     ])
-    .config(function ($routeProvider) {
-        $routeProvider
-            .when('/', {
-                templateUrl: 'views/main.html',
-                controller: 'MainCtrl'
+    .config(function ($stateProvider, $urlRouterProvider, ngToastProvider) {
+
+        // Toast config
+        ngToastProvider.configure({
+            horizontalPosition: 'center'
+        });
+
+        $urlRouterProvider.otherwise('/');
+
+        $stateProvider
+            .state('main', {
+                url: '/',
+                templateUrl: 'views/main.html'
             })
-            .when('/about', {
-                templateUrl: 'views/about.html',
-                controller: 'AboutCtrl'
+            .state('offer', {
+                controller: 'OfferCtrl',
+                templateUrl: 'views/offer.html',
+                controllerAs: 'vm'
             })
-            .when('/PlumbDemo', {
-              templateUrl: 'views/plumbdemo.html',
-              controller: 'PlumbdemoCtrl'
-            })
-            .otherwise({
-                redirectTo: '/'
+            .state('about', {
+                controller: 'AboutCtrl',
+                templateUrl: 'views/about.html'
             });
     });
