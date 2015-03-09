@@ -55,7 +55,7 @@ def custom_exec(project, logger, args, name=None, cwd=None, fail_stderr=True, fa
     assert_can_execute((cmd,), cmd, 'plugin opendatahub.' + name)
     logger.debug(name + ' has been found')
 
-    report_file = project.expand_path('$dir_reports/{0}'.format('bower'))
+    report_file = project.expand_path('$dir_reports/{0}'.format(name))
     error_report_file = '{0}.err'.format(report_file)
 
     logger.info('Running {}'.format(args))
