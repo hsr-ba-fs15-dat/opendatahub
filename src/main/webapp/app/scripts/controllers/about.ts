@@ -1,4 +1,4 @@
-/// <reference path='../../../typings/tsd.d.ts' />
+/// <reference path='../all.d.ts' />
 'use strict';
 
 
@@ -10,4 +10,4 @@ class AboutCtrl {
 
 }
 
-angular.module('opendatahubApp').controller('AboutCtrl', AboutCtrl);
+app.controller('AboutCtrl', AboutCtrl);
