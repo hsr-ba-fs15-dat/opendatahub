@@ -2,21 +2,21 @@
 
 describe('Controller: MainCtrl', function () {
 
-  // load the controller's module
-  beforeEach(module('opendatahubApp'));
+    // load the controller's module
+    beforeEach(module('opendatahubApp'));
 
-  var MainCtrl,
-    scope;
+    var MainCtrl,
+        scope;
 
-  // Initialize the controller and a mock scope
-  beforeEach(inject(function ($controller, $rootScope) {
-    scope = $rootScope.$new();
-    MainCtrl = $controller('MainCtrl', {
-      $scope: scope
+    // Initialize the controller and a mock scope
+    beforeEach(inject(function ($controller, $rootScope) {
+        scope = $rootScope.$new();
+        MainCtrl = $controller('MainCtrl', {
+            $scope: scope
+        });
+    }));
+
+    it('should ... todo', function () {
+        expect(true).toBe(true);
     });
-  }));
-
-  it('should ... todo', function () {
-    expect(true).toBe(true);
-  });
 });

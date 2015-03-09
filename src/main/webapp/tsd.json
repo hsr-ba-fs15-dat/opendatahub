@@ -1,0 +1,45 @@
+{
+  "version": "v4",
+  "repo": "borisyankov/DefinitelyTyped",
+  "ref": "master",
+  "path": "typings",
+  "bundle": "typings/tsd.d.ts",
+  "installed": {
+    "angularjs/angular.d.ts": {
+      "commit": "dd99be72dc8e6de697776a3d24d1a4c9a209fcb6"
+    },
+    "angular-ui/angular-ui-router.d.ts": {
+      "commit": "dd99be72dc8e6de697776a3d24d1a4c9a209fcb6"
+    },
+    "angularjs/angular-animate.d.ts": {
+      "commit": "dd99be72dc8e6de697776a3d24d1a4c9a209fcb6"
+    },
+    "angular-ui-bootstrap/angular-ui-bootstrap.d.ts": {
+      "commit": "dd99be72dc8e6de697776a3d24d1a4c9a209fcb6"
+    },
+    "angularjs/angular-resource.d.ts": {
+      "commit": "dd99be72dc8e6de697776a3d24d1a4c9a209fcb6"
+    },
+    "angularjs/angular-sanitize.d.ts": {
+      "commit": "dd99be72dc8e6de697776a3d24d1a4c9a209fcb6"
+    },
+    "angularjs/angular-mocks.d.ts": {
+      "commit": "dd99be72dc8e6de697776a3d24d1a4c9a209fcb6"
+    },
+    "angularjs/angular-cookies.d.ts": {
+      "commit": "dd99be72dc8e6de697776a3d24d1a4c9a209fcb6"
+    },
+    "jqueryui/jqueryui.d.ts": {
+      "commit": "dd99be72dc8e6de697776a3d24d1a4c9a209fcb6"
+    },
+    "jquery/jquery.d.ts": {
+      "commit": "dd99be72dc8e6de697776a3d24d1a4c9a209fcb6"
+    },
+    "karma-jasmine/karma-jasmine.d.ts": {
+      "commit": "dd99be72dc8e6de697776a3d24d1a4c9a209fcb6"
+    },
+    "jasmine/jasmine.d.ts": {
+      "commit": "dd99be72dc8e6de697776a3d24d1a4c9a209fcb6"
+    }
+  }
+}

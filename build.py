@@ -55,7 +55,7 @@ def custom_exec(project, logger, args, name=None, cwd=None, fail_stderr=True, fa
     assert_can_execute((cmd,), cmd, 'plugin opendatahub.' + name)
     logger.debug(name + ' has been found')
 
-    report_file = project.expand_path('$dir_reports/{0}'.format('bower'))
+    report_file = project.expand_path('$dir_reports/{0}'.format(name))
     error_report_file = '{0}.err'.format(report_file)
 
     logger.info('Running {}'.format(args))
@@ -64,15 +64,15 @@ def custom_exec(project, logger, args, name=None, cwd=None, fail_stderr=True, fa
     error_report_lines = read_file(error_report_file)
 
     verbose = project.get_property('verbose')
+    if verbose:
+        logger.info(''.join(report_lines))
+
     if error_report_lines or exit_code != 0:
         msg = 'Errors while running {0}, see {1}'.format(name, error_report_file)
         if verbose:
             logger.info(''.join(error_report_lines))
         if (error_report_lines and fail_stderr) or (exit_code != 0 and fail_nonzero):
             raise BuildFailedException(msg)
-
-    if verbose:
-        logger.info(''.join(report_lines))
 
 
 
