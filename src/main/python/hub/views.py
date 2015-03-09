@@ -1,22 +1,28 @@
 from django.http import HttpResponse
 
 from rest_framework import viewsets
+from rest_framework.decorators import detail_route
+from rest_framework.response import Response
 
-from hub.serializers import PipelineSerializer, NodeSerializer
-from hub.models import PipelineModel, NodeModel
-
-
-# Create your views here.
-
-
-class PipelineViewSet(viewsets.ModelViewSet):
-    queryset = PipelineModel.objects.all()
-    serializer_class = PipelineSerializer
+from hub.serializers import DocumentSerializer, RecordSerializer
+from hub.models import DocumentModel, RecordModel
 
 
-class NodeViewSet(viewsets.ModelViewSet):
-    queryset = NodeModel.objects.all()
-    serializer_class = NodeSerializer
+class DocumentViewSet(viewsets.ModelViewSet):
+    queryset = DocumentModel.objects.all()
+    serializer_class = DocumentSerializer
+
+
+    @detail_route()
+    def records(self, request, pk):
+        records = RecordModel.objects.filter(document__id=pk)
+        serializer = RecordSerializer(records, many=True, context={'request':request})
+        return Response(serializer.data)
+
+
+class RecordViewSet(viewsets.ModelViewSet):
+    queryset = RecordModel.objects.all()
+    serializer_class = RecordSerializer
 
 
 def test(r):

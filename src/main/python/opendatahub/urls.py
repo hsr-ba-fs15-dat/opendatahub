@@ -3,12 +3,12 @@ from django.contrib import admin
 from opendatahub.settings import PRODUCTION
 
 from rest_framework import routers
-from hub.views import PipelineViewSet, NodeViewSet
+from hub.views import DocumentViewSet, RecordViewSet
 
 
 router = routers.DefaultRouter()
-router.register(r'pipelines', PipelineViewSet)
-router.register(r'nodes', NodeViewSet)
+router.register(r'documents', DocumentViewSet)
+router.register(r'records', RecordViewSet)
 
 from hub import views
 
@@ -19,7 +19,7 @@ urlpatterns = (
     # url(r'^blog/', include('blog.urls')),
 
     url(r'^test/', views.test),
-    url(r'api/(?P<path>.*)$', include(router.urls)),
+    url(r'api/', include(router.urls)),
     url(r'^admin/', include(admin.site.urls)),
 )
 

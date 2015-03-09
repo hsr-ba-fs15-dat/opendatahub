@@ -1,17 +1,27 @@
 from django.db import models
-from picklefield.fields import PickledObjectField
 
 
-class PipelineModel(models.Model):
-    name = models.CharField(max_length=100)
-    description = models.TextField(max_length=2000)
+def cap(str, length):
+    return str if len(str) < length else str[0:length-3] + '...'
 
 
-class NodeModel(models.Model):
-    pipeline = models.ForeignKey(PipelineModel, null=False)
-    successor = models.ForeignKey('NodeModel', null=True)
+class DocumentModel(models.Model):
+    class Meta:
+        db_table = 'hub_documents'
 
-    params = PickledObjectField()
+    description = models.TextField()
 
-    # this probably needs to be a relation of it's own for ui reasons (need to know which fields are applicable, etc.)
-    node_class = models.CharField(max_length=200, null=False)
+    def __str__(self):
+        return "[Document id={} description={}]".format(self.id, cap(self.description, 50))
+
+
+class RecordModel(models.Model):
+    class Meta:
+        db_table = 'hub_records'
+        ordering = ['id']
+
+    document = models.ForeignKey(DocumentModel, null=False)
+    content = models.TextField()
+
+    def __str__(self):
+        return "[Record id={} document={} content={}".format(self.id, self.document_id, cap(self.content, 50))
