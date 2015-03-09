@@ -1,14 +1,15 @@
-from hub.models import PipelineModel, NodeModel
 from rest_framework import serializers
 
+from hub.models import DocumentModel, RecordModel
 
-class PipelineSerializer(serializers.ModelSerializer):
+
+class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = PipelineModel
-        fields = ('name', 'description')
+        model = DocumentModel
+        fields = ('url', 'description')
 
 
-class NodeSerializer(serializers.ModelSerializer):
+class RecordSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = NodeModel
-        fields = ('pipeline', 'successor', 'params')
+        model = RecordModel
+        fields = ('url', 'document', 'content')

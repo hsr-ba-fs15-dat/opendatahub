@@ -1,11 +1,17 @@
-
 import csv
+import json
 from hub import base
+import httplib2
+import logging
+
+import hub.models
+
+logger = logging.getLogger('hub.nodes')
 
 
 class FileInput(base.InputNode):
-    def __init__(self, *args, **kwargs):
-        super(FileInput, self).__init__(*args, **kwargs)
+    def __init__(self, filename):
+        self.filename = filename
 
     def read(self):
         with open(self.filename, 'r') as file_input:
@@ -13,48 +19,62 @@ class FileInput(base.InputNode):
                 yield line
 
 
-class CsvInput(base.TransformationNode):
-    def __init__(self, *args, **kwargs):
-        super(CsvInput, self).__init__(*args, **kwargs)
+class HttpInput(base.InputNode):
+    def __init__(self, url, method='GET', headers=None):
+        self.url = url
+        self.method = method
+        self.headers = headers or {'Content-Type': 'application/json'}
 
-    def transform(self, reader):
-        csv_reader = csv.DictReader(reader)
+    def read(self):
+        if not self.url:
+            raise RuntimeError('missing url')
+
+        if not self.url.startswith('http'):
+            return None # ??
+
+        http = httplib2.Http()
+        response, content = http.request(self.url, self.method, headers=self.headers)
+
+        logger.debug('http: requesting url %s', self.url)
+        logger.debug('http: response status: %d', response.status)
+
+        return content
+
+
+class CsvInput(base.TransformationNode):
+    def transform(self, input):
+        csv_reader = csv.DictReader(input.split('\n'))
         for row in csv_reader:
             yield row
 
 
-class SequentialJoin(base.JoinNode):
-    def __init__(self, *args, **kwargs):
-        super(SequentialJoin, self).__init__(*args, **kwargs)
-
-    def join(self, readers):
-        for reader in readers:
-            for row in reader:
-                yield row
-
-
-class NormalizedAddressToGarbageTransform(base.TransformationNode):
-    def __init__(self, *args, **kwargs):
-        super(NormalizedAddressToGarbageTransform, self).__init__(*args, **kwargs)
-
+class JsonInput(base.TransformationNode):
     def transform(self, reader):
-        for row in reader:
-            converted = {
-                'Name': '{} {}'.format(row['Name'], row['Surname']),
-                'Street': '{} {}'.format(row['Street'], row['No']),
-                'City': '{} {}'.format(row['Zip'], row['City'])
-            }
-            yield converted
+        try:
+            for line in reader:
+                yield json.loads(line)
+        except:
+            # assume it's just a string instead
+            yield json.loads(reader)
 
 
-class CsvOutput(base.OutputNode):
-    def __init__(self, *args, **kwargs):
-        super(CsvOutput, self).__init__(*args, **kwargs)
+class DatabaseWriter(base.OutputNode):
+    def __init__(self, desc):
+        self.desc = desc
 
     def write(self, reader):
-        with open(self.filename, 'w') as output:
-            csv_writer = csv.DictWriter(output, self.field_names)
-            csv_writer.writeheader()
+        doc = hub.models.DocumentModel(description=self.desc)
+        doc.save()
 
-            for row in reader:
-                csv_writer.writerow(row)
+        for record_content in reader:
+            rec = hub.models.RecordModel(document=doc, content=record_content)
+            rec.save()
+
+
+class DatabaseReader(base.InputNode):
+    def __init__(self, document_id):
+        self.document_id = document_id
+
+    def read(self):
+        for record in  hub.models.RecordModel.objects.get(document_id=self.document_id):
+            yield record.content
