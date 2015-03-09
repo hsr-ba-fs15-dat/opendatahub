@@ -15,6 +15,7 @@ install:
   - npm install -g npm@latest
   - npm cache clean
   - npm install -g bower grunt-cli
+  - npm install -g tsd@next
   - gem update --system
   - gem install compass
 

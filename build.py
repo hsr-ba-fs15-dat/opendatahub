@@ -10,6 +10,7 @@ from pybuilder.pluginhelper.external_command import ExternalCommandBuilder
 
 
 import os
+import shutil
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 WEBAPP_DIR = os.path.join(BASE_DIR, 'src', 'main', 'webapp')
 
@@ -84,6 +85,13 @@ def install_bower_packages(project, logger):
 @task('install_build_dependencies')
 def install_npm_packages(project, logger):
     custom_exec(project, logger, ['npm', 'install'], cwd=WEBAPP_DIR, fail_stderr=False)
+
+
+@task('install_build_dependencies')
+def install_typings(project, logger):
+    shutil.rmtree(os.path.join(WEBAPP_DIR, 'typings'), ignore_errors=True)
+    custom_exec(project, logger, ['tsd', 'reinstall'], cwd=WEBAPP_DIR)
+    custom_exec(project, logger, ['tsd', 'rebundle'], cwd=WEBAPP_DIR)
 
 
 @task
