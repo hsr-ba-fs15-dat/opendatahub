@@ -70,13 +70,13 @@ hubPlumb.targetEndpoint = function () {
 
 };
 
-hubPlumb.addEndpoints = function (toId, sourceAnchors, targetAnchors) {
+hubPlumb.addEndpoints = function (toId, sourceAnchors, targetAnchors, scope, params) {
     for (var i = 0; i < sourceAnchors; i++) {
-        var sourceUUID = toId + sourceAnchors[i];
-        hubPlumb.instance.addEndpoint('flowchart' + toId, hubPlumb.sourceEndpoint(), {anchor: 'Continuous', uuid: sourceUUID});
+        var sourceUUID = toId + i + 'source';
+        hubPlumb.instance.addEndpoint('flowchart' + toId, hubPlumb.sourceEndpoint(), {anchor: 'Continuous', uuid: sourceUUID, scope: scope, parameters: params});
     }
     for (var j = 0; j < targetAnchors; j++) {
-        var targetUUID = toId + targetAnchors[j];
-        hubPlumb.instance.addEndpoint('flowchart' + toId, hubPlumb.targetEndpoint(), {anchor: 'Continuous', uuid: targetUUID});
+        var targetUUID = toId + j + 'target';
+        hubPlumb.instance.addEndpoint('flowchart' + toId, hubPlumb.targetEndpoint(), {anchor: 'Continuous', uuid: targetUUID, scope: scope, parameters: params});
     }
 };

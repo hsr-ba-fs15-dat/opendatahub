@@ -38,8 +38,10 @@
         // suspend drawing and initialise.
         instance.batch(function () {
 
-            hubPlumb.addEndpoints("Window4", 4, 2);
-            hubPlumb.addEndpoints("Window2", 2, 0);
+           // hubPlumb.addEndpoints("Window4", 4, 2);
+            hubPlumb.addEndpoints("Window4", 1, 1, "scope1");
+          //  hubPlumb.addEndpoints("Window2", 2, 0);
+            hubPlumb.addEndpoints("Window2", 1, 1, "scope1");
             hubPlumb.addEndpoints("Window3", 1, 2);
             hubPlumb.addEndpoints("Window1", 3, 3);
 
