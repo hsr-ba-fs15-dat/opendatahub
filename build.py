@@ -48,7 +48,7 @@ def initialize(project):
 
 
 
-def custom_exec(project, logger, args, name=None, cwd=None, fail_error=True):
+def custom_exec(project, logger, args, name=None, cwd=None, fail_stderr=True, fail_nonzero=True):
     cmd = args[0]
     name = name or cmd
     logger.debug('Checking availability of ' + cmd)
@@ -64,11 +64,11 @@ def custom_exec(project, logger, args, name=None, cwd=None, fail_error=True):
     error_report_lines = read_file(error_report_file)
 
     verbose = project.get_property('verbose')
-    if error_report_lines:
+    if error_report_lines or exit_code != 0:
         msg = 'Errors while running {0}, see {1}'.format(name, error_report_file)
         if verbose:
             logger.info(''.join(error_report_lines))
-        if fail_error:
+        if (error_report_lines and fail_stderr) or (exit_code != 0 and fail_nonzero):
             raise BuildFailedException(msg)
 
     if verbose:
@@ -78,19 +78,19 @@ def custom_exec(project, logger, args, name=None, cwd=None, fail_error=True):
 
 @task('install_runtime_dependencies')
 def install_bower_packages(project, logger):
-    custom_exec(project, logger, ['bower', 'install', '--config.analytics=false', '--allow-root', '--no-interactive'], cwd=WEBAPP_DIR)
+    custom_exec(project, logger, ['bower', 'install', '--config.analytics=false', '--allow-root', '--no-interactive'], cwd=WEBAPP_DIR, fail_stderr=False)
 
 
 @task('install_build_dependencies')
 def install_npm_packages(project, logger):
-    custom_exec(project, logger, ['npm', 'install'], cwd=WEBAPP_DIR, fail_error=False)
+    custom_exec(project, logger, ['npm', 'install'], cwd=WEBAPP_DIR, fail_stderr=False)
 
 
 @task
 @depends('install_build_dependencies','install_runtime_dependencies')
 @after(('run_unit_tests',), only_once=True)
 def grunt(project, logger):
-    custom_exec(project, logger, ['grunt'], cwd=WEBAPP_DIR, fail_error=True)
+    custom_exec(project, logger, ['grunt'], cwd=WEBAPP_DIR)
 
 
 @task('django_migrate')
