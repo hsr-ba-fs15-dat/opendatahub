@@ -195,6 +195,7 @@ def execute_pylint(project, logger):
     verbose = project.get_property('verbose')
 
     command = ExternalCommandBuilder('pylint', project)
+    command.use_argument('--load-plugins=pylint_django')
     command.use_argument('--msg-template="{C}:{path}:{line}: [{msg_id}({symbol}), {obj}] {msg}"')
     result = command.run_on_production_source_files(logger, include_test_sources=True, include_scripts=True)
 

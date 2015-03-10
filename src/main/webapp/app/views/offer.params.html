@@ -1,0 +1,10 @@
+<div ng-repeat="field in params.fields">
+    <label class="col-md-4 control-label" for="{{ field.id }}">{{ field.label }}</label>
+
+    <div class="col-md-5">
+
+        <input ng-model="offer.params.url" id="{{ field.id }}" name="{{ field.id }}" type="text" placeholder="{{ field.placeholder }}"
+               class="form-control input-md" required>
+        <span ng-if="field.helpText" ng-bind="field.helpText" class="help-block"></span>
+    </div>
+</div>

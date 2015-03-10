@@ -1,4 +1,5 @@
 /// <reference path='../all.d.ts' />
+
 module OpenDataHub.Authentication {
     'use strict';
     angular

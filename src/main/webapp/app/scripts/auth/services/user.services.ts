@@ -1,22 +1,21 @@
-/// <reference path='../../../../typings/tsd.d.ts' />
+/// <reference path='../../all.d.ts' />
+
 (function () {
-  'use strict';
+    'use strict';
 
-  angular
-    .module('openDataHub.auth.services')
-    .factory('Users', Users);
+    angular
+        .module('openDataHub.auth.services')
+        .factory('Users', Users);
 
-  Users.$inject = ['$http'];
+    function Users($http) {
+        var Users = {
+            all: all
+        };
 
-  function Users($http) {
-    var Users = {
-      all: all
-    };
+        return Users;
 
-    return Users;
-
-    function all() {
-      return $http.get('/api/v1/users/');
+        function all() {
+            return $http.get('/api/v1/users/');
+        }
     }
-  }
 })();

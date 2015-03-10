@@ -1,45 +1,45 @@
 {
   "version": "v4",
   "repo": "borisyankov/DefinitelyTyped",
-  "ref": "master",
+  "ref": "1.3.0",
   "path": "typings",
   "bundle": "typings/tsd.d.ts",
   "installed": {
-    "angularjs/angular.d.ts": {
-      "commit": "dd99be72dc8e6de697776a3d24d1a4c9a209fcb6"
-    },
     "angular-ui/angular-ui-router.d.ts": {
-      "commit": "dd99be72dc8e6de697776a3d24d1a4c9a209fcb6"
+      "commit": "3b2ed809b9e8f7dc4fcc1d80199129a0b73fb277"
     },
     "angularjs/angular-animate.d.ts": {
-      "commit": "dd99be72dc8e6de697776a3d24d1a4c9a209fcb6"
+      "commit": "3b2ed809b9e8f7dc4fcc1d80199129a0b73fb277"
     },
     "angular-ui-bootstrap/angular-ui-bootstrap.d.ts": {
-      "commit": "dd99be72dc8e6de697776a3d24d1a4c9a209fcb6"
+      "commit": "3b2ed809b9e8f7dc4fcc1d80199129a0b73fb277"
     },
     "angularjs/angular-resource.d.ts": {
-      "commit": "dd99be72dc8e6de697776a3d24d1a4c9a209fcb6"
+      "commit": "3b2ed809b9e8f7dc4fcc1d80199129a0b73fb277"
     },
     "angularjs/angular-sanitize.d.ts": {
-      "commit": "dd99be72dc8e6de697776a3d24d1a4c9a209fcb6"
+      "commit": "3b2ed809b9e8f7dc4fcc1d80199129a0b73fb277"
     },
     "angularjs/angular-mocks.d.ts": {
-      "commit": "dd99be72dc8e6de697776a3d24d1a4c9a209fcb6"
+      "commit": "3b2ed809b9e8f7dc4fcc1d80199129a0b73fb277"
     },
     "angularjs/angular-cookies.d.ts": {
-      "commit": "dd99be72dc8e6de697776a3d24d1a4c9a209fcb6"
+      "commit": "3b2ed809b9e8f7dc4fcc1d80199129a0b73fb277"
     },
     "jqueryui/jqueryui.d.ts": {
-      "commit": "dd99be72dc8e6de697776a3d24d1a4c9a209fcb6"
+      "commit": "3b2ed809b9e8f7dc4fcc1d80199129a0b73fb277"
     },
     "jquery/jquery.d.ts": {
-      "commit": "dd99be72dc8e6de697776a3d24d1a4c9a209fcb6"
+      "commit": "5c59a734fdee76e135fe8eb63299d27244499031"
     },
     "karma-jasmine/karma-jasmine.d.ts": {
-      "commit": "dd99be72dc8e6de697776a3d24d1a4c9a209fcb6"
+      "commit": "3b2ed809b9e8f7dc4fcc1d80199129a0b73fb277"
     },
     "jasmine/jasmine.d.ts": {
-      "commit": "dd99be72dc8e6de697776a3d24d1a4c9a209fcb6"
+      "commit": "3b2ed809b9e8f7dc4fcc1d80199129a0b73fb277"
+    },
+    "angularjs/angular.d.ts": {
+      "commit": "5c59a734fdee76e135fe8eb63299d27244499031"
     }
   }
 }

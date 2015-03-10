@@ -1,53 +1,61 @@
-<form class="form-horizontal">
-<fieldset>
+<form name="form" class="form-horizontal">
+    <fieldset>
 
-<!-- Form Name -->
-<legend>Daten anbieten</legend>
+        <!-- Form Name -->
+        <legend>Daten anbieten</legend>
 
-<!-- Text input-->
-<div class="form-group">
-  <label class="col-md-4 control-label" for="name">Name</label>  
-  <div class="col-md-4">
-  <input odh-focus="true" id="name" name="name" type="text" placeholder="Verkehrshindernisse ZH" class="form-control input-md" required="">
-  </div>
-</div>
+        <!-- Text input-->
+        <div class="form-group">
+            <label class="col-md-4 control-label" for="name">Name</label>
 
-<!-- Textarea -->
-<div class="form-group">
-  <label class="col-md-4 control-label" for="description">Beschreibung</label>
-  <div class="col-md-4">                     
-    <textarea class="form-control" id="description" name="description"></textarea>
-  </div>
-</div>
+            <div class="col-md-5">
+                <input id="name" name="name" type="text" placeholder="z.B. Verkehrshindernisse ZH"
+                       class="form-control input-md" required=""
+                       ng-model="offer.name">
+            </div>
+        </div>
 
-<!-- Select Basic -->
-<div class="form-group">
-  <label class="col-md-4 control-label" for="data-source">Quelle</label>
-  <div class="col-md-4">
-    <select id="data-source" name="data-source" class="form-control">
-      <option value="HttpDataSource">Online</option>
-      <option value="FileUploadDataSource">Datei hochladen</option>
-    </select>
-  </div>
-</div>
+        <!-- Textarea -->
+        <div class="form-group">
+            <label class="col-md-4 control-label" for="description">Beschreibung</label>
 
-<!-- Text input-->
-<div class="form-group">
-  <label class="col-md-4 control-label" for="url">Addresse</label>  
-  <div class="col-md-4">
-  <input id="url" name="url" type="text" placeholder="http://" class="form-control input-md" required="">
-  <span class="help-block">Webadresse der Daten</span>  
-  </div>
-</div>
+            <div class="col-md-5">
+                <textarea class="form-control" id="description" name="description"
+                          ng-model="offer.description"
+                        ></textarea>
+            </div>
+        </div>
 
-<!-- Button (Double) -->
-<div class="form-group">
-  <label class="col-md-4 control-label" for="add"></label>
-  <div class="col-md-8">
-    <button id="add" name="add" class="btn btn-primary">Hinzufügen</button>
-    <button id="cancel" name="cancel" class="btn btn-danger">Abbrechen</button>
-  </div>
-</div>
+        <!-- Select Basic -->
+        <div class="form-group">
+            <label class="col-md-4 control-label" for="data-source">Quelle</label>
 
-</fieldset>
+            <div class="col-md-5">
+                <ui-select ng-model="offer.dataSource" theme="bootstrap"
+                           on-select="offer.switchDataSource($item, $model)"
+                        >
+                    <ui-select-match placeholder="Wählen Sie eine Datenquelle">
+                        {{$select.selected.label}}
+                    </ui-select-match>
+                    <ui-select-choices repeat="dataSource in offer.dataSources">
+                        <span ng-bind-html="dataSource.label"></span>
+                    </ui-select-choices>
+                </ui-select>
+
+            </div>
+        </div>
+
+        <div class="form-group" ui-view></div>
+
+        <!-- Button (Double) -->
+        <div class="form-group">
+            <label class="col-md-4 control-label" for="add"></label>
+
+            <div class="col-md-8">
+                <button ng-click="offer.submit()" id="add" name="add" class="btn btn-primary">Hinzufügen</button>
+                <button ng-click="offer.cancel()" id="cancel" name="cancel" class="btn btn-danger">Abbrechen</button>
+            </div>
+        </div>
+
+    </fieldset>
 </form>
