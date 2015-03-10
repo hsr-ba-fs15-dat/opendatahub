@@ -5,6 +5,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
+import codecs
 
 from hub.serializers import DocumentSerializer, RecordSerializer
 from hub.models import DocumentModel, RecordModel
@@ -17,7 +18,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
     serializer_class = DocumentSerializer
 
     @detail_route()
-    def records(self, request, pk):
+    def records(self, request, pk, *args, **kwargs):
         records = RecordModel.objects.filter(document__id=pk)
         serializer = RecordSerializer(records, many=True, context={'request': request})
         return Response(serializer.data)
@@ -40,22 +41,22 @@ class DocumentViewSet(viewsets.ModelViewSet):
             if node:
                 reader = node.read(input)
 
-                peek = reader.next()
-                reader = itertools.chain([peek], reader)
+                if reader:
+                    peek = reader.next()
+                    reader = itertools.chain([peek], reader)
 
-                node = TransformationNode.find_node_for(peek)
-                if node:
-                    reader = node.transform(reader)
+                    node = TransformationNode.find_node_for(peek)
+                    if node:
+                        reader = node.transform(reader)
 
-                writer = DatabaseWriter(desc=data['description'])
+                    writer = DatabaseWriter(desc=data['description'])
 
-                doc = writer.write(reader)
-                serializer = DocumentSerializer(DocumentModel.objects.get(id=doc.id), context={'request': request})
+                    doc = writer.write(reader)
+                    serializer = DocumentSerializer(DocumentModel.objects.get(id=doc.id), context={'request': request})
 
-                return Response(serializer.data)
+                    return Response(serializer.data)
 
-        else:
-            raise ValidationError(detail='unknown type')
+        raise ValidationError(detail='error handling input')
 
 
 class RecordViewSet(viewsets.ModelViewSet):

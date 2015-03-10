@@ -1,8 +1,9 @@
 import json
 import logging
-
+import types
 import unicodecsv
 import requests
+import codecs
 
 from hub import base
 import hub.models
@@ -14,18 +15,18 @@ logger = logging.getLogger('hub.nodes')
 class FileInput(base.InputNode):
     @classmethod
     def accept(cls, description):
-        return description == 'file'
+        return isinstance(description, types.DictType) and 'file' in description
 
     def read(self, desc):
-        with open(desc['file'], 'r') as file_input:
-            for line in file_input:
-                yield line
+        for chunk in codecs.getreader('utf-8')(desc['file']):
+            for line in chunk.splitlines():
+                yield line.encode('utf8')
 
 
 class HttpInput(base.InputNode):
     @classmethod
     def accept(cls, description):
-        return type(description) == dict and 'url' in description and description['url'].startswith('http')
+        return isinstance(description, types.DictType) and 'url' in description and description['url'].startswith('http')
 
     def read(self, desc):
         response = requests.get(desc['url'])
@@ -34,7 +35,7 @@ class HttpInput(base.InputNode):
         logger.debug('http: response status: %d', response.status_code)
 
         for line in response.text.splitlines():
-            yield line.encode('utf8')
+            yield unicode(line).encode('utf-8')
 
 
 class CsvInput(base.TransformationNode):
@@ -51,7 +52,7 @@ class CsvInput(base.TransformationNode):
 class JsonInput(base.TransformationNode):
     @classmethod
     def accept(cls, sample):
-        return sample.startswith('{')
+        return isinstance(sample, basestring) and sample.startswith('{')
 
     def transform(self, reader):
         try:
