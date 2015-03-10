@@ -2,7 +2,7 @@ from django.db import models
 
 
 def cap(str, length):
-    return str if len(str) < length else str[0:length-3] + '...'
+    return str if len(str) < length else str[0:length - 3] + '...'
 
 
 class DocumentModel(models.Model):
