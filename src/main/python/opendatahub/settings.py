@@ -45,7 +45,7 @@ INSTALLED_APPS = (
 
 # Dev. only, not required
 try:
-    import django_extensions
+    import django_extensions  # noqa
 
     INSTALLED_APPS += ('django_extensions',)
 except:

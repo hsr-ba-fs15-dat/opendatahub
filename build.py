@@ -43,8 +43,8 @@ def initialize(project):
     # F401: Unused import
     # E501: long line
     # E128: visual indent
-    project.set_property('flake8_ignore', 'F401,E501,E128')
-    project.set_property('flake8_max_line_length', 160)
+    project.set_property('flake8_ignore', 'E128')
+    project.set_property('flake8_max_line_length', 120)
 
 
 
