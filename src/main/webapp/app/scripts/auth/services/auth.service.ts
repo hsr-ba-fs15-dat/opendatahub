@@ -160,4 +160,4 @@ module openDataHub {
 
 }
 
-angular.module('openDataHub').service("AuthenticationService",openDataHub.AuthenticationService);
+angular.module('openDataHub').service('AuthenticationService',openDataHub.AuthenticationService);
