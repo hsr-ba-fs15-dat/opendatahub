@@ -32,33 +32,7 @@
 
 <!-- Add your site or application content here -->
 <div class="header">
-    <div class="navbar navbar-default" role="navigation">
-        <div class="container">
-            <div class="navbar-header">
-
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-                        data-target="#js-navbar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-
-                <a class="navbar-brand" href="#/">OpenDataHub</a>
-            </div>
-
-            <div class="collapse navbar-collapse" id="js-navbar-collapse">
-
-                <ul class="nav navbar-nav">
-                    <li ui-sref-active="active"><a ui-sref="main">Home</a></li>
-                    <li ui-sref-active="active"><a ui-sref="offer">Anbieten</a></li>
-                    <li ui-sref-active="active"><a ui-sref="register">Registrieren</a></li>
-                    <li ui-sref-active="active"><a ui-sref="login">Login</a></li>
-                    <li ui-sref-active="active"><a ui-sref="about">Über</a></li>
-                </ul>
-            </div>
-        </div>
-    </div>
+<div ng-include="'views/navbar.html'"></div>
 </div>
 
 <div class="container">
@@ -103,8 +77,8 @@
 <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
 <script src="bower_components/angular-ui-utils/ui-utils.js"></script>
 <script src="bower_components/angular-ui-select/dist/select.js"></script>
-<script src="bower_components/jsPlumb/dist/js/dom.jsPlumb-1.7.4.js"></script>
-<script src="bower_components/jsPlumb/dist/js/jquery.jsPlumb-1.7.4.js"></script>
+<script src="bower_components/jsPlumb/dist/js/dom.jsPlumb-1.7.3.js"></script>
+<script src="bower_components/jsPlumb/dist/js/jquery.jsPlumb-1.7.3.js"></script>
 <script src="bower_components/jquery-ui/jquery-ui.js"></script>
 <!-- endbower -->
 <!-- endbuild -->
@@ -115,10 +89,12 @@
 <script src="/scripts/app.routes.js"></script>
 <script src="/scripts/app.js"></script>
 <script src="/scripts/auth/auth.module.js"></script>
+<script src="/scripts/auth/controllers/account-settings.controller.js"></script>
+<script src="/scripts/auth/controllers/account.controller.js"></script>
 <script src="/scripts/auth/controllers/login.controller.js"></script>
 <script src="/scripts/auth/controllers/register.controller.js"></script>
+<script src="/scripts/auth/services/accounts.service.js"></script>
 <script src="/scripts/auth/services/auth.service.js"></script>
-<script src="/scripts/auth/services/user.services.js"></script>
 <script src="/scripts/controllers/about.js"></script>
 <script src="/scripts/controllers/main.js"></script>
 <script src="/scripts/controllers/navbar.controller.js"></script>

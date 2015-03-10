@@ -10,11 +10,12 @@ module odg {
     class LoginController {
         public email:string;
         public password:string;
+
         /**
          * @namespace LoginController
          *
          */
-        constructor(private $location, private $scope, private AuthenticationService:odh.AuthenticationService) {
+        constructor(private $state, private $scope, private AuthenticationService:odh.AuthenticationService) {
             this.activate();
 
         }
@@ -27,7 +28,8 @@ module odg {
         activate() {
             // If the user is authenticated, they should not be here.
             if (this.AuthenticationService.isAuthenticated()) {
-                this.$location.url('/');
+                this.$state.go('main');
+
             }
         }
 

@@ -15,15 +15,12 @@ module openDataHub {
             'ui.utils',
             'ui.select',
             'ngToast',
-            'openDataHub.routes',
             'openDataHub.auth',
         ]);
 
     var openDataAuth = angular
         .module('openDataHub.auth', []);
 
-    var openDataRoutes = angular
-        .module('openDataHub.routes', ['ui.router']);
 
     angular
         .module('openDataHub')
@@ -67,9 +64,17 @@ module openDataHub {
                 controller: 'LoginController as vm',
                 templateUrl: '/views/authentication/login.html'
             })
-            .state('about', {
-                controller: 'AboutCtrl',
-                templateUrl: 'views/about.html'
+            .state('userDetail',
+            {
+                url: '/+:username',
+                controller: 'AccountController as vm',
+                templateUrl: '/views/authentication/account.html'
+            })
+            .state('userSettings',
+            {
+                url: '/+:username/settings',
+                controller: 'AccountSettingsController as vm',
+                templateUrl: '/views/authentication/settings.html'
             });
     }
 }

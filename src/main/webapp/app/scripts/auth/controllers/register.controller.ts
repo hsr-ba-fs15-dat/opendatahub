@@ -16,7 +16,7 @@ module odh {
         /**
          * @namespace RegisterController
          */
-        constructor(private $location:ng.ILocationService, private $scope:ng.IScope, private AuthenticationService:odh.AuthenticationService) {
+        constructor(private $state, private $scope:ng.IScope, private AuthenticationService:odh.AuthenticationService) {
             this.activate();
 
         }
@@ -29,7 +29,8 @@ module odh {
         activate() {
             // If the user is authenticated, they should not be here.
             if (this.AuthenticationService.isAuthenticated()) {
-                this.$location.url('/');
+                this.$state.go('main');
+
             }
         }
 
