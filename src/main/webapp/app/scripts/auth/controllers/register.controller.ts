@@ -6,9 +6,9 @@
  */
 module openDataHub {
     'use strict';
+    /* ngInject */
     export class RegisterController {
 
-        //RegisterController.$inject = ['$location', '$scope', 'Authentication'];
         public email;
         public password;
         public username;
@@ -44,7 +44,7 @@ module openDataHub {
             this.AuthenticationService.register(this.email, this.password, this.username);
         }
     }
+    angular.module('openDataHub').controller('RegisterController', RegisterController);
 }
-;
 
-angular.module('openDataHub').controller('RegisterController',openDataHub.RegisterController);
+

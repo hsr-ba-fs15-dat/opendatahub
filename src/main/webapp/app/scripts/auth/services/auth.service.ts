@@ -5,7 +5,9 @@
  */
 module openDataHub {
     'use strict';
+
     export class AuthenticationService {
+        /* ngInject */
         constructor(private $cookies,
                     private $http, private $state:ng.ui.IStateService) {
 
@@ -156,8 +158,7 @@ module openDataHub {
             }
         }
     }
-
+angular.module('openDataHub').service('AuthenticationService',AuthenticationService);
 
 }
 
-angular.module('openDataHub').service('AuthenticationService',openDataHub.AuthenticationService);
