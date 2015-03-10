@@ -1,10 +1,12 @@
 import csv
 import json
-from hub import base
-import httplib2
 import logging
 
+import httplib2
+
+from hub import base
 import hub.models
+
 
 logger = logging.getLogger('hub.nodes')
 
@@ -30,7 +32,7 @@ class HttpInput(base.InputNode):
             raise RuntimeError('missing url')
 
         if not self.url.startswith('http'):
-            return None # ??
+            return None  # ??
 
         http = httplib2.Http()
         response, content = http.request(self.url, self.method, headers=self.headers)
@@ -76,5 +78,5 @@ class DatabaseReader(base.InputNode):
         self.document_id = document_id
 
     def read(self):
-        for record in  hub.models.RecordModel.objects.get(document_id=self.document_id):
+        for record in hub.models.RecordModel.objects.get(document_id=self.document_id):
             yield record.content
