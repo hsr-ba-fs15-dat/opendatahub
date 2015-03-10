@@ -32,10 +32,12 @@ class AccountViewSet(viewsets.ModelViewSet):
 
             return Response(serializer.validated_data, status=status.HTTP_201_CREATED)
 
-        return Response({
-                            'status': 'Bad request',
-                            'message': 'Account could not be created with received data.'
-                        }, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                'status': 'Bad request',
+                'message': 'Account could not be created with received data.'
+            }, status=status.HTTP_400_BAD_REQUEST
+        )
 
 
 class LoginView(views.APIView):
@@ -55,15 +57,19 @@ class LoginView(views.APIView):
 
                 return Response(serialized.data)
             else:
-                return Response({
-                                    'status': 'Unauthorized',
-                                    'message': 'This account has been disabled.'
-                                }, status=status.HTTP_401_UNAUTHORIZED)
+                return Response(
+                    {
+                        'status': 'Unauthorized',
+                        'message': 'This account has been disabled.'
+                    }, status=status.HTTP_401_UNAUTHORIZED
+                )
         else:
-            return Response({
-                                'status': 'Unauthorized',
-                                'message': 'Username/password combination invalid.'
-                            }, status=status.HTTP_401_UNAUTHORIZED)
+            return Response(
+                {
+                    'status': 'Unauthorized',
+                    'message': 'Username/password combination invalid.'
+                }, status=status.HTTP_401_UNAUTHORIZED
+            )
 
 
 class LogoutView(views.APIView):

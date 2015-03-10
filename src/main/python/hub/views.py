@@ -11,7 +11,6 @@ class DocumentViewSet(viewsets.ModelViewSet):
     queryset = DocumentModel.objects.all()
     serializer_class = DocumentSerializer
 
-
     @detail_route()
     def records(self, request, pk):
         records = RecordModel.objects.filter(document__id=pk)
