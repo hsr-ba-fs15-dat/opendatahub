@@ -26,7 +26,8 @@ class FileInput(base.InputNode):
 class HttpInput(base.InputNode):
     @classmethod
     def accept(cls, description):
-        return isinstance(description, types.DictType) and 'url' in description and description['url'].startswith('http')
+        return isinstance(description, types.DictType) and 'url' in description and description['url'].startswith(
+            'http')
 
     def read(self, desc):
         response = requests.get(desc['url'])
