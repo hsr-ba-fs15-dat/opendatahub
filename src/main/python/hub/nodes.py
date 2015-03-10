@@ -1,5 +1,7 @@
 import json
 import logging
+import itertools
+
 import types
 import unicodecsv
 import requests
@@ -26,7 +28,8 @@ class FileInput(base.InputNode):
 class HttpInput(base.InputNode):
     @classmethod
     def accept(cls, description):
-        return isinstance(description, types.DictType) and 'url' in description and description['url'].startswith('http')
+        return isinstance(description, types.DictType) and 'url' in description and description['url'].startswith(
+            'http')
 
     def read(self, desc):
         response = requests.get(desc['url'])
@@ -38,23 +41,23 @@ class HttpInput(base.InputNode):
             yield unicode(line).encode('utf-8')
 
 
-class CsvInput(base.TransformationNode):
+class CsvInput(base.ParserNode):
     @classmethod
     def accept(cls, sample):
         return ',' in sample  # todo: better check
 
-    def transform(self, input):
+    def parse(self, input):
         csv_reader = unicodecsv.DictReader(input, encoding='utf-8')
         for row in csv_reader:
             yield row
 
 
-class JsonInput(base.TransformationNode):
+class JsonInput(base.ParserNode):
     @classmethod
     def accept(cls, sample):
         return isinstance(sample, basestring) and sample.startswith('{')
 
-    def transform(self, reader):
+    def parse(self, reader):
         try:
             for line in reader:
                 yield json.loads(line)
@@ -79,13 +82,23 @@ class DatabaseWriter(base.OutputNode):
 
 
 class DatabaseReader(base.InputNode):
-    def __init__(self, document_id):
-        self.document_id = document_id
-
     @classmethod
     def accept(cls, desc):
-        return 'document_id' in desc
+        return False
 
     def read(self, desc):
-        for record in hub.models.RecordModel.objects.get(document_id=desc['document_id']):
+        for record in hub.models.RecordModel.objects.filter(document__id=desc['document_id']):
             yield record.content
+
+
+class CsvOutput(base.FormatterNode):
+    FORMAT = 'csv'
+
+    def format(self, reader, out):
+        peek = reader.next()
+
+        writer = unicodecsv.DictWriter(out, fieldnames=peek.keys())
+        writer.writeheader()
+
+        for rec in itertools.chain([peek], reader):
+            writer.writerow(rec)

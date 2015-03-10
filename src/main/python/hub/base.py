@@ -36,9 +36,9 @@ class InputNode(Node):
         raise NotImplementedError
 
 
-class TransformationNode(Node):
+class ParserNode(Node):
     __metaclass__ = _NodeMetaclass
-    TYPE = 'transformation'
+    TYPE = 'parser'
 
     @classmethod
     def accept(cls, sample):
@@ -50,7 +50,22 @@ class TransformationNode(Node):
             if node.accept and node.accept(sample):
                 return node()
 
-    def transform(self, reader):
+    def parse(self, reader):
+        raise NotImplementedError
+
+
+class FormatterNode(Node):
+    __metaclass__ = _NodeMetaclass
+    TYPE = 'formatter'
+    FORMAT = 'undefined'
+
+    @classmethod
+    def find_node_for(cls, format):
+        for node in cls.nodes[cls.TYPE]:
+            if node.FORMAT and node.FORMAT == format:
+                return node()
+
+    def format(self, reader, out):
         raise NotImplementedError
 
 

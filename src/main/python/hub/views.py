@@ -5,12 +5,11 @@ from rest_framework import viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
-import codecs
 
 from hub.serializers import DocumentSerializer, RecordSerializer
 from hub.models import DocumentModel, RecordModel
-from hub.base import InputNode, TransformationNode
-from hub.nodes import DatabaseWriter
+from hub.base import InputNode, ParserNode, FormatterNode
+from hub.nodes import DatabaseWriter, DatabaseReader
 
 
 class DocumentViewSet(viewsets.ModelViewSet):
@@ -22,6 +21,26 @@ class DocumentViewSet(viewsets.ModelViewSet):
         records = RecordModel.objects.filter(document__id=pk)
         serializer = RecordSerializer(records, many=True, context={'request': request})
         return Response(serializer.data)
+
+    @detail_route()
+    def data(self, request, pk, format='csv'):
+        # format = request.query_params['format'] if 'format' in request.query_params else  'csv'
+
+        reader = DatabaseReader()
+
+        formatter = FormatterNode.find_node_for(format)
+        if not formatter:
+            raise ValidationError('no formatter')
+
+        response = HttpResponse()
+        response['Content-Disposition'] = 'attachment; filename="data.%s"' % format
+
+        read = reader.read({'document_id': pk})
+        formatter.format(read, response)
+
+        response.flush()
+
+        return response
 
     def create(self, request, *args, **kwargs):
         '''
@@ -45,9 +64,9 @@ class DocumentViewSet(viewsets.ModelViewSet):
                     peek = reader.next()
                     reader = itertools.chain([peek], reader)
 
-                    node = TransformationNode.find_node_for(peek)
+                    node = ParserNode.find_node_for(peek)
                     if node:
-                        reader = node.transform(reader)
+                        reader = node.parse(reader)
 
                     writer = DatabaseWriter(desc=data['description'])
 

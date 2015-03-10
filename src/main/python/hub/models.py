@@ -1,4 +1,5 @@
 from django.db import models
+import picklefield
 
 
 def cap(str, length):
@@ -21,7 +22,7 @@ class RecordModel(models.Model):
         ordering = ['id']
 
     document = models.ForeignKey(DocumentModel, null=False, related_name='records')
-    content = models.TextField()
+    content = picklefield.PickledObjectField()
 
     def __str__(self):
         return "[Record id={} document={} content={}".format(self.id, self.document_id, cap(self.content, 50))

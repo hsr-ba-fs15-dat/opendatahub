@@ -4,6 +4,8 @@ from hub.models import DocumentModel, RecordModel
 
 
 class RecordSerializer(serializers.HyperlinkedModelSerializer):
+    content = serializers.ReadOnlyField()
+
     class Meta:
         model = RecordModel
         fields = ('url', 'document', 'content')

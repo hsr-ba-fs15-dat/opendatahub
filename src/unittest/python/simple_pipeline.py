@@ -6,5 +6,5 @@ c = hub.nodes.CsvInput()
 d = hub.nodes.DatabaseWriter('Random garbage')
 
 http_input = h.read()
-csv_input = c.transform(http_input)
+csv_input = c.parse(http_input)
 d.write(csv_input)
