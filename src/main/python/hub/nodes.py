@@ -1,54 +1,58 @@
-import csv
 import json
-from hub import base
-import httplib2
 import logging
 
+import unicodecsv
+import requests
+
+from hub import base
 import hub.models
+
 
 logger = logging.getLogger('hub.nodes')
 
 
 class FileInput(base.InputNode):
-    def __init__(self, filename):
-        self.filename = filename
+    @classmethod
+    def accept(cls, description):
+        return description == 'file'
 
-    def read(self):
-        with open(self.filename, 'r') as file_input:
+    def read(self, desc):
+        with open(desc['file'], 'r') as file_input:
             for line in file_input:
                 yield line
 
 
 class HttpInput(base.InputNode):
-    def __init__(self, url, method='GET', headers=None):
-        self.url = url
-        self.method = method
-        self.headers = headers or {'Content-Type': 'application/json'}
+    @classmethod
+    def accept(cls, description):
+        return type(description) == dict and 'url' in description and description['url'].startswith('http')
 
-    def read(self):
-        if not self.url:
-            raise RuntimeError('missing url')
+    def read(self, desc):
+        response = requests.get(desc['url'])
 
-        if not self.url.startswith('http'):
-            return None # ??
+        logger.debug('http: requesting url %s', desc['url'])
+        logger.debug('http: response status: %d', response.status_code)
 
-        http = httplib2.Http()
-        response, content = http.request(self.url, self.method, headers=self.headers)
-
-        logger.debug('http: requesting url %s', self.url)
-        logger.debug('http: response status: %d', response.status)
-
-        return content
+        for line in response.text.splitlines():
+            yield line.encode('utf8')
 
 
 class CsvInput(base.TransformationNode):
+    @classmethod
+    def accept(cls, sample):
+        return ',' in sample  # todo: better check
+
     def transform(self, input):
-        csv_reader = csv.DictReader(input.split('\n'))
+        csv_reader = unicodecsv.DictReader(input, encoding='utf-8')
         for row in csv_reader:
             yield row
 
 
 class JsonInput(base.TransformationNode):
+    @classmethod
+    def accept(cls, sample):
+        return sample.startswith('{')
+
     def transform(self, reader):
         try:
             for line in reader:
@@ -70,11 +74,17 @@ class DatabaseWriter(base.OutputNode):
             rec = hub.models.RecordModel(document=doc, content=record_content)
             rec.save()
 
+        return doc
+
 
 class DatabaseReader(base.InputNode):
     def __init__(self, document_id):
         self.document_id = document_id
 
-    def read(self):
-        for record in  hub.models.RecordModel.objects.get(document_id=self.document_id):
+    @classmethod
+    def accept(cls, desc):
+        return 'document_id' in desc
+
+    def read(self, desc):
+        for record in hub.models.RecordModel.objects.get(document_id=desc['document_id']):
             yield record.content
