@@ -214,6 +214,39 @@ module.exports = function (grunt) {
             }
         },
 
+        injector: {
+            options: {},
+            tsd: {
+                options: {
+                    starttag: '// injector:ts',
+                    endtag: '// endinjector',
+                    transform: function (file, i, length) {
+                        if (file.search('.d.ts') === -1) {
+                            return "/// <reference path='" + file.replace('/app/scripts/', '') + "' />";
+                        }
+                    }
+                },
+                files: {
+                    '<%= yeoman.app %>/scripts/all.d.ts': ['<%= yeoman.app %>/scripts/**/*.ts']
+                }
+            },
+            js: {
+                options: {
+                    starttag: '<!-- build:js({.tmp,app}) scripts/scripts.js -->',
+                    endtag: '<!-- endbuild -->',
+                    transform: function (file, i, length) {
+                        if (file.search('.d.ts') === -1) {
+                            file = file.replace('app/', '').replace('.ts', '.js');
+                            return '<script src="' + file + '"></script>';
+                        }
+                    }
+                },
+                files: {
+                    '<%= yeoman.app %>/index.html': ['<%= yeoman.app %>/scripts/**/*.ts']
+                }
+            }
+        },
+
         // Compiles Sass to CSS and generates necessary files if requested
         compass: {
             options: {
@@ -478,7 +511,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('build', [
         'clean:dist',
-        'typescript',
+        'ts',
         'wiredep',
         'useminPrepare',
         'concurrent:dist',
@@ -494,9 +527,14 @@ module.exports = function (grunt) {
         'htmlmin'
     ]);
 
+    grunt.registerTask('ts', [
+        'injector:tsd',
+        'typescript'
+    ]);
+
     grunt.registerTask('default', [
         //'newer:jshint', // We use TypeScript
-        'typescript',
+        'ts',
         'test',
         'build'
     ]);
