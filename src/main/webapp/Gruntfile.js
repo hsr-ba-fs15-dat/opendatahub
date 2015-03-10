@@ -229,6 +229,21 @@ module.exports = function (grunt) {
                 files: {
                     '<%= yeoman.app %>/scripts/all.d.ts': ['<%= yeoman.app %>/scripts/**/*.ts']
                 }
+            },
+            js: {
+                options: {
+                    starttag: '<!-- build:js({.tmp,app}) scripts/scripts.js -->',
+                    endtag: '<!-- endbuild -->',
+                    transform: function (file, i, length) {
+                        if (file.search('.d.ts') === -1) {
+                            file = file.replace('app/', '').replace('.ts', '.js');
+                            return '<script src="' + file + '"></script>';
+                        }
+                    }
+                },
+                files: {
+                    '<%= yeoman.app %>/index.html': ['<%= yeoman.app %>/scripts/**/*.ts']
+                }
             }
         },
 
