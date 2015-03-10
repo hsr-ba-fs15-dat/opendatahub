@@ -13,7 +13,7 @@ import os
 import dj_database_url
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-
+print(os.path.dirname(__file__))
 PRODUCTION = os.getenv('CONFIGURATION') == 'PRODUCTION'
 
 # Quick-start development settings - unsuitable for production
@@ -28,8 +28,9 @@ DEBUG = True
 TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
-
-
+TEMPLATE_DIRS = (
+    os.path.join(BASE_DIR, '../webapp/app'),
+)
 # Application definition
 
 INSTALLED_APPS = (
@@ -41,6 +42,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'rest_framework',
     'hub',
+    'authentication',
 )
 
 # Dev. only, not required
@@ -92,3 +94,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
 STATIC_URL = '/static/'
+
+AUTH_USER_MODEL = 'authentication.Account'
