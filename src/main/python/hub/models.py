@@ -20,7 +20,7 @@ class RecordModel(models.Model):
         db_table = 'hub_records'
         ordering = ['id']
 
-    document = models.ForeignKey(DocumentModel, null=False)
+    document = models.ForeignKey(DocumentModel, null=False, related_name='records')
     content = models.TextField()
 
     def __str__(self):
