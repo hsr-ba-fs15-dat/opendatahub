@@ -106,7 +106,7 @@ def django_makemigrations_custom(project, logger, no_input=True):
     no_input = True
     from pybuilder_django_enhanced_plugin.tasks.common import run_django_manage_command
 
-    args = ['migrate'] + no_input * ['--noinput']
+    args = ['makemigrations'] + no_input * ['--noinput']
     command_result = run_django_manage_command(project, logger, 'django_makemigrations', args)
     if command_result.exit_code != 0:
         error_message = ''.join(command_result.error_report_lines)
