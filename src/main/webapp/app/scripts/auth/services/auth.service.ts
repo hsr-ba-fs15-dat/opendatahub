@@ -1,15 +1,16 @@
-/// <reference path='../../../../typings/tsd.d.ts' />
+/// <reference path='../../all.d.ts' />
+
 /**
  * Authentication
  * @namespace openDataHub.auth.services
  */
-module openDataHub {
+module odh {
     'use strict';
 
     export class AuthenticationService {
-        /* ngInject */
-        constructor(private $cookies,
-                    private $http, private $state:ng.ui.IStateService) {
+
+        constructor(private $cookies:ng.cookies.ICookiesService,
+                    private $http:ng.IHttpService, private $state:ng.ui.IStateService, private $log:ng.ILogService) {
 
         }
 
@@ -23,30 +24,18 @@ module openDataHub {
          * @memberOf openDataHub.auth.services.Authentication
          */
         register(email, password, username) {
-            var that = this;
             return this.$http.post('/api/v1/accounts/', {
                 username: username,
                 password: password,
                 email: email
-            }).then(registerSuccessFn, registerErrorFn);
+            }).then(data => {
+                this.login(email, password);
+            }).catch(data => {
+                this.$log.error('Epic failure!');
 
-            /**
-             * @name registerSuccessFn
-             * @desc Log the new user in
-             */
-            function registerSuccessFn(data, status, headers, config) {
-                that.login(email, password);
-            }
+            });
 
-            /**
-             * @name registerErrorFn
-             * @desc Log "Epic failure!" to the console
-             */
-            function registerErrorFn(data, status, headers, config) {
-                console.error('Epic failure!');
-            }
         }
-
 
         /**
          * @name login
@@ -56,29 +45,16 @@ module openDataHub {
          * @returns {Promise}
          * @memberOf openDataHub.auth.services.Authentication
          */
-
-
         login(email, password) {
-            var that = this;
             return this.$http.post('/api/v1/auth/login/', {
                 email: email, password: password
-            }).then(loginSuccessFn, loginErrorFn);
-            /**
-             * @name loginSuccessFn
-             * @desc Set the authenticated account and redirect to index
-             */
-            function loginSuccessFn(data, status, headers, config) {
-                that.setAuthenticatedAccount(data.data);
-                that.$state.go('main');
-            }
+            }).then(data => {
+                this.setAuthenticatedAccount(data.data);
+                this.$state.go('main');
+            }).catch(() => {
+                this.$log.error('Epic failure!');
 
-            /**
-             * @name loginErrorFn
-             * @desc Log "Epic failure!" to the console
-             */
-            function loginErrorFn(data, status, headers, config) {
-                console.error('Epic failure!');
-            }
+            });
         }
 
         /**
@@ -126,7 +102,7 @@ module openDataHub {
          * @memberOf openDataHub.auth.services.Authentication
          */
         unauthenticate() {
-            delete this.$cookies.authenticatedAccount;
+            delete this.$cookies['authenticatedAccount'];
             sessionStorage.removeItem('user')
         }
 
@@ -137,30 +113,15 @@ module openDataHub {
          * @memberOf openDataHub.auth.services.Authentication
          */
         logout() {
-                        var that = this;
-
-            return this.$http.post('/api/v1/auth/logout/')
-                .then(logoutSuccessFn, logoutErrorFn);
-
-            /**
-             * @name logoutSuccessFn
-             * @desc Unauthenticate and redirect to index with page reload
-             */
-            function logoutSuccessFn(data, status, headers, config) {
-                that.unauthenticate();
-                that.$state.go('main');
-            }
-
-            /**
-             * @name logoutErrorFn
-             * @desc Log "Epic failure!" to the console
-             */
-            function logoutErrorFn(data, status, headers, config) {
-                console.error('Epic failure!');
-            }
+            return this.$http.post('/api/v1/auth/logout/', {})
+                .then(() => {
+                    this.unauthenticate();
+                    this.$state.go('main');
+                }).catch(() => {
+                    this.$log.error('Epic failure!');
+                });
         }
     }
-angular.module('openDataHub').service('AuthenticationService',AuthenticationService);
-
+    angular.module('openDataHub').service('AuthenticationService', AuthenticationService);
 }
 

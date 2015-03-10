@@ -1,10 +1,12 @@
-/// <reference path='../../../../typings/tsd.d.ts' />
+/// <reference path='../../all.d.ts' />
+
 /**
  * LoginController
  * @namespace openDataHub.auth.controllers
  */
-module openDataHub {
+module odg {
     'use strict';
+
     class LoginController {
         public email:string;
         public password:string;
@@ -13,7 +15,7 @@ module openDataHub {
          * @namespace LoginController
          *
          */
-        constructor(private $state, private AuthenticationService) {
+        constructor(private $state, private $scope, private AuthenticationService:odh.AuthenticationService) {
             this.activate();
 
         }

@@ -1,4 +1,5 @@
 /// <reference path='all.d.ts' />
+
 module openDataHub {
     'use strict';
     var openDataHub = angular
@@ -31,21 +32,28 @@ module openDataHub {
         $http.defaults.xsrfCookieName = 'csrftoken';
     }
 
-    function config($stateProvider:ng.ui.IStateProvider) {
+    function config($stateProvider:ng.ui.IStateProvider, $locationProvider:ng.ILocationProvider, ngToastProvider) {
+
+        // Toast config
+        ngToastProvider.configure({
+            horizontalPosition: 'center'
+        });
+
         $stateProvider
             .state('main', {
                 url: '/',
                 templateUrl: 'views/main.html'
             })
-            //.state('offer', {
-            //    controller: 'OfferCtrl',
-            //    templateUrl: 'views/offer.html',
-            //    controllerAs: 'vm'
-            //})
-            //.state('about', {
-            //    controller: 'AboutCtrl',
-            //    templateUrl: 'views/about.html'
-            //})
+            .state('offer', {
+                url: '/offer',
+                controller: 'OfferController as offer',
+                templateUrl: 'views/offer.html'
+            })
+            .state('offer.params', {
+                url: '/:type',
+                controller: 'OfferParamsController as params',
+                templateUrl: 'views/offer.params.html'
+            })
             .state('register', {
                 url: '/register',
                 controller: 'RegisterController as vm',
@@ -68,6 +76,5 @@ module openDataHub {
                 controller: 'AccountSettingsController as vm',
                 templateUrl: '/views/authentication/settings.html'
             });
-
     }
 }

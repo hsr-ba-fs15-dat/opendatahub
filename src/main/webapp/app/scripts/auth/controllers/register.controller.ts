@@ -1,24 +1,23 @@
-/// <reference path='../../../../typings/tsd.d.ts' />
+/// <reference path='../../all.d.ts' />
 
 /**
  * Register controller
  * @namespace openDataHub.auth.controllers
  */
-module openDataHub {
+module odh {
     'use strict';
-    /* ngInject */
+
     export class RegisterController {
 
-        public email;
-        public password;
-        public username;
+        public email:string;
+        public password:string;
+        public username:string;
 
         /**
          * @namespace RegisterController
          */
-        constructor(private $state, private $scope, private AuthenticationService) {
+        constructor(private $state, private $scope:ng.IScope, private AuthenticationService:odh.AuthenticationService) {
             this.activate();
-
 
         }
 

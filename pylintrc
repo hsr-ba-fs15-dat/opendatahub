@@ -281,7 +281,7 @@ zope=no
 # system, and so shouldn't trigger E0201 when accessed. Python regular
 # expressions are accepted.
 #generated-members=REQUEST,acl_users,aq_parent
-generated-members=objects,model,id,document_id,objects.create
+generated-members=document_id,model,create,all
 
 
 [VARIABLES]

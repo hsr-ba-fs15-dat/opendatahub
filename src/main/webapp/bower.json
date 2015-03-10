@@ -17,7 +17,7 @@
     "ngtoast": "~1.5.0",
     "angular-bootstrap": "~0.12.1",
     "angular-ui-utils": "~0.2.2",
-    "angular-ui-select": "~0.10.0",
+    "angular-ui-select": "~0.11.1",
     "font-awesome": "~4.3.0",
     "jsPlumb": "~1.7.3",
     "jquery-ui": "~1.11.3"
@@ -28,6 +28,7 @@
   "appPath": "app",
   "moduleName": "openDataHub",
   "resolutions": {
-    "angular": "^1.4.0"
+    "angular": "^1.4.0",
+    "angular-ui-select": "~0.11.1"
   }
 }

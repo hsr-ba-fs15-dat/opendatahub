@@ -14,14 +14,17 @@
     <link rel="stylesheet" href="bower_components/angular-ui-select/dist/select.css" />
     <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.css" />
     <!-- endbower -->
+    <link rel="stylesheet" href="bower_components/ngtoast/dist/ngToast-animations.css"/>
+
     <!-- endbuild -->
     <!-- build:css(.tmp) styles/main.css -->
     <link rel="stylesheet" href="styles/main.css">
     <!-- endbuild -->
-<base href="/" />
+    <base href="/"/>
 </head>
 
 <body ng-app="openDataHub">
+<toast></toast>
 
 <!--[if lt IE 7]>
           <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
@@ -81,18 +84,25 @@
 <!-- endbuild -->
 
 <!-- build:js({.tmp,app}) scripts/scripts.js -->
-<script src="scripts/app.js"></script>
-<script src="scripts/auth/auth.module.js"></script>
-<script src="scripts/app.config.js"></script>
-<script src="scripts/app.routes.js"></script>
-<script src="scripts/directives/focus.js"></script>
-<script src="scripts/auth/services/auth.service.js"></script>
-<script src="scripts/auth/services/accounts.service.js"></script>
-<script src="scripts/auth/controllers/register.controller.js"></script>
-<script src="scripts/controllers/navbar.controller.js"></script>
-<script src="scripts/auth/controllers/login.controller.js"></script>
-<script src="scripts/auth/controllers/account-settings.controller.js"></script>
-<script src="scripts/auth/controllers/account.controller.js"></script>
+
+<script src="/scripts/app.config.js"></script>
+<script src="/scripts/app.routes.js"></script>
+<script src="/scripts/app.js"></script>
+<script src="/scripts/auth/auth.module.js"></script>
+<script src="/scripts/auth/controllers/account-settings.controller.js"></script>
+<script src="/scripts/auth/controllers/account.controller.js"></script>
+<script src="/scripts/auth/controllers/login.controller.js"></script>
+<script src="/scripts/auth/controllers/register.controller.js"></script>
+<script src="/scripts/auth/services/accounts.service.js"></script>
+<script src="/scripts/auth/services/auth.service.js"></script>
+<script src="/scripts/controllers/about.js"></script>
+<script src="/scripts/controllers/main.js"></script>
+<script src="/scripts/controllers/navbar.controller.js"></script>
+<script src="/scripts/controllers/offer.js"></script>
+<script src="/scripts/directives/focus.js"></script>
+<script src="/scripts/services/example.js"></script>
+<script src="/scripts/temp/hubPlumb.js"></script>
 <!-- endbuild -->
+
 </body>
 </html>
