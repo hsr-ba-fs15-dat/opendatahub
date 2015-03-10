@@ -5,15 +5,14 @@
  */
 module openDataHub {
     'use strict';
-
-    export class LoginController {
+    class LoginController {
         public email:string;
         public password:string;
         /**
          * @namespace LoginController
          *
          */
-        constructor(private $location, private $scope, private Authentication) {
+        constructor(private $location, private $scope, private AuthenticationService) {
             this.activate();
 
         }
@@ -25,7 +24,7 @@ module openDataHub {
          */
         activate() {
             // If the user is authenticated, they should not be here.
-            if (this.Authentication.isAuthenticated()) {
+            if (this.AuthenticationService.isAuthenticated()) {
                 this.$location.url('/');
             }
         }
@@ -36,8 +35,8 @@ module openDataHub {
          * @memberOf openDataHub.auth.controllers.LoginController
          */
         login() {
-            this.Authentication.login(this.email, this.password);
+            this.AuthenticationService.login(this.email, this.password);
         }
     }
+    angular.module('openDataHub').controller('LoginController', LoginController);
 }
-angular.module('openDataHub').controller('LoginController', openDataHub.LoginController);

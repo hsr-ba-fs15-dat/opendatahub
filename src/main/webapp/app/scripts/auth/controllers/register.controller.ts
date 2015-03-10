@@ -16,7 +16,7 @@ module openDataHub {
         /**
          * @namespace RegisterController
          */
-        constructor(private $location, private $scope, private Authentication) {
+        constructor(private $location, private $scope, private AuthenticationService) {
             this.activate();
 
 
@@ -29,7 +29,7 @@ module openDataHub {
          */
         activate() {
             // If the user is authenticated, they should not be here.
-            if (this.Authentication.isAuthenticated()) {
+            if (this.AuthenticationService.isAuthenticated()) {
                 this.$location.url('/');
             }
         }
@@ -41,7 +41,7 @@ module openDataHub {
          */
 
         register() {
-            this.Authentication.register(this.email, this.password, this.username);
+            this.AuthenticationService.register(this.email, this.password, this.username);
         }
     }
 }

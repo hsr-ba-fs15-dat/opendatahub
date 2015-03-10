@@ -15,5 +15,5 @@ class ExampleService {
     }
 }
 
-app.service('ExampleService', ExampleService);
+angular.module('openDataHub').service('ExampleService', ExampleService);
 

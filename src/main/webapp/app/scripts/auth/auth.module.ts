@@ -1,7 +1,6 @@
-/// <reference path='../../../typings/tsd.d.ts' />
-module openDataHub.Authentication {
+/// <reference path='../all.d.ts' />
+module OpenDataHub.Authentication {
     'use strict';
-
     angular
         .module('openDataHub.auth', [
             'openDataHub.auth.controllers',
