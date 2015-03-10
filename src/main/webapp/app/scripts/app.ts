@@ -1,52 +1,64 @@
-/// <reference path='../../typings/tsd.d.ts' />
-'use strict';
+/// <reference path='all.d.ts' />
+module openDataHub {
+    'use strict';
+    var openDataHub = angular
+        .module('openDataHub', [
+            'ngAnimate',
+            'ngAria',
+            'ngCookies',
+            'ngMessages',
+            'ngResource',
+            'ngSanitize',
+            'ngTouch',
+            'ui.router',
+            'ui.utils',
+            'ui.select',
+            'ngToast',
+            'openDataHub.routes',
+            'openDataHub.auth',
+        ]);
 
-/**
- * @ngdoc overview
- * @name opendatahubApp
- * @description
- * # opendatahubApp
- *
- * Main module of the application.
- */
+    var openDataAuth = angular
+        .module('openDataHub.auth', []);
 
+    var openDataRoutes = angular
+        .module('openDataHub.routes', ['ui.router']);
 
+    angular
+        .module('openDataHub')
+        .config(config)
+        .run(run);
 
-var app = angular
-    .module('opendatahubApp', [
-        'ngAnimate',
-        'ngAria',
-        'ngCookies',
-        'ngMessages',
-        'ngResource',
-        'ngSanitize',
-        'ngTouch',
-        'ui.router',
-        'ui.utils',
-        'ui.select',
-        'ngToast'
-    ])
-    .config(function ($stateProvider:ng.ui.IStateProvider, $urlRouterProvider:ng.ui.IUrlRouterProvider, ngToastProvider) {
+    function run($http) {
+        $http.defaults.xsrfHeaderName = 'X-CSRFToken';
+        $http.defaults.xsrfCookieName = 'csrftoken';
+    }
 
-        // Toast config
-        ngToastProvider.configure({
-            horizontalPosition: 'center'
-        });
-
-        $urlRouterProvider.otherwise('/');
-
-        $stateProvider
+    function config ($stateProvider:ng.ui.IStateProvider){
+            $stateProvider
             .state('main', {
                 url: '/',
                 templateUrl: 'views/main.html'
             })
-            .state('offer', {
-                controller: 'OfferCtrl',
-                templateUrl: 'views/offer.html',
-                controllerAs: 'vm'
+            //.state('offer', {
+            //    controller: 'OfferCtrl',
+            //    templateUrl: 'views/offer.html',
+            //    controllerAs: 'vm'
+            //})
+            //.state('about', {
+            //    controller: 'AboutCtrl',
+            //    templateUrl: 'views/about.html'
+            //})
+            .state('register', {
+                url: '/register',
+                controller: 'RegisterController as vm',
+                templateUrl: '/views/authentication/register.html'
             })
-            .state('about', {
-                controller: 'AboutCtrl',
-                templateUrl: 'views/about.html'
+            .state('login', {
+                url: '/login',
+                controller: 'LoginController as vm',
+                templateUrl: '/views/authentication/login.html'
             });
-    });
+
+        }
+}

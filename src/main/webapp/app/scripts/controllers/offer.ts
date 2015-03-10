@@ -9,4 +9,4 @@ class OfferCtrl {
 
 }
 
-app.controller('OfferCtrl', OfferCtrl);
+angular.module('openDataHub').controller('OfferCtrl', OfferCtrl);
