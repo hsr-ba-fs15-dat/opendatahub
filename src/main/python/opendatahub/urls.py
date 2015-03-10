@@ -1,11 +1,10 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
+from rest_framework import routers
+
 from authentication.views import AccountViewSet, LoginView, LogoutView
 from opendatahub.settings import PRODUCTION
-
-from rest_framework import routers
 from hub.views import DocumentViewSet, RecordViewSet
-from opendatahub.views import IndexView
 
 
 router = routers.DefaultRouter()
@@ -17,9 +16,6 @@ from hub import views
 
 
 urlpatterns = (
-    # Examples:
-    # url(r'^$', 'opendatahub.views.hub', name='hub'),
-    # url(r'^blog/', include('blog.urls')),
     url(r'^test/', views.test),
     url(r'api/v1/', include(router.urls)),
     url(r'^admin/', include(admin.site.urls)),
