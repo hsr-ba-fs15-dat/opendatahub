@@ -1,9 +1,45 @@
-/// <reference path='../../typings/tsd.d.ts' />
+/// <reference path='all.d.ts' />
 
-(function () {
+//(function () {
+//    'use strict';
+//
+//    angular
+//        .module('openDataHub', [
+//            //'ngAnimate',
+//            //'ngAria',
+//            //'ngCookies',
+//            //'ngMessages',
+//            //'ngResource',
+//            //'ngSanitize',
+//            //'ngTouch',
+//            //'ui.router',
+//            //'ui.utils',
+//            //'ui.select',
+//            'ngToast',
+//            'openDataHub.config',
+//            'openDataHub.routes',
+//            'openDataHub.auth',
+//        ]);
+//
+//    angular
+//
+//    angular
+//        .module('openDataHub.routes', ['ui.router']);
+//    angular
+//        .module('openDataHub')
+//        .run(run);
+//
+//    run.$inject = ['$http'];
+//
+//    /**
+//     * @name run
+//     * @desc Update xsrf $http headers to align with Django's defaults
+//     */
+//    function
+//})();
+module openDataHub {
     'use strict';
-
-    angular
+    var openDataHub = angular
         .module('openDataHub', [
             //'ngAnimate',
             //'ngAria',
@@ -21,26 +57,55 @@
             'openDataHub.auth',
         ]);
 
-    angular
+    var openDataConfig = angular
         .module('openDataHub.config', []);
 
-    angular
+    var openDataRoutes = angular
         .module('openDataHub.routes', ['ui.router']);
+
     angular
         .module('openDataHub')
+        .config(config)
         .run(run);
 
-    run.$inject = ['$http'];
-
-    /**
-     * @name run
-     * @desc Update xsrf $http headers to align with Django's defaults
-     */
     function run($http) {
         $http.defaults.xsrfHeaderName = 'X-CSRFToken';
         $http.defaults.xsrfCookieName = 'csrftoken';
     }
-})();
+
+    function config ($stateProvider:ng.ui.IStateProvider){
+            $stateProvider
+            .state('main', {
+                url: '/',
+                templateUrl: 'views/main.html'
+            })
+            //.state('offer', {
+            //    controller: 'OfferCtrl',
+            //    templateUrl: 'views/offer.html',
+            //    controllerAs: 'vm'
+            //})
+            //.state('about', {
+            //    controller: 'AboutCtrl',
+            //    templateUrl: 'views/about.html'
+            //})
+            .state('register', {
+                url: '/register',
+                controller: 'RegisterController as vm',
+                templateUrl: '/views/authentication/register.html'
+            })
+            .state('login', {
+                url: '/login',
+                controller: 'LoginController as vm',
+                templateUrl: '/views/authentication/login.html'
+            });
+
+        }
+
+
+}
+
+
+
 
 
 //var app = angular

@@ -3,37 +3,13 @@
  * Authentication
  * @namespace openDataHub.auth.services
  */
-(function () {
+module openDataHub {
     'use strict';
+    export class Authentication {
+        constructor(private $cookies,
+                    private $http, private $state:ng.ui.IStateService) {
 
-    angular
-        .module('openDataHub.auth.services')
-        .factory('Authentication', Authentication);
-
-    Authentication.$inject = ['$cookies', '$http'];
-
-    /**
-     * @namespace Authentication
-     * @returns {Factory}
-     */
-    function Authentication($cookies, $http) {
-        /**
-         * @name Authentication
-         * @desc The Factory to be returned
-         */
-        var Authentication = {
-            getAuthenticatedAccount: getAuthenticatedAccount,
-            isAuthenticated: isAuthenticated,
-            login: login,
-            logout: logout,
-            register: register,
-            setAuthenticatedAccount: setAuthenticatedAccount,
-            unauthenticate: unauthenticate
-        };
-
-        return Authentication;
-
-        ////////////////////
+        }
 
         /**
          * @name register
@@ -44,8 +20,9 @@
          * @returns {Promise}
          * @memberOf openDataHub.auth.services.Authentication
          */
-        function register(email, password, username) {
-            return $http.post('/api/v1/accounts/', {
+        register(email, password, username) {
+            var that = this;
+            return this.$http.post('/api/v1/accounts/', {
                 username: username,
                 password: password,
                 email: email
@@ -56,7 +33,7 @@
              * @desc Log the new user in
              */
             function registerSuccessFn(data, status, headers, config) {
-                Authentication.login(email, password);
+                that.login(email, password);
             }
 
             /**
@@ -68,6 +45,7 @@
             }
         }
 
+
         /**
          * @name login
          * @desc Try to log in with email `email` and password `password`
@@ -77,20 +55,19 @@
          * @memberOf openDataHub.auth.services.Authentication
          */
 
-        function login(email, password) {
-            loginSuccessFn.$inject = ['$location'];
-            return $http.post('/api/v1/auth/login/', {
+
+        login(email, password) {
+            var that = this;
+            return this.$http.post('/api/v1/auth/login/', {
                 email: email, password: password
             }).then(loginSuccessFn, loginErrorFn);
             /**
              * @name loginSuccessFn
              * @desc Set the authenticated account and redirect to index
              */
-            function loginSuccessFn(data, status, headers, config, $location) {
-                Authentication.setAuthenticatedAccount(data.data);
-                //TODO: DO it nice!!
-                //noinspection TaskProblemsInspection
-                window.location = '/';
+            function loginSuccessFn(data, status, headers, config) {
+                that.setAuthenticatedAccount(data.data);
+                that.$state.go('main');
             }
 
             /**
@@ -108,12 +85,12 @@
          * @returns {object|undefined} Account if authenticated, else `undefined`
          * @memberOf openDataHub.auth.services.Authentication
          */
-        function getAuthenticatedAccount() {
-            if (!$cookies.authenticatedAccount) {
+        getAuthenticatedAccount() {
+            if (!this.$cookies.authenticatedAccount) {
                 return;
             }
 
-            return JSON.parse($cookies.authenticatedAccount);
+            return JSON.parse(this.$cookies.authenticatedAccount);
         }
 
 
@@ -123,8 +100,8 @@
          * @returns {boolean} True is user is authenticated, else false.
          * @memberOf openDataHub.auth.services.Authentication
          */
-        function isAuthenticated() {
-            return !!$cookies.authenticatedAccount;
+        isAuthenticated() {
+            return !!this.$cookies.authenticatedAccount;
         }
 
 
@@ -135,8 +112,8 @@
          * @returns {undefined}
          * @memberOf openDataHub.auth.services.Authentication
          */
-        function setAuthenticatedAccount(account) {
-            $cookies.authenticatedAccount = JSON.stringify(account);
+        setAuthenticatedAccount(account) {
+            this.$cookies.authenticatedAccount = JSON.stringify(account);
         }
 
         /**
@@ -145,8 +122,8 @@
          * @returns {undefined}
          * @memberOf openDataHub.auth.services.Authentication
          */
-        function unauthenticate() {
-            delete $cookies.authenticatedAccount;
+        unauthenticate() {
+            delete this.$cookies.authenticatedAccount;
         }
 
         /**
@@ -155,8 +132,10 @@
          * @returns {Promise}
          * @memberOf openDataHub.auth.services.Authentication
          */
-        function logout() {
-            return $http.post('/api/v1/auth/logout/')
+        logout() {
+                        var that = this;
+
+            return this.$http.post('/api/v1/auth/logout/')
                 .then(logoutSuccessFn, logoutErrorFn);
 
             /**
@@ -164,10 +143,8 @@
              * @desc Unauthenticate and redirect to index with page reload
              */
             function logoutSuccessFn(data, status, headers, config) {
-                Authentication.unauthenticate();
-                //TODO: Do it nice!
-                //noinspection TaskProblemsInspection
-                window.location = '/';
+                that.unauthenticate();
+                that.$state.go('main');
             }
 
             /**
@@ -179,4 +156,8 @@
             }
         }
     }
-})();
+
+
+}
+
+angular.module('openDataHub').service("Authentication",openDataHub.Authentication);
