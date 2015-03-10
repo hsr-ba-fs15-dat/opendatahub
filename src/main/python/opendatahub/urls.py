@@ -3,7 +3,7 @@ from django.contrib import admin
 from rest_framework import routers
 
 from authentication.views import AccountViewSet, LoginView, LogoutView
-from opendatahub.settings import PRODUCTION
+from opendatahub.settings import PRODUCTION, STATIC_ROOT
 from hub.views import DocumentViewSet, RecordViewSet
 
 
@@ -27,6 +27,7 @@ urlpatterns = (
 if PRODUCTION:
     urlpatterns += (
         url(r'^$', 'django.views.static.serve', {'path': 'index.html', 'document_root': '../webapp/dist'}),
+        url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': STATIC_ROOT}),
         url(r'^(?P<path>.*)$', 'django.views.static.serve', {'document_root': '../webapp/dist'}),
     )
 else:
