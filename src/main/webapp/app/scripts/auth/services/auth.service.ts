@@ -88,11 +88,11 @@ module openDataHub {
          * @memberOf openDataHub.auth.services.Authentication
          */
         getAuthenticatedAccount() {
-            if (!this.$cookies.authenticatedAccount) {
+            if (!sessionStorage.getItem('user')) {
                 return;
             }
 
-            return JSON.parse(this.$cookies.authenticatedAccount);
+            return JSON.parse(sessionStorage.getItem('user'));
         }
 
 
@@ -103,19 +103,20 @@ module openDataHub {
          * @memberOf openDataHub.auth.services.Authentication
          */
         isAuthenticated() {
-            return !!this.$cookies.authenticatedAccount;
+            return !!sessionStorage.getItem('user');
         }
 
 
         /**
          * @name setAuthenticatedAccount
          * @desc Stringify the account object and store it in a cookie
-         * @param {Object} user The account object to be stored
+         * @param {Object} account The account object to be stored
          * @returns {undefined}
          * @memberOf openDataHub.auth.services.Authentication
          */
         setAuthenticatedAccount(account) {
-            this.$cookies.authenticatedAccount = JSON.stringify(account);
+            this.$cookies['authenticatedAccount'] = JSON.stringify(account);
+            sessionStorage.setItem('user',JSON.stringify(account));
         }
 
         /**
@@ -126,6 +127,7 @@ module openDataHub {
          */
         unauthenticate() {
             delete this.$cookies.authenticatedAccount;
+            sessionStorage.removeItem('user')
         }
 
         /**
