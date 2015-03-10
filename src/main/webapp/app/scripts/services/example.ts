@@ -1,4 +1,4 @@
-/// <reference path='../../../typings/tsd.d.ts' />
+/// <reference path='../all.d.ts' />
 'use strict';
 
 /**
@@ -15,4 +15,5 @@ class ExampleService {
     }
 }
 
-angular.module('opendatahubApp').service('ExampleService', ExampleService);
+app.service('ExampleService', ExampleService);
+

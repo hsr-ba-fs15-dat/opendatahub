@@ -9,7 +9,10 @@
  *
  * Main module of the application.
  */
-angular
+
+
+
+var app = angular
     .module('opendatahubApp', [
         'ngAnimate',
         'ngAria',
@@ -23,7 +26,7 @@ angular
         'ui.select',
         'ngToast'
     ])
-    .config(function ($stateProvider, $urlRouterProvider, ngToastProvider) {
+    .config(function ($stateProvider:ng.ui.IStateProvider, $urlRouterProvider:ng.ui.IUrlRouterProvider, ngToastProvider) {
 
         // Toast config
         ngToastProvider.configure({

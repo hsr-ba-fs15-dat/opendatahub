@@ -33,7 +33,6 @@ else:
     urlpatterns += (
         url(r'^$', 'django.views.static.serve', {'path': 'index.html', 'document_root': '../webapp/app'}),
         url(r'^bower_components/(?P<path>.*)$', 'django.views.static.serve', {'document_root': '../webapp/bower_components'}),
-        url(r'^styles/main\.css$', 'django.views.static.serve', {'path': '.tmp/styles/main.css', 'document_root': '../webapp'}),
         url(r'^(?P<path>.*)$', 'django.views.static.serve', {'document_root': '../webapp/app'}),
     )
 

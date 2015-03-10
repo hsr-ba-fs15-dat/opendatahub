@@ -1,6 +1,5 @@
-/// <reference path='../../../typings/tsd.d.ts' />
+/// <reference path='../all.d.ts' />
 'use strict';
-
 
 class OfferCtrl {
 
@@ -10,4 +9,4 @@ class OfferCtrl {
 
 }
 
-angular.module('opendatahubApp').controller('OfferCtrl', OfferCtrl);
+app.controller('OfferCtrl', OfferCtrl);
