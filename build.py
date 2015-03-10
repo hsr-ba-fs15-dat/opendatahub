@@ -23,7 +23,7 @@ use_plugin('python.flake8')
 use_plugin('python.install_dependencies')
 use_plugin('pypi:pybuilder_django_enhanced_plugin')
 
-default_task = ['clean', 'install_dependencies', 'django_makemigrations', 'django_migrate', 'django_test', 'grunt', 'analyze', 'publish']
+default_task = ['clean', 'install_dependencies', 'django_makemigrations_noinput', 'django_migrate_noinput', 'django_test', 'grunt', 'analyze', 'publish']
 
 @init
 def initialize(project):
@@ -43,8 +43,8 @@ def initialize(project):
     # F401: Unused import
     # E501: long line
     # E128: visual indent
-    project.set_property('flake8_ignore', 'F401,E501,E128')
-    project.set_property('flake8_max_line_length', 160)
+    project.set_property('flake8_ignore', 'E128')
+    project.set_property('flake8_max_line_length', 120)
 
 
 
@@ -101,11 +101,35 @@ def grunt(project, logger):
     custom_exec(project, logger, ['grunt'], cwd=WEBAPP_DIR)
 
 
-@task('django_migrate')
-def django_migrate_fix(project, logger):
+
+def django_makemigrations_custom(project, logger, no_input=True):
+    no_input = True
     from pybuilder_django_enhanced_plugin.tasks.common import run_django_manage_command
 
-    args = ['migrate']
+    args = ['makemigrations'] + no_input * ['--noinput']
+    command_result = run_django_manage_command(project, logger, 'django_makemigrations', args)
+    if command_result.exit_code != 0:
+        error_message = ''.join(command_result.error_report_lines)
+        logger.error('Django makemigrations failed: {}'.format(error_message))
+        raise BuildFailedException('Django makemigrations failed')
+    return command_result
+
+@task
+@depends('prepare')
+def django_makemigrations(project, logger):
+    django_makemigrations_custom(project, logger)
+
+
+@task
+@depends('prepare')
+def django_makemigrations_noinput(project, logger):
+    django_makemigrations_custom(project, logger, True)
+
+
+def django_migrate_custom(project, logger, no_input=False):
+    from pybuilder_django_enhanced_plugin.tasks.common import run_django_manage_command
+
+    args = ['migrate'] + no_input * ['--noinput']
     command_result = run_django_manage_command(project, logger, 'django_migrate', args)
     if command_result.exit_code != 0:
         error_message = ''.join(command_result.error_report_lines)
@@ -113,8 +137,21 @@ def django_migrate_fix(project, logger):
         raise BuildFailedException('Django migrate failed')
     return command_result
 
+@task
+@depends('prepare')
+def django_migrate(project, logger):
+    django_migrate_custom(project, logger)
+
 
 @task
+@depends('prepare')
+def django_migrate_noinput(project, logger):
+    django_migrate_custom(project, logger, True)
+
+
+
+@task
+@depends('prepare')
 def django_flush(project, logger):
     from pybuilder_django_enhanced_plugin.tasks.common import run_django_manage_command
 

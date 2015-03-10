@@ -23,7 +23,6 @@ urlpatterns = (
     url(r'^admin/', include(admin.site.urls)),
 )
 
-
 if PRODUCTION:
     urlpatterns += (
         url(r'^$', 'django.views.static.serve', {'path': 'index.html', 'document_root': '../webapp/dist'}),
@@ -32,9 +31,9 @@ if PRODUCTION:
 else:
     urlpatterns += (
         url(r'^$', 'django.views.static.serve', {'path': 'index.html', 'document_root': '../webapp/app'}),
-        url(r'^bower_components/(?P<path>.*)$', 'django.views.static.serve', {'document_root': '../webapp/bower_components'}),
+        url(r'^bower_components/(?P<path>.*)$', 'django.views.static.serve',
+            {'document_root': '../webapp/bower_components'}),
         url(r'^(?P<path>.*)$', 'django.views.static.serve', {'document_root': '../webapp/app'}),
     )
-
 
 urlpatterns = patterns('', *urlpatterns)
