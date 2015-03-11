@@ -2,6 +2,8 @@
  * Created by remoliebi on 07.03.15.
  */
 
+/* tslint:disable */
+
 'use strict';
 var hubPlumb = hubPlumb || {};
 hubPlumb.connectorPaintStyle = function () {
