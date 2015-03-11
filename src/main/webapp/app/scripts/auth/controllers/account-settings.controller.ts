@@ -14,7 +14,7 @@ module openDataHub {
          */
         private account;
 
-        constructor(private AuthenticationService, private AccountService, private $state, private $stateParams) {
+        constructor(private AuthenticationService:odh.AuthenticationService, private AccountService, private $state, private $stateParams) {
             this.activate();
         }
 

@@ -134,6 +134,15 @@ module.exports = function (grunt) {
             }
         },
 
+        tslint: {
+            options: {
+                configuration: grunt.file.readJSON('tslint.json')
+            },
+            files: {
+                src: ['<%= yeoman.app %>/scripts/**/*.ts']
+            }
+        },
+
         // Empties folders to start fresh
         clean: {
             dist: {
@@ -535,6 +544,7 @@ module.exports = function (grunt) {
     grunt.registerTask('default', [
         //'newer:jshint', // We use TypeScript
         'ts',
+        'tslint',
         'test',
         'build'
     ]);
