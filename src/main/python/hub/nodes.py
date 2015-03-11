@@ -102,3 +102,10 @@ class CsvOutput(base.FormatterNode):
 
         for rec in itertools.chain([peek], reader):
             writer.writerow(rec)
+
+
+class JsonOutput(base.FormatterNode):
+    FORMAT = 'json'
+
+    def format(self, reader, out):
+        json.dump(list(reader), out)
