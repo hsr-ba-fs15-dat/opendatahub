@@ -1,57 +1,42 @@
-/// <reference path='../../../../typings/tsd.d.ts' />
-/**
- * Account
- * @namespace openDataHub.auth.services
- */
-module openDataHub {
+/// <reference path='../../all.d.ts' />
+
+
+module odh.auth {
     'use strict';
+
     export class AccountService {
         public email:string;
         public password:string;
 
-        /**
-         * @namespace AccountService
-         *
-         */
-        constructor(private $http) {
+        constructor(private $http:ng.IHttpService) {
+
         }
 
         /**
-         * @name destroy
-         * @desc Destroys the account with username `username`
-         * @param {string} username The username of the account to be destroyed
-         * @returns {Promise}
-         * @memberOf openDataHub.auth.services.AccountService
+         * Destroys the account with username `username`
+         * @param username The username of the account to be destroyed
          */
-        destroy(username) {
-            return this.$http.delete('/api/v1/accounts/' + username + '/');
+        public destroy(username):ng.IHttpPromise<any> {
+            return this.$http.delete('/api/v1/accounts/' + username);
         }
 
-
         /**
-         * @name get
-         * @desc Gets the account with username `username`
-         * @param {string} username The username of the account to get
-         * @returns {Promise}
-         * @memberOf openDataHub.auth.services.AccountService
+         * Gets the account with username `username`
+         * @param  username The username of the account to get
          */
-        get(username) {
-            return this.$http.get('/api/v1/accounts/' + username + '/');
+        public get(username):ng.IHttpPromise<any> {
+            return this.$http.get('/api/v1/accounts/' + username);
         }
 
-
         /**
-         * @name update
-         * @desc Update the account with username `username`
-         * @param {string} username The username of the account to be updated
-         * @param {Object} account The updated account model
-         * @returns {Promise}
-         * @memberOf openDataHub.auth.services.AccountService
+         * Update the account with username `username`
+         * @param username The username of the account to be updated
+         * @param account The updated account model
          */
-        update(username, account) {
-            return this.$http.put('/api/v1/accounts/' + username + '/', account);
+        public update(username, account):ng.IHttpPromise<any> {
+            return this.$http.put('/api/v1/accounts/' + username, account);
         }
 
     }
-    angular.module('openDataHub').service('AccountService', AccountService);
+    angular.module('openDataHub.auth').service('AccountService', AccountService);
 }

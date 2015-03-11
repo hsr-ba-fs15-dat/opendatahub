@@ -1,16 +1,8 @@
 /// <reference path='../all.d.ts' />
 
-module OpenDataHub.Authentication {
+module odh.auth {
     'use strict';
     angular
-        .module('openDataHub.auth', [
-            'openDataHub.auth.controllers',
-            'openDataHub.auth.services'
-        ]);
+        .module('openDataHub.auth', ['ngCookies']);
 
-    angular
-        .module('openDataHub.auth.controllers', []);
-
-    angular
-        .module('openDataHub.auth.services', ['ngCookies']);
 }

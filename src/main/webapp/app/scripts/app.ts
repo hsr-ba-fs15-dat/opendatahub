@@ -1,8 +1,9 @@
 /// <reference path='all.d.ts' />
 
+
 module openDataHub {
     'use strict';
-    var openDataHub = angular
+    angular
         .module('openDataHub', [
             'ngAnimate',
             'ngAria',
@@ -18,23 +19,19 @@ module openDataHub {
             'openDataHub.auth',
         ]);
 
-    var openDataAuth = angular
-        .module('openDataHub.auth', []);
-
 
     angular
         .module('openDataHub')
         .config(config)
         .run(run);
 
-    function run($http) {
+    function run($http:ng.IHttpService) {
         $http.defaults.xsrfHeaderName = 'X-CSRFToken';
         $http.defaults.xsrfCookieName = 'csrftoken';
     }
 
     function config($stateProvider:ng.ui.IStateProvider, $locationProvider:ng.ILocationProvider, ngToastProvider) {
 
-        // Toast config
         ngToastProvider.configure({
             horizontalPosition: 'center'
         });
@@ -66,13 +63,13 @@ module openDataHub {
             })
             .state('userDetail',
             {
-                url: '/+:username',
+                url: '/:username',
                 controller: 'AccountController as vm',
                 templateUrl: '/views/authentication/account.html'
             })
             .state('userSettings',
             {
-                url: '/+:username/settings',
+                url: '/:username/settings',
                 controller: 'AccountSettingsController as vm',
                 templateUrl: '/views/authentication/settings.html'
             });

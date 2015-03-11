@@ -19,8 +19,8 @@ urlpatterns = (
     url(r'^test/', views.test),
     url(r'api/v1/', include(router.urls)),
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^api/v1/auth/login/$', LoginView.as_view(), name='login'),
-    url(r'^api/v1/auth/logout/$', LogoutView.as_view(), name='logout'),
+    url(r'^api/v1/auth/login$', LoginView.as_view(), name='login'),
+    url(r'^api/v1/auth/logout$', LogoutView.as_view(), name='logout'),
 
 )
 

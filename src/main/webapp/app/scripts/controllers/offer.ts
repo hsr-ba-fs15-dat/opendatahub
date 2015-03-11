@@ -1,7 +1,8 @@
 /// <reference path='../all.d.ts' />
-'use strict';
+
 
 module odh {
+    'use strict';
 
     export class OfferController {
 
@@ -9,16 +10,18 @@ module odh {
         public dataSource:{};
         public name:string;
         public description:string;
-        public params:{} = {};
+        public params:any = {};
 
-        constructor(private $http:ng.IHttpService, private $state:ng.ui.IStateService, private ngToast, private $window:ng.IWindowService) {
+        constructor(private $http:ng.IHttpService, private $state:ng.ui.IStateService, private ngToast,
+                    private $window:ng.IWindowService) {
+
             this.dataSources = [{label: 'Online', type: 'online'}, {label: 'Datei hochladen', type: 'file'}];
             this.dataSource = this.dataSources[0];
             this.switchDataSource(this.dataSource, this.dataSource);
         }
 
         public switchDataSource(item, model) {
-            this.$state.go('offer.params', {type: model.type})
+            this.$state.go('offer.params', {type: model.type});
         }
 
         public cancel() {
@@ -31,7 +34,7 @@ module odh {
             this.$http.post('/api/v1/documents/', {
                 name: this.name,
                 description: this.description,
-                url: this.params['url']
+                url: this.params.url
             })
                 .then(data => this.createSuccess(data))
                 .catch(data => this.createFailure(data));
@@ -50,25 +53,21 @@ module odh {
         }
 
     }
-
     angular.module('openDataHub').controller('OfferController', OfferController);
 
 
     class OfferParamsController {
         public fields:{}[];
 
-        constructor(private $stateParams:ng.ui.IStateParamsService) {
-            // TODO refactor
-            if ($stateParams['type'] === 'online') {
+        constructor(private $stateParams) {
+            // todo refactor
+            if ($stateParams.type === 'online') {
                 this.fields = [
                     {id: 'url', placeholder: 'http://', label: 'Adresse'}
                 ];
-            } else {
-
             }
         }
 
     }
-
     angular.module('openDataHub').controller('OfferParamsController', OfferParamsController);
 }

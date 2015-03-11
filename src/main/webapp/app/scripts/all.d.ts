@@ -13,15 +13,10 @@
 /// <reference path='auth/controllers/register.controller.ts' />
 /// <reference path='auth/services/accounts.service.ts' />
 /// <reference path='auth/services/auth.service.ts' />
-/// <reference path='auth/services/user.services.ts.BACKUP.95151.ts' />
-/// <reference path='auth/services/user.services.ts.BASE.95151.ts' />
-/// <reference path='auth/services/user.services.ts.LOCAL.95151.ts' />
-/// <reference path='auth/services/user.services.ts.REMOTE.95151.ts' />
 /// <reference path='controllers/about.ts' />
 /// <reference path='controllers/main.ts' />
 /// <reference path='controllers/navbar.controller.ts' />
 /// <reference path='controllers/offer.ts' />
 /// <reference path='directives/focus.ts' />
-/// <reference path='services/example.ts' />
 /// <reference path='temp/hubPlumb.ts' />
 // endinjector

@@ -1,40 +1,32 @@
 /// <reference path='../../all.d.ts' />
 
-/**
- * Authentication
- * @namespace openDataHub.auth.services
- */
-module odh {
+
+module odh.auth {
     'use strict';
 
     export class AuthenticationService {
 
-        constructor(private $cookies:ng.cookies.ICookiesService,
-                    private $http:ng.IHttpService, private $state:ng.ui.IStateService, private $log:ng.ILogService) {
+        constructor(private $cookies, private $http:ng.IHttpService, private $state:ng.ui.IStateService,
+                    private $log:ng.ILogService) {
 
         }
 
         /**
-         * @name register
-         * @desc Try to register a new user
-         * @param {string} username The username entered by the user
-         * @param {string} password The password entered by the user
-         * @param {string} email The email entered by the user
-         * @returns {Promise}
-         * @memberOf openDataHub.auth.services.Authentication
+         * Try to register a new user
+         * @param username The username entered by the user
+         * @param password The password entered by the user
+         * @param email The email entered by the user
          */
-        register(email, password, username) {
-            return this.$http.post('/api/v1/accounts/', {
+        public register(email, password, username):ng.IPromise<any> {
+            return this.$http.post('/api/v1/accounts', {
                 username: username,
                 password: password,
                 email: email
             }).then(data => {
                 this.login(email, password);
             }).catch(data => {
-                this.$log.error('Epic failure!');
-
+                this.$log.error('Error while registering', data);
             });
-
         }
 
         /**
@@ -45,8 +37,8 @@ module odh {
          * @returns {Promise}
          * @memberOf openDataHub.auth.services.Authentication
          */
-        login(email, password) {
-            return this.$http.post('/api/v1/auth/login/', {
+        public login(email, password) {
+            return this.$http.post('/api/v1/auth/login', {
                 email: email, password: password
             }).then(data => {
                 this.setAuthenticatedAccount(data.data);
@@ -60,10 +52,10 @@ module odh {
         /**
          * @name getAuthenticatedAccount
          * @desc Return the currently authenticated account
-         * @returns {object|undefined} Account if authenticated, else `undefined`
-         * @memberOf openDataHub.auth.services.Authentication
+         * @returns Account if authenticated, else `undefined`
          */
-        getAuthenticatedAccount() {
+        public getAuthenticatedAccount():any;
+        public getAuthenticatedAccount():void {
             if (!sessionStorage.getItem('user')) {
                 return;
             }
@@ -71,55 +63,43 @@ module odh {
             return JSON.parse(sessionStorage.getItem('user'));
         }
 
-
         /**
-         * @name isAuthenticated
-         * @desc Check if the current user is authenticated
-         * @returns {boolean} True is user is authenticated, else false.
+         * Check if the current user is authenticated
+         * @returns True is user is authenticated, else false.
          * @memberOf openDataHub.auth.services.Authentication
          */
-        isAuthenticated() {
+        public isAuthenticated():boolean {
             return !!sessionStorage.getItem('user');
         }
 
-
         /**
-         * @name setAuthenticatedAccount
-         * @desc Stringify the account object and store it in a cookie
-         * @param {Object} account The account object to be stored
-         * @returns {undefined}
-         * @memberOf openDataHub.auth.services.Authentication
+         * Delete the cookie where the user object is stored
          */
-        setAuthenticatedAccount(account) {
-            this.$cookies['authenticatedAccount'] = JSON.stringify(account);
-            sessionStorage.setItem('user',JSON.stringify(account));
+        public unauthenticate() {
+            delete this.$cookies.authenticatedAccount;
+            sessionStorage.removeItem('user');
         }
 
         /**
-         * @name unauthenticate
-         * @desc Delete the cookie where the user object is stored
-         * @returns {undefined}
-         * @memberOf openDataHub.auth.services.Authentication
+         * Try to log the user out
          */
-        unauthenticate() {
-            delete this.$cookies['authenticatedAccount'];
-            sessionStorage.removeItem('user')
-        }
-
-        /**
-         * @name logout
-         * @desc Try to log the user out
-         * @returns {Promise}
-         * @memberOf openDataHub.auth.services.Authentication
-         */
-        logout() {
-            return this.$http.post('/api/v1/auth/logout/', {})
+        public logout():ng.IPromise<any> {
+            return this.$http.post('/api/v1/auth/logout', {})
                 .then(() => {
                     this.unauthenticate();
                     this.$state.go('main');
                 }).catch(() => {
                     this.$log.error('Epic failure!');
                 });
+        }
+
+        /**
+         * Stringify the account object and store it in a cookie
+         * @param account The account object to be stored
+         */
+        private setAuthenticatedAccount(account) {
+            this.$cookies.authenticatedAccount = JSON.stringify(account);
+            sessionStorage.setItem('user', JSON.stringify(account));
         }
     }
     angular.module('openDataHub').service('AuthenticationService', AuthenticationService);

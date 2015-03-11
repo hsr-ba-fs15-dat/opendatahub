@@ -1,13 +1,11 @@
 /// <reference path='../all.d.ts' />
-'use strict';
 
+module odh {
+    'use strict';
 
-class AboutCtrl {
+    class AboutController {
 
-    constructor(private $scope) {
-        console.log(this.$scope)
     }
 
+    angular.module('openDataHub').controller('AboutController', AboutController);
 }
-
-angular.module('openDataHub').controller('AboutCtrl', AboutCtrl);

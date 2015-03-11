@@ -1,46 +1,31 @@
 /// <reference path='../../all.d.ts' />
 
-/**
- * LoginController
- * @namespace openDataHub.auth.controllers
- */
-module odg {
+
+module odh {
     'use strict';
 
     class LoginController {
         public email:string;
         public password:string;
 
-        /**
-         * @namespace LoginController
-         *
-         */
-        constructor(private $state, private $scope, private AuthenticationService:odh.AuthenticationService) {
+        constructor(private $state, private AuthenticationService:odh.auth.AuthenticationService) {
             this.activate();
-
         }
 
         /**
-         * @name activate
-         * @desc Actions to be performed when this controller is instantiated
-         * @memberOf openDataHub.auth.controllers.LoginController
+         * Log the user in
          */
-        activate() {
-            // If the user is authenticated, they should not be here.
+        public login() {
+            this.AuthenticationService.login(this.email, this.password);
+        }
+
+        private activate() {
+            // if the user is authenticated, they should not be here.
             if (this.AuthenticationService.isAuthenticated()) {
                 this.$state.go('main');
-
             }
-        }
-
-        /**
-         * @name login
-         * @desc Log the user in
-         * @memberOf openDataHub.auth.controllers.LoginController
-         */
-        login() {
-            this.AuthenticationService.login(this.email, this.password);
         }
     }
     angular.module('openDataHub').controller('LoginController', LoginController);
+
 }
