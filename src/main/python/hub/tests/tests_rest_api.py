@@ -1,8 +1,9 @@
-from rest_framework.test import APIClient
-from django.core.files.uploadedfile import SimpleUploadedFile
 import json
 import types
 import testutils
+
+from rest_framework.test import APIClient
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 
 class RestApiTests(testutils.TestBase):
@@ -20,6 +21,9 @@ class RestApiTests(testutils.TestBase):
         self.response_json = json.loads(self.response.content)
 
     def test_post(self):
+        '''
+        Verifies that setUp managed to create a document via the api.
+        '''
         self.assertEqual(200, self.response.status_code)
 
         self.assertIn('name', self.response_json)
@@ -29,6 +33,9 @@ class RestApiTests(testutils.TestBase):
         self.assertEqual(self.data['description'], self.response_json['description'])
 
     def test_get_document(self):
+        '''
+        Retrieves the document and verifies the result.
+        '''
         self.assertIn('id', self.response_json)
 
         document_id = self.response_json['id']
@@ -43,7 +50,15 @@ class RestApiTests(testutils.TestBase):
         self.assertIn('description', result_json)
         self.assertEqual(self.data['description'], result_json['description'])
 
+    def assert_record_ok(self, record):
+        self.assertIn('id', record)
+        self.assertIn('url', record)
+        self.assertIn('content', record)
+
     def test_get_document_records(self):
+        '''
+        Retrieves the records for a certain document and verifies the result.
+        '''
         self.assertIn('id', self.response_json)
 
         document_id = self.response_json['id']
@@ -55,11 +70,12 @@ class RestApiTests(testutils.TestBase):
         self.assertEqual(2, len(result_json))
 
         for record in result_json:
-            self.assertIn('id', record)
-            self.assertIn('url', record)
-            self.assertIn('content', record)
+            self.assert_record_ok(record)
 
     def test_get_records(self):
+        '''
+        Retrieves a list of known records and verifies the result.
+        '''
         result = self.client.get('/api/v1/records')
 
         result_json = json.loads(result.content)
@@ -68,7 +84,4 @@ class RestApiTests(testutils.TestBase):
         self.assertGreater(len(result_json), 2)
 
         for record in result_json:
-            self.assertIn('id', record)
-            self.assertIn('url', record)
-            self.assertIn('content', record)
-
+            self.assert_record_ok(record)
