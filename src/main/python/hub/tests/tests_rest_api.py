@@ -1,6 +1,6 @@
 import json
 import types
-import testutils
+from . import testutils
 
 from rest_framework.test import APIClient
 from django.core.files.uploadedfile import SimpleUploadedFile

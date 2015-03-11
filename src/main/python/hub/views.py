@@ -83,5 +83,5 @@ class RecordViewSet(viewsets.ModelViewSet):
     serializer_class = RecordSerializer
 
 
-def test(r):
+def test(request):
     return HttpResponse('test')

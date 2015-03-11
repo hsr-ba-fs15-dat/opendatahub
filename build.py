@@ -3,12 +3,14 @@ PyBuilder configuration file
 """
 
 import shutil
+import itertools
 
 from pybuilder.core import use_plugin, after, init, task, description, depends
 from pybuilder.utils import assert_can_execute, execute_command, read_file
 from pybuilder.errors import BuildFailedException
 from pybuilder.pluginhelper.external_command import ExternalCommandBuilder
 import os
+import fnmatch
 
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -46,6 +48,12 @@ def initialize(project):
     # E128: visual indent
     project.set_property('flake8_ignore', 'E128')
     project.set_property('flake8_max_line_length', 120)
+    project.set_property('pylint_fail_on_ids', [
+        'E*',
+        'F*',
+        'C0103',  # invalid-name
+        'W0403'  # relative-import
+    ])
 
 
 def custom_exec(project, logger, args, name=None, cwd=None, fail_stderr=True, fail_nonzero=True):
@@ -210,10 +218,10 @@ def check_pylint_availability(logger):
 def execute_pylint(project, logger):
     logger.info('Executing pylint on project sources')
     verbose = project.get_property('verbose')
+    failure_ids = project.get_property('pylint_fail_on_ids', [])
 
     command = ExternalCommandBuilder('pylint', project)
-    command.use_argument('--load-plugins=pylint_django')
-    command.use_argument('--msg-template="{C}:{path}:{line}: [{msg_id}({symbol}), {obj}] {msg}"')
+    command.use_argument('--msg-template="{msg_id}({symbol}):{path}:{line}:{obj}:{msg}"')
     result = command.run_on_production_source_files(logger, include_test_sources=True, include_scripts=True)
 
     if result.error_report_lines:
@@ -225,6 +233,7 @@ def execute_pylint(project, logger):
     if verbose:
         logger.info(''.join(result.report_lines))
 
-    breaking_warnings = [l for l in result.report_lines if l.startswith('E:') or l.startswith('F:')]
-    if breaking_warnings:
-        raise BuildFailedException(''.join(breaking_warnings))
+    breaking_lines = list(
+        itertools.chain(*[fnmatch.filter(result.report_lines, pattern + '(*') for pattern in failure_ids]))
+    if breaking_lines:
+        raise BuildFailedException(''.join(breaking_lines))
