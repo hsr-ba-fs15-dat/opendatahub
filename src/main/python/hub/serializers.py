@@ -8,10 +8,10 @@ class RecordSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = RecordModel
-        fields = ('url', 'document', 'content')
+        fields = ('id', 'url', 'document', 'content')
 
 
 class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = DocumentModel
-        fields = ('url', 'name', 'description')
+        fields = ('id', 'url', 'name', 'description')
