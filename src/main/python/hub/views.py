@@ -68,7 +68,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
                     if node:
                         reader = node.parse(reader)
 
-                    writer = DatabaseWriter(desc=data['description'])
+                    writer = DatabaseWriter(name=data['name'], desc=data['description'])
 
                     doc = writer.write(reader)
                     serializer = DocumentSerializer(DocumentModel.objects.get(id=doc.id), context={'request': request})

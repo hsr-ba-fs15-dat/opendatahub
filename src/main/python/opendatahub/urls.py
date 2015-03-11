@@ -7,7 +7,7 @@ from opendatahub.settings import PRODUCTION, STATIC_ROOT
 from hub.views import DocumentViewSet, RecordViewSet
 
 
-router = routers.DefaultRouter()
+router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'documents', DocumentViewSet)
 router.register(r'records', RecordViewSet)
 router.register(r'accounts', AccountViewSet)

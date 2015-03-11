@@ -67,11 +67,12 @@ class JsonInput(base.ParserNode):
 
 
 class DatabaseWriter(base.OutputNode):
-    def __init__(self, desc):
+    def __init__(self, name, desc):
         self.desc = desc
+        self.name = name
 
     def write(self, reader):
-        doc = hub.models.DocumentModel(description=self.desc)
+        doc = hub.models.DocumentModel(name=self.name, description=self.desc)
         doc.save()
 
         for record_content in reader:

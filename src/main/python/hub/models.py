@@ -1,5 +1,5 @@
 from django.db import models
-import picklefield
+from django_pgjson.fields import JsonField
 
 
 def cap(str, length):
@@ -10,6 +10,7 @@ class DocumentModel(models.Model):
     class Meta:
         db_table = 'hub_documents'
 
+    name = models.CharField(max_length=200)
     description = models.TextField()
 
     def __str__(self):
@@ -22,7 +23,7 @@ class RecordModel(models.Model):
         ordering = ['id']
 
     document = models.ForeignKey(DocumentModel, null=False, related_name='records')
-    content = picklefield.PickledObjectField()
+    content = JsonField()
 
     def __str__(self):
         return "[Record id={} document={} content={}".format(self.id, self.document_id, cap(self.content, 50))

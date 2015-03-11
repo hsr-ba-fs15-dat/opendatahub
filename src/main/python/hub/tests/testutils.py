@@ -3,7 +3,9 @@
 """
 
 import unittest
+
 import os
+
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'opendatahub.settings')
 
