@@ -2,18 +2,18 @@
 PyBuilder configuration file
 """
 
+import shutil
+
 from pybuilder.core import use_plugin, after, init, task, description, depends
 from pybuilder.utils import assert_can_execute, execute_command, read_file
-from pybuilder.plugins.python.python_plugin_helper import log_report
 from pybuilder.errors import BuildFailedException
 from pybuilder.pluginhelper.external_command import ExternalCommandBuilder
-
-
 import os
-import shutil
+
+
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 WEBAPP_DIR = os.path.join(BASE_DIR, 'src', 'main', 'webapp')
-
+DJANGO_DIR = os.path.join(BASE_DIR, 'src', 'main', 'python')
 
 use_plugin("analysis")
 use_plugin('python.core')
@@ -23,7 +23,9 @@ use_plugin('python.flake8')
 use_plugin('python.install_dependencies')
 use_plugin('pypi:pybuilder_django_enhanced_plugin')
 
-default_task = ['clean', 'install_dependencies', 'django_makemigrations_noinput', 'django_migrate_noinput', 'django_test', 'grunt', 'analyze', 'publish']
+default_task = ['clean', 'install_dependencies', 'django_makemigrations_noinput', 'django_migrate_noinput',
+                'django_test', 'django_collectstatic_noinput', 'grunt', 'analyze', 'publish']
+
 
 @init
 def initialize(project):
@@ -33,7 +35,6 @@ def initialize(project):
 
     project.set_property('django_project', 'opendatahub')
     project.set_property('django_apps', ['hub'])
-
 
     project.set_property('coverage_break_build', False)
     project.set_property('flake8_include_test_sources', True)
@@ -45,8 +46,6 @@ def initialize(project):
     # E128: visual indent
     project.set_property('flake8_ignore', 'E128')
     project.set_property('flake8_max_line_length', 120)
-
-
 
 
 def custom_exec(project, logger, args, name=None, cwd=None, fail_stderr=True, fail_nonzero=True):
@@ -76,10 +75,10 @@ def custom_exec(project, logger, args, name=None, cwd=None, fail_stderr=True, fa
             raise BuildFailedException(msg)
 
 
-
 @task('install_runtime_dependencies')
 def install_bower_packages(project, logger):
-    custom_exec(project, logger, ['bower', 'install', '--config.analytics=false', '--allow-root', '--no-interactive'], cwd=WEBAPP_DIR, fail_stderr=False)
+    custom_exec(project, logger, ['bower', 'install', '--config.analytics=false', '--allow-root', '--no-interactive'],
+                cwd=WEBAPP_DIR, fail_stderr=False)
 
 
 @task('install_build_dependencies')
@@ -95,11 +94,10 @@ def install_typings(project, logger):
 
 
 @task
-@depends('install_build_dependencies','install_runtime_dependencies')
+@depends('install_build_dependencies', 'install_runtime_dependencies')
 @after(('run_unit_tests',), only_once=True)
 def grunt(project, logger):
     custom_exec(project, logger, ['grunt'], cwd=WEBAPP_DIR)
-
 
 
 def django_makemigrations_custom(project, logger, no_input=True):
@@ -113,6 +111,7 @@ def django_makemigrations_custom(project, logger, no_input=True):
         logger.error('Django makemigrations failed: {}'.format(error_message))
         raise BuildFailedException('Django makemigrations failed')
     return command_result
+
 
 @task
 @depends('prepare')
@@ -137,6 +136,20 @@ def django_migrate_custom(project, logger, no_input=False):
         raise BuildFailedException('Django migrate failed')
     return command_result
 
+
+@task
+def django_collectstatic_noinput(project, logger):
+    from pybuilder_django_enhanced_plugin.tasks.common import run_django_manage_command
+
+    args = ['collectstatic', '--noinput']
+    command_result = run_django_manage_command(project, logger, 'django_collectstatic_noinput', args)
+    if command_result.exit_code != 0:
+        error_message = ''.join(command_result.error_report_lines)
+        logger.error('Django collectstatic failed: {}'.format(error_message))
+        raise BuildFailedException('Django collectstatic failed')
+    return command_result
+
+
 @task
 @depends('prepare')
 def django_migrate(project, logger):
@@ -147,7 +160,6 @@ def django_migrate(project, logger):
 @depends('prepare')
 def django_migrate_noinput(project, logger):
     django_migrate_custom(project, logger, True)
-
 
 
 @task
@@ -175,13 +187,16 @@ def django_dbshell(project, logger):
     logger.info('Running django dbshell {} '.format(args))
     execute_from_command_line([''] + args)
 
+
 @task
 def dbshell(project, logger):
     django_dbshell(project, logger)
 
+
 @init
 def init_pylint(project):
     project.build_depends_on('pylint')
+
 
 @after('prepare')
 def check_pylint_availability(logger):
@@ -189,12 +204,15 @@ def check_pylint_availability(logger):
     assert_can_execute(('pylint', ), 'pylint', 'plugin python.pylint')
     logger.debug('pylint has been found')
 
+
 @task('analyze')
+@depends('prepare')
 def execute_pylint(project, logger):
     logger.info('Executing pylint on project sources')
     verbose = project.get_property('verbose')
 
     command = ExternalCommandBuilder('pylint', project)
+    command.use_argument('--load-plugins=pylint_django')
     command.use_argument('--msg-template="{C}:{path}:{line}: [{msg_id}({symbol}), {obj}] {msg}"')
     result = command.run_on_production_source_files(logger, include_test_sources=True, include_scripts=True)
 

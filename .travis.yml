@@ -31,7 +31,7 @@ script:
 before_deploy:
  - git config --global user.email 'build@travis-ci.com'
  - git config --global user.name 'Tavis CI'
- - git add -f $TRAVIS_BUILD_DIR/src/main/webapp/dist
+ - git add -f $TRAVIS_BUILD_DIR/src/main/webapp/dist $TRAVIS_BUILD_DIR/src/main/python/staticfiles
  - git commit -q -m 'deploy to heroku'
  - cd $TRAVIS_BUILD_DIR
 
@@ -43,6 +43,9 @@ deploy:
     secure: Qb2O3PviVvKvxUxDuxxz8bxbVniNHgBYJxCzDBpLC56d7i5/yiZX9X2sBrFvBhFyh2naidzp0s9EgoN3U2HISaoThzM8/075pIlTnI7dir6R1623ngv7+COXAqoFRNME0A6ghJhTIfxEnDdNrztfQ8WcnVXuNU37kWIHGYryiJk=
   app:
     master: opendatahub-hsr-dev
+  run:
+    - python $HOME/src/main/python/manage.py migrate --noinput
+    - python $HOME/src/main/python/manage.py makemigrations --noinput
 
 notifications:
   slack:

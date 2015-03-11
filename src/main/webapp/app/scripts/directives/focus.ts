@@ -8,6 +8,7 @@
  * # focus input field on condition
  */
 function odhFocus($timeout):ng.IDirective {
+    console.log("Focused!")
     return {
         restrict: 'A',
         require: '^form',
@@ -26,4 +27,4 @@ function odhFocus($timeout):ng.IDirective {
     };
 }
 
-app.directive('odhFocus', odhFocus);
+angular.module('openDataHub').directive('odhFocus', odhFocus);

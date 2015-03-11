@@ -10,4 +10,4 @@ class AboutCtrl {
 
 }
 
-app.controller('AboutCtrl', AboutCtrl);
+angular.module('openDataHub').controller('AboutCtrl', AboutCtrl);

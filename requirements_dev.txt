@@ -6,4 +6,5 @@ django-extensions==1.5.0
 Werkzeug==0.10.1
 pyinotify==0.9.5
 watchdog==0.8.3
+pylint-django==0.6
 ipython

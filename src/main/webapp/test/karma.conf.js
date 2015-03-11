@@ -35,8 +35,8 @@ module.exports = function(config) {
       'bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
       'bower_components/angular-ui-utils/ui-utils.js',
       'bower_components/angular-ui-select/dist/select.js',
-      'bower_components/jsPlumb/dist/js/dom.jsPlumb-1.7.4.js',
-      'bower_components/jsPlumb/dist/js/jquery.jsPlumb-1.7.4.js',
+      'bower_components/jsPlumb/dist/js/dom.jsPlumb-1.7.3.js',
+      'bower_components/jsPlumb/dist/js/jquery.jsPlumb-1.7.3.js',
       'bower_components/jquery-ui/jquery-ui.js',
       'bower_components/angular-mocks/angular-mocks.js',
       // endbower

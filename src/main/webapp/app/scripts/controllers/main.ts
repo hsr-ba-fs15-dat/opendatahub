@@ -10,4 +10,4 @@ class MainCtrl {
 
 }
 
-app.controller('MainCtrl', MainCtrl);
+angular.module('openDataHub').controller('MainCtrl', MainCtrl);

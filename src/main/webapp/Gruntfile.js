@@ -528,7 +528,7 @@ module.exports = function (grunt) {
     ]);
 
     grunt.registerTask('ts', [
-        'injector:tsd',
+        'injector',
         'typescript'
     ]);
 

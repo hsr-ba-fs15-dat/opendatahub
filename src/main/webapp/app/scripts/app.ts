@@ -1,39 +1,43 @@
-/// <reference path='../../typings/tsd.d.ts' />
-'use strict';
+/// <reference path='all.d.ts' />
 
-/**
- * @ngdoc overview
- * @name opendatahubApp
- * @description
- * # opendatahubApp
- *
- * Main module of the application.
- */
+module openDataHub {
+    'use strict';
+    var openDataHub = angular
+        .module('openDataHub', [
+            'ngAnimate',
+            'ngAria',
+            'ngCookies',
+            'ngMessages',
+            'ngResource',
+            'ngSanitize',
+            'ngTouch',
+            'ui.router',
+            'ui.utils',
+            'ui.select',
+            'ngToast',
+            'openDataHub.auth',
+        ]);
+
+    var openDataAuth = angular
+        .module('openDataHub.auth', []);
 
 
+    angular
+        .module('openDataHub')
+        .config(config)
+        .run(run);
 
-var app = angular
-    .module('opendatahubApp', [
-        'ngAnimate',
-        'ngAria',
-        'ngCookies',
-        'ngMessages',
-        'ngResource',
-        'ngSanitize',
-        'ngTouch',
-        'ui.router',
-        'ui.utils',
-        'ui.select',
-        'ngToast'
-    ])
-    .config(function ($stateProvider:ng.ui.IStateProvider, $urlRouterProvider:ng.ui.IUrlRouterProvider, ngToastProvider) {
+    function run($http) {
+        $http.defaults.xsrfHeaderName = 'X-CSRFToken';
+        $http.defaults.xsrfCookieName = 'csrftoken';
+    }
+
+    function config($stateProvider:ng.ui.IStateProvider, $locationProvider:ng.ILocationProvider, ngToastProvider) {
 
         // Toast config
         ngToastProvider.configure({
             horizontalPosition: 'center'
         });
-
-        $urlRouterProvider.otherwise('/');
 
         $stateProvider
             .state('main', {
@@ -41,12 +45,36 @@ var app = angular
                 templateUrl: 'views/main.html'
             })
             .state('offer', {
-                controller: 'OfferCtrl',
-                templateUrl: 'views/offer.html',
-                controllerAs: 'vm'
+                url: '/offer',
+                controller: 'OfferController as offer',
+                templateUrl: 'views/offer.html'
             })
-            .state('about', {
-                controller: 'AboutCtrl',
-                templateUrl: 'views/about.html'
+            .state('offer.params', {
+                url: '/:type',
+                controller: 'OfferParamsController as params',
+                templateUrl: 'views/offer.params.html'
+            })
+            .state('register', {
+                url: '/register',
+                controller: 'RegisterController as vm',
+                templateUrl: '/views/authentication/register.html'
+            })
+            .state('login', {
+                url: '/login',
+                controller: 'LoginController as vm',
+                templateUrl: '/views/authentication/login.html'
+            })
+            .state('userDetail',
+            {
+                url: '/+:username',
+                controller: 'AccountController as vm',
+                templateUrl: '/views/authentication/account.html'
+            })
+            .state('userSettings',
+            {
+                url: '/+:username/settings',
+                controller: 'AccountSettingsController as vm',
+                templateUrl: '/views/authentication/settings.html'
             });
-    });
+    }
+}
