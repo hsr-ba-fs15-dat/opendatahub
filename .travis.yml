@@ -52,5 +52,5 @@ notifications:
     on_failure: always
     on_success: change
     rooms:
-      - hsrdat:kFUd9okBkUuXn6L66bB9w65f#webapp
+      - opendatahub:kFUd9okBkUuXn6L66bB9w65f#webapp
 
