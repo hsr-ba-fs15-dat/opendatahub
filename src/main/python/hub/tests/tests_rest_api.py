@@ -21,9 +21,8 @@ class RestApiTests(testutils.TestBase):
         self.response_json = json.loads(self.response.content)
 
     def test_post(self):
-        '''
-        Verifies that setUp managed to create a document via the api.
-        '''
+        """ Verifies that setUp managed to create a document via the api.
+        """
         self.assertEqual(200, self.response.status_code)
 
         self.assertIn('name', self.response_json)
@@ -33,9 +32,8 @@ class RestApiTests(testutils.TestBase):
         self.assertEqual(self.data['description'], self.response_json['description'])
 
     def test_get_document(self):
-        '''
-        Retrieves the document and verifies the result.
-        '''
+        """ AssertionError: Path must be within the project
+        """
         self.assertIn('id', self.response_json)
 
         document_id = self.response_json['id']
@@ -56,9 +54,8 @@ class RestApiTests(testutils.TestBase):
         self.assertIn('content', record)
 
     def test_get_document_records(self):
-        '''
-        Retrieves the records for a certain document and verifies the result.
-        '''
+        """ Retrieves the records for a certain document and verifies the result.
+        """
         self.assertIn('id', self.response_json)
 
         document_id = self.response_json['id']
@@ -73,9 +70,8 @@ class RestApiTests(testutils.TestBase):
             self.assert_record_ok(record)
 
     def test_get_records(self):
-        '''
-        Retrieves a list of known records and verifies the result.
-        '''
+        """ Retrieves a list of known records and verifies the result.
+        """
         result = self.client.get('/api/v1/records')
 
         result_json = json.loads(result.content)

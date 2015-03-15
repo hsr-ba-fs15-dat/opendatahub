@@ -43,10 +43,10 @@ class DocumentViewSet(viewsets.ModelViewSet):
         return response
 
     def create(self, request, *args, **kwargs):
-        '''
+        """
         Create a document.
         Expected parameters: One of: url, file. Always: description
-        '''
+        """
         data = request.data
 
         input = None
