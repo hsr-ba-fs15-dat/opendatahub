@@ -5,7 +5,7 @@ PyBuilder configuration file
 import shutil
 import itertools
 
-from pybuilder.core import use_plugin, after, init, task, description, depends
+from pybuilder.core import use_plugin, after, init, task, depends
 from pybuilder.utils import assert_can_execute, execute_command, read_file
 from pybuilder.errors import BuildFailedException
 from pybuilder.pluginhelper.external_command import ExternalCommandBuilder
@@ -23,10 +23,10 @@ use_plugin('python.unittest')
 use_plugin('python.coverage')
 use_plugin('python.flake8')
 use_plugin('python.install_dependencies')
-use_plugin('pypi:pybuilder_django_enhanced_plugin')
+# use_plugin('pypi:pybuilder_django_enhanced_plugin')
 
-default_task = ['clean', 'install_dependencies', 'django_makemigrations_noinput', 'django_migrate_noinput',
-                'django_test', 'django_collectstatic_noinput', 'grunt', 'analyze', 'publish']
+default_task = ['clean', 'install_dependencies', 'django_makemigrations', 'django_migrate',
+                'django_test', 'django_collectstatic', 'grunt', 'analyze', 'publish']
 
 
 @init
@@ -83,6 +83,13 @@ def custom_exec(project, logger, args, name=None, cwd=None, fail_stderr=True, fa
             raise BuildFailedException(msg)
 
 
+def django_exec(project, logger, args, **kwargs):
+    django_project = project.get_property('django_project')
+    django_apps = project.get_property('django_apps')
+    args_ex = ['--settings={}.settings'.format(django_project), '--pythonpath=' + DJANGO_DIR]
+    return custom_exec(project, logger, ['django-admin'] + args + args_ex, **kwargs)
+
+
 @task('install_runtime_dependencies')
 def install_bower_packages(project, logger):
     custom_exec(project, logger, ['bower', 'install', '--config.analytics=false', '--allow-root', '--no-interactive'],
@@ -108,97 +115,34 @@ def grunt(project, logger):
     custom_exec(project, logger, ['grunt'], cwd=WEBAPP_DIR)
 
 
-def django_makemigrations_custom(project, logger, no_input=True):
-    no_input = True
-    from pybuilder_django_enhanced_plugin.tasks.common import run_django_manage_command
-
-    args = ['makemigrations'] + no_input * ['--noinput']
-    command_result = run_django_manage_command(project, logger, 'django_makemigrations', args)
-    if command_result.exit_code != 0:
-        error_message = ''.join(command_result.error_report_lines)
-        logger.error('Django makemigrations failed: {}'.format(error_message))
-        raise BuildFailedException('Django makemigrations failed')
-    return command_result
+@task
+@depends('prepare')
+def django_test(project, logger):
+    django_exec(project, logger, ['test'] + project.get_property('django_apps'), fail_stderr=False)
 
 
 @task
 @depends('prepare')
 def django_makemigrations(project, logger):
-    django_makemigrations_custom(project, logger)
-
-
-@task
-@depends('prepare')
-def django_makemigrations_noinput(project, logger):
-    django_makemigrations_custom(project, logger, True)
-
-
-def django_migrate_custom(project, logger, no_input=False):
-    from pybuilder_django_enhanced_plugin.tasks.common import run_django_manage_command
-
-    args = ['migrate'] + no_input * ['--noinput']
-    command_result = run_django_manage_command(project, logger, 'django_migrate', args)
-    if command_result.exit_code != 0:
-        error_message = ''.join(command_result.error_report_lines)
-        logger.error('Django migrate failed: {}'.format(error_message))
-        raise BuildFailedException('Django migrate failed')
-    return command_result
-
-
-@task
-def django_collectstatic_noinput(project, logger):
-    from pybuilder_django_enhanced_plugin.tasks.common import run_django_manage_command
-
-    args = ['collectstatic', '--noinput']
-    command_result = run_django_manage_command(project, logger, 'django_collectstatic_noinput', args)
-    if command_result.exit_code != 0:
-        error_message = ''.join(command_result.error_report_lines)
-        logger.error('Django collectstatic failed: {}'.format(error_message))
-        raise BuildFailedException('Django collectstatic failed')
-    return command_result
+    django_exec(project, logger, ['makemigrations', '--noinput'], fail_stderr=False)
 
 
 @task
 @depends('prepare')
 def django_migrate(project, logger):
-    django_migrate_custom(project, logger)
+    django_exec(project, logger, ['migrate', '--noinput'], fail_stderr=False)
 
 
 @task
 @depends('prepare')
-def django_migrate_noinput(project, logger):
-    django_migrate_custom(project, logger, True)
+def django_collectstatic(project, logger):
+    django_exec(project, logger, ['collectstatic', '--noinput'], fail_stderr=False)
 
 
 @task
 @depends('prepare')
 def django_flush(project, logger):
-    from pybuilder_django_enhanced_plugin.tasks.common import run_django_manage_command
-
-    args = ['flush', '--noinput']
-    command_result = run_django_manage_command(project, logger, 'django_flush', args)
-    if command_result.exit_code != 0:
-        error_message = ''.join(command_result.error_report_lines)
-        logger.error('Django flush failed: {}'.format(error_message))
-        raise BuildFailedException('Django flush failed')
-    return command_result
-
-
-@task
-@description('Runs django dbshell')
-def django_dbshell(project, logger):
-    from pybuilder_django_enhanced_plugin.tasks.common import get_django_command_args
-    from django.core.management import execute_from_command_line
-
-    args = ['dbshell']
-    args += get_django_command_args(project)
-    logger.info('Running django dbshell {} '.format(args))
-    execute_from_command_line([''] + args)
-
-
-@task
-def dbshell(project, logger):
-    django_dbshell(project, logger)
+    django_exec(project, logger, ['flush', '--noinput'], fail_stderr=False)
 
 
 @init
