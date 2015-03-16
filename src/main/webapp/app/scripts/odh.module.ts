@@ -52,27 +52,6 @@ module openDataHub {
                 controller: 'OfferParamsController as params',
                 templateUrl: 'views/offer.params.html'
             })
-            .state('register', {
-                url: '/register',
-                controller: 'RegisterController as vm',
-                templateUrl: '/views/authentication/register.html'
-            })
-            .state('login', {
-                url: '/login',
-                controller: 'LoginController as vm',
-                templateUrl: '/views/authentication/login.html'
-            })
-            .state('userDetail',
-            {
-                url: '/:username',
-                controller: 'AccountController as vm',
-                templateUrl: '/views/authentication/account.html'
-            })
-            .state('userSettings',
-            {
-                url: '/:username/settings',
-                controller: 'AccountSettingsController as vm',
-                templateUrl: '/views/authentication/settings.html'
-            });
+            ;
     }
 }

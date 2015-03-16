@@ -13,18 +13,6 @@ module odh {
                     private AuthenticationService:odh.auth.AuthenticationService) {
 
         }
-
-        logout() {
-            this.AuthenticationService.logout();
-        }
-
-        isAuthenticated() {
-            return this.AuthenticationService.isAuthenticated();
-        }
-
-        getAuthenticatedAccount() {
-            return this.AuthenticationService.getAuthenticatedAccount();
-        }
     }
 
     angular.module('openDataHub').controller('NavBarController', NavBarController);

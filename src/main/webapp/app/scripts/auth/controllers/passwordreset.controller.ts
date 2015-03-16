@@ -4,36 +4,37 @@
 module odh.auth {
     'use strict';
 
-    class RegisterController {
+    class PasswordResetController {
 
+        public complete:boolean;
         public model:any;
         public errors:any;
-        public complete:boolean;
 
         constructor(private ValidateService:odh.auth.ValidateService,
                     private AuthenticationService:odh.auth.AuthenticationService) {
             // controller init
-            this.model = {'username': '', 'password': '', 'email': ''};
-            this.errors = [];
             this.complete = false;
+            this.model = {'email': ''};
+
+
         }
 
-        public register(formData:any) {
+        public resetPassword(formData:any) {
+            this.errors = [];
             this.ValidateService.form_validation(formData, this.errors);
             if (!formData.$invalid) {
-                this.AuthenticationService.register(
-                    this.model.username, this.model.password1, this.model.password2, this.model.email
-                )
-                    .then(() => {
+                this.AuthenticationService.resetPassword(this.model.email)
+                    .then(function () {
                         // success case
                         this.complete = true;
-                    })
-                    .catch((data) => {
+                    }, function (data) {
                         // error case
                         this.errors = data;
                     });
             }
+
         }
+
     }
-    angular.module('openDataHub.auth').controller('RegisterController', RegisterController);
+    angular.module('openDataHub.auth').controller('PasswordResetController', PasswordResetController);
 }

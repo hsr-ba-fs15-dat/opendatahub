@@ -2,7 +2,7 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from rest_framework import routers
 
-from authentication.views import AccountViewSet, LoginView, LogoutView
+from authentication.views import FacebookLogin
 from opendatahub.settings import PRODUCTION, STATIC_ROOT
 from hub.views import DocumentViewSet, RecordViewSet
 
@@ -10,7 +10,6 @@ from hub.views import DocumentViewSet, RecordViewSet
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'documents', DocumentViewSet)
 router.register(r'records', RecordViewSet)
-router.register(r'accounts', AccountViewSet)
 
 from hub import views
 
@@ -19,8 +18,11 @@ urlpatterns = (
     url(r'^test/', views.test),
     url(r'api/v1/', include(router.urls)),
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^api/v1/auth/login$', LoginView.as_view(), name='login'),
-    url(r'^api/v1/auth/logout$', LogoutView.as_view(), name='logout'),
+
+    url(r'^rest-auth/', include('rest_auth.urls')),
+    url(r'^rest-auth/registration/', include('rest_auth.registration.urls')),
+
+    url(r'^/rest-auth/facebook/$', FacebookLogin.as_view(), name='fb_login')
 
 )
 
