@@ -10,8 +10,9 @@
 
             <div class="col-md-5">
                 <input id="name" name="name" type="text" placeholder="z.B. Verkehrshindernisse ZH"
-                       class="form-control input-md" required=""
-                       ng-model="offer.name">
+                       class="form-control input-md"
+                       ng-model="offer.name"
+                       required>
             </div>
         </div>
 
@@ -22,6 +23,7 @@
             <div class="col-md-5">
                 <textarea class="form-control" id="description" name="description"
                           ng-model="offer.description"
+                          required
                         ></textarea>
             </div>
         </div>
@@ -31,8 +33,11 @@
             <label class="col-md-4 control-label" for="data-source">Quelle</label>
 
             <div class="col-md-5">
-                <ui-select ng-model="offer.dataSource" theme="bootstrap"
+                <ui-select id="data-source" name="data-source"
+                           ng-model="offer.dataSource"
+                           theme="bootstrap"
                            on-select="offer.switchDataSource($item, $model)"
+                           required
                         >
                     <ui-select-match placeholder="Wählen Sie eine Datenquelle">
                         {{$select.selected.label}}
@@ -47,7 +52,6 @@
 
         <div class="form-group" ui-view></div>
 
-        <!-- Button (Double) -->
         <div class="form-group">
             <label class="col-md-4 control-label" for="add"></label>
 
@@ -57,5 +61,13 @@
             </div>
         </div>
 
+        <div ng-show="offer.progress" class="col-md-offset-4 col-md-5">
+            <progressbar class="progress-striped active" max="100"
+                         value="offer.progress" type="info">
+            </progressbar>
+        </div>
+
     </fieldset>
+
 </form>
+

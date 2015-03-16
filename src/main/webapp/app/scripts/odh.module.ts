@@ -15,6 +15,7 @@ module openDataHub {
             'ui.router',
             'ui.utils',
             'ui.select',
+            'ui.bootstrap',
             'ngGrid',
             'openDataHub.auth',
             'openDataHub.utils',
@@ -22,6 +23,7 @@ module openDataHub {
         ])
 
         .config(($stateProvider:ng.ui.IStateProvider, $locationProvider:ng.ILocationProvider) => {
+
             $stateProvider
                 .state('main', {
                     url: '/',

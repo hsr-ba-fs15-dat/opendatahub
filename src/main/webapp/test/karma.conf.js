@@ -39,6 +39,7 @@ module.exports = function(config) {
       'bower_components/jsPlumb/dist/js/dom.jsPlumb-1.7.4.js',
       'bower_components/jsPlumb/dist/js/jquery.jsPlumb-1.7.4.js',
       'bower_components/jquery-ui/jquery-ui.js',
+      'bower_components/ng-file-upload/angular-file-upload.js',
       'bower_components/ng-grid/build/ng-grid.js',
       'bower_components/json3/lib/json3.min.js',
       'bower_components/angular-mocks/angular-mocks.js',

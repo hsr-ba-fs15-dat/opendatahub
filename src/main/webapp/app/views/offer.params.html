@@ -1,10 +1,44 @@
 <div ng-repeat="field in params.fields">
-    <label class="col-md-4 control-label" for="{{ field.id }}">{{ field.label }}</label>
 
-    <div class="col-md-5">
+    <div ng-switch="field.type">
 
-        <input ng-model="offer.params.url" id="{{ field.id }}" name="{{ field.id }}" type="text" placeholder="{{ field.placeholder }}"
-               class="form-control input-md" required>
-        <span ng-if="field.helpText" ng-bind="field.helpText" class="help-block"></span>
+        <div ng-switch-when="file">
+            <div class="col-md-offset-4 col-md-5">
+
+                <div ng-file-drop ng-file-select ng-model="offer.params.file" class="drop-box"
+                     drag-over-class="dragover" ng-multiple="false" allow-dir="false">
+
+                <span ng-show="offer.params.file">
+                    {{ offer.params.file[0].name | limitTo: 20 }}{{ offer.params.file[0].name.length > 20 ? '...' : '' }}
+                </span>
+
+                <span ng-hide="offer.params.file">
+                    {{ field.label }}
+                </span>
+
+                </div>
+                <div ng-no-file-drop>File Drag/Drop is not supported for this browser</div>
+
+            </div>
+        </div>
+
+
+        <div ng-switch-default>
+
+            <label class="col-md-4 control-label" for="{{ field.id }}">{{ field.label }}</label>
+
+            <div class="col-md-5">
+
+                <input ng-model="offer.params.url" id="{{ field.id }}" name="{{ field.id }}" type="text"
+                       placeholder="{{ field.placeholder }}"
+                       class="form-control input-md" required>
+                <span ng-if="field.helpText" ng-bind="field.helpText" class="help-block"></span>
+
+            </div>
+        </div>
+
+
     </div>
 </div>
+
+

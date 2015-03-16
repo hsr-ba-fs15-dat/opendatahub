@@ -5,5 +5,6 @@ module odh.utils {
 
     angular
         .module('openDataHub.main', [
+            'angularFileUpload'
         ]);
 }
