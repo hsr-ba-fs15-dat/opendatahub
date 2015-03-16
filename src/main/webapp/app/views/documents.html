@@ -1,0 +1,17 @@
+
+<form name="form" class="form-horizontal">
+    <div class="form-group">
+        <label class="col-md-4 control-label" for="name">Suche</label>
+
+        <div class="col-md-6">
+            <input id="name" name="name" type="text" placeholder="z.B. Verkehrshindernisse ZH"
+                   class="form-control input-md" ng-model="docs.searchTerms">
+        </div>
+
+        <div class="col-md-2">
+            <button class="btn btn-primary" ng-click="docs.retrieveDataAsync()">Search</button>
+        </div>
+    </div>
+</form>
+
+<div class="gridStyle" ng-grid="docs.gridOptions"></div>

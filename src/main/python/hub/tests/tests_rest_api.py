@@ -63,10 +63,11 @@ class RestApiTests(testutils.TestBase):
 
         result_json = json.loads(result.content)
 
-        self.assertIsInstance(result_json, types.ListType)
-        self.assertEqual(2, len(result_json))
+        self.assertIn('results', result_json)
+        self.assertIsInstance(result_json['results'], types.ListType)
+        self.assertEqual(2, len(result_json['results']))
 
-        for record in result_json:
+        for record in result_json['results']:
             self.assert_record_ok(record)
 
     def test_get_records(self):
@@ -76,8 +77,9 @@ class RestApiTests(testutils.TestBase):
 
         result_json = json.loads(result.content)
 
-        self.assertIsInstance(result_json, types.ListType)
-        self.assertGreater(len(result_json), 2)
+        self.assertIn('results', result_json)
+        self.assertIsInstance(result_json['results'], types.ListType)
+        self.assertGreater(len(result_json['results']), 2)
 
-        for record in result_json:
+        for record in result_json['results']:
             self.assert_record_ok(record)

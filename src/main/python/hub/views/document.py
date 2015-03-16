@@ -1,12 +1,14 @@
 import itertools
 
-from django.http import HttpResponse
 from rest_framework import viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 
-from hub.serializers import DocumentSerializer, RecordSerializer
+from django.db.models import Q
+from django.http import HttpResponse
+
+from hub.serializers import DocumentSerializer, PaginatedRecordSerializer
 from hub.models import DocumentModel, RecordModel
 from hub.base import InputNode, ParserNode, FormatterNode
 from hub.nodes import DatabaseWriter, DatabaseReader
@@ -16,15 +18,18 @@ class DocumentViewSet(viewsets.ModelViewSet):
     queryset = DocumentModel.objects.all()
     serializer_class = DocumentSerializer
 
+    paginate_by = 50
+
     @detail_route()
     def records(self, request, pk, *args, **kwargs):
         records = RecordModel.objects.filter(document__id=pk)
-        serializer = RecordSerializer(records, many=True, context={'request': request})
+        records = self.paginate_queryset(records)
+        serializer = PaginatedRecordSerializer(instance=records, context=self.get_serializer_context())
         return Response(serializer.data)
 
     @detail_route()
-    def data(self, request, pk, format='csv'):
-        # format = request.query_params['format'] if 'format' in request.query_params else  'csv'
+    def data(self, request, pk):
+        format = request.query_params.get('format', 'csv')
 
         reader = DatabaseReader()
 
@@ -77,11 +82,25 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
         raise ValidationError(detail='error handling input')
 
+    def list(self, request, *args, **kwargs):
+        """
+        Search for documents. Valid query parameters:
+        - name: Searches only in the name field.
+        - description: Searches only in the description field.
+        - search: searches all available text fields.
+        Wildcards are not needed.
+        """
+        params = request.query_params
 
-class RecordViewSet(viewsets.ModelViewSet):
-    queryset = RecordModel.objects.all()
-    serializer_class = RecordSerializer
+        documents = DocumentModel.objects.all()
 
+        if 'name' in params:
+            documents = documents.filter(name__icontains=params['name'])
+        if 'description' in params:
+            documents = documents.filter(description__icontains=params['description'])
+        if 'search' in params:
+            documents = documents.filter(Q(name__icontains=params['search']) |
+                                         Q(description__icontains=params['search']))
 
-def test(request):
-    return HttpResponse('test')
+        serializer = self.get_pagination_serializer(self.paginate_queryset(documents)) # many=True, context={'request': request}
+        return Response(serializer.data)

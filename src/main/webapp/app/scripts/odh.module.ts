@@ -15,6 +15,7 @@ module openDataHub {
             'ui.router',
             'ui.utils',
             'ui.select',
+            'ngGrid',
             'openDataHub.auth',
             'openDataHub.utils'
         ]);
@@ -51,6 +52,11 @@ module openDataHub {
                 url: '/:type',
                 controller: 'OfferParamsController as params',
                 templateUrl: 'views/offer.params.html'
+            })
+            .state('documents', {
+                url: '/documents',
+                controller: 'DocumentListController as docs',
+                templateUrl: 'views/documents.html'
             })
             .state('register', {
                 url: '/register',

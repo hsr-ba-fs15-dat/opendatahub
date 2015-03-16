@@ -4,7 +4,8 @@ from rest_framework import routers
 
 from authentication.views import AccountViewSet, LoginView, LogoutView
 from opendatahub.settings import PRODUCTION, STATIC_ROOT
-from hub.views import DocumentViewSet, RecordViewSet
+from hub.views.document import DocumentViewSet
+from hub.views.record import RecordViewSet
 
 
 router = routers.DefaultRouter(trailing_slash=False)
@@ -16,7 +17,6 @@ from hub import views
 
 
 urlpatterns = (
-    url(r'^test/', views.test),
     url(r'api/v1/', include(router.urls)),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^api/v1/auth/login$', LoginView.as_view(), name='login'),
