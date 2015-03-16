@@ -35,12 +35,8 @@ module openDataHub {
                     url: '/:type',
                     controller: 'OfferParamsController as params',
                     templateUrl: 'views/offer.params.html'
-                })
-                
-             
-
+                });
         })
-
         .run(($http:ng.IHttpService) => {
             $http.defaults.xsrfHeaderName = 'X-CSRFToken';
             $http.defaults.xsrfCookieName = 'csrftoken';
