@@ -145,6 +145,13 @@ def django_flush(project, logger):
     django_exec(project, logger, ['flush', '--noinput'], fail_stderr=False)
 
 
+
+@task
+@depends('prepare')
+def django_reset_db(project, logger):
+    django_exec(project, logger, ['reset_db', '--noinput'], fail_stderr=False)
+
+
 @init
 def init_pylint(project):
     project.build_depends_on('pylint')
