@@ -9,6 +9,7 @@ addons:
 env:
   global:
     - CI=true
+    - secure: "RC8P0y4q2g8ErB7MnTz4w5q1PK79rYeLN7YHfqaLZ4QeL+FF5cIVw9YP4iCI3I4mq7zm++jSQFoZj75G3iX8VZgJSqJjsriZKi6jXBqkF2q9CUWTJI935sNrRfaTC+Dxgcve5xK7ddIGuCmusN2foYSaon5Zlrq1xSTCcnMjV/M="
 
 install:
   - pip install pybuilder
