@@ -12,8 +12,8 @@ module odh {
         public description:string;
         public params:any = {};
 
-        constructor(private $http:ng.IHttpService, private $state:ng.ui.IStateService, private ngToast,
-                    private $window:ng.IWindowService) {
+        constructor(private $http:ng.IHttpService, private $state:ng.ui.IStateService,
+                    private ToastService:odh.utils.ToastService, private $window:ng.IWindowService) {
 
             this.dataSources = [{label: 'Online', type: 'online'}, {label: 'Datei hochladen', type: 'file'}];
             this.dataSource = this.dataSources[0];
@@ -44,12 +44,11 @@ module odh {
         private createSuccess(data) {
             // todo remove demo/test
             this.$window.open(data.data.url);
-            this.ngToast.create('Datei erfolgreich abgelegt');
-
+            this.ToastService.success('Datei erfolgreich abgelegt');
         }
 
         private createFailure(data) {
-            this.ngToast.create({className: 'danger', content: 'Ups! Irgendwas ist schief gelaufen'});
+            this.ToastService.failure('Ups! Irgendwas ist schief gelaufen!');
         }
 
     }

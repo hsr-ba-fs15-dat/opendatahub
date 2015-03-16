@@ -243,6 +243,13 @@ module.exports = function (grunt) {
                 options: {
                     starttag: '<!-- build:js({.tmp,app}) scripts/scripts.js -->',
                     endtag: '<!-- endbuild -->',
+                    sort: function (a, b) {
+                        var va = a.search('.module.ts') === -1 ? 0 : 100;
+                        var vb = b.search('.module.ts') === -1 ? 0 : 100;
+                        va -= a.split('/').length;
+                        vb -= b.split('/').length;
+                        return vb - va;
+                    },
                     transform: function (file, i, length) {
                         if (file.search('.d.ts') === -1) {
                             file = file.replace('app/', '').replace('.ts', '.js');

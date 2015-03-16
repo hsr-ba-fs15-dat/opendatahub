@@ -15,10 +15,9 @@ module openDataHub {
             'ui.router',
             'ui.utils',
             'ui.select',
-            'ngToast',
             'openDataHub.auth',
+            'openDataHub.utils'
         ]);
-
 
     angular
         .module('openDataHub')
@@ -33,7 +32,9 @@ module openDataHub {
     function config($stateProvider:ng.ui.IStateProvider, $locationProvider:ng.ILocationProvider, ngToastProvider) {
 
         ngToastProvider.configure({
-            horizontalPosition: 'center'
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+            animation: 'slide'
         });
 
         $stateProvider
