@@ -3,8 +3,6 @@
 
 // injector:ts
 
-/// <reference path='app.config.ts' />
-/// <reference path='app.routes.ts' />
 /// <reference path='auth/auth.module.ts' />
 
 /// <reference path='auth/controllers/login.ts' />
@@ -19,12 +17,12 @@
 /// <reference path='auth/controllers/userprofile.controller.ts' />
 /// <reference path='auth/controllers/verifyemail.controller.ts' />
 /// <reference path='auth/services/auth.service.ts' />
-/// <reference path='auth/services/validate.service.ts' />
-/// <reference path='controllers/about.ts' />
-/// <reference path='controllers/main.ts' />
-/// <reference path='controllers/navbar.controller.ts' />
-/// <reference path='controllers/offer.ts' />
-/// <reference path='directives/focus.ts' />
+/// <reference path='main/controllers/about.controller.ts' />
+/// <reference path='main/controllers/main.controller.ts' />
+/// <reference path='main/controllers/navbar.controller.ts' />
+/// <reference path='main/controllers/offer.controller.ts' />
+/// <reference path='main/directives/focus.ts' />
+/// <reference path='main/main.module.ts' />
 /// <reference path='odh.module.ts' />
 /// <reference path='temp/hubPlumb.ts' />
 /// <reference path='utils/toast.service.ts' />

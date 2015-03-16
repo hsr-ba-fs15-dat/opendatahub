@@ -42,7 +42,26 @@ module.exports = function(config) {
       'bower_components/json3/lib/json3.min.js',
       'bower_components/angular-mocks/angular-mocks.js',
       // endbower
-      'app/scripts/**/*.js',
+      // injector:js
+      'app/scripts/odh.module.js',
+      'app/scripts/utils/utils.module.js',
+      'app/scripts/main/main.module.js',
+      'app/scripts/auth/auth.module.js',
+      
+      'app/scripts/temp/hubPlumb.js',
+      'app/scripts/utils/toast.service.js',
+      'app/scripts/main/controllers/offer.controller.js',
+      'app/scripts/main/controllers/about.controller.js',
+      'app/scripts/auth/controllers/login.controller.js',
+      'app/scripts/main/controllers/navbar.controller.js',
+      'app/scripts/auth/services/accounts.service.js',
+      'app/scripts/main/directives/focus.js',
+      'app/scripts/auth/controllers/account.controller.js',
+      'app/scripts/auth/controllers/account-settings.controller.js',
+      'app/scripts/auth/controllers/register.controller.js',
+      'app/scripts/auth/services/auth.service.js',
+      'app/scripts/main/controllers/main.controller.js',
+      // endinjector
       'test/mock/**/*.js',
       'test/spec/**/*.js'
     ],

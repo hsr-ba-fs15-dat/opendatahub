@@ -252,13 +252,35 @@ module.exports = function (grunt) {
                     },
                     transform: function (file, i, length) {
                         if (file.search('.d.ts') === -1) {
-                            file = file.replace('app/', '').replace('.ts', '.js');
+                            file = file.replace('/app/', '').replace('.ts', '.js');
                             return '<script src="' + file + '"></script>';
                         }
                     }
                 },
                 files: {
                     '<%= yeoman.app %>/index.html': ['<%= yeoman.app %>/scripts/**/*.ts']
+                }
+            },
+            jstest: {
+                options: {
+                    starttag: '// injector:js',
+                    endtag: '// endinjector',
+                    sort: function (a, b) {
+                        var va = a.search('.module.ts') === -1 ? 0 : 100;
+                        var vb = b.search('.module.ts') === -1 ? 0 : 100;
+                        va -= a.split('/').length;
+                        vb -= b.split('/').length;
+                        return vb - va;
+                    },
+                    transform: function (file, i, length) {
+                        if (file.search('.d.ts') === -1) {
+                            file = file.replace('/app/', 'app/').replace('.ts', '.js');
+                            return "'" + file + "',";
+                        }
+                    }
+                },
+                files: {
+                    'test/karma.conf.js': ['<%= yeoman.app %>/scripts/**/*.ts']
                 }
             }
         },
@@ -519,6 +541,7 @@ module.exports = function (grunt) {
     grunt.registerTask('test', [
         'clean:server',
         'wiredep',
+        'ts',
         'concurrent:test',
         'autoprefixer',
         'connect:test',

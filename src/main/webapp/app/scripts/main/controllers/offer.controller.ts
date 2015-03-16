@@ -1,4 +1,4 @@
-/// <reference path='../all.d.ts' />
+/// <reference path='../../all.d.ts' />
 
 
 module odh {
@@ -52,7 +52,7 @@ module odh {
         }
 
     }
-    angular.module('openDataHub').controller('OfferController', OfferController);
+    angular.module('openDataHub.main').controller('OfferController', OfferController);
 
 
     class OfferParamsController {
@@ -68,5 +68,5 @@ module odh {
         }
 
     }
-    angular.module('openDataHub').controller('OfferParamsController', OfferParamsController);
+    angular.module('openDataHub.main').controller('OfferParamsController', OfferParamsController);
 }
