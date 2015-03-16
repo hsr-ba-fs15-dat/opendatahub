@@ -18,6 +18,7 @@ install:
   - npm install -g tsd@next
   - gem update --system
   - gem install compass
+  - wget -qO- https://toolbelt.heroku.com/install-ubuntu.sh | sh
 
 before_script:
   - psql -c "CREATE USER opendatahub WITH PASSWORD 'opendatahub';" -U postgres
@@ -29,6 +30,7 @@ script:
  - pyb -v
 
 before_deploy:
+ - heroku pg:reset DATABASE --confirm opendatahub-hsr-dev
  - git config --global user.email 'build@travis-ci.com'
  - git config --global user.name 'Tavis CI'
  - git add -f $TRAVIS_BUILD_DIR/src/main/webapp/dist $TRAVIS_BUILD_DIR/src/main/python/staticfiles
