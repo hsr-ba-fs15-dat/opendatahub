@@ -40,7 +40,27 @@ module.exports = function(config) {
       'bower_components/jquery-ui/jquery-ui.js',
       'bower_components/angular-mocks/angular-mocks.js',
       // endbower
-      'app/scripts/**/*.js',
+      // injector:js
+      'app/scripts/odh.module.js',
+      'app/scripts/utils/utils.module.js',
+      'app/scripts/auth/auth.module.js',
+      
+      'app/scripts/odh.config.js',
+      'app/scripts/odh.routes.js',
+      'app/scripts/directives/focus.js',
+      'app/scripts/controllers/main.js',
+      'app/scripts/controllers/about.js',
+      'app/scripts/utils/toast.service.js',
+      'app/scripts/controllers/navbar.controller.js',
+      'app/scripts/controllers/offer.js',
+      'app/scripts/temp/hubPlumb.js',
+      'app/scripts/auth/controllers/login.controller.js',
+      'app/scripts/auth/controllers/account.controller.js',
+      'app/scripts/auth/controllers/account-settings.controller.js',
+      'app/scripts/auth/services/auth.service.js',
+      'app/scripts/auth/controllers/register.controller.js',
+      'app/scripts/auth/services/accounts.service.js',
+      // endinjector
       'test/mock/**/*.js',
       'test/spec/**/*.js'
     ],
