@@ -47,8 +47,8 @@ deploy:
   app:
     master: opendatahub-hsr-dev
   run:
-    - "'python $HOME/src/main/python/manage.py makemigrations --noinput'"
-    - "'python $HOME/src/main/python/manage.py migrate --noinput'"
+    - python /app/src/main/python/manage.py makemigrations --noinput
+    - python /app/src/main/python/manage.py migrate --noinput
 
 
 notifications:
