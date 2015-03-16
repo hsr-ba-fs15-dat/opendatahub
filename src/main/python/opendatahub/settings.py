@@ -38,10 +38,18 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'django.contrib.sites',
     'django.contrib.staticfiles',
     'rest_framework',
     'hub',
     'authentication',
+    'rest_framework.authtoken',
+    'rest_auth',
+    'allauth',
+    'allauth.account',
+    'rest_auth.registration',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.facebook',
 )
 
 # Dev. only, not required
@@ -66,7 +74,10 @@ ROOT_URLCONF = 'opendatahub.urls'
 
 WSGI_APPLICATION = 'opendatahub.wsgi.application'
 
-
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'allauth.socialaccount.context_processors.socialaccount',
+    'django.contrib.auth.context_processors.auth'
+)
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 
@@ -91,8 +102,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
-
+SITE_ID = 1
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
-AUTH_USER_MODEL = 'authentication.Account'

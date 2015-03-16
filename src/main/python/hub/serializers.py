@@ -11,6 +11,7 @@ class RecordSerializer(serializers.HyperlinkedModelSerializer):
         model = RecordModel
         fields = ('id', 'url', 'document', 'content')
 
+
 class PaginatedRecordSerializer(PaginationSerializer):
     class Meta:
         object_serializer_class = RecordSerializer

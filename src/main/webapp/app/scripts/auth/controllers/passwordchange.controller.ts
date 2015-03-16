@@ -4,36 +4,35 @@
 module odh.auth {
     'use strict';
 
-    class RegisterController {
+    class PasswordChangeController {
 
-        public model:any;
-        public errors:any;
+        public errors: any;
+        public model: any;
         public complete:boolean;
 
         constructor(private ValidateService:odh.auth.ValidateService,
                     private AuthenticationService:odh.auth.AuthenticationService) {
             // controller init
-            this.model = {'username': '', 'password': '', 'email': ''};
-            this.errors = [];
+            this.model = {'new_password1': '', 'new_password2': ''};
             this.complete = false;
         }
 
-        public register(formData:any) {
+        public changePassword(formData:any) {
+            this.errors = [];
             this.ValidateService.form_validation(formData, this.errors);
             if (!formData.$invalid) {
-                this.AuthenticationService.register(
-                    this.model.username, this.model.password1, this.model.password2, this.model.email
-                )
-                    .then(() => {
+                this.AuthenticationService.changePassword(this.model.new_password1, this.model.new_password2)
+                    .then(function () {
                         // success case
                         this.complete = true;
-                    })
-                    .catch((data) => {
+                    }, function (data) {
                         // error case
                         this.errors = data;
                     });
             }
         }
+
+
     }
-    angular.module('openDataHub.auth').controller('RegisterController', RegisterController);
+    angular.module('openDataHub.auth').controller('PasswordChangeController', PasswordChangeController);
 }

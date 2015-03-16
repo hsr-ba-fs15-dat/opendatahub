@@ -4,7 +4,6 @@ from rest_framework import viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
-
 from django.db.models import Q
 from django.http import HttpResponse
 
@@ -102,5 +101,6 @@ class DocumentViewSet(viewsets.ModelViewSet):
             documents = documents.filter(Q(name__icontains=params['search']) |
                                          Q(description__icontains=params['search']))
 
-        serializer = self.get_pagination_serializer(self.paginate_queryset(documents)) # many=True, context={'request': request}
+        serializer = self.get_pagination_serializer(
+            self.paginate_queryset(documents))  # many=True, context={'request': request}
         return Response(serializer.data)

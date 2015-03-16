@@ -9,4 +9,3 @@ class RecordViewSet(viewsets.ModelViewSet):
     serializer_class = RecordSerializer
 
     paginate_by = 50
-
