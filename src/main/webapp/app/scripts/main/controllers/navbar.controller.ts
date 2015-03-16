@@ -1,4 +1,4 @@
-/// <reference path='../all.d.ts' />
+/// <reference path='../../all.d.ts' />
 
 
 module odh {
@@ -27,5 +27,5 @@ module odh {
         }
     }
 
-    angular.module('openDataHub').controller('NavBarController', NavBarController);
+    angular.module('openDataHub.main').controller('NavBarController', NavBarController);
 }

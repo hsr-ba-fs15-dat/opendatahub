@@ -16,63 +16,54 @@ module openDataHub {
             'ui.utils',
             'ui.select',
             'openDataHub.auth',
-            'openDataHub.utils'
-        ]);
+            'openDataHub.utils',
+            'openDataHub.main'
+        ])
 
-    angular
-        .module('openDataHub')
-        .config(config)
-        .run(run);
+        .config(($stateProvider:ng.ui.IStateProvider, $locationProvider:ng.ILocationProvider) => {
+            $stateProvider
+                .state('main', {
+                    url: '/',
+                    templateUrl: 'views/main.html'
+                })
+                .state('offer', {
+                    url: '/offer',
+                    controller: 'OfferController as offer',
+                    templateUrl: 'views/offer.html'
+                })
+                .state('offer.params', {
+                    url: '/:type',
+                    controller: 'OfferParamsController as params',
+                    templateUrl: 'views/offer.params.html'
+                })
+                .state('register', {
+                    url: '/register',
+                    controller: 'RegisterController as vm',
+                    templateUrl: '/views/authentication/register.html'
+                })
+                .state('login', {
+                    url: '/login',
+                    controller: 'LoginController as vm',
+                    templateUrl: '/views/authentication/login.html'
+                })
+                .state('userDetail',
+                {
+                    url: '/:username',
+                    controller: 'AccountController as vm',
+                    templateUrl: '/views/authentication/account.html'
+                })
+                .state('userSettings',
+                {
+                    url: '/:username/settings',
+                    controller: 'AccountSettingsController as vm',
+                    templateUrl: '/views/authentication/settings.html'
+                });
 
-    function run($http:ng.IHttpService) {
-        $http.defaults.xsrfHeaderName = 'X-CSRFToken';
-        $http.defaults.xsrfCookieName = 'csrftoken';
-    }
+        })
 
-    function config($stateProvider:ng.ui.IStateProvider, $locationProvider:ng.ILocationProvider, ngToastProvider) {
-
-        ngToastProvider.configure({
-            horizontalPosition: 'center',
-            verticalPosition: 'top',
-            animation: 'slide'
+        .run(($http:ng.IHttpService) => {
+            $http.defaults.xsrfHeaderName = 'X-CSRFToken';
+            $http.defaults.xsrfCookieName = 'csrftoken';
         });
 
-        $stateProvider
-            .state('main', {
-                url: '/',
-                templateUrl: 'views/main.html'
-            })
-            .state('offer', {
-                url: '/offer',
-                controller: 'OfferController as offer',
-                templateUrl: 'views/offer.html'
-            })
-            .state('offer.params', {
-                url: '/:type',
-                controller: 'OfferParamsController as params',
-                templateUrl: 'views/offer.params.html'
-            })
-            .state('register', {
-                url: '/register',
-                controller: 'RegisterController as vm',
-                templateUrl: '/views/authentication/register.html'
-            })
-            .state('login', {
-                url: '/login',
-                controller: 'LoginController as vm',
-                templateUrl: '/views/authentication/login.html'
-            })
-            .state('userDetail',
-            {
-                url: '/:username',
-                controller: 'AccountController as vm',
-                templateUrl: '/views/authentication/account.html'
-            })
-            .state('userSettings',
-            {
-                url: '/:username/settings',
-                controller: 'AccountSettingsController as vm',
-                templateUrl: '/views/authentication/settings.html'
-            });
-    }
 }
