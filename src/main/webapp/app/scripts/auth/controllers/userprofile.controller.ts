@@ -4,36 +4,38 @@
 module odh.auth {
     'use strict';
 
-    class RegisterController {
+    class UserProfileController {
 
+        public complete:boolean;
         public model:any;
         public errors:any;
-        public complete:boolean;
 
         constructor(private ValidateService:odh.auth.ValidateService,
                     private AuthenticationService:odh.auth.AuthenticationService) {
             // controller init
-            this.model = {'username': '', 'password': '', 'email': ''};
-            this.errors = [];
+            this.model = {'first_name': '', 'last_name': '', 'email': ''};
             this.complete = false;
+            AuthenticationService.profile().then(function (data) {
+                this.model = data;
+            });
         }
 
-        public register(formData:any) {
+        public updateProfile(formData:any, model:any) {
+            this.errors = [];
             this.ValidateService.form_validation(formData, this.errors);
             if (!formData.$invalid) {
-                this.AuthenticationService.register(
-                    this.model.username, this.model.password1, this.model.password2, this.model.email
-                )
-                    .then(() => {
+                this.AuthenticationService.updateProfile(model)
+                    .then(function (data) {
                         // success case
                         this.complete = true;
-                    })
-                    .catch((data) => {
+                    }, function (data) {
                         // error case
-                        this.errors = data;
+                        this.error = data;
                     });
             }
         }
+
+
     }
-    angular.module('openDataHub.auth').controller('RegisterController', RegisterController);
+    angular.module('openDataHub.auth').controller('UserProfileController', UserProfileController);
 }
