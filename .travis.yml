@@ -47,8 +47,7 @@ deploy:
   app:
     master: opendatahub-hsr-dev
   run:
-    - django-admin makemigrations --pythonpath=/app/src/main/python/ --settings=opendatahub.settings --noinput
-    - django-admin migrate --pythonpath=/app/src/main/python/ --settings=opendatahub.settings --noinput
+    - django-admin makemigrations --pythonpath=/app/src/main/python/ --settings=opendatahub.settings --noinput && django-admin migrate --pythonpath=/app/src/main/python/ --settings=opendatahub.settings --noinput
 
 
 notifications:
