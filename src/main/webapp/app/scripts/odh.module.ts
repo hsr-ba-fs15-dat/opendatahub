@@ -22,7 +22,10 @@ module openDataHub {
             'openDataHub.main'
         ])
 
-        .config(($stateProvider:ng.ui.IStateProvider, $locationProvider:ng.ILocationProvider) => {
+        .config(($stateProvider:ng.ui.IStateProvider, $locationProvider:ng.ILocationProvider,
+                 UrlServiceProvider:odh.utils.UrlService) => {
+
+            UrlServiceProvider.setApiPrefix('/api/v1/');
 
             $stateProvider
                 .state('main', {

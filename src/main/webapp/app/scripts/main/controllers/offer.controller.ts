@@ -14,7 +14,8 @@ module odh {
         public progress = 0;
 
         constructor(private $http:ng.IHttpService, private $state:ng.ui.IStateService, private $scope:ng.IScope,
-                    private ToastService:odh.utils.ToastService, private $window:ng.IWindowService, private $upload) {
+                    private ToastService:odh.utils.ToastService, private $window:ng.IWindowService, private $upload,
+                    private UrlService:odh.utils.UrlService) {
 
             this.dataSources = [{label: 'Online', type: 'online'}, {label: 'Datei hochladen', type: 'file'}];
             this.dataSource = this.dataSources[0];
@@ -34,10 +35,11 @@ module odh {
             // todo move to service
             // todo redirect to newly created doc "detail view"
             var promise:any;
+            var url = this.UrlService.get('documents');
 
             if (this.params.file) {
                 promise = this.$upload.upload({
-                    url: '/api/v1/documents',
+                    url: url,
                     fields: {name: this.name, description: this.description},
                     file: this.params.file
                 });
@@ -47,7 +49,7 @@ module odh {
                 });
 
             } else {
-                promise = this.$http.post('/api/v1/documents', {
+                promise = this.$http.post(url, {
                     name: this.name,
                     description: this.description,
                     url: this.params.url

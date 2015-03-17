@@ -12,8 +12,11 @@ module odh {
     export class DocumentService implements ng.IServiceProvider {
         private documents;
 
-        constructor(private $log:ng.ILogService, private $resource:ng.resource.IResourceService) {
-            this.documents = $resource('http://localhost:5000/api/v1/documents');
+        constructor(private $log:ng.ILogService, private $resource:ng.resource.IResourceService,
+                    UrlService:odh.utils.UrlService) {
+
+            var url = UrlService.get('documents');
+            this.documents = $resource(url);
         }
 
         public $get(query:string, page:number = 1) {

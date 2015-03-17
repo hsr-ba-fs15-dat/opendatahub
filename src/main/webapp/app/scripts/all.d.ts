@@ -29,5 +29,6 @@
 /// <reference path='odh.module.ts' />
 /// <reference path='temp/hubPlumb.ts' />
 /// <reference path='utils/toast.service.ts' />
+/// <reference path='utils/url.service.ts' />
 /// <reference path='utils/utils.module.ts' />
 // endinjector
