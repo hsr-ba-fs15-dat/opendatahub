@@ -30,4 +30,3 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 class PaginatedDocumentSerializer(PaginationSerializer):
     class Meta:
         object_serializer_class = DocumentSerializer
-
