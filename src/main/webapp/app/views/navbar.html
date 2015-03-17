@@ -19,8 +19,9 @@
             <ul class="nav navbar-nav">
                 <li ui-sref-active="active"><a ui-sref="documents">Dokumente</a></li>
                 <li ui-sref-active="active"><a ui-sref="offer">Teilen</a></li>
+                <li ui-sref-active="active"><a ui-sref="about">Über</a></li>
 
-                <li ui-sref-active="active" class="dropdown">
+                <li ui-sref-active="active" class="dropdown" ng-show="false">
 
                     <a class="dropdown-toggle" data-toggle="dropdown">User
                         {{ vm.getAuthenticatedAccount().username }} <b class="caret"></b></a>
@@ -34,7 +35,7 @@
                     </ul>
                 </li>
             </ul>
-            <ul class="nav navbar-nav navbar-right">
+            <ul class="nav navbar-nav navbar-right" ng-show="false">
                 <li ng-show="vm.isAuthenticated()">
                     <a href="#" ng-click="vm.logout()">Logout</a>
                 </li>

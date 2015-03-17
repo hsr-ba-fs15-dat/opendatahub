@@ -6,11 +6,11 @@
 
         <!-- Text input-->
         <div class="form-group" ng-class="{'has-error': form.name.$invalid && form.name.$dirty}">
-            <label class="col-md-3 control-label" for="name">Name</label>
+            <label class="col-md-3 control-label" for="name">Name/Titel</label>
 
             <div class="col-md-6">
                 <input id="name" name="name" type="text" placeholder="z.B. Verkehrshindernisse ZH"
-                       class="form-control input-md"
+                       class="form-control input-md floating-label"
                        ng-model="offer.name"
                        required>
 
@@ -27,8 +27,9 @@
             <label class="col-md-3 control-label" for="description">Beschreibung</label>
 
             <div class="col-md-6">
-                <textarea class="form-control" id="description" name="description"
+                <textarea class="form-control floating-label" id="description" name="description"
                           ng-model="offer.description"
+                          placeholder="Textuelle Beschreibung des Inhalts"
                           required
                         ></textarea>
 

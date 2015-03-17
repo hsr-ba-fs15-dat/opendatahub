@@ -16,7 +16,7 @@ module openDataHub {
             'ui.utils',
             'ui.select',
             'ui.bootstrap',
-            'ngGrid',
+            'ui.grid',
             'openDataHub.auth',
             'openDataHub.utils',
             'openDataHub.main'
@@ -33,6 +33,10 @@ module openDataHub {
                 .state('main', {
                     url: '/',
                     templateUrl: 'views/main.html'
+                })
+                .state('about', {
+                    url: '/',
+                    templateUrl: 'views/about.html'
                 })
                 .state('offer', {
                     url: '/offer',

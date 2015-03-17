@@ -9,51 +9,20 @@ module odh {
         public searchTerms:string;
         public documents;
 
-        public gridOptions = {
-            data: 'docs.documents.results',
-            totalServerItems: 'docs.documents.count',
-            enablePaging: true,
-            enableRowSelection: false,
-            showFooter: true,
-            columnDefs: [
-                {field: 'name', displayName: 'Name',
-                    cellTemplate: '<div class="ngCellText">' +
-                    '<a ui-sref="document({id: row.getProperty(\'id\')})">{{row.getProperty(col.field)}}</a>' +
-                    '</div>'},
-                {field: 'description', displayName: 'Beschreibung'}
-            ],
-            pagingOptions: {
-                pageSizes: [50],
-                pageSize: 50,
-                currentPage: 1
-            }
-        };
-
         constructor(private $scope:ng.IScope, private $log:ng.ILogService, private documentService:odh.DocumentService,
                     private ToastService:odh.utils.ToastService) {
 
-            $scope.$watch(() => this.gridOptions.pagingOptions.currentPage,
-                <any>angular.bind(this, this.pagingOptionsChanged));
             this.retrieveDataAsync();
         }
 
         public retrieveDataAsync() {
             this.$log.debug('Fetching data');
-            this.documentService.search(this.searchTerms, this.gridOptions.pagingOptions.currentPage)
+            this.documentService.search(this.searchTerms, 1)
                 .then(data => {
-                    this.documents = data;
+                    this.documents = data.results;
                     this.$log.debug('Data: ', data);
-                    if (!this.$scope.$$phase) {
-                        this.$scope.$apply();
-                    }
                 })
                 .catch(error => this.onError(error));
-        }
-
-        private pagingOptionsChanged(newVal, oldVal) {
-            if (newVal !== oldVal) {
-                this.retrieveDataAsync();
-            }
         }
 
         private onError(error) {

@@ -64,8 +64,7 @@ module odh {
         private createSuccess(data) {
             // todo remove demo/test
             this.ToastService.success('Datei erfolgreich abgelegt');
-            this.$window.open(data.data.url);
-            this.$state.go('main');
+            this.$state.go('document', {id: data.data.id});
         }
 
         private createFailure(data) {
@@ -88,7 +87,7 @@ module odh {
                 ];
             } else {
                 this.fields = [
-                    {id: 'file', label: 'Wählen Sie Ihre Datei', type: 'file'}
+                    {id: 'file', label: 'Wählen oder ziehen Sie Ihre Datei', type: 'file'}
                 ];
             }
         }
