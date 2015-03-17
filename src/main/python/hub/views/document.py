@@ -28,7 +28,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
     @detail_route()
     def data(self, request, pk, *args, **kwargs):
-        format = request.query_params.get('fmt', 'csv')  #kwargs.get('format', 'csv')
+        format = request.query_params.get('fmt', 'csv')  # kwargs.get('format', 'csv')
 
         reader = DatabaseReader()
 
@@ -76,7 +76,8 @@ class DocumentViewSet(viewsets.ModelViewSet):
                         writer = DatabaseWriter(name=data['name'], desc=data['description'])
 
                         doc = writer.write(reader)
-                        serializer = DocumentSerializer(DocumentModel.objects.get(id=doc.id), context={'request': request})
+                        serializer = DocumentSerializer(DocumentModel.objects.get(id=doc.id),
+                                                        context={'request': request})
 
                         return Response(serializer.data)
         except:

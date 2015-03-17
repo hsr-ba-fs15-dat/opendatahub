@@ -42,7 +42,7 @@ class HttpInput(base.InputNode):
 
 
 class CsvInput(base.ParserNode):
-    sniffer = unicodecsv.Sniffer()
+
     @classmethod
     def accept(cls, sample):
         return ',' in sample  # todo: better check
