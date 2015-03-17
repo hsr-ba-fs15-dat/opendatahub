@@ -9,6 +9,7 @@ module odh.auth {
             'ngResource',
             'ngSanitize',
             'ngRoute',
+            'ezfb',
         ]
     ).config(config)
         .run(function (AuthenticationService) {
@@ -16,9 +17,13 @@ module odh.auth {
 
         });
     ;
-    function config($stateProvider:ng.ui.IStateProvider, $locationProvider:ng.ILocationProvider) {
+    function config($stateProvider:ng.ui.IStateProvider, $locationProvider:ng.ILocationProvider, ezfbProvider) {
 
-
+        ezfbProvider.setLocale('de_DE');
+        ezfbProvider.setInitParams({
+            appId: '386469651480295',
+            version: 'v2.0'
+        });
         $stateProvider
             .state('demo', {
                 url: '/demo',

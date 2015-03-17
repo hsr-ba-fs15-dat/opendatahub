@@ -21,7 +21,7 @@
 
                 <li ui-sref-active="active" class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown">User
-                        {{ vm.getAuthenticatedAccount().username }}</a>
+                       </a>
                     <ul class="dropdown-menu">
                         <li>
                             <a ui-sref="userDetail({username: vm.getAuthenticatedAccount().username})">User</a>
@@ -33,7 +33,7 @@
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li ng-show="vm.isAuthenticated()">
+                <li ng-show="">
                     <a href="#" ng-click="vm.logout()">Logout</a>
                 </li>
                 <li >

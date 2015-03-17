@@ -11,7 +11,9 @@ module odh.auth {
         public errors: any;
         constructor(private $location:ng.ILocationService,
                     private AuthenticationService:odh.auth.AuthenticationService,
-                    private ValidateService:odh.auth.ValidateService) {
+                    private ValidateService:odh.auth.ValidateService,
+                    private FaceBookService:odh.auth.FaceBookService
+        ) {
             this.model = {'username': '', 'password': ''};
             this.complete = false;
         }
@@ -30,6 +32,12 @@ module odh.auth {
                         that.errors = data;
                     });
             }
+        }
+        public login_fb() {
+           this.FaceBookService.login().then(function(response){
+               // this is where we'll contact backend. for now just log response
+               console.log(response);
+           });
         }
 
     }

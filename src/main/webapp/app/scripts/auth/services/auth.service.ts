@@ -191,6 +191,9 @@ module odh.auth {
             return this.authenticationStatus();
         }
 
+
+
+
     }
     angular.module('openDataHub').service('AuthenticationService', AuthenticationService);
 }
