@@ -1,4 +1,4 @@
-/// <reference path='../all.d.ts' />
+/// <reference path='../../all.d.ts' />
 
 
 module odh {
@@ -26,5 +26,5 @@ module odh {
         }
 
     }
-    angular.module('openDataHub').service('documentService', DocumentService);
+    angular.module('openDataHub.main').service('documentService', DocumentService);
 }

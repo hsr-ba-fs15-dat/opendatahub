@@ -1,4 +1,4 @@
-/// <reference path='../all.d.ts' />
+/// <reference path='../../all.d.ts' />
 
 
 module odh {
@@ -18,6 +18,7 @@ module odh {
             data: 'docs.documents.results',
             totalServerItems: 'docs.documents.count',
             enablePaging: true,
+            enableRowSelection: false,
             showFooter: true,
             columnDefs: [
                 {field: 'name', displayName: 'Name'},
@@ -63,5 +64,5 @@ module odh {
         }
 
     }
-    angular.module('openDataHub').controller('DocumentListController', DocumentListController);
+    angular.module('openDataHub.main').controller('DocumentListController', DocumentListController);
 }
