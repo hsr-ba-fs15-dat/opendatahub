@@ -8,6 +8,8 @@ module odh {
 
         public searchTerms:string;
         public documents;
+        public totalItems:number;
+        public currentPage:number = 1;
 
         constructor(private $scope:ng.IScope, private $log:ng.ILogService, private documentService:odh.DocumentService,
                     private ToastService:odh.utils.ToastService) {
@@ -15,11 +17,16 @@ module odh {
             this.retrieveDataAsync();
         }
 
+        public pageChanged() {
+            this.retrieveDataAsync();
+        }
+
         public retrieveDataAsync() {
             this.$log.debug('Fetching data');
-            this.documentService.search(this.searchTerms, 1)
+            this.documentService.search(this.searchTerms, this.currentPage)
                 .then(data => {
                     this.documents = data.results;
+                    this.totalItems = data.count;
                     this.$log.debug('Data: ', data);
                 })
                 .catch(error => this.onError(error));

@@ -22,12 +22,19 @@ module openDataHub {
             'openDataHub.main'
         ])
 
-        .config(($stateProvider:ng.ui.IStateProvider, $locationProvider:ng.ILocationProvider,
-                 UrlServiceProvider:odh.utils.UrlService) => {
+        .config(($stateProvider:ng.ui.IStateProvider, $urlRouterProvider:ng.ui.IUrlRouterProvider,
+                 UrlServiceProvider:odh.utils.UrlService, paginationConfig:ng.ui.bootstrap.IPaginationConfig) => {
 
             (<any>$).material.init();
 
+            paginationConfig.firstText = 'Erste';
+            paginationConfig.lastText = 'Letzte';
+            paginationConfig.nextText = 'Nächste';
+            paginationConfig.previousText = 'Zurück';
+
             UrlServiceProvider.setApiPrefix('/api/v1/');
+
+            $urlRouterProvider.otherwise('/');
 
             $stateProvider
                 .state('main', {
