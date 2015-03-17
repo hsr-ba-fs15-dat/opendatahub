@@ -39,9 +39,16 @@ module openDataHub {
                     controller: 'OfferParamsController as params',
                     templateUrl: 'views/offer.params.html'
                 }).state('documents', {
-                    url: '/documents',
+                    url: '/document',
                     controller: 'DocumentListController as docs',
-                    templateUrl: 'views/documents.html'
+                    templateUrl: 'views/document.list.html'
+                }).state('document', {
+                    url: '/document/{id}',
+                    controller: 'DocumentDetailController as doc',
+                    templateUrl: 'views/document.detail.html',
+                    params: {
+                        'id': 0
+                    }
                 });
         })
         .run(($http:ng.IHttpService) => {

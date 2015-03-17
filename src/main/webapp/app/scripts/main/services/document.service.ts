@@ -4,19 +4,18 @@
 module odh {
     'use strict';
 
-    export interface IDocument extends ng.resource.IResource<Document> {
-        name: string
-        description: string
-    }
-
-    export class DocumentService implements ng.IServiceProvider {
+    export class DocumentService {
         private documents;
 
         constructor(private $log:ng.ILogService, private $resource:ng.resource.IResourceService) {
-            this.documents = $resource('http://localhost:5000/api/v1/documents');
+            this.documents = $resource('/api/v1/documents/:id');
         }
 
-        public $get(query:string, page:number = 1) {
+        public get(documentId:number) {
+            return this.documents.get({id: documentId}).$promise;
+        }
+
+        public search(query:string, page:number = 1) {
             var params:any = { page: page };
             if (query) {
                 params.search = query;

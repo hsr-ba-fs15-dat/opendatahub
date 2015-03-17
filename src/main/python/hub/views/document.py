@@ -27,8 +27,8 @@ class DocumentViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     @detail_route()
-    def data(self, request, pk):
-        format = request.query_params.get('format', 'csv')
+    def data(self, request, pk, *args, **kwargs):
+        format = kwargs.get('format', 'csv')
 
         reader = DatabaseReader()
 
