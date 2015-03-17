@@ -7,8 +7,11 @@ module odh {
     export class DocumentService {
         private documents;
 
-        constructor(private $log:ng.ILogService, private $resource:ng.resource.IResourceService) {
-            this.documents = $resource('/api/v1/documents/:id');
+        constructor(private $log:ng.ILogService, private $resource:ng.resource.IResourceService,
+                    UrlService:odh.utils.UrlService) {
+
+            var url = UrlService.get('documents') + '/:id';
+            this.documents = $resource(url);
         }
 
         public get(documentId:number) {
