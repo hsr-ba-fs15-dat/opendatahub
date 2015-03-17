@@ -52,8 +52,8 @@ module.exports = function(config) {
       
       'app/scripts/temp/hubPlumb.js',
       'app/scripts/utils/toast.service.js',
-      'app/scripts/main/controllers/about.controller.js',
-      'app/scripts/auth/controllers/passwordreset.controller.js',
+      'app/scripts/utils/url.service.js',
+      'app/scripts/main/controllers/documents.js',
       'app/scripts/auth/controllers/passwordresetconfirm.controller.js',
       'app/scripts/auth/controllers/register.controller.js',
       'app/scripts/auth/controllers/restriced.controller.js',
@@ -62,8 +62,8 @@ module.exports = function(config) {
       'app/scripts/auth/controllers/logout.controller.js',
       'app/scripts/auth/services/facebook.service.js',
       'app/scripts/auth/services/validate.service.js',
+      'app/scripts/main/controllers/about.controller.js',
       'app/scripts/auth/controllers/master.controller.js',
-      'app/scripts/main/controllers/documents.js',
       'app/scripts/main/controllers/main.controller.js',
       'app/scripts/main/controllers/navbar.controller.js',
       'app/scripts/main/controllers/offer.controller.js',
@@ -73,6 +73,7 @@ module.exports = function(config) {
       
       'app/scripts/auth/controllers/main.controller.js',
       'app/scripts/auth/controllers/passwordchange.controller.js',
+      'app/scripts/auth/controllers/passwordreset.controller.js',
       'app/scripts/auth/services/auth.service.js',
       // endinjector
       'test/mock/**/*.js',
