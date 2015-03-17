@@ -6,6 +6,7 @@
     <title></title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
+
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <!-- build:css(.) styles/vendor.css -->
     <!-- bower:css -->
@@ -14,13 +15,17 @@
     <link rel="stylesheet" href="bower_components/angular-ui-select/dist/select.css" />
     <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.css" />
     <link rel="stylesheet" href="bower_components/ng-grid/ng-grid.css" />
+    <link rel="stylesheet" href="bower_components/bootstrap-material-design/dist/css/ripples.css" />
     <!-- endbower -->
     <link rel="stylesheet" href="bower_components/ngtoast/dist/ngToast-animations.css"/>
 
     <!-- endbuild -->
+
     <!-- build:css(.tmp) styles/main.css -->
     <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/material.css">
     <!-- endbuild -->
+
     <base href="/"/>
 </head>
 
@@ -84,6 +89,9 @@
 <script src="bower_components/ng-file-upload/angular-file-upload.js"></script>
 <script src="bower_components/ng-grid/build/ng-grid.js"></script>
 <script src="bower_components/json3/lib/json3.min.js"></script>
+<script src="bower_components/bootstrap-material-design/dist/js/material.js"></script>
+<script src="bower_components/bootstrap-material-design/dist/js/ripples.js"></script>
+<script src="bower_components/arrive/src/arrive.js"></script>
 <!-- endbower -->
 <!-- endbuild -->
 
@@ -96,7 +104,7 @@
 <script src="scripts/temp/hubPlumb.js"></script>
 <script src="scripts/utils/toast.service.js"></script>
 <script src="scripts/utils/url.service.js"></script>
-<script src="scripts/main/controllers/documents.js"></script>
+<script src="scripts/main/controllers/document.controller.js"></script>
 <script src="scripts/auth/controllers/passwordresetconfirm.controller.js"></script>
 <script src="scripts/auth/controllers/register.controller.js"></script>
 <script src="scripts/auth/controllers/restriced.controller.js"></script>
@@ -111,7 +119,7 @@
 <script src="scripts/main/controllers/offer.controller.js"></script>
 <script src="scripts/main/directives/focus.js"></script>
 <script src="scripts/auth/controllers/login.js"></script>
-<script src="scripts/main/services/documents.js"></script>
+<script src="scripts/main/services/document.service.js"></script>
 
 <script src="scripts/auth/controllers/main.controller.js"></script>
 <script src="scripts/auth/controllers/passwordchange.controller.js"></script>

@@ -25,6 +25,8 @@ module openDataHub {
         .config(($stateProvider:ng.ui.IStateProvider, $locationProvider:ng.ILocationProvider,
                  UrlServiceProvider:odh.utils.UrlService) => {
 
+            (<any>$).material.init();
+
             UrlServiceProvider.setApiPrefix('/api/v1/');
 
             $stateProvider

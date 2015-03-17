@@ -23,16 +23,24 @@
         </div>
 
 
-        <div ng-switch-default>
+        <div ng-switch-default ng-class="{'has-error': form[field.id].$invalid && form[field.id].$dirty}">
 
-            <label class="col-md-4 control-label" for="{{ field.id }}">{{ field.label }}</label>
+            <label class="col-md-3 control-label" for="{{ field.id }}">{{ field.label }}</label>
 
-            <div class="col-md-5">
+            <div class="col-md-6">
 
                 <input ng-model="offer.params.url" id="{{ field.id }}" name="{{ field.id }}" type="text"
                        placeholder="{{ field.placeholder }}"
                        class="form-control input-md" required>
                 <span ng-if="field.helpText" ng-bind="field.helpText" class="help-block"></span>
+
+
+                <div ng-messages="form[field.id].$error" ng-show="form[field.id].$dirty">
+                    <span class="help-block">
+                        <div ng-message="required">Die Eingabe von "{{ field.label }} ist zwingend.</div>
+                    </span>
+                </div>
+
 
             </div>
         </div>

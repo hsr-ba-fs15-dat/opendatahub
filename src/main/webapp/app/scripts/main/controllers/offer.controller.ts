@@ -6,24 +6,19 @@ module odh {
 
     export class OfferController {
 
-        public dataSources:{}[];
-        public dataSource:{};
+        public dataSource:string = 'online';
         public name:string;
         public description:string;
         public params:any = {};
         public progress = 0;
 
-        constructor(private $http:ng.IHttpService, private $state:ng.ui.IStateService, private $scope:ng.IScope,
+        constructor(private $http:ng.IHttpService, private $state:ng.ui.IStateService, private $scope:any,
                     private ToastService:odh.utils.ToastService, private $window:ng.IWindowService, private $upload,
                     private UrlService:odh.utils.UrlService) {
-
-            this.dataSources = [{label: 'Online', type: 'online'}, {label: 'Datei hochladen', type: 'file'}];
-            this.dataSource = this.dataSources[0];
-            this.switchDataSource(this.dataSource, this.dataSource);
         }
 
-        public switchDataSource(item, model) {
-            this.$state.go('offer.params', {type: model.type});
+        public switchDataSource() {
+            this.$state.go('offer.params', {type: this.dataSource});
         }
 
         public cancel() {
@@ -34,6 +29,11 @@ module odh {
             // todo restangular or ngresource
             // todo move to service
             // todo redirect to newly created doc "detail view"
+            this.$scope.form.$setDirty();
+            if (this.$scope.form.$invalid) {
+                return;
+            }
+
             var promise:any;
             var url = this.UrlService.get('documents');
 
