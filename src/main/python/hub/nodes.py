@@ -42,6 +42,7 @@ class HttpInput(base.InputNode):
 
 
 class CsvInput(base.ParserNode):
+    sniffer = unicodecsv.Sniffer()
     @classmethod
     def accept(cls, sample):
         return ',' in sample  # todo: better check
@@ -76,6 +77,9 @@ class DatabaseWriter(base.OutputNode):
         doc.save()
 
         for record_content in reader:
+            if not isinstance(record_content, types.DictType):
+                raise RuntimeError('unexpected format')
+
             rec = hub.models.RecordModel(document=doc, content=record_content)
             rec.save()
 
@@ -90,6 +94,15 @@ class DatabaseReader(base.InputNode):
     def read(self, desc):
         for record in hub.models.RecordModel.objects.filter(document__id=desc['document_id']):
             yield record.content
+
+
+class PlainOutput(base.FormatterNode):
+    FORMAT = 'plain'
+
+    def format(self, reader, out):
+        for rec in reader:
+            out.write(rec)
+            out.write('\n')
 
 
 class CsvOutput(base.FormatterNode):

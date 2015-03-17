@@ -59,25 +59,28 @@ class DocumentViewSet(viewsets.ModelViewSet):
         if 'file' in data:
             input = {'file': data['file']}
 
-        if input:
-            node = InputNode.find_node_for(input)
-            if node:
-                reader = node.read(input)
+        try:
+            if input:
+                node = InputNode.find_node_for(input)
+                if node:
+                    reader = node.read(input)
 
-                if reader:
-                    peek = reader.next()
-                    reader = itertools.chain([peek], reader)
+                    if reader:
+                        peek = reader.next()
+                        reader = itertools.chain([peek], reader)
 
-                    node = ParserNode.find_node_for(peek)
-                    if node:
-                        reader = node.parse(reader)
+                        node = ParserNode.find_node_for(peek)
+                        if node:
+                            reader = node.parse(reader)
 
-                    writer = DatabaseWriter(name=data['name'], desc=data['description'])
+                        writer = DatabaseWriter(name=data['name'], desc=data['description'])
 
-                    doc = writer.write(reader)
-                    serializer = DocumentSerializer(DocumentModel.objects.get(id=doc.id), context={'request': request})
+                        doc = writer.write(reader)
+                        serializer = DocumentSerializer(DocumentModel.objects.get(id=doc.id), context={'request': request})
 
-                    return Response(serializer.data)
+                        return Response(serializer.data)
+        except:
+            pass
 
         raise ValidationError(detail='error handling input')
 
