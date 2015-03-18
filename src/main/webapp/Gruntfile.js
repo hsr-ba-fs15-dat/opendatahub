@@ -190,7 +190,8 @@ module.exports = function (grunt) {
         wiredep: {
             app: {
                 src: ['<%= yeoman.app %>/index.html'],
-                ignorePath: /\.\.\//
+                ignorePath: /\.\.\//,
+                exclude: ['bower_components/bootstrap-material-design/dist/css/material.css']
             },
             test: {
                 devDependencies: true,
@@ -486,10 +487,11 @@ module.exports = function (grunt) {
                 'compass:server'
             ],
             test: [
-                'compass'
+                'compass',
             ],
             dist: [
                 'compass:dist',
+                'copy:styles',
                 'imagemin',
                 'svgmin'
             ]
@@ -554,11 +556,11 @@ module.exports = function (grunt) {
         'wiredep',
         'useminPrepare',
         'concurrent:dist',
-        'autoprefixer',
+        //'autoprefixer',
         'concat',
         'ngAnnotate',
         'copy:dist',
-        'cdnify',
+        //'cdnify',
         'cssmin',
         'uglify',
         'filerev',

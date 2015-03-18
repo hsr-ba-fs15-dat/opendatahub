@@ -9,6 +9,7 @@ module odh.utils {
         private apiPrefix:string = '';
         private $interpolate:ng.IInterpolateService;
 
+        /* @ngInject */
         public $get($interpolate:ng.IInterpolateService) {
             this.$interpolate = $interpolate;
             return this;

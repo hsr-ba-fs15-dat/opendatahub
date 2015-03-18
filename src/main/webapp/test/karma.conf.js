@@ -40,8 +40,11 @@ module.exports = function(config) {
       'bower_components/jsPlumb/dist/js/jquery.jsPlumb-1.7.3.js',
       'bower_components/jquery-ui/jquery-ui.js',
       'bower_components/ng-file-upload/angular-file-upload.js',
-      'bower_components/ng-grid/build/ng-grid.js',
       'bower_components/json3/lib/json3.min.js',
+      'bower_components/bootstrap-material-design/dist/js/material.js',
+      'bower_components/bootstrap-material-design/dist/js/ripples.js',
+      'bower_components/arrive/src/arrive.js',
+      'bower_components/angular-ui-grid/ui-grid.js',
       'bower_components/angular-mocks/angular-mocks.js',
       // endbower
       // injector:js
@@ -53,7 +56,7 @@ module.exports = function(config) {
       'app/scripts/temp/hubPlumb.js',
       'app/scripts/utils/toast.service.js',
       'app/scripts/utils/url.service.js',
-      'app/scripts/main/controllers/documents.js',
+      'app/scripts/main/controllers/document.controller.js',
       'app/scripts/auth/controllers/passwordresetconfirm.controller.js',
       'app/scripts/auth/controllers/register.controller.js',
       'app/scripts/auth/controllers/restriced.controller.js',
@@ -69,7 +72,7 @@ module.exports = function(config) {
       'app/scripts/main/controllers/offer.controller.js',
       'app/scripts/main/directives/focus.js',
       'app/scripts/auth/controllers/login.js',
-      'app/scripts/main/services/documents.js',
+      'app/scripts/main/services/document.service.js',
       
       'app/scripts/auth/controllers/main.controller.js',
       'app/scripts/auth/controllers/passwordchange.controller.js',

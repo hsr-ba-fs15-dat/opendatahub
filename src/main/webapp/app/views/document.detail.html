@@ -1,8 +1,8 @@
 
 <div class="btn-toolbar clearfix">
     <button class="btn btn-default" ui-sref="documents">Zur Liste</button>
-    <a class="btn btn-default" ng-href="{{ doc.document.data }}" target="_blank">Download als CSV</a>
-    <a class="btn btn-default" ng-href="{{ doc.document.data }}.json" target="_blank">Download als JSON</a>
+    <a class="btn btn-default" ng-href="{{ doc.document.data }}?fmt=csv" target="_blank">Download als CSV</a>
+    <a class="btn btn-default" ng-href="{{ doc.document.data }}?fmt=json" target="_blank">Download als JSON</a>
 </div>
 
 <div style="padding-top: 2em">
