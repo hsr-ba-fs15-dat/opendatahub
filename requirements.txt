@@ -14,3 +14,13 @@ djangorestframework==3.0.5
 django-pgjson==0.2.3
 django-rest-auth
 django-allauth
+
+
+numpy==1.9.2
+pandas==0.15.2
+petl==1.0.6
+python-dateutil==2.4.1
+pytz==2014.10
+six==1.9.0
+ogrtools==0.7.2
+xlrd==0.9.3
