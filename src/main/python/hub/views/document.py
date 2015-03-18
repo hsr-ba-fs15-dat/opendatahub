@@ -1,4 +1,5 @@
 from rest_framework import viewsets
+
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
@@ -7,9 +8,13 @@ from django.http import HttpResponse
 import requests as http
 
 from hub.serializers import DocumentSerializer
+
 from hub.models import DocumentModel
-from hub.nodes import DatabaseWriter, DatabaseReader
-from hub.base import known_formatters
+from hub.formatter import known_formatters
+import hub.formatters
+
+print('Loaded formatters:')
+print(hub.formatters.__all__)
 
 
 class DocumentViewSet(viewsets.ModelViewSet):
@@ -22,14 +27,14 @@ class DocumentViewSet(viewsets.ModelViewSet):
     def data(self, request, pk, *args, **kwargs):
         format = request.query_params.get('fmt', 'plain')
 
-        reader = DatabaseReader()
+        document = DocumentModel.objects.get(id=pk)
 
-        document = reader.read(pk)
+        formatter_class = known_formatters.get(format)
 
-        formatter = known_formatters.get(format)()
-
-        if not formatter:
+        if not formatter_class:
             raise ValidationError('No such formatter')
+
+        formatter = formatter_class()
 
         response = HttpResponse()
         response['Content-Disposition'] = 'attachment; filename="data.%s"' % formatter.description.file_extension
@@ -59,14 +64,14 @@ class DocumentViewSet(viewsets.ModelViewSet):
             elif 'file' in request.data:
                 content = request.data['file'].read()
 
-            writer = DatabaseWriter()
-            doc = writer.write(request.data['name'], request.data['description'], content)
+            doc = DocumentModel(name=request.data['name'], description=request.data['description'], content=content)
+            doc.save()
 
-            serializer = DocumentSerializer(DocumentModel.objects.get(id=doc.id), context={'request':request})
+            serializer = DocumentSerializer(DocumentModel.objects.get(id=doc.id), context={'request': request})
 
             return Response(serializer.data)
         except:
-            raise # ValidationError(detail='error handling input')
+            raise  # ValidationError(detail='error handling input')
 
     def list(self, request, *args, **kwargs):
         """
