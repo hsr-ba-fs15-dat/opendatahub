@@ -3,7 +3,6 @@
 """
 
 import unittest
-
 import os
 
 
@@ -19,5 +18,5 @@ class TestBase(unittest.TestCase):
     """
 
     @classmethod
-    def get_test_file_path(cls, file_name):
-        return os.path.join(BASE_DIR, 'testdata', file_name)
+    def get_test_file_path(cls, file_path):
+        return os.path.join(BASE_DIR, 'testdata', *file_path.split('/'))
