@@ -1,77 +1,39 @@
 import collections
 
+known_formatters = collections.OrderedDict()
 
-class Node(object):
-    nodes = collections.defaultdict(list)
-    TYPE = 'undefined'
+
+class FormatterDescription(object):
+    def __init__(self, name, description, mime_type='text/plain', file_extension='txt'):
+        self.name = name
+        self.description = description
+        self.mime_type = mime_type
+        self.file_extension = file_extension
+
+
+class FormatterBase(object):
+    description = None
 
     @classmethod
     def register(cls, node_class):
-        cls.nodes[node_class.TYPE].append(node_class)
+        if node_class.description and node_class.description != None:
+            known_formatters[node_class.description.name] = node_class
 
 
-class _NodeMetaclass(type):
+class FormatAlreadyRegisteredError(RuntimeError):
+    pass
+
+
+class _FormatterMetaclass(type):
     def __init__(cls, name, bases, dct):
-        super(_NodeMetaclass, cls).__init__(name, bases, dct)
+        super(_FormatterMetaclass, cls).__init__(name, bases, dct)
 
         if 'TYPE' not in dct:
-            Node.register(cls)
+            FormatterBase.register(cls)
 
 
-class InputNode(Node):
-    __metaclass__ = _NodeMetaclass
-    TYPE = 'input'
+class Formatter(FormatterBase):
+    __metaclass__ = _FormatterMetaclass
 
-    @classmethod
-    def accept(cls, description):
-        raise NotImplementedError
-
-    @classmethod
-    def find_node_for(cls, description):
-        for node in cls.nodes[cls.TYPE]:
-            if node.accept and node.accept(description):
-                return node()
-
-    def read(self, description):
-        raise NotImplementedError
-
-
-class ParserNode(Node):
-    __metaclass__ = _NodeMetaclass
-    TYPE = 'parser'
-
-    @classmethod
-    def accept(cls, sample):
-        raise NotImplementedError
-
-    @classmethod
-    def find_node_for(cls, sample):
-        for node in cls.nodes[cls.TYPE]:
-            if node.accept and node.accept(sample):
-                return node()
-
-    def parse(self, reader):
-        raise NotImplementedError
-
-
-class FormatterNode(Node):
-    __metaclass__ = _NodeMetaclass
-    TYPE = 'formatter'
-    FORMAT = 'undefined'
-
-    @classmethod
-    def find_node_for(cls, format):
-        for node in cls.nodes[cls.TYPE]:
-            if node.FORMAT and node.FORMAT == format:
-                return node()
-
-    def format(self, reader, out):
-        raise NotImplementedError
-
-
-class OutputNode(Node):
-    __metaclass__ = _NodeMetaclass
-    TYPE = 'output'
-
-    def write(self, reader):
+    def format(self, document, writer, parameters):
         raise NotImplementedError
