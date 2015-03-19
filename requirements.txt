@@ -8,7 +8,7 @@ psycopg2==2.6
 static3==0.5.1
 requests==2.5.3
 unicodecsv==0.9.4
-
+python-social-auth
 django-picklefield==0.3.1
 djangorestframework==3.0.5
 django-pgjson==0.2.3
