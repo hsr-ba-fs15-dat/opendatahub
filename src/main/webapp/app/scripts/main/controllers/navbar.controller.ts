@@ -9,9 +9,16 @@ module odh {
         public email:string;
         public password:string;
 
-        constructor(private $location:ng.ILocationService,
-                    private AuthenticationService:odh.auth.AuthenticationService) {
+        constructor(private AuthenticationService:odh.auth.AuthenticationService) {
 
+        }
+
+        public isAuthenticated() {
+            return this.AuthenticationService.isAuthed();
+        }
+
+        public logout() {
+            this.AuthenticationService.logout();
         }
     }
 

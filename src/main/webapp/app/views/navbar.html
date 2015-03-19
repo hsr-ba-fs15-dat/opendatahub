@@ -36,14 +36,17 @@
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li ng-show="">
+                <li ng-show="vm.isAuthenticated()">
                     <a href="#" ng-click="vm.logout()">Logout</a>
                 </li>
-                <li>
+                <li ng-hide="vm.isAuthenticated()">
                     <a ui-sref="login">Login</a>
                 </li>
-                <li>
+                <li ng-hide="vm.isAuthenticated()">
                     <a ui-sref="register">Register</a>
+                </li>
+                <li>
+                    <a ui-sref="userProfile">UserProfile</a>
                 </li>
             </ul>
         </div>

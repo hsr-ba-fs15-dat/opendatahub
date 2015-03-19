@@ -2,7 +2,6 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from rest_framework import routers
 
-from authentication.views import FacebookLogin
 from opendatahub.settings import PRODUCTION, STATIC_ROOT
 from hub.views.document import DocumentViewSet
 from hub.views.record import RecordViewSet
@@ -15,11 +14,7 @@ router.register(r'records', RecordViewSet)
 urlpatterns = (
     url(r'api/v1/', include(router.urls)),
     url(r'^admin/', include(admin.site.urls)),
-
-    url(r'^rest-auth/', include('rest_auth.urls')),
-    url(r'^rest-auth/registration/', include('rest_auth.registration.urls')),
-
-    url(r'^/rest-auth/facebook/$', FacebookLogin.as_view(), name='fb_login'),
+    url(r'api/v1/auth/', include('authentication.urls')),
 )
 
 if PRODUCTION:
