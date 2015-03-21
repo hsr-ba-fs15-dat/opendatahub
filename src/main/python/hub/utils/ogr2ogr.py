@@ -3,23 +3,34 @@
 """
 
 import subprocess
-from cStringIO import StringIO
-import shutil
-import tempfile
+import collections
 
 import os
+
+from hub.structures.file import FileGroup
 
 
 class Ogr2OgrException(Exception):
     pass
 
 
-OGR2OGR_FILES = {
-    # file extension -> type in ogr2ogr
-    '.gml': 'GML',
-    '.shp': 'ESRI Shapefile',
-    # todo more to come
-}
+OgrFomat = collections.namedtuple('OgrFormat', ('extension', 'identifier'))
+
+GML = OgrFomat('gml', 'GML')
+SHP = OgrFomat('shp', 'ESRI Shapefile')
+CSV = OgrFomat('csv', 'CSV')
+GEO_JSON = OgrFomat('json', 'GeoJSON')
+KML = OgrFomat('kml', 'KML')
+
+# todo needs further research in how these two work, currently they fail, duh
+# INTERLIS_1 = OgrFomat('ili', 'Interlis 1')
+# INTERLIS_2 = OgrFomat('ili', 'Interlis 2')
+
+
+OGR_BY_EXTENSION = {}
+for var in globals().values():
+    if isinstance(var, OgrFomat):
+        OGR_BY_EXTENSION[var.extension] = var
 
 
 def _ogr2ogr_cli(arguments, *agrs, **kwargs):
@@ -30,28 +41,20 @@ def _ogr2ogr_cli(arguments, *agrs, **kwargs):
         raise Ogr2OgrException()
 
 
-def ogr2ogr(from_files, to_type):
-    main_file = next((name for name in from_files.keys() if os.path.splitext(name)[1] in OGR2OGR_FILES))
+def ogr2ogr(file_group, to_type):
+    main_file = next((f for f in file_group if f.extension in OGR_BY_EXTENSION))
 
-    if OGR2OGR_FILES[os.path.splitext(main_file)[1]] == to_type:
-        return from_files
+    if OGR_BY_EXTENSION[main_file.extension] == to_type:
+        return file_group
 
-    temp_dir = tempfile.mkdtemp('ogr2ogr')
-    try:
-        for from_file_name, from_file_stream in from_files.iteritems():
-            with open(os.path.join(temp_dir, from_file_name), 'wb') as f:
-                f.write(from_file_stream.getvalue())
+    with file_group.on_filesystem() as temp_dir:
+        path = os.path.join(temp_dir, 'out')
+        _ogr2ogr_cli(['-f', to_type.identifier, path, os.path.join(temp_dir, main_file.name)])
 
-        path = os.path.join(temp_dir, 'temp')
-        _ogr2ogr_cli(['-f', to_type, path, os.path.join(temp_dir, main_file)])
+        if os.path.isdir(path):
+            files = [os.path.join(path, name) for name in os.listdir(path)]
+        elif os.path.exists(path):
+            files = [os.path.join(temp_dir, '{}.{}'.format(main_file.name.rsplit('.', 1)[0], to_type.extension))]
+            os.rename(path, files[0])
 
-        out_files = {}
-        for file_name in os.listdir(path):
-            abs_path = os.path.join(path, file_name)
-            with open(abs_path, 'rb') as f:
-                out_files[file_name] = StringIO(''.join(f.readlines()))
-
-        return out_files
-
-    finally:
-        shutil.rmtree(temp_dir)
+        return FileGroup.from_files(*files)
