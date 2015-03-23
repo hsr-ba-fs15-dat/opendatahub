@@ -9,7 +9,6 @@ static3==0.5.1
 requests==2.5.3
 
 # other
-requests==2.5.3
 unicodecsv==0.9.4
 python-social-auth
 django-picklefield==0.3.1
