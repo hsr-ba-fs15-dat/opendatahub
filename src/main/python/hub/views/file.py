@@ -1,8 +1,8 @@
+import zipfile
+
 from rest_framework import viewsets
 from rest_framework.decorators import detail_route
 from django.http.response import HttpResponse, HttpResponseNotFound, HttpResponseServerError
-
-import zipfile
 
 from hub.serializers import FileSerializer
 from hub.models import FileModel
