@@ -9,32 +9,20 @@ module odh.auth {
         public complete:boolean;
         public model:any;
         public errors:any;
+        public error:any;
+        public username;
 
         constructor(private ValidateService:odh.auth.ValidateService,
-                    private AuthenticationService:odh.auth.AuthenticationService) {
+                    public AuthenticationService:odh.auth.AuthenticationService,
+                    UserService:odh.auth.UserService) {
             // controller init
             this.model = {'first_name': '', 'last_name': '', 'email': ''};
             this.complete = false;
-            AuthenticationService.profile().then(function (data) {
-                this.model = data;
+            UserService.profile().then((data:any) => {
+                this.model = data.data;
+                this.username = data.data.username;
             });
         }
-
-        public updateProfile(formData:any, model:any) {
-            this.errors = [];
-            this.ValidateService.form_validation(formData, this.errors);
-            if (!formData.$invalid) {
-                this.AuthenticationService.updateProfile(model)
-                    .then(function (data) {
-                        // success case
-                        this.complete = true;
-                    }, function (data) {
-                        // error case
-                        this.error = data;
-                    });
-            }
-        }
-
 
     }
     angular.module('openDataHub.auth').controller('UserProfileController', UserProfileController);
