@@ -3,6 +3,7 @@
 """
 
 from django.db import models
+from .structures.file import File, FileGroup
 
 
 def cap(str, length):
@@ -32,8 +33,16 @@ class FileGroupModel(models.Model):
     """
     Group of files belonging to each other.
     """
-    document = models.ForeignKey(DocumentModel)
+    document = models.ForeignKey(DocumentModel, related_name='groups')
     format = models.CharField(max_length=50, null=True)
+
+    def to_file_group(self):
+        group = FileGroup()
+
+        for file in FileModel.files:
+            group.add(file.to_file(group))
+
+        return group
 
 
 class FileModel(models.Model):
@@ -42,4 +51,7 @@ class FileModel(models.Model):
     """
     file_name = models.CharField(max_length=255)
     data = models.BinaryField()
-    file_group = models.ForeignKey(FileGroupModel)
+    file_group = models.ForeignKey(FileGroupModel, related_name='files')
+
+    def to_file(self, file_group=None):
+        return File(name=self.file_name, stream=self.data, file_group=file_group)

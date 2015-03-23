@@ -5,12 +5,10 @@ from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from django.db.models import Q
-from django.http import HttpResponse
 import requests as http
 
 from hub.serializers import DocumentSerializer, FileGroupSerializer
 from hub.models import DocumentModel, FileGroupModel, FileModel
-from hub.formatter import known_formatters
 import hub.formatters
 from hub.structures.file import File
 
@@ -24,34 +22,6 @@ class DocumentViewSet(viewsets.ModelViewSet):
     serializer_class = DocumentSerializer
 
     paginate_by = 50
-
-    @detail_route()
-    def data(self, request, pk, *args, **kwargs):
-        format = request.query_params.get('fmt', 'plain')
-
-        document = DocumentModel.objects.get(id=pk)
-        files = FileModel.objects.filter(file_group__document=document)
-
-        if len(files) == 0:
-            return HttpResponse(status=404, reason='No such documents, or document not found')
-        else:
-            file = files[0]
-
-            response = HttpResponse()
-            response['Content-Disposition'] = 'attachment; filename="%s"' % file.name
-
-        formatter_class = known_formatters.get(format)
-
-        if not formatter_class:
-            raise ValidationError('No such formatter')
-
-        formatter = formatter_class()
-
-        formatter.format(document, response, None)
-
-        response.flush()
-
-        return response
 
     def create(self, request, *args, **kwargs):
         """
