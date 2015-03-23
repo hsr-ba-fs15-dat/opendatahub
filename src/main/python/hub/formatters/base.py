@@ -60,6 +60,15 @@ class CSVFormatter(Formatter):
                                 file.to_df().to_csv(encoding='UTF-8')).file_group
 
 
+class JSONFormatter(Formatter):
+    targets = formats.JSON,
+
+    @classmethod
+    def format(cls, file, format):
+        return File.from_string(os.path.splitext(file.name)[0] + '.json',
+                                file.to_df().to_json(orient='records')).file_group
+
+
 class OGRFormatter(Formatter):
     targets = formats.GeoJSON, formats.GML, formats.KML, formats.Shapefile
 

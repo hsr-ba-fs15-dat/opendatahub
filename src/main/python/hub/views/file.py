@@ -34,7 +34,7 @@ class FileViewSet(viewsets.ModelViewSet):
                 response['Content-Disposition'] = 'attachment; filename="data.zip"'
 
                 zip = zipfile.ZipFile(response, 'w')
-                for file in result.files:
+                for file in result:
                     zip.writestr(file.name, file.stream.getvalue())
                 zip.close()
             else:
