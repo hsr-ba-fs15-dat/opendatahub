@@ -16,7 +16,7 @@ router.register(r'files', FileViewSet)
 router.register(r'format', FormatView, 'format')
 
 urlpatterns = (
-    url(r'api/v1/', include(router.urls)),
+    url(r'api/v1/?', include(router.urls)),
     url(r'^admin/', include(admin.site.urls)),
     url(r'api/v1/auth/', include('authentication.urls')),
 )
