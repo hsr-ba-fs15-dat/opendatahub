@@ -54,4 +54,4 @@ class FileModel(models.Model):
     file_group = models.ForeignKey(FileGroupModel, related_name='files')
 
     def to_file(self, file_group=None):
-        return File(name=self.file_name, stream=self.data, file_group=file_group)
+        return File.from_string(self.file_name, self.data, file_group=file_group)
