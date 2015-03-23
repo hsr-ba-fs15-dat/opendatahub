@@ -5,17 +5,23 @@ module odh {
     'use strict';
 
     export class DocumentService {
-        private documents;
+        private documents:restangular.IElement;
+
 
         constructor(private $log:ng.ILogService, private $resource:ng.resource.IResourceService,
-                    UrlService:odh.utils.UrlService) {
+                    UrlService:odh.utils.UrlService, private Restangular:restangular.IService) {
 
-            var url = UrlService.get('documents') + '/:id';
-            this.documents = $resource(url);
+            this.documents = this.Restangular.all('documents');
         }
 
         public get(documentId:number) {
-            return this.documents.get({id: documentId}).$promise;
+                        (<any>window).ral = this.Restangular;
+
+            return this.documents.get(documentId);
+        }
+
+        public getAll() {
+            return this.Restangular.all('documents');
         }
 
         public search(query:string, page:number = 1) {
@@ -24,7 +30,7 @@ module odh {
                 params.search = query;
             }
             this.$log.debug('Document list parameters', params);
-            return this.documents.get(params).$promise;
+            return this.documents.getList(params);
         }
 
     }

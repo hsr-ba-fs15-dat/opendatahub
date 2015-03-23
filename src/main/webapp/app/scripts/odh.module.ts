@@ -17,20 +17,39 @@ module openDataHub {
             'ui.select',
             'ui.bootstrap',
             'ui.grid',
+            'restangular',
             'openDataHub.auth',
             'openDataHub.utils',
             'openDataHub.main'
         ])
 
         .config(($stateProvider:ng.ui.IStateProvider, $urlRouterProvider:ng.ui.IUrlRouterProvider,
-                 UrlServiceProvider:odh.utils.UrlService, paginationConfig:ng.ui.bootstrap.IPaginationConfig) => {
+                 UrlServiceProvider:odh.utils.UrlService, paginationConfig:ng.ui.bootstrap.IPaginationConfig,
+                 RestangularProvider:restangular.IProvider) => {
 
             (<any>$).material.init();
+
 
             paginationConfig.firstText = 'Erste';
             paginationConfig.lastText = 'Letzte';
             paginationConfig.nextText = 'Nächste';
             paginationConfig.previousText = 'Zurück';
+
+
+            RestangularProvider.setBaseUrl('/api/v1/');
+
+            RestangularProvider.addResponseInterceptor(function (data, operation, what, url, response, deferred) {
+                var extractedData;
+                if (operation === 'getList' && data.results) {
+                    extractedData = data.results;
+                    var meta = angular.copy(data);
+                    delete data.results;
+                    extractedData.meta = meta;
+                } else {
+                    extractedData = data;
+                }
+                return extractedData;
+            });
 
             UrlServiceProvider.setApiPrefix('/api/v1/');
 

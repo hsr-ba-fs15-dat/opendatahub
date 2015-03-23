@@ -76,7 +76,7 @@ class JSON(Format):
 
     @classmethod
     def is_format(self, file, *args, **kwargs):
-        return file.extension == 'json' and not '"geometry"' in file.stream.getvalue()  # todo figure out a better way
+        return file.extension == 'json' and '"geometry"' not in file.stream.getvalue()  # todo figure out a better way
 
 
 class Excel(Format):
@@ -128,28 +128,29 @@ class KML(Format):
         return file.extension == 'kml'
 
 
-class INTERLIS1(Format):
-    label = 'INTERLIS 1'
-
-    description = """
-    INTERLIS ist ein Dateiformat zum Austausch von Geodaten.
-    """
-
-    @classmethod
-    def is_format(self, file, *args, **kwargs):
-        return file.extension == 'itf'
-
-
-class INTERLIS2(Format):
-    label = 'INTERLIS 2'
-
-    description = """
-    INTERLIS ist ein Dateiformat zum Austausch von Geodaten.
-    """
-
-    @classmethod
-    def is_format(self, file, *args, **kwargs):
-        return file.extension == 'xtf'
+# todo figure out how these work
+# class INTERLIS1(Format):
+#     label = 'INTERLIS 1'
+#
+#     description = """
+#     INTERLIS ist ein Dateiformat zum Austausch von Geodaten.
+#     """
+#
+#     @classmethod
+#     def is_format(self, file, *args, **kwargs):
+#         return file.extension == 'itf'
+#
+#
+# class INTERLIS2(Format):
+#     label = 'INTERLIS 2'
+#
+#     description = """
+#     INTERLIS ist ein Dateiformat zum Austausch von Geodaten.
+#     """
+#
+#     @classmethod
+#     def is_format(self, file, *args, **kwargs):
+#         return file.extension == 'xtf'
 
 
 class GeoJSON(Format):
