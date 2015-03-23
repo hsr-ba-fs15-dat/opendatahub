@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 import os
 import logging
 import dj_database_url
+import datetime
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
@@ -47,12 +48,37 @@ INSTALLED_APPS = (
     'hub',
     'authentication',
     'rest_framework.authtoken',
-    'rest_auth',
     'allauth',
     'allauth.account',
-    'rest_auth.registration',
     'allauth.socialaccount',
+    'allauth.socialaccount.providers.amazon',
+    'allauth.socialaccount.providers.angellist',
+    'allauth.socialaccount.providers.bitbucket',
+    'allauth.socialaccount.providers.bitly',
+    'allauth.socialaccount.providers.coinbase',
+    'allauth.socialaccount.providers.dropbox',
     'allauth.socialaccount.providers.facebook',
+    'allauth.socialaccount.providers.flickr',
+    'allauth.socialaccount.providers.feedly',
+    'allauth.socialaccount.providers.fxa',
+    'allauth.socialaccount.providers.github',
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.hubic',
+    'allauth.socialaccount.providers.instagram',
+    'allauth.socialaccount.providers.linkedin',
+    'allauth.socialaccount.providers.linkedin_oauth2',
+    'allauth.socialaccount.providers.odnoklassniki',
+    'allauth.socialaccount.providers.openid',
+    'allauth.socialaccount.providers.persona',
+    'allauth.socialaccount.providers.soundcloud',
+    'allauth.socialaccount.providers.stackexchange',
+    'allauth.socialaccount.providers.tumblr',
+    'allauth.socialaccount.providers.twitch',
+    'allauth.socialaccount.providers.twitter',
+    'allauth.socialaccount.providers.vimeo',
+    'allauth.socialaccount.providers.vk',
+    'allauth.socialaccount.providers.weibo',
+    'allauth.socialaccount.providers.xing',
 )
 
 # Dev. only, not required
@@ -78,7 +104,8 @@ ROOT_URLCONF = 'opendatahub.urls'
 WSGI_APPLICATION = 'opendatahub.wsgi.application'
 
 TEMPLATE_CONTEXT_PROCESSORS = (
-    'allauth.socialaccount.context_processors.socialaccount',
+    "allauth.account.context_processors.account",
+    "allauth.socialaccount.context_processors.socialaccount",
     'django.contrib.auth.context_processors.auth'
 )
 # Database
@@ -102,10 +129,33 @@ USE_L10N = True
 
 USE_TZ = True
 
+ACCOUNT_ADAPTER = 'authentication.adapters.MessageFreeAdapter'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 SITE_ID = 1
-
+JWT_AUTH = {
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=14)
+}
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
+AUTHENTICATION_BACKENDS = (
+    # Needed to login by username in Django admin, regardless of `allauth`
+    "django.contrib.auth.backends.ModelBackend",
+    'social.backends.facebook.FacebookOAuth2',
+    'social.backends.github.GithubOAuth2',
+    'social.backends.twitter.TwitterOAuth',
+)
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.AllowAny',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+    ),
+}
+
+SOCIAL_AUTH_FACEBOOK_KEY = '401520096685508'
+SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']

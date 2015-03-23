@@ -23,6 +23,8 @@ class Parser(RegistrationMixin):
     parsers = {}
     parsers_by_format = collections.defaultdict(list)
 
+    accepts = ()
+
     @classmethod
     def register_child(cls, name, bases, dct):
         if not dct.get('_is_abstract'):
@@ -36,7 +38,6 @@ class Parser(RegistrationMixin):
             try:
                 return parser.parse(file, format=format, *args, **kwargs)
             except:
-                raise
                 logging.debug('%s was not able to parse data with format %s', parser.__name__, format.__name__)
                 continue
 

@@ -47,11 +47,11 @@ class FileGroup(object):
     def __iter__(self):
         return iter(self.files)
 
-    def __getitem__(self, ixOrKey):
-        if isinstance(ixOrKey, int):
-            return self.files[ixOrKey]
-        elif isinstance(ixOrKey, basestring):
-            return self.get_by_name(ixOrKey)
+    def __getitem__(self, ix_or_key):
+        if isinstance(ix_or_key, int):
+            return self.files[ix_or_key]
+        elif isinstance(ix_or_key, basestring):
+            return self.get_by_name(ix_or_key)
         raise ValueError
 
     @contextlib.contextmanager
@@ -78,24 +78,44 @@ class File(object):
         self.stream = stream
         self.file_group = file_group
         self.format = format
+        self.df = None
 
     @classmethod
     def from_file(cls, path, *args, **kwargs):
         with open(path, 'rb') as f:
             return cls(os.path.basename(path), StringIO(f.read()), *args, **kwargs)
 
+    @classmethod
+    def from_string(cls, name, string, *args, **kwargs):
+        return cls(name, StringIO(string), *args, **kwargs)
+
     @property
     def extension(self):
         return self.name.rsplit('.', 1)[-1].lower()
 
-    def parse(self):
-        from hub import parsers
+    def to_df(self, force=False):
+        if force or self.df is None:
+            from hub import parsers
 
-        format = formats.identify(self)
-        if not format:
-            return None
+            format = formats.identify(self)
+            if not format:
+                return None
 
-        return parsers.parse(self, format)
+            self.df = parsers.parse(self, format)
+
+        return self.df
+
+    def to_format(self, format):
+        from hub import formatters, formats
+
+        if not isinstance(format, formats.Format):
+            format = str(format).lower()
+            try:
+                format = next((f for f in formats.Format.formats.itervalues() if format == f.__name__.lower()))
+            except StopIteration:
+                raise  # todo
+
+        return formatters.Formatter.format(self, format)
 
 
 if __name__ == '__main__':
@@ -112,5 +132,7 @@ if __name__ == '__main__':
         fg = FileGroup.from_files(TestBase.get_test_file_path(filename))
 
         f = fg[0]
-        df = f.parse()
+        df = f.to_df()
         print df
+
+        print f.to_format('gml').names

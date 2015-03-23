@@ -16,7 +16,7 @@ class FormatterBase(object):
 
     @classmethod
     def register(cls, node_class):
-        if node_class.description and node_class.description != None:
+        if node_class.description and node_class.description is not None:
             known_formatters[node_class.description.name] = node_class
 
 

@@ -6,7 +6,7 @@
 class CallbackMeta(type):
     def __init__(cls, name, bases, dct):
         cls.meta_init(name, bases, dct)
-        return super(CallbackMeta, cls).__init__(name, bases, dct)
+        super(CallbackMeta, cls).__init__(name, bases, dct)
 
 
 class RegistrationMixin(object):
