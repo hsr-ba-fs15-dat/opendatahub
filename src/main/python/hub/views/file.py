@@ -26,7 +26,7 @@ class FileViewSet(viewsets.ModelViewSet):
 
         try:
             result = file.to_format(format_name)
-            response.write(result)
+            response.write(result[0].stream.getvalue())
             response.flush()
 
             return response

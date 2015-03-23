@@ -3,18 +3,23 @@
 """
 
 from hub.tests.testutils import TestBase
-from hub.utils.ogr2ogr import ogr2ogr, OGR_BY_EXTENSION
+from hub.utils.ogr2ogr import ogr2ogr, OGR_BY_EXTENSION, _ogr2ogr_cli, Ogr2OgrException
 from hub.structures.file import FileGroup
+import logging
+import os
 
 
 class Ogr2OgrUtilsTests(TestBase):
-    def test_gml_to_all(self):
-        file_group = FileGroup.from_files(
-            self.get_test_file_path('gml/Bahnhoefe.gml'),
-            self.get_test_file_path('gml/Bahnhoefe.gfs'),
-            self.get_test_file_path('gml/Bahnhoefe.xsd'),
-        )
+    def test_ogr_cli(self):
+        _ogr2ogr_cli(['--version'])
+        self.assertRaises(Ogr2OgrException, lambda: _ogr2ogr_cli([]))
 
-        for ext, ogr_format in OGR_BY_EXTENSION.iteritems():
-            new_file_group = ogr2ogr(file_group, ogr_format)
-            self.assertIn('Bahnhoefe.' + ext, new_file_group.names)
+    def test_all_to_all(self):
+        for ext_from, ogr_format_from in OGR_BY_EXTENSION.iteritems():
+            data_dir = self.get_test_file_path(ext_from.lower())
+            file_group_from = FileGroup.from_files(*(os.path.join(data_dir, f) for f in os.listdir(data_dir)))
+
+            for ext_to, ogr_format_to in OGR_BY_EXTENSION.iteritems():
+                logging.info('Converting from %s to %s', ext_from, ext_to)
+                file_group_to = ogr2ogr(file_group_from, ogr_format_to)
+                self.assertIn('Bahnhoefe', [os.path.splitext(fn)[0] for fn in file_group_to.names])
