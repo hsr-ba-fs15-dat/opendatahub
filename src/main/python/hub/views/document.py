@@ -1,3 +1,7 @@
+"""
+
+"""
+
 from rest_framework import viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
@@ -11,7 +15,6 @@ from hub.serializers import DocumentSerializer
 from hub.models import DocumentModel, FileGroupModel, FileModel
 from hub.formatter import known_formatters
 import hub.formatters
-from hub.parsers import Parser
 from hub.formats import Format
 from hub.structures.file import File
 
@@ -97,7 +100,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
             if not file:
                 raise ValidationError('Failed to read content')
 
-            file_model = FileModel(file_name=file.name, data=file.parse(), file_group=file_group)
+            file_model = FileModel(file_name=file.name, data=file.to_df(), file_group=file_group)
             file_model.save()
 
             serializer = DocumentSerializer(DocumentModel.objects.get(id=doc.id), context={'request': request})

@@ -1,4 +1,6 @@
-import base64
+"""
+
+"""
 
 from django.db import models
 
