@@ -1,25 +1,42 @@
 # -*- coding: utf-8 -*-
+"""
+Base/infrastructure classes for formats and basic/builtin formats
+"""
+
 from __future__ import unicode_literals
 
 from opendatahub.utils.plugins import RegistrationMixin
 
 
 class Format(RegistrationMixin):
+    """ Format base class. All classes that inherit from Format are automatically registered as formats.
+    """
+
+    # tells not to register as format
     _is_abstract = True
+
+    # holds all registered formats by name
     formats = {}
     DEFAULT_FORMAT = None
 
+    # descriptive meta information for display in webfrontend
     label = ''
     description = ''
     example = ''
 
     @classmethod
     def register_child(cls, name, bases, dct):
+        # remove training whitespace cause by being a docstring/multiline comment
+        cls.description = cls.description.strip()
+        cls.example = cls.example.strip()
         if not dct.get('_is_abstract'):
             cls.formats[name] = cls
 
     @staticmethod
     def identify(file, *args, **kwargs):
+        """ Tries to auto-detect the format by passing it through the chain of format classes
+        :type file: hub.structures.File
+        """
         try:
             return next((format for format in Format.formats.itervalues() if format.is_format(file, *args, **kwargs)))
         except StopIteration:
@@ -51,12 +68,24 @@ class CSV(Format):
 
 
 class JSON(Format):
+    label = 'JSON'
+
+    description = """
+    JavaScript Objekt-Notation. Nützlich zur Wiederverwendung in Webapplikationen.
+    """
+
     @classmethod
     def is_format(self, file, *args, **kwargs):
-        return file.extension == 'json'
+        return file.extension == 'json' and not '"geometry"' in file.stream.getvalue()  # todo figure out a better way
 
 
 class Excel(Format):
+    label = 'Excel'
+
+    description = """
+    Microsoft Office Excel Datei (xls bzw. xlsx)
+    """
+
     @classmethod
     def is_format(self, file, *args, **kwargs):
         return file.extension in ('xls', 'xlsx')
@@ -132,10 +161,16 @@ class GeoJSON(Format):
 
     @classmethod
     def is_format(self, file, *args, **kwargs):
-        return file.extension == 'json'
+        return file.extension == 'json' and '"geometry"' in file.stream.getvalue()  # todo figure out a better way
 
 
 class Other(Format):
+    label = 'Original'
+
+    description = """
+    Die original zur Verfügung gestellten Daten ohne jegliche konversion.
+    """
+
     @classmethod
     def is_format(self, file, *args, **kwargs):
         return False
