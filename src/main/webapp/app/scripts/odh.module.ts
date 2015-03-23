@@ -19,11 +19,14 @@ module openDataHub {
             'ui.grid',
             'openDataHub.auth',
             'openDataHub.utils',
-            'openDataHub.main'
+            'openDataHub.main',
+            'restangular'
         ])
 
         .config(($stateProvider:ng.ui.IStateProvider, $urlRouterProvider:ng.ui.IUrlRouterProvider,
-                 UrlServiceProvider:odh.utils.UrlService, paginationConfig:ng.ui.bootstrap.IPaginationConfig) => {
+                 UrlServiceProvider:odh.utils.UrlService, paginationConfig:ng.ui.bootstrap.IPaginationConfig,
+                 RestangularProvider) => {
+            RestangularProvider.setBaseUrl('/api/v1');
 
             (<any>$).material.init();
 

@@ -46,6 +46,8 @@ module.exports = function(config) {
       'bower_components/arrive/src/arrive.js',
       'bower_components/angular-ui-grid/ui-grid.js',
       'bower_components/angular-easyfb/angular-easyfb.js',
+      'bower_components/lodash/dist/lodash.compat.js',
+      'bower_components/restangular/dist/restangular.js',
       'bower_components/angular-mocks/angular-mocks.js',
       // endbower
       // injector:js

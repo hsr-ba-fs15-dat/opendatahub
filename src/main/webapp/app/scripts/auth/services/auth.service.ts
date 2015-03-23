@@ -71,8 +71,8 @@ module odh.auth {
     }
     angular.module('openDataHub.auth').service('AuthenticationService', AuthenticationService)
         .constant('API', '/api/v1/auth/');
-    angular.module('openDataHub').config(($httpProvider:ng.IHttpProvider) => {
-        $httpProvider.interceptors.push(odh.auth.AuthenticationInterceptor.Factory);
-    });
+    // angular.module('openDataHub').config(($httpProvider:ng.IHttpProvider) => {
+    //    $httpProvider.interceptors.push(odh.auth.AuthenticationInterceptor.Factory);
+    // });
 }
 

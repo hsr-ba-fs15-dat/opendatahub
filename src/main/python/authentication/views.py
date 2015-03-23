@@ -24,12 +24,12 @@ class CurrentUserView(APIView):
 @psa()
 def auth_by_token(request, backend):
     """Decorator that creates/authenticates a user with an access_token"""
-    token = request.DATA.get('access_token')
+    token = request.data.get('access_token')
     user = request.user
     print("token")
     print(token)
     user = request.backend.do_auth(
-        access_token=request.DATA.get('access_token')
+        access_token=request.data.get('access_token')
     )
     if user:
         return user
@@ -43,8 +43,8 @@ class SocialView(APIView):
     permission_classes = (AllowAny,)
 
     def post(self, request, format=None):
-        auth_token = request.DATA.get('access_token', None)
-        backend = request.DATA.get('backend', None)
+        auth_token = request.data.get('access_token', None)
+        backend = request.data.get('backend', None)
         if auth_token and backend:
             try:
                 # Try to authenticate the user using python-social-auth
