@@ -1,17 +1,20 @@
 from rest_framework import viewsets
-
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from django.db.models import Q
 from django.http import HttpResponse
 import requests as http
+import re
 
 from hub.serializers import DocumentSerializer
-
-from hub.models import DocumentModel
+from hub.models import DocumentModel, FileGroupModel, FileModel
 from hub.formatter import known_formatters
 import hub.formatters
+from hub.parsers import Parser
+from hub.formats import Format
+from hub.structures.file import File
+
 
 print('Loaded formatters:')
 print(hub.formatters.__all__)
@@ -52,20 +55,50 @@ class DocumentViewSet(viewsets.ModelViewSet):
         Expected parameters: One of: url, file. Always: description
         """
         try:
-            content = ""
+
+            if not ('name' in request.data and 'description' in request.data):
+                raise ValidationError('Insufficient information')
+
+            doc = DocumentModel(name=request.data['name'], description=request.data['description'],
+                                private=request.data.get('private', False))
+            doc.save()
+
+            file_group = FileGroupModel(document=doc)
+            file_group.save()
+
+            file = None
 
             if 'url' in request.data:
                 resp = http.get(request.data['url'])
 
-                if resp.status_code == 200:
-                    content = resp.text
-                else:
+                if resp.status_code != 200:
                     raise ValidationError('Failed to retrieve content: Status code %d' % resp.status_code)
-            elif 'file' in request.data:
-                content = request.data['file'].read()
 
-            doc = DocumentModel(name=request.data['name'], description=request.data['description'], content=content)
-            doc.save()
+                # extract last part of the path component
+                match = re.search(r'/([^/]*)(?:\?#.*)$', request.data['url'])
+
+                file = None
+                if match:
+                    filename = match.group(1)
+                    file = File(filename, resp.text)
+                elif 'format' in request.data:
+                    format = filter(lambda n: n.label == request.data['format'], Format.formats)
+
+                    if not format:
+                        raise ValidationError('Unknown format')
+
+                    file = File(request.data['url'], resp.text, format=format)
+
+            elif 'file' in request.data:
+                file = File(request.data['file'].name, request.data['file'])
+            else:
+                raise ValidationError('No data source specified')
+
+            if not file:
+                raise ValidationError('Failed to read content')
+
+            file_model = FileModel(file_name=file.name, data=file.parse(), file_group=file_group)
+            file_model.save()
 
             serializer = DocumentSerializer(DocumentModel.objects.get(id=doc.id), context={'request': request})
 
