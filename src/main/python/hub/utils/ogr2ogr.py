@@ -1,5 +1,6 @@
 """
-
+ogr2ogr (GDAL) command line interface wrapper
+Requires ogr2ogr to be installed (e.g. sudo apt-get install gdal-bin)
 """
 
 import subprocess
@@ -7,6 +8,7 @@ import collections
 
 import os
 import shutil
+import logging
 
 from hub.structures.file import FileGroup
 
@@ -36,6 +38,7 @@ for var in globals().values():
 
 def _ogr2ogr_cli(arguments, *agrs, **kwargs):
     cmd = ['ogr2ogr'] + arguments
+    logging.debug('Running ogr2ogr: %s', ' '.join(cmd))
     process = subprocess.Popen(cmd)
     exit_code = process.wait()
     if exit_code:
