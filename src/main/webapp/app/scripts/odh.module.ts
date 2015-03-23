@@ -25,7 +25,7 @@ module openDataHub {
 
         .config(($stateProvider:ng.ui.IStateProvider, $urlRouterProvider:ng.ui.IUrlRouterProvider,
                  UrlServiceProvider:odh.utils.UrlService, paginationConfig:ng.ui.bootstrap.IPaginationConfig,
-                 RestangularProvider) => {
+                 RestangularProvider, $httpProvider:ng.IHttpProvider) => {
             RestangularProvider.setBaseUrl('/api/v1');
 
             (<any>$).material.init();

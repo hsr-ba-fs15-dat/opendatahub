@@ -18,8 +18,8 @@ module odh.auth {
     function config($stateProvider:ng.ui.IStateProvider, ezfbProvider) {
         ezfbProvider.setLocale('de_DE');
         ezfbProvider.setInitParams({
-            appId: '401522313351953',
-            // appId: '401520096685508',
+            //appId: '401522313351953',
+            appId: '401520096685508',
             version: 'v2.0'
         });
         $stateProvider

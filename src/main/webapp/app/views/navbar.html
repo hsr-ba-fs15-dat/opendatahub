@@ -37,15 +37,12 @@
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li ng-show="vm.isAuthenticated()">
-                    <a href="#" ng-click="vm.logout()">Logout</a>
+                    <a href="#" ng-click="vm.logout()">Ausloggen</a>
                 </li>
                 <li ng-hide="vm.isAuthenticated()">
-                    <a ui-sref="login">Login</a>
+                    <a ui-sref="login">Einloggen / Registrieren</a>
                 </li>
-                <li ng-hide="vm.isAuthenticated()">
-                    <a ui-sref="register">Register</a>
-                </li>
-                <li>
+                <li ng-show="vm.isAuthenticated()">
                     <a ui-sref="userProfile">UserProfile</a>
                 </li>
             </ul>

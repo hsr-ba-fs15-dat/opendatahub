@@ -5,9 +5,12 @@ module odh.auth {
     'use strict';
 
     export class AuthenticationService {
+        private $window:ng.IWindowService;
 
-
-        constructor(private $window:ng.IWindowService) {
+        /* @ngInject */
+        public $get($window:ng.IWindowService) {
+            this.$window = $window;
+            return this;
         }
 
 
@@ -43,20 +46,20 @@ module odh.auth {
     export class AuthenticationInterceptor {
 
 
-        constructor(private AuthenticationService:AuthenticationService, private API) {
+        constructor(private AuthenticationServiceProvider:AuthenticationService, private API) {
         }
 
 
         public response = (res) => {
             if (res.config.url.indexOf(this.API) === 0 && res.data.token) {
-                this.AuthenticationService.saveToken(res.data.token);
+                this.AuthenticationServiceProvider.saveToken(res.data.token);
             }
 
             return res;
         };
 
         public request = (config) => {
-            var token = this.AuthenticationService.getToken();
+            var token = this.AuthenticationServiceProvider.getToken();
             console.log(token);
             if (config.url.indexOf(this.API) === 0 && token) {
                 config.headers.Authorization = 'jwt ' + token;
@@ -64,15 +67,15 @@ module odh.auth {
 
             return config;
         };
-
+        /* @ngInject */
         public static Factory(AuthenticationService:auth.AuthenticationService, API) {
             return new AuthenticationInterceptor(AuthenticationService, API);
         }
     }
-    angular.module('openDataHub.auth').service('AuthenticationService', AuthenticationService)
-        .constant('API', '/api/v1/auth/');
-    // angular.module('openDataHub').config(($httpProvider:ng.IHttpProvider) => {
-    //    $httpProvider.interceptors.push(odh.auth.AuthenticationInterceptor.Factory);
-    // });
+    angular.module('openDataHub.auth').provider('AuthenticationService', AuthenticationService)
+        .constant('API', '/api/v1/');
+    angular.module('openDataHub').config(($httpProvider:ng.IHttpProvider) => {
+                $httpProvider.interceptors.push(odh.auth.AuthenticationInterceptor.Factory);
+    });
 }
 

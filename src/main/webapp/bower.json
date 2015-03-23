@@ -29,7 +29,8 @@
     "arrive": "~2.1.0",
     "angular-ui-grid": "~3.0.0-rc.20",
     "angular-easyfb": "~1.2.1",
-    "restangular": "~1.4.0"
+    "restangular": "~1.4.0",
+    "bootstrap-social-buttons": "~1.0.0"
   },
   "devDependencies": {
     "angular-mocks": "^1.4.0"
