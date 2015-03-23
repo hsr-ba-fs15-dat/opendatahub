@@ -41,6 +41,8 @@ module odh {
             var promise:any;
             var url = this.UrlService.get('documents');
 
+            console.log(this.params);
+
             if (this.params.file) {
                 promise = this.$upload.upload({
                     url: url,

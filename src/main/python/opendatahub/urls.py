@@ -3,13 +3,18 @@ from django.contrib import admin
 from rest_framework import routers
 
 from authentication.views import FacebookLogin
+
 from opendatahub.settings import PRODUCTION, STATIC_ROOT
 from hub.views.document import DocumentViewSet
+from hub.views.file_group import FileGroupViewSet
+from hub.views.file import FileViewSet
 from hub.views.format import FormatView
 
 
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'documents', DocumentViewSet)
+router.register(r'fileGroups', FileGroupViewSet)
+router.register(r'files', FileViewSet)
 router.register(r'format', FormatView, 'format')
 
 urlpatterns = (
