@@ -63,7 +63,6 @@ class Excel(Format):
 
 
 class Shapefile(Format):
-
     label = 'ESRI Shapefile'
 
     description = """
@@ -76,7 +75,6 @@ class Shapefile(Format):
 
 
 class GML(Format):
-
     label = 'GML'
 
     description = """
@@ -89,7 +87,6 @@ class GML(Format):
 
 
 class KML(Format):
-
     label = 'KML'
 
     description = """
@@ -103,7 +100,6 @@ class KML(Format):
 
 
 class INTERLIS1(Format):
-
     label = 'INTERLIS 1'
 
     description = """
@@ -116,7 +112,6 @@ class INTERLIS1(Format):
 
 
 class INTERLIS2(Format):
-
     label = 'INTERLIS 2'
 
     description = """
@@ -129,7 +124,6 @@ class INTERLIS2(Format):
 
 
 class GeoJSON(Format):
-
     label = 'GeoJSON'
 
     description = """
@@ -142,9 +136,9 @@ class GeoJSON(Format):
 
 
 class Other(Format):
-
     @classmethod
     def is_format(self, file, *args, **kwargs):
         return False
+
 
 Format.DEFAULT_FORMAT = Other

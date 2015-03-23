@@ -3,12 +3,13 @@
 """
 """
 
+import logging
+import collections
+
 import pandas
 import geopandas
-import logging
-
-import collections
 import os
+
 from opendatahub.utils.plugins import RegistrationMixin
 from hub import formats
 from hub.utils import ogr2ogr

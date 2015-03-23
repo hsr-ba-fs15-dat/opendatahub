@@ -1,21 +1,15 @@
-"""
-
-"""
+import urlparse
 
 from rest_framework import viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from django.db.models import Q
-from django.http import HttpResponse
 import requests as http
-import re
 
-from hub.serializers import DocumentSerializer
+from hub.serializers import DocumentSerializer, FileGroupSerializer
 from hub.models import DocumentModel, FileGroupModel, FileModel
-from hub.formatter import known_formatters
 import hub.formatters
-from hub.formats import Format
 from hub.structures.file import File
 
 
@@ -29,36 +23,12 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
     paginate_by = 50
 
-    @detail_route()
-    def data(self, request, pk, *args, **kwargs):
-        format = request.query_params.get('fmt', 'plain')
-
-        document = DocumentModel.objects.get(id=pk)
-
-        formatter_class = known_formatters.get(format)
-
-        if not formatter_class:
-            raise ValidationError('No such formatter')
-
-        formatter = formatter_class()
-
-        response = HttpResponse()
-        response['Content-Disposition'] = 'attachment; filename="data.%s"' % formatter.description.file_extension
-        response['Content-Type'] = formatter.description.mime_type
-
-        formatter.format(document, response, None)
-
-        response.flush()
-
-        return response
-
     def create(self, request, *args, **kwargs):
         """
         Create a document.
         Expected parameters: One of: url, file. Always: description
         """
         try:
-
             if not ('name' in request.data and 'description' in request.data):
                 raise ValidationError('Insufficient information')
 
@@ -66,42 +36,40 @@ class DocumentViewSet(viewsets.ModelViewSet):
                                 private=request.data.get('private', False))
             doc.save()
 
-            file_group = FileGroupModel(document=doc)
+            file_group = FileGroupModel(document=doc, format=request.data.get('format', None))
             file_group.save()
 
             file = None
 
             if 'url' in request.data:
-                resp = http.get(request.data['url'])
+                url = request.data['url']
+
+                resp = http.get(url)
 
                 if resp.status_code != 200:
                     raise ValidationError('Failed to retrieve content: Status code %d' % resp.status_code)
 
-                # extract last part of the path component
-                match = re.search(r'/([^/]*)(?:\?#.*)$', request.data['url'])
+                path = urlparse.urlparse(url)[2]
 
-                file = None
-                if match:
-                    filename = match.group(1)
-                    file = File(filename, resp.text)
-                elif 'format' in request.data:
-                    format = filter(lambda n: n.label == request.data['format'], Format.formats)
+                if path:
+                    filename = path.rsplit('/', 1)[1]
+                else:
+                    filename = (url[:250] + '...') if len(url) > 250 else url
 
-                    if not format:
-                        raise ValidationError('Unknown format')
+                file = File(filename, resp.text.encode('utf8'))
 
-                    file = File(request.data['url'], resp.text, format=format)
+                if not file:
+                    raise ValidationError('Failed to read content')
 
+                file_model = FileModel(file_name=file.name, data=file.stream, file_group=file_group)
+                file_model.save()
             elif 'file' in request.data:
-                file = File(request.data['file'].name, request.data['file'])
+                files = request.data.getlist('file')
+                for file in files:
+                    file_model = FileModel(file_name=file.name, data=file.read(), file_group=file_group)
+                    file_model.save()
             else:
                 raise ValidationError('No data source specified')
-
-            if not file:
-                raise ValidationError('Failed to read content')
-
-            file_model = FileModel(file_name=file.name, data=file.to_df(), file_group=file_group)
-            file_model.save()
 
             serializer = DocumentSerializer(DocumentModel.objects.get(id=doc.id), context={'request': request})
 
@@ -130,4 +98,10 @@ class DocumentViewSet(viewsets.ModelViewSet):
                                          Q(description__icontains=params['search']))
 
         serializer = self.get_pagination_serializer(self.paginate_queryset(documents))
+        return Response(serializer.data)
+
+    @detail_route()
+    def filegroups(self, request, pk, *args, **kwargs):
+        queryset = FileGroupModel.objects.filter(document__id=pk)
+        serializer = FileGroupSerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data)
