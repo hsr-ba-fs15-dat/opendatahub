@@ -6,6 +6,7 @@ import subprocess
 import collections
 
 import os
+import shutil
 
 from hub.structures.file import FileGroup
 
@@ -60,7 +61,7 @@ def ogr2ogr(file_group, to_type):
                     ext = to_type.extension if filename == 'out' else filename.rsplit('.', 1)[-1]
 
                     files.append(os.path.join(temp_dir, '{}.{}'.format(os.path.splitext(main_file.name)[0], ext)))
-                    os.rename(os.path.join(temp_dir, filename), files[-1])
+                    shutil.move(os.path.join(temp_dir, filename), files[-1])
 
         file_group_converted = FileGroup.from_files(*files)
         # some ogr2ogr drivers don't retain the name (evil!), let's rename them ourselves
