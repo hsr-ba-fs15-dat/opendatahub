@@ -3,6 +3,7 @@
 """
 
 from django.db import models
+
 from .structures.file import File, FileGroup
 
 
@@ -39,7 +40,7 @@ class FileGroupModel(models.Model):
     def to_file_group(self):
         group = FileGroup()
 
-        for file in FileModel.files:
+        for file in FileModel.files.all():
             group.add(file.to_file(group))
 
         return group
