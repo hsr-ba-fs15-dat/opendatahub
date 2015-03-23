@@ -23,6 +23,7 @@ class FileGroupSerializer(serializers.HyperlinkedModelSerializer):
 
 class FileSerializer(serializers.HyperlinkedModelSerializer):
     data = serializers.HyperlinkedIdentityField('filemodel-data')
+
     class Meta:
         model = FileModel
         fields = ('id', 'url', 'file_name', 'file_group', 'data')

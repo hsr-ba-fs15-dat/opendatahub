@@ -10,7 +10,6 @@ class FileViewSet(viewsets.ModelViewSet):
     queryset = FileModel.objects.all()
     serializer_class = FileSerializer
 
-
     @detail_route()
     def data(self, request, pk, *args, **kwargs):
         format_name = request.query_params.get('fmt', 'CSV')
@@ -34,4 +33,3 @@ class FileViewSet(viewsets.ModelViewSet):
         except:
             raise
             # return HttpResponseServerError()
-
