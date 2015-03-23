@@ -133,5 +133,5 @@ class DocumentViewSet(viewsets.ModelViewSet):
     @detail_route()
     def filegroups(self, request, pk, *args, **kwargs):
         queryset = FileGroupModel.objects.filter(document__id=pk)
-        serializer = FileGroupSerializer(queryset, many=True, context={'request':request})
+        serializer = FileGroupSerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data)

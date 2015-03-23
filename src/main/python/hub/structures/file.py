@@ -4,7 +4,6 @@
 from cStringIO import StringIO
 import contextlib
 import tempfile
-
 import shutil
 
 import os

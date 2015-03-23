@@ -1,9 +1,9 @@
 import json
-import types
-from . import testutils
 
 from rest_framework.test import APIClient
 from django.core.files.uploadedfile import SimpleUploadedFile
+
+from . import testutils
 
 
 class RestApiTests(testutils.TestBase):

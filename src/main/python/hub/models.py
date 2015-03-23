@@ -13,6 +13,7 @@ class DocumentModel(models.Model):
     """
     Metadata for a document.
     """
+
     class Meta:
         db_table = 'hub_documents'
 
@@ -21,7 +22,7 @@ class DocumentModel(models.Model):
 
     private = models.BooleanField(default=False)
 
-    #todo: ref to user for ownership
+    # todo: ref to user for ownership
 
     def __str__(self):
         return "[Document id={} description={}]".format(self.id, cap(self.description, 50))

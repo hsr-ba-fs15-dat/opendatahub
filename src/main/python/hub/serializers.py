@@ -32,3 +32,7 @@ class PaginatedDocumentSerializer(PaginationSerializer):
         object_serializer_class = DocumentSerializer
 
 
+class FormatSerializer(serializers.Serializer):
+    label = serializers.CharField(read_only=True)
+    description = serializers.CharField(read_only=True)
+    example = serializers.CharField(read_only=True)

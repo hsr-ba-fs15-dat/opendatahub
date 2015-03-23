@@ -8,7 +8,6 @@ from hub.structures.file import FileGroup
 
 
 class Ogr2OgrUtilsTests(TestBase):
-
     def test_gml_to_all(self):
         file_group = FileGroup.from_files(
             self.get_test_file_path('gml/Bahnhoefe.gml'),
