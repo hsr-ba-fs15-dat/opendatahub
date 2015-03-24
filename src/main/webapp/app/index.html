@@ -16,12 +16,12 @@
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <!-- build:css(.) styles/vendor.css -->
     <!-- bower:css -->
-    <link rel="stylesheet" href="bower_components/animate.css/animate.css" />
-    <link rel="stylesheet" href="bower_components/ngtoast/dist/ngToast.css" />
-    <link rel="stylesheet" href="bower_components/angular-ui-select/dist/select.css" />
-    <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.css" />
-    <link rel="stylesheet" href="bower_components/bootstrap-material-design/dist/css/ripples.css" />
-    <link rel="stylesheet" href="bower_components/angular-ui-grid/ui-grid.css" />
+    <link rel="stylesheet" href="bower_components/animate.css/animate.css"/>
+    <link rel="stylesheet" href="bower_components/ngtoast/dist/ngToast.css"/>
+    <link rel="stylesheet" href="bower_components/angular-ui-select/dist/select.css"/>
+    <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.css"/>
+    <link rel="stylesheet" href="bower_components/bootstrap-material-design/dist/css/ripples.css"/>
+    <link rel="stylesheet" href="bower_components/angular-ui-grid/ui-grid.css"/>
     <!-- endbower -->
     <link rel="stylesheet" href="bower_components/ngtoast/dist/ngToast-animations.css"/>
 
@@ -39,26 +39,28 @@
 </head>
 
 <body ng-app="openDataHub">
-<fb app-id='401520096685508'></fb>
-<toast></toast>
+<div id="wrap">
+    <fb app-id='401520096685508'></fb>
+    <toast></toast>
 
-<!--[if lt IE 7]>
-<p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
-    your browser</a> to improve your experience.</p>
-<![endif]-->
+    <!--[if lt IE 7]>
+    <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
+        your browser</a> to improve your experience.</p>
+    <![endif]-->
 
-<!-- Add your site or application content here -->
-<div class="header">
-    <div ng-include="'views/navbar.html'"></div>
-</div>
+    <!-- Add your site or application content here -->
+    <div class="header">
+        <div ng-include="'views/navbar.html'"></div>
+    </div>
 
-<div class="container">
-    <div ui-view></div>
-</div>
-
-<div class="footer">
     <div class="container">
-        <p><a target="_blank" href="http://www.hsr.ch/geometalab">&copy; 2015 Geometa Lab</a></p>
+        <div ui-view></div>
+    </div>
+</div>
+
+<div class="footer btn-material-blue-grey">
+    <div class="container">
+        <a target="_blank" href="http://www.hsr.ch/geometalab">&copy; 2015 Geometa Lab</a>
     </div>
 </div>
 
