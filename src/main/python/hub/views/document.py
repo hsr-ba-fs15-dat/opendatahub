@@ -38,7 +38,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
                 raise ValidationError('Insufficient information')
 
             doc = DocumentModel(name=request.data['name'], description=request.data['description'],
-                                private=request.data.get('private', False)) # , owner=request.user
+                                private=request.data.get('private', False), owner=request.user)
             doc.save()
 
             if 'url' in request.data:
@@ -106,7 +106,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
         """
         params = request.query_params
 
-        documents = DocumentModel.objects.filter(Q(private=False) | Q(owner=request.user))
+        documents = DocumentModel.objects.all()
 
         if 'name' in params:
             documents = documents.filter(name__icontains=params['name'])
