@@ -22,20 +22,20 @@ class RestApiTests(testutils.TestBase):
             'file': SimpleUploadedFile(f.name, f.read())
         }
 
-        self.client = APIClient()
+    def get_client(self, authenticate=True):
+        client = APIClient()
+        if authenticate:
+            client.login(username=self.username, password=self.password)
+        return client
 
-    def _do_login(self):
-        self.client.login(username=self.username, password=self.password)
-
-    def _do_post(self):
-        self.response = self.client.post('/api/v1/document', self.data)
+    def do_post(self, client):
+        self.response = client.post('/api/v1/document', self.data)
         self.response_json = json.loads(self.response.content)
 
     def test_post(self):
         """ Verifies that setUp managed to create a document via the api.
         """
-        self._do_login()
-        self._do_post()
+        self.do_post(self.get_client())
 
         self.assertEqual(200, self.response.status_code)
 
@@ -47,7 +47,7 @@ class RestApiTests(testutils.TestBase):
 
     def test_post_requires_auth(self):
         try:
-            self._do_post()
+            self.do_post(self.get_client(authenticate=False))
             self.fail('creating a document is supposed to require authentication')
         except:
             pass
@@ -55,13 +55,12 @@ class RestApiTests(testutils.TestBase):
     def test_get_document(self):
         """ AssertionError: Path must be within the project
         """
-        self._do_login()
-        self._do_post()
+        self.do_post(self.get_client())
 
         self.assertIn('id', self.response_json)
 
         document_id = self.response_json['id']
-        result = self.client.get('/api/v1/document/%d' % document_id)
+        result = self.get_client(authenticate=False).get('/api/v1/document/%d' % document_id)
 
         result_json = json.loads(result.content)
 
