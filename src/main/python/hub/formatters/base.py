@@ -69,6 +69,17 @@ class JSONFormatter(Formatter):
                                 file.to_df().to_json(orient='records')).file_group
 
 
+class ExcelFormatter(Formatter):
+    targets = formats.Excel,
+
+    @classmethod
+    def format(cls, file, format, *args, **kwargs):
+        # FIXME this fails due to encoding, which according to documentation is not supposed to happen
+        f = tempfile.NamedTemporaryFile(suffix=".xlsx")
+        file.to_df().to_excel(f.name, engine='xlsxwriter')
+        return File.from_file(os.path.splitext(file.name)[0] + '.xlsx', f.name).file_group
+
+
 class NoopFormatter(Formatter):
     targets = formats.Other,
 
