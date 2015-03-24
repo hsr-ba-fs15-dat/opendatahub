@@ -4,10 +4,17 @@ from rest_framework.test import APIClient
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from . import testutils
+from django.contrib.auth.models import User
 
 
 class RestApiTests(testutils.TestBase):
+    username = 'test'
+    password = 'secret'
+
     def setUp(self):
+        if not User.objects.filter(username=self.username).exists():
+            User.objects.create_user(username=self.username, email='test@example.com', password=self.password)
+
         f = open(self.get_test_file_path('test-addresses.csv'), 'r')
         self.data = {
             'name': 'REST Api test',
@@ -16,6 +23,7 @@ class RestApiTests(testutils.TestBase):
         }
 
         self.client = APIClient()
+        self.client.login(username=self.username, password=self.password)
 
         self.response = self.client.post('/api/v1/document', self.data)
         self.response_json = json.loads(self.response.content)

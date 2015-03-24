@@ -14,7 +14,7 @@ from hub.models import DocumentModel, FileGroupModel, FileModel
 import hub.formatters
 from hub.structures.file import File
 
-from authentication.permissions import IsOwnerOrPublic
+from authentication.permissions import IsOwnerOrPublic,IsOwnerOrReadOnly
 
 print('Loaded formatters:')
 print(hub.formatters.__all__)
@@ -26,7 +26,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
     paginate_by = 50
 
-    permission_classes = IsOwnerOrPublic,
+    permission_classes = IsOwnerOrPublic, IsOwnerOrReadOnly,
 
     def create(self, request, *args, **kwargs):
         """
