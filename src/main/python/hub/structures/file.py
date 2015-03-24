@@ -39,6 +39,9 @@ class FileGroup(object):
     def get_by_extension(self, extension):
         return [f for f in self.files if f.extension == extension]
 
+    def get_main_file(self):
+        return next((f for f in self.files if not issubclass(f.get_format(), formats.Other)))
+
     @property
     def names(self):
         return [f.name for f in self.files]
@@ -91,6 +94,14 @@ class File(object):
     @property
     def extension(self):
         return self.name.rsplit('.', 1)[-1].lower()
+
+
+    def get_format(self):
+        if not self.format:
+            self.format = formats.identify(self)
+
+        return self.format
+
 
     def to_df(self, force=False):
         if force or self.df is None:
