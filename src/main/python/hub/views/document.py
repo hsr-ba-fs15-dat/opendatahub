@@ -13,8 +13,8 @@ from hub.serializers import DocumentSerializer, FileGroupSerializer
 from hub.models import DocumentModel, FileGroupModel, FileModel
 import hub.formatters
 from hub.structures.file import File
+from authentication.permissions import IsOwnerOrPublic, IsOwnerOrReadOnly
 
-from authentication.permissions import IsOwnerOrPublic,IsOwnerOrReadOnly
 
 print('Loaded formatters:')
 print(hub.formatters.__all__)
