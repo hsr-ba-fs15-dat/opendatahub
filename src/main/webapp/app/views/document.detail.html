@@ -1,24 +1,24 @@
-<div style="padding-top: 2em">
-    <div class="col-md-4">Name</div>
-    <div class="col-md-8">{{ doc.document.name }}</div>
-
-    <div class="col-md-4">Beschreibung</div>
-    <div class="col-md-8">{{ doc.document.description }}</div>
+<div style="padding-top: 2em;">
+    <h2>{{ doc.document.name }}</h2>
+    <p>{{ doc.document.description }}</p>
 </div>
+
+<div class="separator-v"></div>
 
 <h4>Dateien</h4>
 
 <div>
-    <div class="row">
-        <div class="col-md-8">TODO</div>
+    <div class="row" ng-repeat="group in doc.fileGroups">
+        <div class="col-md-8"><span ng-repeat="file in group.files">{{ file.file_name }}{{ $last ? '' : ', ' }}</span> </div>
         <div class="btn-group">
-            <a href="bootstrap-elements.html" data-target="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+            <a href="bootstrap-elements.html" data-target="#" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
                 Herunterladen
                 <span class="caret"></span>
             </a>
             <ul class="dropdown-menu">
-                <li ng-repeat="format in doc.availableFormats"><a ng-href="">{{
-                    format.label }}</a></li>
+                <li ng-repeat="format in doc.availableFormats">
+                    <a ng-href="{{ group.data }}?fmt={{ format.name }}">{{ format.label }}</a>
+                </li>
             </ul>
         </div>
     </div>

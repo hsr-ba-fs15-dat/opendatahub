@@ -16,7 +16,7 @@ class DocumentModel(models.Model):
     Metadata for a document.
     """
 
-    class Meta:
+    class Meta(object):
         db_table = 'hub_documents'
 
     name = models.CharField(max_length=200)

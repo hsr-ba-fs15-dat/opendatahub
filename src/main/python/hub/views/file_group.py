@@ -14,7 +14,7 @@ class FileGroupViewSet(viewsets.ModelViewSet):
     serializer_class = FileGroupSerializer
 
     @detail_route()
-    def files(self, request, pk, *args, **kwargs):
+    def file(self, request, pk, *args, **kwargs):
         queryset = FileModel.objects.filter(file_group__id=pk)
         serializer = FileSerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data)
@@ -53,3 +53,7 @@ class FileGroupViewSet(viewsets.ModelViewSet):
         except:
             raise
             # return HttpResponseServerError()
+
+    @detail_route()
+    def preview(self, request, pk):
+        return HttpResponseNotFound(reason='Testing!')
