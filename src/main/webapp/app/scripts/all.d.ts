@@ -19,6 +19,7 @@
 /// <reference path='main/directives/focus.ts' />
 /// <reference path='main/main.module.ts' />
 /// <reference path='main/services/document.service.ts' />
+/// <reference path='main/services/format.service.ts' />
 /// <reference path='odh.module.ts' />
 /// <reference path='temp/hubPlumb.ts' />
 /// <reference path='utils/toast.service.ts' />

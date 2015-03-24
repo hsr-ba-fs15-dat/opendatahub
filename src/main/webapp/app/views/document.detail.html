@@ -1,14 +1,25 @@
-
-<div class="btn-toolbar clearfix">
-    <button class="btn btn-default" ui-sref="documents">Zur Liste</button>
-    <a class="btn btn-default" ng-href="{{ doc.document.data }}?fmt=csv" target="_blank">Download als CSV</a>
-    <a class="btn btn-default" ng-href="{{ doc.document.data }}?fmt=json" target="_blank">Download als JSON</a>
-</div>
-
 <div style="padding-top: 2em">
     <div class="col-md-4">Name</div>
     <div class="col-md-8">{{ doc.document.name }}</div>
 
     <div class="col-md-4">Beschreibung</div>
     <div class="col-md-8">{{ doc.document.description }}</div>
+</div>
+
+<h4>Dateien</h4>
+
+<div>
+    <div class="row">
+        <div class="col-md-8">TODO</div>
+        <div class="btn-group">
+            <a href="bootstrap-elements.html" data-target="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                Herunterladen
+                <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+                <li ng-repeat="format in doc.availableFormats"><a ng-href="">{{
+                    format.label }}</a></li>
+            </ul>
+        </div>
+    </div>
 </div>

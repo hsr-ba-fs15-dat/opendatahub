@@ -6,18 +6,16 @@ module odh.utils {
 
     export class ToastService {
 
-        public temp:{};
-
         constructor(private ngToast) {
 
         }
 
         public success(msg:string):void {
-            this.ngToast.create({className: 'success', content: msg});
+            this.ngToast.create({className: 'success shadow-z-3', content: msg});
         }
 
         public failure(msg:string):void {
-            this.ngToast.create({className: 'danger', content: msg});
+            this.ngToast.create({className: 'danger shadow-z-3', content: msg});
         }
 
     }

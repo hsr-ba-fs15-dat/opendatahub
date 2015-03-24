@@ -1,11 +1,14 @@
 """
-
+ogr2ogr (GDAL) command line interface wrapper
+Requires ogr2ogr to be installed (e.g. sudo apt-get install gdal-bin)
 """
 
 import subprocess
 import collections
 
 import os
+import shutil
+import logging
 
 from hub.structures.file import FileGroup
 
@@ -35,6 +38,7 @@ for var in globals().values():
 
 def _ogr2ogr_cli(arguments, *agrs, **kwargs):
     cmd = ['ogr2ogr'] + arguments
+    logging.debug('Running ogr2ogr: %s', ' '.join(cmd))
     process = subprocess.Popen(cmd)
     exit_code = process.wait()
     if exit_code:
@@ -60,7 +64,7 @@ def ogr2ogr(file_group, to_type):
                     ext = to_type.extension if filename == 'out' else filename.rsplit('.', 1)[-1]
 
                     files.append(os.path.join(temp_dir, '{}.{}'.format(os.path.splitext(main_file.name)[0], ext)))
-                    os.rename(os.path.join(temp_dir, filename), files[-1])
+                    shutil.move(os.path.join(temp_dir, filename), files[-1])
 
         file_group_converted = FileGroup.from_files(*files)
         # some ogr2ogr drivers don't retain the name (evil!), let's rename them ourselves
