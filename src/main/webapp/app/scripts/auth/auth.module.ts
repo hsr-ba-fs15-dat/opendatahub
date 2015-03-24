@@ -10,15 +10,16 @@ module odh.auth {
             'ngSanitize',
             'ngRoute',
             'ezfb',
+            'restangular'
         ]
     ).config(config)
         ;
 
-    function config($stateProvider:ng.ui.IStateProvider, $locationProvider:ng.ILocationProvider, ezfbProvider) {
-
+    function config($stateProvider:ng.ui.IStateProvider, ezfbProvider) {
         ezfbProvider.setLocale('de_DE');
         ezfbProvider.setInitParams({
-            appId: '401520096685508',
+            // appId: '401522313351953', // this is the Local ID
+            appId: '401520096685508', // this is the Heroku ID
             version: 'v2.0'
         });
         $stateProvider

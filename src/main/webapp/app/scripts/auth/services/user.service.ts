@@ -13,7 +13,7 @@ module odh.auth {
         }
 
         public login(socialToken, provider = 'facebook') {
-            return this.$http.post(this.API + provider + '/', {
+            return this.$http.post(this.API + 'auth/' + provider + '/', {
                 access_token: socialToken.access_token,
                 backend: provider
             }).then((data:any) => {
@@ -27,7 +27,7 @@ module odh.auth {
         }
 
         public profile() {
-            return this.$http.get(this.API + 'user/');
+            return this.$http.get(this.API + 'auth/' + 'user/');
         }
 
     }

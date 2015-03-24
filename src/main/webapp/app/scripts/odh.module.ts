@@ -29,7 +29,6 @@ module openDataHub {
 
             (<any>$).material.init();
 
-
             paginationConfig.firstText = 'Erste';
             paginationConfig.lastText = 'Letzte';
             paginationConfig.nextText = 'Nächste';
