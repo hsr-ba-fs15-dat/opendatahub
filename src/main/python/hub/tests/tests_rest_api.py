@@ -2,9 +2,9 @@ import json
 
 from rest_framework.test import APIClient
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.contrib.auth.models import User
 
 from . import testutils
-from django.contrib.auth.models import User
 
 
 class RestApiTests(testutils.TestBase):
@@ -23,14 +23,20 @@ class RestApiTests(testutils.TestBase):
         }
 
         self.client = APIClient()
+
+    def _do_login(self):
         self.client.login(username=self.username, password=self.password)
 
+    def _do_post(self):
         self.response = self.client.post('/api/v1/document', self.data)
         self.response_json = json.loads(self.response.content)
 
     def test_post(self):
         """ Verifies that setUp managed to create a document via the api.
         """
+        self._do_login()
+        self._do_post()
+
         self.assertEqual(200, self.response.status_code)
 
         self.assertIn('name', self.response_json)
@@ -39,9 +45,19 @@ class RestApiTests(testutils.TestBase):
         self.assertIn('description', self.response_json)
         self.assertEqual(self.data['description'], self.response_json['description'])
 
+    def test_post_requires_auth(self):
+        try:
+            self._do_post()
+            self.fail('creating a document is supposed to require authentication')
+        except:
+            pass
+
     def test_get_document(self):
         """ AssertionError: Path must be within the project
         """
+        self._do_login()
+        self._do_post()
+
         self.assertIn('id', self.response_json)
 
         document_id = self.response_json['id']
