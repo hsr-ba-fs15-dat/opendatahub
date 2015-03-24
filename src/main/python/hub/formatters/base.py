@@ -75,9 +75,11 @@ class ExcelFormatter(Formatter):
     @classmethod
     def format(cls, file, format, *args, **kwargs):
         # FIXME this fails due to encoding, which according to documentation is not supposed to happen
-        f = tempfile.NamedTemporaryFile(suffix=".xlsx")
-        file.to_df().to_excel(f.name, engine='xlsxwriter')
-        return File.from_file(os.path.splitext(file.name)[0] + '.xlsx', f.name).file_group
+        # xxx does not work with geo (TypeError: Unsupported type <class 'shapely.geometry.point.Point'> in write())
+        with tempfile.NamedTemporaryFile(suffix=".xlsx") as f:
+            file.to_df().to_excel(f.name, engine='xlsxwriter')
+            f.seek(0)
+            return File.from_string(os.path.splitext(file.name)[0] + '.xlsx' + '.xlsx', f.read()).file_group
 
 
 class NoopFormatter(Formatter):
@@ -132,6 +134,6 @@ if __name__ == '__main__':
         f = fg[0]
         df = f.to_df()
 
-        f = Formatter.format(f, formats.GML)
+        f = Formatter.format(f, formats.Excel)
 
         pass

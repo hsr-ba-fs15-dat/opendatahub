@@ -50,7 +50,7 @@ class CSVParser(Parser):
 
     @classmethod
     def parse(cls, file, format, *args, **kwargs):
-        return pandas.read_csv(file.stream)
+        return pandas.read_csv(file.stream, encoding='UTF-8')
 
 
 class JSONParser(Parser):
@@ -66,7 +66,7 @@ class ExcelParser(Parser):
 
     @classmethod
     def parse(cls, file, format, *args, **kwargs):
-        return pandas.read_excel(file.stream)
+        return pandas.read_excel(file.stream, encoding='UTF-8')
 
 
 class OGRParser(Parser):
@@ -82,7 +82,7 @@ class OGRParser(Parser):
             name = '{}.{}'.format(os.path.splitext(name)[0], ogr2ogr.SHP.extension)
 
         with file_group.on_filesystem() as temp_dir:
-            return geopandas.read_file(os.path.join(temp_dir, name))
+            return geopandas.read_file(os.path.join(temp_dir, name), encoding='UTF-8')
 
 
 if __name__ == '__main__':

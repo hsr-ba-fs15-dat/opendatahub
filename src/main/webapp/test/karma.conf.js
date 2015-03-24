@@ -49,6 +49,7 @@ module.exports = function(config) {
       'bower_components/lodash/dist/lodash.compat.js',
       'bower_components/restangular/dist/restangular.js',
       'bower_components/satellizer/satellizer.js',
+      'bower_components/angular-loading-bar/build/loading-bar.js',
       'bower_components/angular-mocks/angular-mocks.js',
       // endbower
       // injector:js
@@ -62,8 +63,8 @@ module.exports = function(config) {
       'app/scripts/utils/url.service.js',
       'app/scripts/main/directives/focus.js',
       'app/scripts/main/controllers/document.controller.js',
+      'app/scripts/main/controllers/main.controller.js',
       'app/scripts/auth/controllers/userprofile.controller.js',
-      'app/scripts/main/controllers/navbar.controller.js',
       'app/scripts/main/controllers/offer.controller.js',
       'app/scripts/auth/services/user.service.js',
       'app/scripts/auth/controllers/main.controller.js',
@@ -73,7 +74,7 @@ module.exports = function(config) {
       'app/scripts/auth/services/auth.service.js',
       'app/scripts/auth/services/validate.service.js',
       'app/scripts/main/controllers/about.controller.js',
-      'app/scripts/main/controllers/main.controller.js',
+      'app/scripts/main/controllers/navbar.controller.js',
       // endinjector
       'test/mock/**/*.js',
       'test/spec/**/*.js'

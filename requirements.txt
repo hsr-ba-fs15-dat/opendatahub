@@ -18,7 +18,7 @@ django-allauth
 djangorestframework-jwt
 
 
-# numpy pandas xlrd xlwt geopandas matplotlib
+# numpy pandas xlrd xlwt xlsxwriter geopandas matplotlib
 click==3.3
 cligj==0.1.0
 descartes==1.0.1
@@ -38,3 +38,4 @@ six==1.9.0
 xlrd==0.9.3
 xlwt==0.7.5
 PyJWT==1.0.0
+XlsxWriter==0.7.1

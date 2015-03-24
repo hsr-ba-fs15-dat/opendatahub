@@ -1,10 +1,6 @@
 <form name="form" class="form-horizontal">
     <fieldset>
 
-        <!-- Form Name -->
-        <legend>Daten teilen</legend>
-
-        <!-- Text input-->
         <div class="form-group" ng-class="{'has-error': form.name.$invalid && offer.submitted}">
             <label class="col-md-3 control-label" for="name">Name/Titel</label>
 
@@ -40,23 +36,21 @@
                 </div>
 
             </div>
-        </div>
 
-                <!-- Text input-->
-        <div class="form-group">
-            <label class="col-md-3 control-label" for="isprivate">Ist Privat</label>
-
-            <div class="col-md-6">
-                <input id="name" name="name" type="checkbox"
-                       ng-model="offer.isprivate">
+            <div class="col-md-offset-3 col-md-7">
+                <div class="checkbox">
+                    <label>
+                        <input id="name" name="name" type="checkbox"
+                               ng-model="offer.isprivate" type="checkbox">Privat
+                    </label>
+                </div>
             </div>
         </div>
 
-        <!-- Select Basic -->
-        <div class="form-group">
-            <label class="col-md-3 control-label" for="data-source">Quelle</label>
 
-            <div class="col-md-6">
+        <div class="form-group">
+
+            <div class="col-md-7 col-md-offset-3">
                 <div class="radio">
                     <label>
                         <input name="data-source" ng-change="offer.switchDataSource()" id="data-source" type="radio"
@@ -72,9 +66,10 @@
                     </label>
                 </div>
             </div>
-        </div>
 
-        <div class="form-group" ui-view></div>
+            <div ui-view></div>
+
+        </div>
 
         <div class="form-group">
             <label class="col-md-4 control-label" for="add"></label>
@@ -85,7 +80,7 @@
             </div>
         </div>
 
-        <div ng-show="offer.progress" class="col-md-offset-4 col-md-5">
+        <div ng-show="offer.progress" class="col-md-offset-3 col-md-6">
             <progressbar class="progress-striped active" max="100"
                          value="offer.progress" type="info">
             </progressbar>
