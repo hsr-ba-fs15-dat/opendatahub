@@ -1,25 +1,30 @@
-<div style="padding-top: 2em;">
-    <h2>{{ doc.document.name }}</h2>
+<div>
+    <h1>{{ doc.document.name }}</h1>
+
     <p>{{ doc.document.description }}</p>
 </div>
 
-<div class="separator-v"></div>
-
-<h4>Dateien</h4>
-
+<h3>Dateien</h3>
 <div>
-    <div class="row" ng-repeat="group in doc.fileGroups">
-        <div class="col-md-8"><span ng-repeat="file in group.files">{{ file.file_name }}{{ $last ? '' : ', ' }}</span> </div>
-        <div class="btn-group">
-            <a href="bootstrap-elements.html" data-target="#" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
-                Herunterladen
-                <span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu">
-                <li ng-repeat="format in doc.availableFormats">
-                    <a ng-href="{{ group.data }}?fmt={{ format.name }}">{{ format.label }}</a>
-                </li>
-            </ul>
+    <div class="row" ng-repeat="group in doc.fileGroups" style="margin-left:0.5em">
+        <div class="row-same-height row-full-height">
+            <div class="col-md-8 col-full-height col-xs-height" style="vertical-align:middle">
+                <span ng-repeat="file in group.files">{{ file.file_name }}{{ $last ? '' : ', ' }}</span>
+            </div>
+            <div class="col-md-4 col-full-height col-xs-height">
+                <div class="btn-group">
+                    <a href="bootstrap-elements.html" data-target="#" class="btn btn-default btn-xs dropdown-toggle"
+                       data-toggle="dropdown">
+                        Herunterladen
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li ng-repeat="format in doc.availableFormats">
+                            <a ng-href="{{ group.data }}?fmt={{ format.name }}">{{ format.label }}</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 </div>
