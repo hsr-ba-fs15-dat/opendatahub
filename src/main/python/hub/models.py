@@ -16,7 +16,7 @@ class DocumentModel(models.Model):
     Metadata for a document.
     """
 
-    class Meta:
+    class Meta(object):
         db_table = 'hub_documents'
 
     name = models.CharField(max_length=200)
@@ -40,7 +40,7 @@ class FileGroupModel(models.Model):
     def to_file_group(self):
         group = FileGroup()
 
-        for file in FileModel.files.all():
+        for file in self.files.all():
             group.add(file.to_file(group))
 
         return group

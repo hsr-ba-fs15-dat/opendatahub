@@ -20,6 +20,7 @@ class Format(RegistrationMixin):
     DEFAULT_FORMAT = None
 
     # descriptive meta information for display in webfrontend
+    name = ''
     label = ''
     description = ''
     example = ''
@@ -29,6 +30,7 @@ class Format(RegistrationMixin):
         # remove training whitespace cause by being a docstring/multiline comment
         cls.description = cls.description.strip()
         cls.example = cls.example.strip()
+        cls.name = name
         if not dct.get('_is_abstract'):
             cls.formats[name] = cls
 

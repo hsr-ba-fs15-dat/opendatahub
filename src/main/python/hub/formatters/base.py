@@ -69,6 +69,14 @@ class JSONFormatter(Formatter):
                                 file.to_df().to_json(orient='records')).file_group
 
 
+class NoopFormatter(Formatter):
+    targets = formats.Other,
+
+    @classmethod
+    def format(cls, file, format):
+        return file.file_group
+
+
 class OGRFormatter(Formatter):
     targets = formats.GeoJSON, formats.GML, formats.KML, formats.Shapefile
 

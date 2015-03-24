@@ -39,6 +39,9 @@ class FileGroup(object):
     def get_by_extension(self, extension):
         return [f for f in self.files if f.extension == extension]
 
+    def get_main_file(self):
+        return next((f for f in self.files if not issubclass(f.get_format(), formats.Other)))
+
     @property
     def names(self):
         return [f.name for f in self.files]
@@ -55,6 +58,7 @@ class FileGroup(object):
 
     @contextlib.contextmanager
     def on_filesystem(self):
+        temp_dir = None
         try:
             temp_dir = tempfile.mkdtemp()
             for f in self.files:
@@ -62,7 +66,20 @@ class FileGroup(object):
                     temp_f.write(f.stream.getvalue())
             yield temp_dir
         finally:
-            shutil.rmtree(temp_dir)
+            if temp_dir:
+                shutil.rmtree(temp_dir)
+
+    def to_df(self, force=False):
+        file = self.get_main_file()
+        if file:
+            return file.to_df(force)
+        return None
+
+    def to_format(self, format):
+        file = self.get_main_file()
+        if file:
+            return file.to_format(format)
+        return None
 
 
 class File(object):
@@ -91,6 +108,12 @@ class File(object):
     @property
     def extension(self):
         return self.name.rsplit('.', 1)[-1].lower()
+
+    def get_format(self):
+        if not self.format:
+            self.format = formats.identify(self)
+
+        return self.format
 
     def to_df(self, force=False):
         if force or self.df is None:

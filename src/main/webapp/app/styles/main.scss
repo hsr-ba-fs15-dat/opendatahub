@@ -95,3 +95,8 @@ a {
 .dragover {
   border: 2px dashed blue;
 }
+
+.separator-v {
+  @extend .clearfix;
+  padding: 1em 0;
+}

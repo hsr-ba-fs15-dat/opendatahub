@@ -1,4 +1,5 @@
 import urlparse
+import collections
 
 from rest_framework import viewsets
 from rest_framework.decorators import detail_route
@@ -6,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from django.db.models import Q
 import requests as http
+import os
 
 from hub.serializers import DocumentSerializer, FileGroupSerializer
 from hub.models import DocumentModel, FileGroupModel, FileModel
@@ -36,38 +38,10 @@ class DocumentViewSet(viewsets.ModelViewSet):
                                 private=request.data.get('private', False))
             doc.save()
 
-            file_group = FileGroupModel(document=doc, format=request.data.get('format', None))
-            file_group.save()
-
-            file = None
-
             if 'url' in request.data:
-                url = request.data['url']
-
-                resp = http.get(url)
-
-                if resp.status_code != 200:
-                    raise ValidationError('Failed to retrieve content: Status code %d' % resp.status_code)
-
-                path = urlparse.urlparse(url)[2]
-
-                if path:
-                    filename = path.rsplit('/', 1)[1]
-                else:
-                    filename = (url[:250] + '...') if len(url) > 250 else url
-
-                file = File(filename, resp.text.encode('utf8'))
-
-                if not file:
-                    raise ValidationError('Failed to read content')
-
-                file_model = FileModel(file_name=file.name, data=file.stream, file_group=file_group)
-                file_model.save()
+                self._handle_url(request, doc)
             elif 'file' in request.data:
-                files = request.data.getlist('file')
-                for file in files:
-                    file_model = FileModel(file_name=file.name, data=file.read(), file_group=file_group)
-                    file_model.save()
+                self._handle_file(request, doc)
             else:
                 raise ValidationError('No data source specified')
 
@@ -76,6 +50,48 @@ class DocumentViewSet(viewsets.ModelViewSet):
             return Response(serializer.data)
         except:
             raise  # ValidationError(detail='error handling input')
+
+    def _handle_url(self, request, document):
+        url = request.data['url']
+
+        resp = http.get(url)
+
+        if resp.status_code != 200:
+            raise ValidationError('Failed to retrieve content: Status code %d' % resp.status_code)
+
+        path = urlparse.urlparse(url)[2]
+
+        if path:
+            filename = path.rsplit('/', 1)[1]
+        else:
+            filename = (url[:250] + '...') if len(url) > 250 else url
+
+        file = File(filename, resp.text.encode('utf8'))
+
+        if not file:
+            raise ValidationError('Failed to read content')
+
+        file_group = FileGroupModel(document=document, format=request.data.get('format', None))
+        file_group.save()
+
+        file_model = FileModel(file_name=file.name, data=file.stream, file_group=file_group)
+        file_model.save()
+
+    def _handle_file(self, request, document):
+        files = request.data.getlist('file')
+
+        groups = collections.defaultdict(list)
+        for file in files:
+            name = os.path.splitext(file.name)[0]
+            groups[name].append(file)
+
+        for group in groups.itervalues():
+            file_group = FileGroupModel(document=document, format=request.data.get('format', None))
+            file_group.save()
+
+            for file in group:
+                file_model = FileModel(file_name=file.name, data=file.read(), file_group=file_group)
+                file_model.save()
 
     def list(self, request, *args, **kwargs):
         """
@@ -101,7 +117,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     @detail_route()
-    def filegroups(self, request, pk, *args, **kwargs):
+    def filegroup(self, request, pk, *args, **kwargs):
         queryset = FileGroupModel.objects.filter(document__id=pk)
         serializer = FileGroupSerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data)

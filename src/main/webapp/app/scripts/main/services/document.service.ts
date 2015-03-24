@@ -1,7 +1,7 @@
 /// <reference path='../../all.d.ts' />
 
 
-module odh {
+module odh.main {
     'use strict';
 
     export class DocumentService {
@@ -11,7 +11,7 @@ module odh {
         constructor(private $log:ng.ILogService, private $resource:ng.resource.IResourceService,
                     UrlService:odh.utils.UrlService, private Restangular:restangular.IService) {
 
-            this.documents = this.Restangular.all('documents');
+            this.documents = this.Restangular.all('document');
         }
 
         public get(documentId:number) {
@@ -21,7 +21,7 @@ module odh {
         }
 
         public getAll() {
-            return this.Restangular.all('documents');
+            return this.documents.getList();
         }
 
         public search(query:string, page:number = 1) {
@@ -32,7 +32,19 @@ module odh {
             this.$log.debug('Document list parameters', params);
             return this.documents.getList(params);
         }
-
     }
-    angular.module('openDataHub.main').service('documentService', DocumentService);
+
+    export class FileGroupService {
+        constructor(private $log:ng.ILogService, private $resource:ng.resource.IResourceService,
+                    UrlService:odh.utils.UrlService, private Restangular:restangular.IService) {
+        }
+
+        public getAll(documentId) {
+            return this.Restangular.one('document', documentId).getList('filegroup');
+        }
+    }
+
+    angular.module('openDataHub.main')
+        .service('DocumentService', DocumentService)
+        .service('FileGroupService', FileGroupService);
 }

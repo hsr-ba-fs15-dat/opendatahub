@@ -11,7 +11,7 @@ module odh {
         public totalItems:number;
         public currentPage:number = 1;
 
-        constructor(private $scope:ng.IScope, private $log:ng.ILogService, private documentService:odh.DocumentService,
+        constructor(private $log:ng.ILogService, private DocumentService:odh.main.DocumentService,
                     private ToastService:odh.utils.ToastService) {
 
             this.retrieveDataAsync();
@@ -23,7 +23,7 @@ module odh {
 
         public retrieveDataAsync() {
             this.$log.debug('Fetching data');
-            this.documentService.search(this.searchTerms, this.currentPage)
+            this.DocumentService.search(this.searchTerms, this.currentPage)
                 .then(data => {
                     this.documents = data;
                     this.totalItems = data.meta.count;
@@ -41,13 +41,16 @@ module odh {
 
     class DocumentDetailController {
         public documentId:number;
+
         public document;
+        public fileGroups;
+
         public availableFormats:odh.main.IFormat[];
 
         constructor(private $log:ng.ILogService, private $state:ng.ui.IStateService,
                     private $stateParams:any, private $window:ng.IWindowService,
-                    private documentService:odh.DocumentService, private ToastService:odh.utils.ToastService,
-                    private FormatService:odh.main.FormatService) {
+                    private DocumentService:odh.main.DocumentService, private ToastService:odh.utils.ToastService,
+                    private FormatService:odh.main.FormatService, private FileGroupService:odh.main.FileGroupService) {
             this.documentId = $stateParams.id;
             this.retrieveData();
         }
@@ -58,17 +61,27 @@ module odh {
             });
 
             if (typeof(this.documentId) !== 'undefined') {
-                this.document = this.documentService.get(this.documentId)
+                this.document = this.DocumentService.get(this.documentId)
                     .then(data => {
+                        this.$log.debug('Document ' + this.documentId, data);
                         this.document = data;
                     })
                     .catch(error => {
                         this.ToastService.failure('Dokument wurde nicht gefunden');
                         this.$log.error(error);
                     });
+
+                this.fileGroups = this.FileGroupService.getAll(this.documentId)
+                    .then(data => {
+                        this.$log.debug('File Groups for document ' + this.documentId, data);
+                        this.fileGroups = data;
+                    })
+                    .catch(error => {
+                        this.ToastService.failure('Keine Daten gefunden für dieses Dokument');
+                        this.$log.error(error);
+                    });
             }
         }
-
     }
 
     angular.module('openDataHub.main')
