@@ -7,28 +7,27 @@ module odh.auth {
     class LoginController {
 
 
-        constructor(private FaceBookService:FaceBookService,
-                    private AuthenticationService:AuthenticationService,
-                    private UserService: UserService
-            ) {
-            // controller init
+        constructor(private AuthenticationService:AuthenticationService,
+                    private UserService:UserService,
+                    private $auth) {
         }
 
-        public login() {
-            this.FaceBookService.login().then((response) => {
-                // this is where we'll contact backend. for now just log response
-                console.log('facebook');
-                var reqObj = {
-                    access_token: response.authResponse.accessToken
-                };
-                this.UserService.login(reqObj).then(() => {
+        public authenticate(provider) {
+            this.$auth.authenticate(provider, {backend: provider}).then(
+                (data) => {
+                    this.UserService.login(data).then(() => {
 
-                    console.log (this.AuthenticationService.isAuthed());
-                    // this.$location.path('/userProfile');
+                        console.log(this.AuthenticationService.isAuthed());
 
+                    });
                 });
-            });
         }
+
+        public logout() {
+            this.$auth.logout();
+        }
+
+
     }
     angular.module('openDataHub.auth').controller('LoginController', LoginController);
 }

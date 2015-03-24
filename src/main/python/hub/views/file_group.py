@@ -8,10 +8,14 @@ from django.http.response import HttpResponse, HttpResponseNotFound, HttpRespons
 from hub.models import FileGroupModel, FileModel
 from hub.serializers import FileGroupSerializer, FileSerializer
 
+from authentication.permissions import IsOwnerOrPublic
+
 
 class FileGroupViewSet(viewsets.ModelViewSet):
     queryset = FileGroupModel.objects.all()
     serializer_class = FileGroupSerializer
+
+    permission_classes = IsOwnerOrPublic,
 
     @detail_route()
     def file(self, request, pk, *args, **kwargs):

@@ -3,6 +3,7 @@
 """
 
 from django.db import models
+from django.contrib.auth.models import User
 
 from .structures.file import File, FileGroup
 
@@ -24,7 +25,7 @@ class DocumentModel(models.Model):
 
     private = models.BooleanField(default=False)
 
-    # todo: ref to user for ownership
+    owner = models.ForeignKey(User, null=True)
 
     def __str__(self):
         return "[Document id={} description={}]".format(self.id, cap(self.description, 50))

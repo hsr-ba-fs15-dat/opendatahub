@@ -8,21 +8,22 @@ module odh.auth {
 
         public temp:{};
 
-        constructor(private $http:ng.IHttpService, public API, private AuthenticationService:AuthenticationService) {
+        constructor(private $http:ng.IHttpService, public API, private AuthenticationService:AuthenticationService,
+                    private $auth) {
 
         }
 
+        public authenticate(provider) {
+            this.$auth.authenticate(provider);
+        }
+
         public login(socialToken, provider = 'facebook') {
-            return this.$http.post(this.API + 'auth/' + provider + '/', {
+            return this.$http.post(this.API + 'auth/social/', {
                 access_token: socialToken.access_token,
                 backend: provider
             }).then((data:any) => {
-
-                console.log(data);
-                console.log(data.data.token);
                 var token = data.data.token;
                 this.AuthenticationService.saveToken(token);
-
             });
         }
 

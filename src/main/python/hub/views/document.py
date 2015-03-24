@@ -13,6 +13,7 @@ from hub.serializers import DocumentSerializer, FileGroupSerializer
 from hub.models import DocumentModel, FileGroupModel, FileModel
 import hub.formatters
 from hub.structures.file import File
+from authentication.permissions import IsOwnerOrPublic, IsOwnerOrReadOnly
 
 
 print('Loaded formatters:')
@@ -25,6 +26,8 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
     paginate_by = 50
 
+    permission_classes = IsOwnerOrPublic, IsOwnerOrReadOnly,
+
     def create(self, request, *args, **kwargs):
         """
         Create a document.
@@ -35,7 +38,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
                 raise ValidationError('Insufficient information')
 
             doc = DocumentModel(name=request.data['name'], description=request.data['description'],
-                                private=request.data.get('private', False))
+                                private=request.data.get('private', False), owner=request.user)
             doc.save()
 
             if 'url' in request.data:

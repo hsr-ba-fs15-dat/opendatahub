@@ -9,16 +9,16 @@ module odh {
         public email:string;
         public password:string;
 
-        constructor(private AuthenticationService:odh.auth.AuthenticationService) {
+        constructor(private AuthenticationService:odh.auth.AuthenticationService, private $auth) {
 
         }
 
         public isAuthenticated() {
-            return this.AuthenticationService.isAuthed();
+            return this.$auth.isAuthenticated();
         }
 
         public logout() {
-            this.AuthenticationService.logout();
+            this.$auth.logout();
         }
     }
 

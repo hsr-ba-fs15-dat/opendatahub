@@ -96,7 +96,21 @@ a {
   border: 2px dashed blue;
 }
 
-.separator-v {
-  @extend .clearfix;
-  padding: 1em 0;
+// http://www.minimit.com/articles/solutions-tutorials/bootstrap-3-responsive-columns-of-same-height
+.row-full-height {
+  height: 100%;
+}
+.col-full-height {
+  height: 100%;
+  vertical-align: middle;
+}
+.row-same-height {
+  display: table;
+  width: 100%;
+  /* fix overflow */
+  table-layout: fixed;
+}
+.col-xs-height {
+  display: table-cell;
+  float: none !important;
 }

@@ -47,39 +47,10 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'rest_framework',
     'hub',
+    'rest_framework_jwt',
     'authentication',
     'rest_framework.authtoken',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.amazon',
-    'allauth.socialaccount.providers.angellist',
-    'allauth.socialaccount.providers.bitbucket',
-    'allauth.socialaccount.providers.bitly',
-    'allauth.socialaccount.providers.coinbase',
-    'allauth.socialaccount.providers.dropbox',
-    'allauth.socialaccount.providers.facebook',
-    'allauth.socialaccount.providers.flickr',
-    'allauth.socialaccount.providers.feedly',
-    'allauth.socialaccount.providers.fxa',
-    'allauth.socialaccount.providers.github',
-    'allauth.socialaccount.providers.google',
-    'allauth.socialaccount.providers.hubic',
-    'allauth.socialaccount.providers.instagram',
-    'allauth.socialaccount.providers.linkedin',
-    'allauth.socialaccount.providers.linkedin_oauth2',
-    'allauth.socialaccount.providers.odnoklassniki',
-    'allauth.socialaccount.providers.openid',
-    'allauth.socialaccount.providers.persona',
-    'allauth.socialaccount.providers.soundcloud',
-    'allauth.socialaccount.providers.stackexchange',
-    'allauth.socialaccount.providers.tumblr',
-    'allauth.socialaccount.providers.twitch',
-    'allauth.socialaccount.providers.twitter',
-    'allauth.socialaccount.providers.vimeo',
-    'allauth.socialaccount.providers.vk',
-    'allauth.socialaccount.providers.weibo',
-    'allauth.socialaccount.providers.xing',
+    'social.apps.django_app.default',
 )
 
 # Dev. only, not required
@@ -105,8 +76,8 @@ ROOT_URLCONF = 'opendatahub.urls'
 WSGI_APPLICATION = 'opendatahub.wsgi.application'
 
 TEMPLATE_CONTEXT_PROCESSORS = (
-    "allauth.account.context_processors.account",
-    "allauth.socialaccount.context_processors.socialaccount",
+    'social.apps.django_app.context_processors.backends',
+    'social.apps.django_app.context_processors.login_redirect',
     'django.contrib.auth.context_processors.auth'
 )
 # Database
@@ -157,6 +128,8 @@ REST_FRAMEWORK = {
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
     ),
 }
-
-SOCIAL_AUTH_FACEBOOK_KEY = '401520096685508'
+JWT_DECODE_HANDLER = 'authentication.jwt_decode_handler'
+# JWT_AUTH_HEADER_PREFIX = "Bearer"
+# SOCIAL_AUTH_FACEBOOK_KEY = '401520096685508'
+SOCIAL_AUTH_FACEBOOK_KEY = '401522313351953'
 SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
