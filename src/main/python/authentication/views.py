@@ -17,10 +17,9 @@ from authentication.serializers import UserSerializer
 
 
 class PublicKeysView(APIView):
-    def get(self):
-        return {'facebook': config.FACEBOOK_PUBLIC,
-                'github': config.GITHUB_PUBLIC
-        }
+    def get(self, request):
+        return Response({'facebook': config.FACEBOOK_PUBLIC,
+                         'github': config.GITHUB_PUBLIC})
 
 
 class CurrentUserView(APIView):
