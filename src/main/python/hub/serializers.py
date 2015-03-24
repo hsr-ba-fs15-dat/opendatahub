@@ -16,17 +16,17 @@ class FileGroupSerializer(serializers.HyperlinkedModelSerializer):
     file_format = serializers.CharField(source='format')
     files = serializers.HyperlinkedIdentityField('filegroupmodel-files')
 
+    data = serializers.HyperlinkedIdentityField('filegroupmodel-data')
+
     class Meta:
         model = FileGroupModel
-        fields = ('id', 'url', 'file_format', 'document', 'files')
+        fields = ('id', 'url', 'file_format', 'document', 'files', 'data')
 
 
 class FileSerializer(serializers.HyperlinkedModelSerializer):
-    data = serializers.HyperlinkedIdentityField('filemodel-data')
-
     class Meta:
         model = FileModel
-        fields = ('id', 'url', 'file_name', 'file_group', 'data')
+        fields = ('id', 'url', 'file_name', 'file_group')
 
 
 class PaginatedDocumentSerializer(PaginationSerializer):
