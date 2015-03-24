@@ -9,18 +9,21 @@ module odh.auth {
             'ngResource',
             'ngSanitize',
             'ngRoute',
-            'ezfb',
-            'restangular'
+            'restangular',
+            'satellizer'
         ]
     ).config(config)
-        ;
+    ;
 
-    function config($stateProvider:ng.ui.IStateProvider, ezfbProvider) {
-        ezfbProvider.setLocale('de_DE');
-        ezfbProvider.setInitParams({
-            // appId: '401522313351953', // this is the Local ID
-            appId: '401520096685508', // this is the Heroku ID
-            version: 'v2.0'
+    function config($stateProvider:ng.ui.IStateProvider, $authProvider) {
+        $authProvider.facebook({
+            url: '/api/v1/auth/social/',
+            clientId: '401522313351953',
+            responseType: 'token'
+        });
+        $authProvider.github({
+            url: '/api/v1/auth/social/',
+            clientId: 'f29d882c342818c82e0b'
         });
         $stateProvider
 

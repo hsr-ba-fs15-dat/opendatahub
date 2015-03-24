@@ -60,7 +60,6 @@ module odh.auth {
 
         public request = (config) => {
             var token = this.AuthenticationServiceProvider.getToken();
-            console.log(token);
             if (config.url.indexOf(this.API) === 0 && token) {
                 config.headers.Authorization = 'jwt ' + token;
             }

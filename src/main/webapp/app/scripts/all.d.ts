@@ -8,7 +8,6 @@
 /// <reference path='auth/controllers/main.controller.ts' />
 /// <reference path='auth/controllers/userprofile.controller.ts' />
 /// <reference path='auth/services/auth.service.ts' />
-/// <reference path='auth/services/facebook.service.ts' />
 /// <reference path='auth/services/user.service.ts' />
 /// <reference path='auth/services/validate.service.ts' />
 /// <reference path='main/controllers/about.controller.ts' />
