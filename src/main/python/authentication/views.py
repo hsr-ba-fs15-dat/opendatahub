@@ -2,7 +2,6 @@ from calendar import timegm
 import datetime
 from urlparse import parse_qsl
 
-from django.conf import settings
 import requests
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -13,7 +12,15 @@ from rest_framework_jwt.utils import jwt_payload_handler, jwt_encode_handler
 from social.apps.django_app.utils import psa
 from django.contrib.auth.models import User
 
+from authentication import config
 from authentication.serializers import UserSerializer
+
+
+class PublicKeysView(APIView):
+    def get(self):
+        return {'facebook': config.FACEBOOK_PUBLIC,
+                'github': config.GITHUB_PUBLIC
+        }
 
 
 class CurrentUserView(APIView):
@@ -49,7 +56,7 @@ def get_access_token(request, backend):
         params = {
             'client_id': request.data.get('clientId'),
             'redirect_uri': request.data.get('redirectUri'),
-            'client_secret': settings.SOCIAL_AUTH_GITHUB_SECRET,
+            'client_secret': config.GITHUB_SECRET,
             'code': request.data.get('code')
         }
 
