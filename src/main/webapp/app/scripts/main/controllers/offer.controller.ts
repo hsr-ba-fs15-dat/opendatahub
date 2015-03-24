@@ -39,7 +39,7 @@ module odh {
             }
 
             var promise:any;
-            var url = this.UrlService.get('documents');
+            var url = this.UrlService.get('document');
 
             console.log(this.params);
 
