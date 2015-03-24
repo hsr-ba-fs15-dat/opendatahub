@@ -1,29 +1,59 @@
+"""
+
+"""
+
 from django.db import models
-from django_pgjson.fields import JsonField
+from django.contrib.auth.models import User
+
+from .structures.file import File, FileGroup
 
 
 def cap(str, length):
-    return str if len(str) < length else str[0:length - 3] + '...'
+    return str if len(str) < length else str[:length - 3] + '...'
 
 
 class DocumentModel(models.Model):
-    class Meta:
+    """
+    Metadata for a document.
+    """
+
+    class Meta(object):
         db_table = 'hub_documents'
 
     name = models.CharField(max_length=200)
     description = models.TextField()
 
+    private = models.BooleanField(default=False)
+
+    owner = models.ForeignKey(User, null=True)
+
     def __str__(self):
         return "[Document id={} description={}]".format(self.id, cap(self.description, 50))
 
 
-class RecordModel(models.Model):
-    class Meta:
-        db_table = 'hub_records'
-        ordering = ['id']
+class FileGroupModel(models.Model):
+    """
+    Group of files belonging to each other.
+    """
+    document = models.ForeignKey(DocumentModel, related_name='groups')
+    format = models.CharField(max_length=50, null=True)
 
-    document = models.ForeignKey(DocumentModel, null=False, related_name='records')
-    content = JsonField()
+    def to_file_group(self):
+        group = FileGroup()
 
-    def __str__(self):
-        return "[Record id={} document={} content={}".format(self.id, self.document_id, cap(self.content, 50))
+        for file in self.files.all():
+            group.add(file.to_file(group))
+
+        return group
+
+
+class FileModel(models.Model):
+    """
+    A single file.
+    """
+    file_name = models.CharField(max_length=255)
+    data = models.BinaryField()
+    file_group = models.ForeignKey(FileGroupModel, related_name='files')
+
+    def to_file(self, file_group=None):
+        return File.from_string(self.file_name, self.data, file_group=file_group)

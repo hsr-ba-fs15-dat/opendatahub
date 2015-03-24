@@ -1,14 +1,30 @@
+<div>
+    <h1>{{ doc.document.name }}</h1>
 
-<div class="btn-toolbar clearfix">
-    <button class="btn btn-default" ui-sref="documents">Zur Liste</button>
-    <a class="btn btn-default" ng-href="{{ doc.document.data }}?fmt=csv" target="_blank">Download als CSV</a>
-    <a class="btn btn-default" ng-href="{{ doc.document.data }}?fmt=json" target="_blank">Download als JSON</a>
+    <p>{{ doc.document.description }}</p>
 </div>
 
-<div style="padding-top: 2em">
-    <div class="col-md-4">Name</div>
-    <div class="col-md-8">{{ doc.document.name }}</div>
-
-    <div class="col-md-4">Beschreibung</div>
-    <div class="col-md-8">{{ doc.document.description }}</div>
+<h3>Dateien</h3>
+<div>
+    <div class="row" ng-repeat="group in doc.fileGroups" style="margin-left:0.5em">
+        <div class="row-same-height row-full-height">
+            <div class="col-md-8 col-full-height col-xs-height" style="vertical-align:middle">
+                <span ng-repeat="file in group.files">{{ file.file_name }}{{ $last ? '' : ', ' }}</span>
+            </div>
+            <div class="col-md-4 col-full-height col-xs-height">
+                <div class="btn-group">
+                    <a href="bootstrap-elements.html" data-target="#" class="btn btn-default btn-xs dropdown-toggle"
+                       data-toggle="dropdown">
+                        Herunterladen
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li ng-repeat="format in doc.availableFormats">
+                            <a ng-href="{{ group.data }}?fmt={{ format.name }}">{{ format.label }}</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

@@ -7,6 +7,12 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
 
+    <style type="text/css">
+        [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+            display: none !important;
+        }
+    </style>
+
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <!-- build:css(.) styles/vendor.css -->
     <!-- bower:css -->
@@ -32,38 +38,45 @@
     <base href="/"/>
 </head>
 
-<body ng-app="openDataHub" >
-<toast></toast>
+<body ng-app="openDataHub">
+<div id="wrap">
+       <toast></toast>
 
-<!--[if lt IE 7]>
-          <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <!--[if lt IE 7]>
+    <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
+        your browser</a> to improve your experience.</p>
     <![endif]-->
 
-<!-- Add your site or application content here -->
-<div class="header">
-<div ng-include="'views/navbar.html'"></div>
-</div>
+    <!-- Add your site or application content here -->
+    <div class="header">
+        <div ng-include="'views/navbar.html'"></div>
+    </div>
 
-<div class="container">
-    <div ui-view></div>
-</div>
-
-<div class="footer">
     <div class="container">
-        <p><a target="_blank" href="http://www.hsr.ch/geometalab">&copy; 2015 Geometa Lab</a></p>
+        <div class="well">
+            <div ui-view></div>
+        </div>
+    </div>
+</div>
+
+<div class="footer btn-material-blue-grey">
+    <div class="container">
+        <a target="_blank" href="http://www.hsr.ch/geometalab">&copy; 2015 Geometa Lab</a>
     </div>
 </div>
 
 
 <!-- Google Analytics -->
- <script>
-   !function(A,n,g,u,l,a,r){A.GoogleAnalyticsObject=l,A[l]=A[l]||function(){
-   (A[l].q=A[l].q||[]).push(arguments)},A[l].l=+new Date,a=n.createElement(g),
-   r=n.getElementsByTagName(g)[0],a.src=u,r.parentNode.insertBefore(a,r)
-   }(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+<script>
+    !function (A, n, g, u, l, a, r) {
+        A.GoogleAnalyticsObject = l, A[l] = A[l] || function () {
+            (A[l].q = A[l].q || []).push(arguments)
+        }, A[l].l = +new Date, a = n.createElement(g),
+                r = n.getElementsByTagName(g)[0], a.src = u, r.parentNode.insertBefore(a, r)
+    }(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
 
-   ga('create', 'UA-60616577-1');
-   ga('send', 'pageview');
+    ga('create', 'UA-60616577-1');
+    ga('send', 'pageview');
 </script>
 
 
@@ -86,8 +99,8 @@
 <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
 <script src="bower_components/angular-ui-utils/ui-utils.js"></script>
 <script src="bower_components/angular-ui-select/dist/select.js"></script>
-<script src="bower_components/jsPlumb/dist/js/dom.jsPlumb-1.7.3.js"></script>
-<script src="bower_components/jsPlumb/dist/js/jquery.jsPlumb-1.7.3.js"></script>
+<script src="bower_components/jsPlumb/dist/js/dom.jsPlumb-1.7.4.js"></script>
+<script src="bower_components/jsPlumb/dist/js/jquery.jsPlumb-1.7.4.js"></script>
 <script src="bower_components/jquery-ui/jquery-ui.js"></script>
 <script src="bower_components/ng-file-upload/angular-file-upload.js"></script>
 <script src="bower_components/json3/lib/json3.min.js"></script>
@@ -119,6 +132,7 @@
 <script src="scripts/auth/services/user.service.js"></script>
 <script src="scripts/auth/controllers/main.controller.js"></script>
 <script src="scripts/main/services/document.service.js"></script>
+<script src="scripts/main/services/format.service.js"></script>
 <script src="scripts/auth/controllers/login.controller.js"></script>
 <script src="scripts/auth/services/auth.service.js"></script>
 <script src="scripts/auth/services/validate.service.js"></script>

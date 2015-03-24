@@ -1,16 +1,23 @@
-import itertools
+import urlparse
+import collections
 
 from rest_framework import viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from django.db.models import Q
-from django.http import HttpResponse
+import requests as http
+import os
 
-from hub.serializers import DocumentSerializer, PaginatedRecordSerializer
-from hub.models import DocumentModel, RecordModel
-from hub.base import InputNode, ParserNode, FormatterNode
-from hub.nodes import DatabaseWriter, DatabaseReader
+from hub.serializers import DocumentSerializer, FileGroupSerializer
+from hub.models import DocumentModel, FileGroupModel, FileModel
+import hub.formatters
+from hub.structures.file import File
+from authentication.permissions import IsOwnerOrPublic, IsOwnerOrReadOnly
+
+
+print('Loaded formatters:')
+print(hub.formatters.__all__)
 
 
 class DocumentViewSet(viewsets.ModelViewSet):
@@ -19,71 +26,75 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
     paginate_by = 50
 
-    @detail_route()
-    def records(self, request, pk, *args, **kwargs):
-        records = RecordModel.objects.filter(document__id=pk)
-        records = self.paginate_queryset(records)
-        serializer = PaginatedRecordSerializer(instance=records, context=self.get_serializer_context())
-        return Response(serializer.data)
-
-    @detail_route()
-    def data(self, request, pk, *args, **kwargs):
-        format = request.query_params.get('fmt', 'csv')  # kwargs.get('format', 'csv')
-
-        reader = DatabaseReader()
-
-        formatter = FormatterNode.find_node_for(format)
-        if not formatter:
-            raise ValidationError('no formatter')
-
-        response = HttpResponse()
-        response['Content-Disposition'] = 'attachment; filename="data.%s"' % format
-
-        read = reader.read({'document_id': pk})
-        formatter.format(read, response)
-
-        response.flush()
-
-        return response
+    permission_classes = IsOwnerOrPublic, IsOwnerOrReadOnly,
 
     def create(self, request, *args, **kwargs):
         """
         Create a document.
         Expected parameters: One of: url, file. Always: description
         """
-        data = request.data
-
-        input = None
-        if 'url' in data:
-            input = {'url': data['url']}
-        if 'file' in data:
-            input = {'file': data['file']}
-
         try:
-            if input:
-                node = InputNode.find_node_for(input)
-                if node:
-                    reader = node.read(input)
+            if not ('name' in request.data and 'description' in request.data):
+                raise ValidationError('Insufficient information')
 
-                    if reader:
-                        peek = reader.next()
-                        reader = itertools.chain([peek], reader)
+            doc = DocumentModel(name=request.data['name'], description=request.data['description'],
+                                private=request.data.get('private', False), owner=request.user)
+            doc.save()
 
-                        node = ParserNode.find_node_for(peek)
-                        if node:
-                            reader = node.parse(reader)
+            if 'url' in request.data:
+                self._handle_url(request, doc)
+            elif 'file' in request.data:
+                self._handle_file(request, doc)
+            else:
+                raise ValidationError('No data source specified')
 
-                        writer = DatabaseWriter(name=data['name'], desc=data['description'])
+            serializer = DocumentSerializer(DocumentModel.objects.get(id=doc.id), context={'request': request})
 
-                        doc = writer.write(reader)
-                        serializer = DocumentSerializer(DocumentModel.objects.get(id=doc.id),
-                                                        context={'request': request})
-
-                        return Response(serializer.data)
+            return Response(serializer.data)
         except:
-            pass
+            raise  # ValidationError(detail='error handling input')
 
-        raise ValidationError(detail='error handling input')
+    def _handle_url(self, request, document):
+        url = request.data['url']
+
+        resp = http.get(url)
+
+        if resp.status_code != 200:
+            raise ValidationError('Failed to retrieve content: Status code %d' % resp.status_code)
+
+        path = urlparse.urlparse(url)[2]
+
+        if path:
+            filename = path.rsplit('/', 1)[1]
+        else:
+            filename = (url[:250] + '...') if len(url) > 250 else url
+
+        file = File(filename, resp.text.encode('utf8'))
+
+        if not file:
+            raise ValidationError('Failed to read content')
+
+        file_group = FileGroupModel(document=document, format=request.data.get('format', None))
+        file_group.save()
+
+        file_model = FileModel(file_name=file.name, data=file.stream, file_group=file_group)
+        file_model.save()
+
+    def _handle_file(self, request, document):
+        files = request.data.getlist('file')
+
+        groups = collections.defaultdict(list)
+        for file in files:
+            name = os.path.splitext(file.name)[0]
+            groups[name].append(file)
+
+        for group in groups.itervalues():
+            file_group = FileGroupModel(document=document, format=request.data.get('format', None))
+            file_group.save()
+
+            for file in group:
+                file_model = FileModel(file_name=file.name, data=file.read(), file_group=file_group)
+                file_model.save()
 
     def list(self, request, *args, **kwargs):
         """
@@ -105,6 +116,11 @@ class DocumentViewSet(viewsets.ModelViewSet):
             documents = documents.filter(Q(name__icontains=params['search']) |
                                          Q(description__icontains=params['search']))
 
-        serializer = self.get_pagination_serializer(
-            self.paginate_queryset(documents))  # many=True, context={'request': request}
+        serializer = self.get_pagination_serializer(self.paginate_queryset(documents))
+        return Response(serializer.data)
+
+    @detail_route()
+    def filegroup(self, request, pk, *args, **kwargs):
+        queryset = FileGroupModel.objects.filter(document__id=pk)
+        serializer = FileGroupSerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data)

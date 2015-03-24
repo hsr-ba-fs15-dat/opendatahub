@@ -18,8 +18,10 @@ install:
   - npm install -g bower grunt-cli
   - npm install -g tsd@next
   - gem update --system
-  - gem install compass
+  - gem install compass # SASS/SCSS
   - wget -qO- https://toolbelt.heroku.com/install-ubuntu.sh | sh
+  - sudo apt-get install gdal-bin libgdal-dev libgdal1h libgdal1-dev # ogr2ogr/GDAL
+  - sudo apt-get install libfreetype6 libfreetype6-dev # pre-req matplotlib
 
 before_script:
   - psql -c "CREATE USER opendatahub WITH PASSWORD 'opendatahub';" -U postgres
@@ -28,6 +30,7 @@ before_script:
   - psql -c 'ALTER USER opendatahub CREATEDB;' -U postgres
 
 script:
+ - pip install -r requirements.txt # usually done by pyb but doesn't write stdout -> build gets killed by travis
  - pyb -v
 
 before_deploy:

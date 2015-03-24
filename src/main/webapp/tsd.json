@@ -40,6 +40,9 @@
     },
     "angularjs/angular.d.ts": {
       "commit": "5c59a734fdee76e135fe8eb63299d27244499031"
+    },
+    "restangular/restangular.d.ts": {
+      "commit": "5c59a734fdee76e135fe8eb63299d27244499031"
     }
   }
 }

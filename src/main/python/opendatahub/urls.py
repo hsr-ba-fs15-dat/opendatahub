@@ -4,15 +4,19 @@ from rest_framework import routers
 
 from opendatahub.settings import PRODUCTION, STATIC_ROOT
 from hub.views.document import DocumentViewSet
-from hub.views.record import RecordViewSet
+from hub.views.file_group import FileGroupViewSet
+from hub.views.file import FileViewSet
+from hub.views.format import FormatView
 
 
 router = routers.DefaultRouter(trailing_slash=False)
-router.register(r'documents', DocumentViewSet)
-router.register(r'records', RecordViewSet)
+router.register(r'document', DocumentViewSet)
+router.register(r'fileGroup', FileGroupViewSet)
+router.register(r'file', FileViewSet)
+router.register(r'format', FormatView, 'format')
 
 urlpatterns = (
-    url(r'api/v1/', include(router.urls)),
+    url(r'api/v1/?', include(router.urls)),
     url(r'^admin/', include(admin.site.urls)),
     url(r'api/v1/auth/', include('authentication.urls')),
 )

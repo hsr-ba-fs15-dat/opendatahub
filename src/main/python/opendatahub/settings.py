@@ -9,9 +9,12 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 """
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+import logging
+import datetime
+
 import os
 import dj_database_url
-import datetime
+
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
@@ -25,6 +28,7 @@ SECRET_KEY = 'r)gg!i^!6=62c8p416@n^x0@nc3#h)dj3ge10l*977u@np6=--'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+logging.basicConfig(level=logging.DEBUG)
 
 TEMPLATE_DEBUG = True
 

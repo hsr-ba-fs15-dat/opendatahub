@@ -9,6 +9,7 @@ module odh {
         public dataSource:string = 'online';
         public name:string;
         public description:string;
+        public isprivate:boolean;
         public params:any = {};
         public progress = 0;
         public submitted:boolean = false;
@@ -38,12 +39,14 @@ module odh {
             }
 
             var promise:any;
-            var url = this.UrlService.get('documents');
+            var url = this.UrlService.get('document');
+
+            console.log(this.params);
 
             if (this.params.file) {
                 promise = this.$upload.upload({
                     url: url,
-                    fields: {name: this.name, description: this.description},
+                    fields: {name: this.name, description: this.description, 'private':this.isprivate},
                     file: this.params.file
                 });
 
