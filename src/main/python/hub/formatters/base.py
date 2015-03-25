@@ -75,7 +75,7 @@ class ExcelFormatter(Formatter):
     def format(cls, file, format, *args, **kwargs):
         # xxx does not work with geo (TypeError: Unsupported type <class 'shapely.geometry.point.Point'> in write())
         with tempfile.NamedTemporaryFile(suffix=".xlsx") as f:
-            file.to_df().to_excel(f.name, engine='xlsxwriter')
+            file.to_df().to_excel(f.name, engine='xlsxwriter', index=False)
             f.seek(0)
             return File.from_string(os.path.splitext(file.name)[0] + '.xlsx', f.read()).file_group
 
