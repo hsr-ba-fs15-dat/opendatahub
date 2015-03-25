@@ -68,11 +68,6 @@ module openDataHub {
                     controller: 'OfferController as offer',
                     templateUrl: 'views/offer.html'
                 })
-                .state('offer.params', {
-                    url: '/:type',
-                    controller: 'OfferParamsController as params',
-                    templateUrl: 'views/offer.params.html'
-                })
                 .state('documents', {
                     url: '/document',
                     controller: 'DocumentListController as docs',

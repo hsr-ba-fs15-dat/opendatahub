@@ -13,15 +13,25 @@ module odh {
         public params:any = {};
         public progress = 0;
         public submitted:boolean = false;
+        public fields:{}[];
+
+        private fieldsByType = {
+            online: [
+                {id: 'url', placeholder: 'http://', label: 'Adresse'}
+            ],
+            file: [
+                {id: 'file', label: 'Wählen oder ziehen Sie Ihre Dateien', type: 'file'}
+            ]
+        };
 
         constructor(private $http:ng.IHttpService, private $state:ng.ui.IStateService, private $scope:any,
                     private ToastService:odh.utils.ToastService, private $window:ng.IWindowService, private $upload,
                     private UrlService:odh.utils.UrlService) {
-
+            this.switchDataSource();
         }
 
         public switchDataSource() {
-            this.$state.go('offer.params', {type: this.dataSource});
+            this.fields = this.fieldsByType[this.dataSource];
         }
 
         public cancel() {
@@ -41,12 +51,10 @@ module odh {
             var promise:any;
             var url = this.UrlService.get('document');
 
-            console.log(this.params);
-
             if (this.params.file) {
                 promise = this.$upload.upload({
                     url: url,
-                    fields: {name: this.name, description: this.description, 'private':this.isprivate},
+                    fields: {name: this.name, description: this.description, 'private': this.isprivate},
                     file: this.params.file
                 });
 
@@ -81,23 +89,4 @@ module odh {
     }
     angular.module('openDataHub.main').controller('OfferController', OfferController);
 
-
-    class OfferParamsController {
-        public fields:{}[];
-
-        constructor(private $stateParams) {
-            // todo refactor
-            if ($stateParams.type === 'online') {
-                this.fields = [
-                    {id: 'url', placeholder: 'http://', label: 'Adresse'}
-                ];
-            } else {
-                this.fields = [
-                    {id: 'file', label: 'Wählen oder ziehen Sie Ihre Datei', type: 'file'}
-                ];
-            }
-        }
-
-    }
-    angular.module('openDataHub.main').controller('OfferParamsController', OfferParamsController);
 }

@@ -101,21 +101,25 @@ class OGRFormatter(Formatter):
     @classmethod
     def format(cls, file, format, *args, **kwargs):
         df = file.to_df()
-        file_group = None
+
         if isinstance(df, pandas.DataFrame):
             file = CSVFormatter.format(file, formats.CSV)
             file_group = ogr2ogr.ogr2ogr(file, ogr2ogr.CSV)
         elif isinstance(df, geopandas.GeoDataFrame):
-            temp_dir = None  # to shut the inspector up
+            temp_dir = tempfile.mkdtemp()
             try:
-                temp_dir = tempfile.mkdtemp()
                 df.to_file(os.path.join(temp_dir, os.path.splitext(file.name)[0] + '.shp'))
                 file_group = FileGroup.from_files(*os.listdir(temp_dir))
+            except:
+                # todo exception handling
+                return None
             finally:
-                if temp_dir:
-                    shutil.rmtree(temp_dir)
-        if file_group:
-            return ogr2ogr.ogr2ogr(file_group, cls.FORMAT_TO_OGR[format])
+                shutil.rmtree(temp_dir)
+        else:
+            # todo exception handling
+            return None
+
+        return ogr2ogr.ogr2ogr(file_group, cls.FORMAT_TO_OGR[format])
 
 
 if __name__ == '__main__':
