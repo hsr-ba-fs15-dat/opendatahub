@@ -3,7 +3,6 @@
 """
 """
 
-import logging
 import collections
 import tempfile
 import shutil
@@ -44,9 +43,9 @@ class Formatter(RegistrationMixin):
                 return formatter.format(file, format=format, *args, **kwargs)
             except:
                 raise
-                logging.debug('%s was not able to format data with target format %s', formatter.__name__,
-                              format.__name__)
-                continue
+                #logging.debug('%s was not able to format data with target format %s', formatter.__name__,
+                #              format.__name__)
+                #continue
 
         raise NoFormatterException('Unable to format data')
 
@@ -55,7 +54,7 @@ class CSVFormatter(Formatter):
     targets = formats.CSV,
 
     @classmethod
-    def format(cls, file, format):
+    def format(cls, file, format, *args, **kwargs):
         return File.from_string(os.path.splitext(file.name)[0] + '.csv',
                                 file.to_df().to_csv(index=False, encoding='UTF-8')).file_group
 
@@ -64,7 +63,8 @@ class JSONFormatter(Formatter):
     targets = formats.JSON,
 
     @classmethod
-    def format(cls, file, format):
+    def format(cls, file, format, *args, **kwargs
+):
         return File.from_string(os.path.splitext(file.name)[0] + '.json',
                                 file.to_df().to_json(orient='records')).file_group
 
@@ -74,7 +74,6 @@ class ExcelFormatter(Formatter):
 
     @classmethod
     def format(cls, file, format, *args, **kwargs):
-        # FIXME this fails due to encoding, which according to documentation is not supposed to happen
         # xxx does not work with geo (TypeError: Unsupported type <class 'shapely.geometry.point.Point'> in write())
         with tempfile.NamedTemporaryFile(suffix=".xlsx") as f:
             file.to_df().to_excel(f.name, engine='xlsxwriter')
@@ -86,7 +85,8 @@ class NoopFormatter(Formatter):
     targets = formats.Other,
 
     @classmethod
-    def format(cls, file, format):
+    def format(cls, file, format, *args, **kwargs
+):
         return file.file_group
 
 
@@ -103,18 +103,21 @@ class OGRFormatter(Formatter):
     @classmethod
     def format(cls, file, format, *args, **kwargs):
         df = file.to_df()
+        file_group = None
         if isinstance(df, pandas.DataFrame):
             file = CSVFormatter.format(file, formats.CSV)
             file_group = ogr2ogr.ogr2ogr(file, ogr2ogr.CSV)
         elif isinstance(df, geopandas.GeoDataFrame):
+            temp_dir = None # to shut the inspector up
             try:
                 temp_dir = tempfile.mkdtemp()
                 df.to_file(os.path.join(temp_dir, os.path.splitext(file.name)[0] + '.shp'))
                 file_group = FileGroup.from_files(*os.listdir(temp_dir))
             finally:
-                shutil.rmtree(temp_dir)
-
-        return ogr2ogr.ogr2ogr(file_group, cls.FORMAT_TO_OGR[format])
+                if temp_dir:
+                    shutil.rmtree(temp_dir)
+        if file_group:
+            return ogr2ogr.ogr2ogr(file_group, cls.FORMAT_TO_OGR[format])
 
 
 if __name__ == '__main__':
