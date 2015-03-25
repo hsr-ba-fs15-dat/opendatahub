@@ -1,5 +1,6 @@
-from calendar import timegm
 import datetime
+
+from calendar import timegm
 from urlparse import parse_qsl
 
 import requests
@@ -47,22 +48,29 @@ def auth_by_token(request, backend, auth_token):
 
 
 def get_access_token(request, backend):
+    access_token_url = ""
+    secret = ""
+
     if backend == "facebook":
-        return request.data.get(u'access_token', None)
+        access_token_url = 'https://graph.facebook.com/oauth/access_token'
+        secret = config.FACEBOOK_SECRET
     if backend == "github":
         access_token_url = 'https://github.com/login/oauth/access_token'
+        secret = config.GITHUB_SECRET
+    params = {
+        'client_id': request.data.get('clientId'),
+        'redirect_uri': request.data.get('redirectUri'),
+        'client_secret': secret,
+        'code': request.data.get('code')
+    }
 
-        params = {
-            'client_id': request.data.get('clientId'),
-            'redirect_uri': request.data.get('redirectUri'),
-            'client_secret': config.GITHUB_SECRET,
-            'code': request.data.get('code')
-        }
-
-        # Step 1. Exchange authorization code for access token.
-        r = requests.get(access_token_url, params=params)
+    # Step 1. Exchange authorization code for access token.
+    r = requests.get(access_token_url, params=params)
+    try:
         access_token = dict(parse_qsl(r.text))['access_token']
-        return access_token
+    except KeyError:
+        access_token = "FAILED"
+    return access_token
 
 
 class SocialView(APIView):
