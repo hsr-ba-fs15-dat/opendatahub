@@ -43,9 +43,9 @@ class Formatter(RegistrationMixin):
                 return formatter.format(file, format=format, *args, **kwargs)
             except:
                 raise
-                #logging.debug('%s was not able to format data with target format %s', formatter.__name__,
-                #              format.__name__)
-                #continue
+                # logging.debug('%s was not able to format data with target format %s', formatter.__name__,
+                # format.__name__)
+                # continue
 
         raise NoFormatterException('Unable to format data')
 
@@ -63,8 +63,7 @@ class JSONFormatter(Formatter):
     targets = formats.JSON,
 
     @classmethod
-    def format(cls, file, format, *args, **kwargs
-):
+    def format(cls, file, format, *args, **kwargs):
         return File.from_string(os.path.splitext(file.name)[0] + '.json',
                                 file.to_df().to_json(orient='records')).file_group
 
@@ -85,8 +84,7 @@ class NoopFormatter(Formatter):
     targets = formats.Other,
 
     @classmethod
-    def format(cls, file, format, *args, **kwargs
-):
+    def format(cls, file, format, *args, **kwargs):
         return file.file_group
 
 
@@ -108,7 +106,7 @@ class OGRFormatter(Formatter):
             file = CSVFormatter.format(file, formats.CSV)
             file_group = ogr2ogr.ogr2ogr(file, ogr2ogr.CSV)
         elif isinstance(df, geopandas.GeoDataFrame):
-            temp_dir = None # to shut the inspector up
+            temp_dir = None  # to shut the inspector up
             try:
                 temp_dir = tempfile.mkdtemp()
                 df.to_file(os.path.join(temp_dir, os.path.splitext(file.name)[0] + '.shp'))
