@@ -18,8 +18,7 @@ module odh.auth {
         $authProvider.facebook({
             url: '/api/v1/auth/social/',
             // clientId: '401522313351953', // this is the local id
-            clientId: '401520096685508', // this is the heroku id
-            responseType: 'token'
+            clientId: '401520096685508' // this is the heroku id
         });
         $authProvider.github({
             url: '/api/v1/auth/social/',
