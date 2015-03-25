@@ -7,9 +7,9 @@
                ng-model-options="{ updateOn: 'default blur', debounce: {'default': 200, 'blur': 0} }"
                 >
     </div>
-    <div class="col-md-6 checkbox checkbox-inline">
-        <label><input type="checkbox" ng-model="docs.mineOnly" ng-change="docs.retrieveDataAsync()"/>Nur eigene
-            Dokumente anzeigen</label>
+    <div class="col-md-6 checkbox checkbox-inline" ng-show="docs.isAuthenticated()">
+        <label><input type="checkbox" ng-model="docs.mineOnly" ng-change="docs.retrieveDataAsync()"/>
+            Nur eigene Dokumente anzeigen</label>
     </div>
 </div>
 
@@ -18,8 +18,8 @@
         <table class="table table-striped table-hover">
             <thead>
             <tr>
-                <th>Titel</th>
-                <th>Beschreibung</th>
+                <th class="col-md-5">Titel</th>
+                <th class="col-md-7">Beschreibung</th>
             </tr>
             </thead>
             <tbody>

@@ -14,8 +14,13 @@ module odh {
         public mineOnly = false;
 
         constructor(private $log:ng.ILogService, private DocumentService:odh.main.DocumentService,
-                    private ToastService:odh.utils.ToastService) {
+                    private ToastService:odh.utils.ToastService,
+                    private $auth:any) {
             this.retrieveDataAsync();
+        }
+
+        public isAuthenticated() {
+            return this.$auth.isAuthenticated();
         }
 
         public pageChanged() {
