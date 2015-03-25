@@ -15,12 +15,12 @@ class RestApiTests(testutils.TestBase):
         if not User.objects.filter(username=self.username).exists():
             User.objects.create_user(username=self.username, email='test@example.com', password=self.password)
 
-        f = open(self.get_test_file_path('test-addresses.csv'), 'r')
-        self.data = {
-            'name': 'REST Api test',
-            'description': 'post_document test',
-            'file': SimpleUploadedFile(f.name, f.read())
-        }
+        with open(self.get_test_file_path('test-addresses.csv'), 'r') as f:
+            self.data = {
+                'name': 'REST Api test',
+                'description': 'post_document test',
+                'file': SimpleUploadedFile(f.name, f.read())
+            }
 
     def get_client(self, authenticate=True):
         client = APIClient()

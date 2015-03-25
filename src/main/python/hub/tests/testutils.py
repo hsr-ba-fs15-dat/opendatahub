@@ -5,6 +5,8 @@
 import unittest
 
 import os
+from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'opendatahub.settings')
@@ -17,6 +19,19 @@ class TestBase(unittest.TestCase):
     """
 
     """
+
+    username = 'testdata_import'
+    email = username + '@opendatahub.ch'
+    password = 'secret'
+
+    @classmethod
+    def get_test_user(self):
+        try:
+            user = User.objects.get(username=self.username)
+        except ObjectDoesNotExist:
+            user = User.objects.create_user(username=self.username, email=self.email, password=self.password)
+
+        return user
 
     @classmethod
     def get_test_file_path(cls, file_path):
