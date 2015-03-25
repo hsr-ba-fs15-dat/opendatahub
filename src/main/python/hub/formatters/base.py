@@ -57,7 +57,7 @@ class CSVFormatter(Formatter):
     @classmethod
     def format(cls, file, format):
         return File.from_string(os.path.splitext(file.name)[0] + '.csv',
-                                file.to_df().to_csv(encoding='UTF-8')).file_group
+                                file.to_df().to_csv(index=False, encoding='UTF-8')).file_group
 
 
 class JSONFormatter(Formatter):
@@ -79,7 +79,7 @@ class ExcelFormatter(Formatter):
         with tempfile.NamedTemporaryFile(suffix=".xlsx") as f:
             file.to_df().to_excel(f.name, engine='xlsxwriter')
             f.seek(0)
-            return File.from_string(os.path.splitext(file.name)[0] + '.xlsx' + '.xlsx', f.read()).file_group
+            return File.from_string(os.path.splitext(file.name)[0] + '.xlsx', f.read()).file_group
 
 
 class NoopFormatter(Formatter):
