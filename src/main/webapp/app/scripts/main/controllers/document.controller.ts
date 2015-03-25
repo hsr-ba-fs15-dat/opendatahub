@@ -11,9 +11,10 @@ module odh {
         public totalItems:number;
         public currentPage:number = 1;
 
+        public mineOnly = false;
+
         constructor(private $log:ng.ILogService, private DocumentService:odh.main.DocumentService,
                     private ToastService:odh.utils.ToastService) {
-
             this.retrieveDataAsync();
         }
 
@@ -23,7 +24,7 @@ module odh {
 
         public retrieveDataAsync() {
             this.$log.debug('Fetching data');
-            this.DocumentService.search(this.searchTerms, this.currentPage)
+            this.DocumentService.search(this.searchTerms, this.mineOnly, this.currentPage)
                 .then(data => {
                     this.documents = data;
                     this.totalItems = data.meta.count;

@@ -24,10 +24,13 @@ module odh.main {
             return this.documents.getList();
         }
 
-        public search(query:string, page:number = 1) {
+        public search(query:string, mineOnly:boolean = false, page:number = 1) {
             var params:any = { page: page };
             if (query) {
                 params.search = query;
+            }
+            if (mineOnly) {
+                params.owneronly = true;
             }
             this.$log.debug('Document list parameters', params);
             return this.documents.getList(params);

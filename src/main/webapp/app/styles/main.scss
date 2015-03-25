@@ -114,3 +114,8 @@ a {
   display: table-cell;
   float: none !important;
 }
+
+// fix for text control spacing issues when inline with checkboxes using .checkbox
+.inline-checkbox-fix {
+  margin-top: 10px;
+}

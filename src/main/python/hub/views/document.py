@@ -115,6 +115,8 @@ class DocumentViewSet(viewsets.ModelViewSet):
         if 'search' in params:
             documents = documents.filter(Q(name__icontains=params['search']) |
                                          Q(description__icontains=params['search']))
+        if 'owneronly' in params:
+            documents = documents.filter(owner__id=request.user.id)
 
         serializer = self.get_pagination_serializer(self.paginate_queryset(documents))
         return Response(serializer.data)

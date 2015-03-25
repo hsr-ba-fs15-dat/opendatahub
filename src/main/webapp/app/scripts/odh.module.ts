@@ -37,7 +37,7 @@ module openDataHub {
 
             RestangularProvider.setBaseUrl('/api/v1/');
 
-            RestangularProvider.addResponseInterceptor(function (data, operation, what, url, response, deferred) {
+            RestangularProvider.addResponseInterceptor(function (data, operation/*, what, url, response, deferred*/) {
                 var extractedData;
                 if (operation === 'getList' && data.results) {
                     extractedData = data.results;
