@@ -22,6 +22,8 @@ class FileGroupSerializer(serializers.HyperlinkedModelSerializer):
     file_format = serializers.CharField(source='format')
     files = FileSerializer(many=True, read_only=True)
 
+    document = DocumentSerializer(read_only=True)
+
     data = serializers.HyperlinkedIdentityField('filegroupmodel-data')
 
     preview = serializers.HyperlinkedIdentityField('filegroupmodel-preview')
