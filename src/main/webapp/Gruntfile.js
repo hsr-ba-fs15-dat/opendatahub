@@ -48,6 +48,10 @@ module.exports = function (grunt) {
                 files: ['<%= yeoman.app %>/styles/{,*/}*.{scss,sass}'],
                 tasks: ['compass:server', 'autoprefixer']
             },
+            less: {
+                files: ['<%= yeoman.app %>/styles/{,*/}*.less'],
+                tasks: ['less:server', 'autoprefixer']
+            },
             gruntfile: {
                 files: ['Gruntfile.js']
             },
@@ -163,11 +167,12 @@ module.exports = function (grunt) {
         // Add vendor prefixed styles
         autoprefixer: {
             options: {
-                browsers: ['last 1 version']
+                //browsers: ['last 1 version']
+                browsers: ['last 3 versions', 'ie 8', 'ie 9', 'ie 10', 'ie 11']
             },
             server: {
                 options: {
-                    map: true,
+                    map: true
                 },
                 files: [{
                     expand: true,
@@ -221,6 +226,10 @@ module.exports = function (grunt) {
                         }
                     }
                 }
+            },
+            less: {
+                src: ['<%= yeoman.app %>/styles/{,*/}*.less'],
+                ignorePath: /(\.\.\/){1,2}bower_components\//
             }
         },
 
@@ -312,6 +321,40 @@ module.exports = function (grunt) {
                 options: {
                     sourcemap: true
                 }
+            }
+        },
+
+        // Compiles LESS to CSS and generates necessary files if requested
+        less: {
+            options: {
+                paths: ['./bower_components'],
+            },
+            dist: {
+                options: {
+                    cleancss: true,
+                    report: 'gzip'
+                },
+                files: [{
+                    expand: true,
+                    cwd: '<%= yeoman.app %>/styles',
+                    src: '*.less',
+                    dest: '.tmp/styles',
+                    ext: '.css'
+                }]
+            },
+            server: {
+                options: {
+                    sourceMap: true,
+                    sourceMapBasepath: '<%= yeoman.app %>/',
+                    sourceMapRootpath: '../'
+                },
+                files: [{
+                    expand: true,
+                    cwd: '<%= yeoman.app %>/styles',
+                    src: '*.less',
+                    dest: '.tmp/styles',
+                    ext: '.css'
+                }]
             }
         },
 
@@ -489,13 +532,16 @@ module.exports = function (grunt) {
         // Run some tasks in parallel to speed up the build process
         concurrent: {
             server: [
-                'compass:server'
+                //'compass:server',
+                'less:server'
             ],
             test: [
-                'compass',
+                //'compass',
+                'less'
             ],
             dist: [
-                'compass:dist',
+                //'compass:dist',
+                'less:dist',
                 'copy:styles',
                 'imagemin',
                 'svgmin'
@@ -561,7 +607,7 @@ module.exports = function (grunt) {
         'wiredep',
         'useminPrepare',
         'concurrent:dist',
-        //'autoprefixer',
+        'autoprefixer',
         'concat',
         'ngAnnotate',
         'copy:dist',
