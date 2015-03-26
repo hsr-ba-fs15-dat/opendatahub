@@ -102,7 +102,7 @@ USE_L10N = True
 USE_TZ = True
 
 # ACCOUNT_ADAPTER = 'authentication.adapters.MessageFreeAdapter'
-SOCIAL_AUTH_USER_MODEL = 'authentication.models.UserProfile'
+AUTH_USER_MODEL = 'authentication.UserProfile'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 SITE_ID = 1
@@ -134,7 +134,7 @@ SOCIAL_AUTH_PIPELINE = (
     'social.pipeline.social_auth.auth_allowed',
     'social.pipeline.social_auth.social_user',
     'social.pipeline.user.get_username',
-    # 'social.pipeline.social_auth.associate_by_email',  # <--- enable this one
+    'social.pipeline.social_auth.associate_by_email',  # <--- enable this one
     'social.pipeline.user.create_user',
     'social.pipeline.social_auth.associate_user',
     'social.pipeline.social_auth.load_extra_data',

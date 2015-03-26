@@ -1,5 +1,4 @@
 import datetime
-
 from calendar import timegm
 from urlparse import parse_qsl
 
@@ -10,11 +9,10 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_jwt.settings import api_settings
 from rest_framework_jwt.utils import jwt_payload_handler, jwt_encode_handler
-from social.apps.django_app.default.models import UserSocialAuth
 from social.apps.django_app.utils import psa
-from django.contrib.auth.models import User
 
 from authentication import config
+from authentication.models import UserProfile
 from authentication.serializers import UserSerializer
 
 
@@ -26,10 +24,11 @@ class PublicKeysView(APIView):
 
 class CurrentUserView(APIView):
     permission_classes = (IsAuthenticated,)
-    queryset = User.objects.all()
+    queryset = UserProfile.objects.all()
 
     def get(self, request):
-        serializer = UserSerializer(request.user)
+        serializer = UserSerializer(request.user, context={'request': request})
+        # serialized_data = serializers.serialize("json", request.user)
         return Response(serializer.data)
 
 
@@ -89,7 +88,7 @@ class SocialView(APIView):
                 # Try to authenticate the user using python-social-auth
                 user = auth_by_token(request, backend, auth_token)
 
-            except Exception, e:
+            except Exception:
                 return Response({'status': 'Bad request',
                                  'message': 'Could not authenticate with the provided token.'},
                                 status=status.HTTP_400_BAD_REQUEST)

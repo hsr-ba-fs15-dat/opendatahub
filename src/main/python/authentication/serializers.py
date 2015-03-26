@@ -1,18 +1,23 @@
-from rest_framework.relations import PrimaryKeyRelatedField, HyperlinkedIdentityField
-from rest_framework.serializers import ModelSerializer, StringRelatedField
-from social.apps.django_app.default.models import DjangoStorage, UserSocialAuth
+from rest_framework.serializers import ModelSerializer
+from social.apps.django_app.default.models import UserSocialAuth
+
 from authentication.models import UserProfile
 
 
+class UserSocialAuthSerializer(ModelSerializer):
+    class Meta:
+        model = UserSocialAuth
+        fields = ('provider', 'uid')
+
+
 class UserSerializer(ModelSerializer):
-    # social_data = PrimaryKeyRelatedField()
+    social_auth = UserSocialAuthSerializer(
+        many=True,
+        read_only=True,
+    )
 
     class Meta:
         model = UserProfile
-        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'profile_photo')
-
-
-class UserAuthSerializer(ModelSerializer):
-    class Meta:
-        model = UserSocialAuth
-        fields = ('extra_data', 'provider')
+        fields = (
+            'id', 'username', 'email', 'first_name', 'last_name', 'profile_photo', 'description', 'social_auth'
+        )

@@ -1,22 +1,19 @@
-from social.backends.facebook import FacebookOAuth2
-
 from requests import request, HTTPError
 
-from django.core.files.base import ContentFile
 
+def save_profile_picture(strategy, user, response, details, is_new=False, *args, **kwargs):
+    if is_new or True:
+        if strategy.request.backend.name == 'facebook':
+            url = 'http://graph.facebook.com/{0}/picture'.format(response['id'])
 
-def save_profile_picture(strategy, user, response, details,
-                         is_new=False,*args,**kwargs):
+            try:
+                response = request('GET', url, params={'type': 'large'})
+                response.raise_for_status()
+            except HTTPError:
+                pass
+            else:
 
-    if is_new and strategy.backend.name == 'facebook':
-        url = 'http://graph.facebook.com/{0}/picture'.format(response['id'])
-
-        try:
-            response = request('GET', url, params={'type': 'large'})
-            response.raise_for_status()
-        except HTTPError:
-            pass
-        else:
-            profile = user.get_profile()
-            profile.profile_photo.save('{0}_social.jpg'.format(user.username), ContentFile(response.content))
-            profile.save()
+                # profile.profile_photo.save('{0}_social.jpg'.format(user.username), ContentFile(response.content))
+                user.profile_photo = url
+                user.profile_photo_origin = strategy.request.backend.name
+                user.save()
