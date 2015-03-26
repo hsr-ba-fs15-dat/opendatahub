@@ -2,12 +2,14 @@
 """
 
 from cStringIO import StringIO
+import codecs
 import contextlib
 import tempfile
 import shutil
 
 import os
 
+from django.utils.encoding import force_bytes
 from hub import formats
 
 
@@ -46,15 +48,9 @@ class FileGroup(object):
     def names(self):
         return [f.name for f in self.files]
 
-    def __iter__(self):
-        return iter(self.files)
-
-    def __getitem__(self, ix_or_key):
-        if isinstance(ix_or_key, int):
-            return self.files[ix_or_key]
-        elif isinstance(ix_or_key, basestring):
-            return self.get_by_name(ix_or_key)
-        raise ValueError
+    def rename_all(self, basename):
+        for f in self.files:
+            f.basename = basename
 
     @contextlib.contextmanager
     def on_filesystem(self):
@@ -81,17 +77,28 @@ class FileGroup(object):
             return file.to_format(format)
         return None
 
+    def __iter__(self):
+        return iter(self.files)
+
+    def __getitem__(self, ix_or_key):
+        if isinstance(ix_or_key, int):
+            return self.files[ix_or_key]
+        elif isinstance(ix_or_key, basestring):
+            return self.get_by_name(ix_or_key)
+
 
 class File(object):
     """ In-memory file wrapper with added meta
     """
+
+    CODEC = codecs.lookup('UTF-8')
 
     def __init__(self, name, stream, file_group=None, format=None):
         if not file_group:
             file_group = FileGroup([self])
 
         self.name = name
-        self.stream = stream
+        self._stream = stream
         self.file_group = file_group
         self.format = format
         self.df = None
@@ -103,11 +110,35 @@ class File(object):
 
     @classmethod
     def from_string(cls, name, string, *args, **kwargs):
-        return cls(name, StringIO(string), *args, **kwargs)
+        return cls(name, StringIO(force_bytes(string)), *args, **kwargs)
+
+    @property
+    def basename(self):
+        return os.path.splitext(self.name)[0]
+
+    @basename.setter
+    def basename(self, basename):
+        ext = self.extension
+        self.name = '{}{}{}'.format(self.basename, bool(ext) * '.', ext)
 
     @property
     def extension(self):
-        return self.name.rsplit('.', 1)[-1].lower()
+        split = self.name.rsplit('.', 1)
+        return split[-1].lower() if len(split) > 1 else ''
+
+    @extension.setter
+    def extension(self, ext):
+        ext = ext or ''
+        self.name = '{}{}{}'.format(self.basename, bool(ext) * '.', ext)
+
+    @property
+    def stream(self):
+        self._stream.seek(0)
+        return self._stream
+
+    @property
+    def ustream(self):
+        return codecs.StreamReaderWriter(self.stream, self.CODEC.streamreader, self.CODEC.streamwriter)
 
     def get_format(self):
         if not self.format:
@@ -138,6 +169,9 @@ class File(object):
                 raise  # todo
 
         return formatters.Formatter.format(self, format)
+
+    def __contains__(self, string):
+        return string in self.ustream.read()
 
 
 if __name__ == '__main__':

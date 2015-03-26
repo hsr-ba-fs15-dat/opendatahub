@@ -39,6 +39,7 @@ class Parser(RegistrationMixin):
             try:
                 return parser.parse(file, format=format, *args, **kwargs)
             except:
+                raise
                 logging.debug('%s was not able to parse data with format %s', parser.__name__, format.__name__)
                 continue
 
@@ -79,10 +80,23 @@ class OGRParser(Parser):
 
         if format not in (formats.Shapefile, formats.GeoJSON):
             file_group = ogr2ogr.ogr2ogr(file_group, ogr2ogr.SHP)
-            name = '{}.{}'.format(os.path.splitext(name)[0], ogr2ogr.SHP.extension)
+            name = '{}.{}'.format(file.basename, ogr2ogr.SHP.extension)
 
         with file_group.on_filesystem() as temp_dir:
             return geopandas.read_file(os.path.join(temp_dir, name), encoding='UTF-8')
+
+
+class GenericXMLParser(Parser):
+    """ Flat XML parser
+    """
+
+    accepts = formats.XML,
+
+    @classmethod
+    def parse(cls, file, format, *args, **kwargs):
+        from lxml import etree
+        et = etree.parse(file.stream)
+        return pandas.DataFrame([dict(text=e.text, **e.attrib) for e in et.getroot()])
 
 
 if __name__ == '__main__':

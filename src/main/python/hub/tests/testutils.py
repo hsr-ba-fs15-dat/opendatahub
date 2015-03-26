@@ -5,11 +5,11 @@
 import unittest
 
 import os
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'opendatahub.settings')
+
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 
-
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'opendatahub.settings')
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 TEMP_DIR = os.path.join(BASE_DIR, 'temp')
@@ -20,7 +20,7 @@ class TestBase(unittest.TestCase):
 
     """
 
-    username = 'testdata_import'
+    username = 'testuser'
     email = username + '@opendatahub.ch'
     password = 'secret'
 

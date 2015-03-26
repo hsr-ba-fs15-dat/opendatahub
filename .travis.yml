@@ -22,6 +22,7 @@ install:
   - wget -qO- https://toolbelt.heroku.com/install-ubuntu.sh | sh
   - sudo apt-get install gdal-bin libgdal-dev libgdal1h libgdal1-dev # ogr2ogr/GDAL
   - sudo apt-get install libfreetype6 libfreetype6-dev # pre-req matplotlib
+  - sudo apt-get install libxml2-dev libxslt-dev python-dev # lxml
 
 before_script:
   - psql -c "CREATE USER opendatahub WITH PASSWORD 'opendatahub';" -U postgres

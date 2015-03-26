@@ -78,7 +78,18 @@ class JSON(Format):
 
     @classmethod
     def is_format(self, file, *args, **kwargs):
-        return file.extension == 'json' and '"geometry"' not in file.stream.getvalue()  # todo figure out a better way
+        return file.extension == 'json' and '"geometry"' not in file  # todo figure out a better way
+
+
+class XML(Format):
+    label = 'XML'
+
+    description = """
+    """
+
+    @classmethod
+    def is_format(self, file, *args, **kwargs):
+        return file.extension == 'xml'  # or '<?xml' in file  # do not uncomment, GML are xml too (and many more)
 
 
 class Excel(Format):
@@ -164,7 +175,7 @@ class GeoJSON(Format):
 
     @classmethod
     def is_format(self, file, *args, **kwargs):
-        return file.extension == 'json' and '"geometry"' in file.stream.getvalue()  # todo figure out a better way
+        return file.extension == 'json' and '"geometry"' in file  # todo figure out a better way
 
 
 class Other(Format):

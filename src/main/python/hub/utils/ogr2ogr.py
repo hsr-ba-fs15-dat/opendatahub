@@ -63,12 +63,11 @@ def ogr2ogr(file_group, to_type):
                 if os.path.splitext(filename)[0] == 'out':
                     ext = to_type.extension if filename == 'out' else filename.rsplit('.', 1)[-1]
 
-                    files.append(os.path.join(temp_dir, '{}.{}'.format(os.path.splitext(main_file.name)[0], ext)))
+                    files.append(os.path.join(temp_dir, '{}.{}'.format(main_file.basename, ext)))
                     shutil.move(os.path.join(temp_dir, filename), files[-1])
 
         file_group_converted = FileGroup.from_files(*files)
         # some ogr2ogr drivers don't retain the name (evil!), let's rename them ourselves
-        for file in file_group_converted:
-            file.name = os.path.splitext(main_file.name)[0] + os.path.splitext(file.name)[1]
+        file_group.rename_all(main_file.basename)
 
         return file_group_converted

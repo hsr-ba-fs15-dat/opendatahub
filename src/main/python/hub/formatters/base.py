@@ -55,7 +55,7 @@ class CSVFormatter(Formatter):
 
     @classmethod
     def format(cls, file, format, *args, **kwargs):
-        return File.from_string(os.path.splitext(file.name)[0] + '.csv',
+        return File.from_string(file.basename + '.csv',
                                 file.to_df().to_csv(index=False, encoding='UTF-8')).file_group
 
 
@@ -64,7 +64,7 @@ class JSONFormatter(Formatter):
 
     @classmethod
     def format(cls, file, format, *args, **kwargs):
-        return File.from_string(os.path.splitext(file.name)[0] + '.json',
+        return File.from_string(file.basename + '.json',
                                 file.to_df().to_json(orient='records')).file_group
 
 
@@ -77,7 +77,7 @@ class ExcelFormatter(Formatter):
         with tempfile.NamedTemporaryFile(suffix=".xlsx") as f:
             file.to_df().to_excel(f.name, engine='xlsxwriter', index=False)
             f.seek(0)
-            return File.from_string(os.path.splitext(file.name)[0] + '.xlsx', f.read()).file_group
+            return File.from_string(file.basename + '.xlsx', f.read()).file_group
 
 
 class NoopFormatter(Formatter):
@@ -108,7 +108,7 @@ class OGRFormatter(Formatter):
         elif isinstance(df, geopandas.GeoDataFrame):
             temp_dir = tempfile.mkdtemp()
             try:
-                df.to_file(os.path.join(temp_dir, os.path.splitext(file.name)[0] + '.shp'))
+                df.to_file(os.path.join(temp_dir, file.basename + '.shp'))
                 file_group = FileGroup.from_files(*os.listdir(temp_dir))
             except:
                 # todo exception handling
@@ -139,6 +139,6 @@ if __name__ == '__main__':
         f = fg[0]
         df = f.to_df()
 
-        f = Formatter.format(f, formats.Excel)
+        f = Formatter.format(f, formats.GML)
 
         pass

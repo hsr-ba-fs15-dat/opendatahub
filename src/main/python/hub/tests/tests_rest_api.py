@@ -2,18 +2,14 @@ import json
 
 from rest_framework.test import APIClient
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.contrib.auth.models import User
 
 from . import testutils
 
 
 class RestApiTests(testutils.TestBase):
-    username = 'test'
-    password = 'secret'
 
     def setUp(self):
-        if not User.objects.filter(username=self.username).exists():
-            User.objects.create_user(username=self.username, email='test@example.com', password=self.password)
+        self.user = self.get_test_user()
 
         with open(self.get_test_file_path('test-addresses.csv'), 'r') as f:
             self.data = {
