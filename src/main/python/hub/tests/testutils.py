@@ -5,9 +5,11 @@
 import unittest
 
 import os
+
+from authentication.models import UserProfile
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'opendatahub.settings')
 
-from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 
 
@@ -27,9 +29,9 @@ class TestBase(unittest.TestCase):
     @classmethod
     def get_test_user(self):
         try:
-            user = User.objects.get(username=self.username)
+            user = UserProfile.objects.get(username=self.username)
         except ObjectDoesNotExist:
-            user = User.objects.create_user(username=self.username, email=self.email, password=self.password)
+            user = UserProfile.objects.create_user(username=self.username, email=self.email, password=self.password)
 
         return user
 
