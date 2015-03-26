@@ -17,7 +17,7 @@ module odh.auth {
     function config($stateProvider:ng.ui.IStateProvider, $authProvider) {
         $authProvider.facebook({
             url: '/api/v1/auth/social/',
-            // clientId: '401522313351953', // this is the local id
+            // clientId: '401522313351953' // this is the local id
             clientId: '401520096685508' // this is the heroku id
         });
         $authProvider.github({

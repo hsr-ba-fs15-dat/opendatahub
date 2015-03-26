@@ -6,6 +6,9 @@ from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from django.db.models import Q
+
+from django.db import transaction
+
 import requests as http
 import os
 
@@ -33,20 +36,21 @@ class DocumentViewSet(viewsets.ModelViewSet):
         Create a document.
         Expected parameters: One of: url, file. Always: description
         """
+        if not ('name' in request.data and 'description' in request.data):
+                    raise ValidationError('Insufficient information')
+
         try:
-            if not ('name' in request.data and 'description' in request.data):
-                raise ValidationError('Insufficient information')
+            with transaction.atomic():
+                doc = DocumentModel(name=request.data['name'], description=request.data['description'],
+                                    private=request.data.get('private', False), owner=request.user)
+                doc.save()
 
-            doc = DocumentModel(name=request.data['name'], description=request.data['description'],
-                                private=request.data.get('private', False), owner=request.user)
-            doc.save()
-
-            if 'url' in request.data:
-                self._handle_url(request, doc)
-            elif 'file' in request.data:
-                self._handle_file(request, doc)
-            else:
-                raise ValidationError('No data source specified')
+                if 'url' in request.data:
+                    self._handle_url(request, doc)
+                elif 'file' in request.data:
+                    self._handle_file(request, doc)
+                else:
+                    raise ValidationError('No data source specified')
 
             serializer = DocumentSerializer(DocumentModel.objects.get(id=doc.id), context={'request': request})
 
