@@ -31,7 +31,7 @@
     "angular-easyfb": "~1.2.1",
     "restangular": "~1.4.0",
     "bootstrap-social-buttons": "~1.0.0",
-    "satellizer": "~0.9.4",
+    "satellizer": "https://github.com/hsr-ba-fs15-dat/satellizer.git#0.9.4.2",
     "angular-loading-bar": "~0.7.1"
   },
   "devDependencies": {

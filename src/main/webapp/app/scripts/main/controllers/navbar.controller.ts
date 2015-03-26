@@ -9,7 +9,7 @@ module odh {
         public email:string;
         public password:string;
 
-        constructor(private AuthenticationService:odh.auth.AuthenticationService, private $auth) {
+        constructor(private $auth) {
 
         }
 

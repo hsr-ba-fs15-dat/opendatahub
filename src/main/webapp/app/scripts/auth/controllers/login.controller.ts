@@ -7,20 +7,12 @@ module odh.auth {
     class LoginController {
 
 
-        constructor(private AuthenticationService:AuthenticationService,
-                    private UserService:UserService,
+        constructor(private UserService:UserService,
                     private $auth) {
         }
 
         public authenticate(provider) {
-            this.$auth.authenticate(provider, {backend: provider}).then(
-                (data) => {
-                    this.UserService.login(data).then(() => {
-
-                        console.log(this.AuthenticationService.isAuthed());
-
-                    });
-                });
+            this.$auth.authenticate(provider, {backend: provider});
         }
 
         public logout() {

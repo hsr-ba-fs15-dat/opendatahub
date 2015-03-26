@@ -14,9 +14,8 @@ python-social-auth
 django-picklefield==0.3.1
 djangorestframework==3.0.5
 django-pgjson==0.2.3
-django-allauth
 djangorestframework-jwt
-
+pillow
 
 # numpy pandas xlrd xlwt xlsxwriter geopandas matplotlib lxml beautifulsoup4
 click==3.3

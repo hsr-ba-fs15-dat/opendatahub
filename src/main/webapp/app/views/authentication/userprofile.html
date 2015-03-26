@@ -1,31 +1,68 @@
-<div id="userProfile_view" ng-controller="UserProfileController as up">
-    <div ng-if="up.complete == false">
-        <form role="form" ng-if="up.AuthenticationService.isAuthed" name="userProfileForm" ng-submit="up.updateProfile(userProfileForm, up.model)" novalidate>
+<div id="userProfile_view" ng-controller="UserProfileController as up" ng-if="up.complete == false">
+    <h1>{{up.first_name}} {{up.last_name}}</h1>
+    <hr>
+    <div class="row">
+        <!-- left column -->
+        <div class="col-md-3">
+            <div class="text-center" ng-if="up.profile_photo">
+                <img ng-src="{{up.profile_photo}}" class="avatar img-circle fa fa-facebook" alt="avatar">
 
-            <div class="form-group">
-                <label for="id_first_name">Username</label>
-                <input disabled name="first_name" id="id_user_name" class="form-control" type="text" ng-model="up.username" placeholder="First Name" />
+                <p>
+                    {{ up.email }}
+                </p>
+
+                <div ng-repeat="(key, value) in up.providers">
+                    <a ng-href="http://www.{{value.provider}}.com/{{value.uid}}">
+                        <i class="fa fa-{{value.provider}}"></i>
+                        {{value.provider }}
+                    </a>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="id_first_name">First Name</label>
-                <input name="first_name" id="id_first_name" class="form-control" type="text" ng-model="up.model.first_name" placeholder="First Name" />
+
+
+        </div>
+
+        <!-- edit form column -->
+        <div class="col-md-9 personal-info">
+            <div class="alert alert-success alert-dismissable" ng-if="up.complete == true">
+                <a class="panel-close close" data-dismiss="alert">×</a>
+                <i class="fa fa-coffee"></i>
+                Ihr Profil wurde aktualisiert
             </div>
-            <div class="alert alert-danger" ng-repeat="error in up.errors.first_name">{{error}}</div>
-            <div class="form-group">
-                <label for="id_last_name">Last Name</label>
-                <input name="last_name" id="id_last_name" class="form-control" type="text" ng-model="up.model.last_name" placeholder="Last Name" />
+            <div class="alert alert-warning" ng-if="!up.UserService.isAuthenticated()">
+                Sie müssen eingeloggt sein um diese Seite ansehen zu können.
             </div>
-            <div class="alert alert-danger" ng-repeat="error in up.errors.last_name">{{error}}</div>
-            <div class="form-group">
-                <label for="id_email">Email</label>
-                <input name="email" id="id_email" class="form-control" type="email" ng-model="up.model.email" placeholder="Email" required />
-            </div>
-            <div class="alert alert-danger" ng-repeat="error in up.errors.email">{{error}}</div>
-            <button type="submit" ng-show="up.AuthenticationService.authenticated" class="btn btn-primary">Update Profile</button>
-        </form>
-        <div class="alert alert-warning" ng-if="up.AuthenticationService.authenticated == false">You need to be logged in to do this.</div>
-    </div>
-    <div ng-if="up.complete == true">
-        <div class="alert alert-success">You have updated your profile.</div>
+            <h3>Personal info</h3>
+
+            <form role="form" ng-if="up.UserService.isAuthenticated()" name="userProfileForm"
+                  ng-submit="up.updateProfile(userProfileForm, up.model)" novalidate>
+
+                <div class="form-group">
+                    <label class="col-md-3 control-label">Anzeigename:</label>
+
+                    <div class="col-md-8">
+                        <input class="form-control" type="text" ng-value="up.model.username" disabled>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">Beschreibung:</label>
+
+                    <div class="col-md-8">
+                        <textarea class="form-control" ng-model="up.model.description"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-3 control-label"></label>
+
+                    <div class="col-md-8">
+                        <input type="button" class="btn btn-primary" value="Save Changes">
+                        <span></span>
+                        <input type="reset" class="btn btn-default" value="Cancel">
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
+<hr>

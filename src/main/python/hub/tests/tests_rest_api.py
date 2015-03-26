@@ -4,6 +4,7 @@ from rest_framework.test import APIClient
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from . import testutils
+from authentication.models import UserProfile as User
 
 
 class RestApiTests(testutils.TestBase):
