@@ -1,6 +1,6 @@
 <div id="userProfile_view" ng-controller="UserProfileController as up">
     <div ng-if="up.complete == false">
-        <form role="form" ng-if="up.AuthenticationService.isAuthed" name="userProfileForm" ng-submit="up.updateProfile(userProfileForm, up.model)" novalidate>
+        <form role="form" ng-if="up.UserService.isAuthenticated()" name="userProfileForm" ng-submit="up.updateProfile(userProfileForm, up.model)" novalidate>
 
             <div class="form-group">
                 <label for="id_first_name">Username</label>
@@ -21,9 +21,9 @@
                 <input name="email" id="id_email" class="form-control" type="email" ng-model="up.model.email" placeholder="Email" required />
             </div>
             <div class="alert alert-danger" ng-repeat="error in up.errors.email">{{error}}</div>
-            <button type="submit" ng-show="up.AuthenticationService.authenticated" class="btn btn-primary">Update Profile</button>
+            <button type="submit" ng-show="up.UserService.isAuthenticated()" class="btn btn-primary">Update Profile</button>
         </form>
-        <div class="alert alert-warning" ng-if="up.AuthenticationService.authenticated == false">You need to be logged in to do this.</div>
+        <div class="alert alert-warning" ng-if="!up.UserService.isAuthenticated()">You need to be logged in to do this.</div>
     </div>
     <div ng-if="up.complete == true">
         <div class="alert alert-success">You have updated your profile.</div>

@@ -101,8 +101,8 @@ USE_L10N = True
 
 USE_TZ = True
 
-ACCOUNT_ADAPTER = 'authentication.adapters.MessageFreeAdapter'
-
+# ACCOUNT_ADAPTER = 'authentication.adapters.MessageFreeAdapter'
+SOCIAL_AUTH_USER_MODEL = 'authentication.models.UserProfile'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 SITE_ID = 1
@@ -116,8 +116,8 @@ AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",
     'social.backends.facebook.FacebookOAuth2',
     'social.backends.github.GithubOAuth2',
-    'social.backends.twitter.TwitterOAuth',
 )
+
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.AllowAny',
@@ -128,8 +128,18 @@ REST_FRAMEWORK = {
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
     ),
 }
-JWT_DECODE_HANDLER = 'authentication.jwt_decode_handler'
-# JWT_AUTH_HEADER_PREFIX = "Bearer"
-# SOCIAL_AUTH_FACEBOOK_KEY = '401520096685508'
-SOCIAL_AUTH_FACEBOOK_KEY = '401522313351953'
-SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
+SOCIAL_AUTH_PIPELINE = (
+    'social.pipeline.social_auth.social_details',
+    'social.pipeline.social_auth.social_uid',
+    'social.pipeline.social_auth.auth_allowed',
+    'social.pipeline.social_auth.social_user',
+    'social.pipeline.user.get_username',
+    # 'social.pipeline.social_auth.associate_by_email',  # <--- enable this one
+    'social.pipeline.user.create_user',
+    'social.pipeline.social_auth.associate_user',
+    'social.pipeline.social_auth.load_extra_data',
+    'social.pipeline.user.user_details',
+    'authentication.pipelines.save_profile_picture'
+)
+JWT_ALLOW_REFRESH = True
+JWT_AUTH_HEADER_PREFIX = "Bearer"

@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_jwt.settings import api_settings
 from rest_framework_jwt.utils import jwt_payload_handler, jwt_encode_handler
+from social.apps.django_app.default.models import UserSocialAuth
 from social.apps.django_app.utils import psa
 from django.contrib.auth.models import User
 
@@ -25,11 +26,9 @@ class PublicKeysView(APIView):
 
 class CurrentUserView(APIView):
     permission_classes = (IsAuthenticated,)
-
     queryset = User.objects.all()
 
     def get(self, request):
-        print(request.data)
         serializer = UserSerializer(request.user)
         return Response(serializer.data)
 
@@ -57,6 +56,7 @@ def get_access_token(request, backend):
     if backend == "github":
         access_token_url = 'https://github.com/login/oauth/access_token'
         secret = config.GITHUB_SECRET
+
     params = {
         'client_id': request.data.get('clientId'),
         'redirect_uri': request.data.get('redirectUri'),
@@ -89,7 +89,7 @@ class SocialView(APIView):
                 # Try to authenticate the user using python-social-auth
                 user = auth_by_token(request, backend, auth_token)
 
-            except Exception:
+            except Exception, e:
                 return Response({'status': 'Bad request',
                                  'message': 'Could not authenticate with the provided token.'},
                                 status=status.HTTP_400_BAD_REQUEST)

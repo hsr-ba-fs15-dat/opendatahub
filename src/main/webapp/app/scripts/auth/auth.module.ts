@@ -15,15 +15,16 @@ module odh.auth {
     ;
 
     function config($stateProvider:ng.ui.IStateProvider, $authProvider) {
+        $authProvider.authorizationPrefix = 'jwt';
         $authProvider.facebook({
             url: '/api/v1/auth/social/',
-            // clientId: '401522313351953', // this is the local id
-            clientId: '401520096685508' // this is the heroku id
+            clientId: '401522313351953' // this is the local id
+            // clientId: '401520096685508' // this is the heroku id
         });
         $authProvider.github({
             url: '/api/v1/auth/social/',
-            // clientId: 'f29d882c342818c82e0b' // this is the local id
-            clientId: '8ef558ed3fb0f5385da5' // this is the heroku id
+            clientId: 'f29d882c342818c82e0b' // this is the local id
+            // clientId: '8ef558ed3fb0f5385da5' // this is the heroku id
         });
         $stateProvider
 
@@ -32,8 +33,8 @@ module odh.auth {
                 controller: 'LoginController as lc',
                 templateUrl: 'views/authentication/login.html',
                 resolve: {
-                    authenticated: ['AuthenticationService', function (AuthenticationService) {
-                        return AuthenticationService.isAuthed();
+                    authenticated: ['$auth', function ($auth) {
+                        return $auth.isAuthenticated();
                     }]
                 }
             })
@@ -41,15 +42,14 @@ module odh.auth {
                 url: '/userProfile',
                 controller: 'UserProfileController as up',
                 templateUrl: '/views/authentication/userprofile.html'
-                //
             })
             .state('logout', {
                 url: '/logout',
                 controller: 'LogoutController',
                 templateUrl: '/views/authentication/logout.html',
                 resolve: {
-                    authenticated: ['AuthenticationService', function (AuthenticationService) {
-                        return AuthenticationService.isAuthed();
+                    authenticated: ['$auth', function ($auth) {
+                        return $auth.isAuthenticated();
                     }]
                 }
             });

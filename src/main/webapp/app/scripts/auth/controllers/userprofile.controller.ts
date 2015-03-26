@@ -12,15 +12,14 @@ module odh.auth {
         public error:any;
         public username;
 
-        constructor(private ValidateService:odh.auth.ValidateService,
-                    public AuthenticationService:odh.auth.AuthenticationService,
-                    UserService:odh.auth.UserService) {
+        constructor(public UserService:odh.auth.UserService) {
             // controller init
-            this.model = {'first_name': '', 'last_name': '', 'email': ''};
+            this.model = {'first_name': '', 'last_name': '', 'email': '', extra_data : ''};
             this.complete = false;
             UserService.profile().then((data:any) => {
                 this.model = data.data;
                 this.username = data.data.username;
+                console.log(data);
             });
         }
 
