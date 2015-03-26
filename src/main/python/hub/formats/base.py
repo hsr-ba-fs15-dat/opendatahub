@@ -143,9 +143,9 @@ class KML(Format):
 
 # todo figure out how these work
 # class INTERLIS1(Format):
-#     label = 'INTERLIS 1'
+# label = 'INTERLIS 1'
 #
-#     description = """
+# description = """
 #     INTERLIS ist ein Dateiformat zum Austausch von Geodaten.
 #     """
 #
@@ -175,7 +175,8 @@ class GeoJSON(Format):
 
     @classmethod
     def is_format(self, file, *args, **kwargs):
-        return file.extension == 'json' and '"geometry"' in file  # todo figure out a better way
+        return file.extension == 'geojson' or (
+            file.extension == 'json' and '"geometry"' in file)  # todo figure out a better way
 
 
 class Other(Format):

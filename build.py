@@ -17,10 +17,10 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 WEBAPP_DIR = os.path.join(BASE_DIR, 'src', 'main', 'webapp')
 DJANGO_DIR = os.path.join(BASE_DIR, 'src', 'main', 'python')
 
-use_plugin("analysis")
+use_plugin('analysis')
 use_plugin('python.core')
 use_plugin('python.unittest')
-use_plugin('python.coverage')
+# use_plugin('python.coverage')  # disabled as it doesn't work out of the box with django tests anyway
 use_plugin('python.flake8')
 use_plugin('python.install_dependencies')
 # use_plugin('pypi:pybuilder_django_enhanced_plugin')

@@ -9,6 +9,7 @@ import shutil
 
 import os
 
+import pandas
 from django.utils.encoding import force_bytes
 from hub import formats
 
@@ -157,6 +158,18 @@ class File(object):
             self.df = parsers.parse(self, format)
 
         return self.df
+
+    def to_normalized_df(self):
+        """
+        :return: DataFrame which contains only exportable data (no objects)
+        """
+        df = pandas.DataFrame(self.to_df())
+        for col in df.columns:
+            # todo performance considerations (check if it's not already a string -> also dtype object in pandas)
+            if df[col].dtype == object:
+                df[col] = df[col].astype(unicode)
+
+        return df
 
     def to_format(self, format):
         from hub import formatters, formats
