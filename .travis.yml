@@ -6,7 +6,7 @@ python:
 cache:
   directories:
     - $HOME/.pip-cache/
-    - /home/travis/virtualenv/python2.7
+    - /home/travis/virtualenv/python2.7.9
 
 addons:
   postgresql: 9.3
