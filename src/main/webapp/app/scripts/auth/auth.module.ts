@@ -18,13 +18,13 @@ module odh.auth {
         $authProvider.authorizationPrefix = 'jwt';
         $authProvider.facebook({
             url: '/api/v1/auth/social/',
-            clientId: '401522313351953' // this is the local id
-            // clientId: '401520096685508' // this is the heroku id
+            // clientId: '401522313351953' // this is the local id
+            clientId: '401520096685508' // this is the heroku id
         });
         $authProvider.github({
             url: '/api/v1/auth/social/',
-            clientId: 'f29d882c342818c82e0b' // this is the local id
-            // clientId: '8ef558ed3fb0f5385da5' // this is the heroku id
+            // clientId: 'f29d882c342818c82e0b' // this is the local id
+            clientId: '8ef558ed3fb0f5385da5' // this is the heroku id
             // clientId: 'b24753ec88ca98150354' // localhost id
         });
         $stateProvider
