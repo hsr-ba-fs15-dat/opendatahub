@@ -3,24 +3,40 @@
 
 module odh.auth {
     'use strict';
-
+    interface IModel {
+        username:string;
+        description:string;
+    }
     class UserProfileController {
 
         public complete:boolean;
-        public model:any;
+        public model:IModel;
         public errors:any;
         public error:any;
-        public username;
+        public username:string;
+        public first_name:string;
+        public last_name:string;
+        public email:string;
+        public profile_photo:string;
+        public profile_photo_origin:string;
+        public providers:{};
 
-        constructor(private ValidateService:odh.auth.ValidateService,
-                    public AuthenticationService:odh.auth.AuthenticationService,
-                    UserService:odh.auth.UserService) {
+
+        constructor(public UserService:odh.auth.UserService) {
             // controller init
-            this.model = {'first_name': '', 'last_name': '', 'email': ''};
+            this.model = {username: '', description: ''};
             this.complete = false;
             UserService.profile().then((data:any) => {
-                this.model = data.data;
                 this.username = data.data.username;
+                this.last_name = data.data.last_name;
+                this.first_name = data.data.first_name;
+                this.profile_photo = data.data.profile_photo;
+                this.profile_photo_origin = data.data.profile_photo_origin;
+                this.email = data.data.email;
+                this.model.username = data.data.username;
+                this.model.description = data.data.username;
+                this.providers = data.data.social_auth;
+                console.log(data.data);
             });
         }
 

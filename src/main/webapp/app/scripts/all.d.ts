@@ -5,11 +5,8 @@
 
 /// <reference path='auth/auth.module.ts' />
 /// <reference path='auth/controllers/login.controller.ts' />
-/// <reference path='auth/controllers/main.controller.ts' />
 /// <reference path='auth/controllers/userprofile.controller.ts' />
-/// <reference path='auth/services/auth.service.ts' />
 /// <reference path='auth/services/user.service.ts' />
-/// <reference path='auth/services/validate.service.ts' />
 /// <reference path='main/controllers/about.controller.ts' />
 /// <reference path='main/controllers/document.controller.ts' />
 /// <reference path='main/controllers/main.controller.ts' />

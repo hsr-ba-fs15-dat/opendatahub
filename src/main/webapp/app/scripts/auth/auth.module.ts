@@ -15,6 +15,7 @@ module odh.auth {
     ;
 
     function config($stateProvider:ng.ui.IStateProvider, $authProvider) {
+        $authProvider.authorizationPrefix = 'jwt';
         $authProvider.facebook({
             url: '/api/v1/auth/social/',
             // clientId: '401522313351953' // this is the local id
@@ -33,8 +34,8 @@ module odh.auth {
                 controller: 'LoginController as lc',
                 templateUrl: 'views/authentication/login.html',
                 resolve: {
-                    authenticated: ['AuthenticationService', function (AuthenticationService) {
-                        return AuthenticationService.isAuthed();
+                    authenticated: ['$auth', function ($auth) {
+                        return $auth.isAuthenticated();
                     }]
                 }
             })
@@ -42,15 +43,14 @@ module odh.auth {
                 url: '/userProfile',
                 controller: 'UserProfileController as up',
                 templateUrl: '/views/authentication/userprofile.html'
-                //
             })
             .state('logout', {
                 url: '/logout',
                 controller: 'LogoutController',
                 templateUrl: '/views/authentication/logout.html',
                 resolve: {
-                    authenticated: ['AuthenticationService', function (AuthenticationService) {
-                        return AuthenticationService.isAuthed();
+                    authenticated: ['$auth', function ($auth) {
+                        return $auth.isAuthenticated();
                     }]
                 }
             });

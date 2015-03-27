@@ -3,9 +3,12 @@
 """
 
 from django.db import models
-from django.contrib.auth.models import User
 
+from opendatahub import settings
 from .structures.file import File, FileGroup
+
+
+AUTH_USER_MODEL = getattr(settings, 'AUTH_USER_MODEL', 'auth.User')
 
 
 def cap(str, length):
@@ -25,7 +28,7 @@ class DocumentModel(models.Model):
 
     private = models.BooleanField(default=False)
 
-    owner = models.ForeignKey(User, null=True)
+    owner = models.ForeignKey(AUTH_USER_MODEL, null=True)
 
     def __str__(self):
         return "[Document id={} description={}]".format(self.id, cap(self.description, 50))
