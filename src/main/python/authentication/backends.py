@@ -1,7 +1,7 @@
 import urlparse
+
 from abc import abstractmethod
 from social.backends.github import GithubOAuth2
-
 from social.backends.open_id import OpenIdAuth
 from social.exceptions import AuthMissingParameter
 
