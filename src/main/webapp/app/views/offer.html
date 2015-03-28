@@ -36,21 +36,26 @@
                 </div>
 
             </div>
+        </div>
 
-            <div class="col-md-offset-3 col-md-7">
+        <div class="form-group">
+            <label class="col-md-3 control-label" for="name">Privat</label>
+
+            <div class="col-md-6">
                 <div class="checkbox">
                     <label>
                         <input id="name" name="name" type="checkbox"
-                               ng-model="offer.isprivate" type="checkbox"> Privat
+                               ng-model="offer.isprivate" type="checkbox">
                     </label>
                 </div>
             </div>
         </div>
 
 
-        <div class="form-group">
+        <div class="col-md-7 col-md-offset-3">
+            <div class="form-group">
 
-            <div class="col-md-7 col-md-offset-3">
+
                 <div class="radio">
                     <label>
                         <input name="data-source" ng-change="offer.switchDataSource()" id="data-source" type="radio"
@@ -66,18 +71,19 @@
                     </label>
                 </div>
             </div>
+        </div>
 
-            <div ng-repeat="field in offer.fields">
+        <div ng-repeat="field in offer.fields">
 
-                <div ng-switch="field.type">
+            <div ng-switch="field.type">
 
-                    <div ng-switch-when="file">
-                        <div class="col-md-offset-3 col-md-6"
-                             ng-class="{'has-error': form[field.id].$invalid && offer.submitted}">
+                <div ng-switch-when="file">
+                    <div class="col-md-offset-3 col-md-6"
+                         ng-class="{'has-error': form[field.id].$invalid && offer.submitted}">
 
-                            <div required ng-file-drop ng-file-select id="{{ field.id }}" name="{{ field.id }}"
-                                 ng-model="offer.params.file" class="well text-center"
-                                 drag-over-class="well-material-blue-100" ng-multiple="true" allow-dir="false">
+                        <div required ng-file-drop ng-file-select id="{{ field.id }}" name="{{ field.id }}"
+                             ng-model="offer.params.file" class="well text-center"
+                             drag-over-class="well-material-blue-100" ng-multiple="true" allow-dir="false">
 
                                 <span ng-show="offer.params.file" ng-repeat="file in offer.params.file">
                                     {{ file.name | limitTo: 20 }}{{ file.name.length > 20 ? '...' : '' }}{{ $last ? '' : ','  }}
@@ -87,46 +93,47 @@
                                     {{ field.label }}
                                 </span>
 
-                            </div>
-                            <div ng-no-file-drop>Ziehen von Dateien wird von Ihrem Browser nicht unterstützt</div>
-
-
-                            <div ng-messages="form[field.id].$error"
-                                 ng-show="form[field.id].$invalid && offer.submitted">
-                                <span class="help-block">
-                                    <div ng-message="required">Bitte stellen Sie mindestens eine Datei zur Verfügung.</div>
-                                </span>
-                            </div>
-
                         </div>
+                        <div ng-no-file-drop>Ziehen von Dateien wird von Ihrem Browser nicht unterstützt</div>
+
+
+                        <div ng-messages="form[field.id].$error"
+                             ng-show="form[field.id].$invalid && offer.submitted">
+                                <span class="help-block">
+                                    <div ng-message="required">Bitte stellen Sie mindestens eine Datei zur Verfügung.
+                                    </div>
+                                </span>
+                        </div>
+
                     </div>
+                </div>
 
 
-                    <div ng-switch-default ng-class="{'has-error': form[field.id].$invalid && offer.submitted}">
+                <div ng-switch-default ng-class="{'has-error': form[field.id].$invalid && offer.submitted}">
 
-                        <label class="col-md-3 control-label" for="{{ field.id }}">{{ field.label }}</label>
+                    <label class="col-md-3 control-label" for="{{ field.id }}">{{ field.label }}</label>
 
-                        <div class="col-md-6">
+                    <div class="col-md-6">
 
-                            <input ng-model="offer.params.url" id="{{ field.id }}" name="{{ field.id }}" type="text"
-                                   placeholder="{{ field.placeholder }}"
-                                   class="form-control input-md" required>
-                            <span ng-if="field.helpText" ng-bind="field.helpText" class="help-block"></span>
+                        <input ng-model="offer.params.url" id="{{ field.id }}" name="{{ field.id }}" type="text"
+                               placeholder="{{ field.placeholder }}"
+                               class="form-control input-md" required>
+                        <span ng-if="field.helpText" ng-bind="field.helpText" class="help-block"></span>
 
 
-                            <div ng-messages="form[field.id].$error" ng-show="offer.submitted">
+                        <div ng-messages="form[field.id].$error" ng-show="offer.submitted">
                     <span class="help-block">
                         <div ng-message="required">Die Eingabe von "{{ field.label }}" ist zwingend.</div>
                     </span>
-                            </div>
-
-
                         </div>
+
+
                     </div>
-
-
                 </div>
+
+
             </div>
+        </div>
 
         </div>
 
