@@ -22,7 +22,6 @@
     <link rel="stylesheet" href="bower_components/angular-ui-select/dist/select.css" />
     <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.css" />
     <link rel="stylesheet" href="bower_components/bootstrap-material-design/dist/css/ripples.css" />
-    <link rel="stylesheet" href="bower_components/angular-ui-grid/ui-grid.css" />
     <link rel="stylesheet" href="bower_components/angular-loading-bar/build/loading-bar.css" />
     <!-- endbower -->
     <link rel="stylesheet" href="bower_components/ngtoast/dist/ngToast-animations.css"/>
@@ -37,7 +36,7 @@
 </head>
 
 <body ng-app="openDataHub">
-<div id="wrap">
+<div id="wrap" ng-cloak>
        <toast></toast>
 
     <!--[if lt IE 7]>
@@ -93,7 +92,6 @@
 <script src="bower_components/angular-aria/angular-aria.js"></script>
 <script src="bower_components/angular-cookies/angular-cookies.js"></script>
 <script src="bower_components/angular-messages/angular-messages.js"></script>
-<script src="bower_components/angular-resource/angular-resource.js"></script>
 <script src="bower_components/angular-route/angular-route.js"></script>
 <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
 <script src="bower_components/angular-touch/angular-touch.js"></script>
@@ -102,15 +100,11 @@
 <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
 <script src="bower_components/angular-ui-utils/ui-utils.js"></script>
 <script src="bower_components/angular-ui-select/dist/select.js"></script>
-<script src="bower_components/jsPlumb/dist/js/dom.jsPlumb-1.7.4.js"></script>
-<script src="bower_components/jsPlumb/dist/js/jquery.jsPlumb-1.7.4.js"></script>
-<script src="bower_components/jquery-ui/jquery-ui.js"></script>
 <script src="bower_components/ng-file-upload/angular-file-upload.js"></script>
 <script src="bower_components/json3/lib/json3.min.js"></script>
 <script src="bower_components/bootstrap-material-design/dist/js/material.js"></script>
 <script src="bower_components/bootstrap-material-design/dist/js/ripples.js"></script>
 <script src="bower_components/arrive/src/arrive.js"></script>
-<script src="bower_components/angular-ui-grid/ui-grid.js"></script>
 <script src="bower_components/angular-easyfb/angular-easyfb.js"></script>
 <script src="bower_components/lodash/dist/lodash.compat.js"></script>
 <script src="bower_components/restangular/dist/restangular.js"></script>

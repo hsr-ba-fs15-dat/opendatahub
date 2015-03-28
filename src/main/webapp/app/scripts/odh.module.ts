@@ -9,14 +9,12 @@ module openDataHub {
             'ngAria',
             'ngCookies',
             'ngMessages',
-            'ngResource',
             'ngSanitize',
             'ngTouch',
             'ui.router',
             'ui.utils',
             'ui.select',
             'ui.bootstrap',
-            'ui.grid',
             'restangular',
             'openDataHub.auth',
             'openDataHub.utils',
@@ -25,7 +23,7 @@ module openDataHub {
 
         .config(($stateProvider:ng.ui.IStateProvider, $urlRouterProvider:ng.ui.IUrlRouterProvider,
                  UrlServiceProvider:odh.utils.UrlService, paginationConfig:ng.ui.bootstrap.IPaginationConfig,
-                 RestangularProvider:restangular.IProvider) => {
+                 RestangularProvider:restangular.IProvider, $httpProvider:ng.IHttpProvider) => {
 
             (<any>$).material.init();
 
@@ -34,9 +32,10 @@ module openDataHub {
             paginationConfig.nextText = 'Nächste';
             paginationConfig.previousText = 'Zurück';
 
+            // django request.is_ajax() compatibility
+            $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
             RestangularProvider.setBaseUrl('/api/v1/');
-
             RestangularProvider.addResponseInterceptor(function (data, operation/*, what, url, response, deferred*/) {
                 var extractedData;
                 if (operation === 'getList' && data.results) {

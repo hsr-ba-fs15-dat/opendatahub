@@ -12,6 +12,7 @@ import os
 import pandas
 from django.utils.encoding import force_bytes
 from hub import formats
+from django.core.cache import caches  # noqa
 
 
 class FileGroup(object):

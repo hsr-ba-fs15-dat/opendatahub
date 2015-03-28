@@ -3,7 +3,7 @@ import zipfile
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route
-from django.http.response import HttpResponse, HttpResponseNotFound, HttpResponseServerError
+from django.http.response import HttpResponse, HttpResponseNotFound, HttpResponseServerError, JsonResponse
 
 from hub.models import FileGroupModel, FileModel
 from hub.serializers import FileGroupSerializer, FileSerializer
@@ -38,25 +38,30 @@ class FileGroupViewSet(viewsets.ModelViewSet):
 
         try:
             result = group.to_format(format_name)
+
             if not result:
                 return HttpResponseServerError(reason='Transformation failed: no result')
 
+            if request.is_ajax():
+                return JsonResponse({})  # just signal that it can be downloaded (200)
+
             if len(result.files) > 1:
-                response['Content-Disposition'] = 'attachment; filename="data.zip"'
+                filename = group[0].basename + '.zip'
+                response['Content-Disposition'] = 'attachment; filename="{}"'.format(filename)
 
                 zip = zipfile.ZipFile(response, 'w')
                 for file in result:
                     zip.writestr(file.name, file.stream.getvalue())
                 zip.close()
             else:
-                response['Content-Disposition'] = 'attachment; filename="%s"' % result[0].name
+                response['Content-Disposition'] = 'attachment; filename="{}"'.format(result[0].name)
                 response.write(result[0].stream.getvalue())
             response.flush()
 
             return response
         except:
             raise
-            # return HttpResponseServerError()
+            return HttpResponseServerError(reason='Transformation failed: no result')
 
     @detail_route()
     def preview(self, request, pk):

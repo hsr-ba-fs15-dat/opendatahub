@@ -88,6 +88,21 @@ DATABASES = {
     'default': dj_database_url.config(default='postgres://opendatahub:opendatahub@localhost:5432/opendatahub')
 }
 
+CACHES = {
+    'formats': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'formats_cache',
+        'TIMEOUT': 3000,
+        'OPTIONS': {
+            'MAX_ENTRIES': 1000
+        }
+    },
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'default_cache'
+    }
+}
+
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
 
