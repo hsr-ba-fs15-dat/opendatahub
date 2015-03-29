@@ -2,14 +2,9 @@
 Tests for formatters
 """
 
-import logging
-
 from hub.tests.testutils import TestBase
 from hub.structures.file import FileGroup
 from hub.formats import Format
-
-
-logging.getLogger('Fiona').setLevel(logging.WARN)
 
 
 class FormatsTests(TestBase):
