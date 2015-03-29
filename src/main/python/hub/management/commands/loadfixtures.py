@@ -3,25 +3,41 @@
 """
 
 from django.core.management.base import BaseCommand
-import os
 
 from hub.tests.testutils import TestBase
 from hub.models import DocumentModel, FileGroupModel, FileModel
+from hub import formats
+from hub.structures.file import FileGroup
 
 
 class Command(BaseCommand):
     help = 'Loads test data into the database'
 
+    IMPORT = {
+        # first element in considered the main file
+        ('mockaroo.com.csv',): formats.CSV,
+        ('mockaroo.com.json',): formats.JSON,
+        ('mockaroo.com.xlsx',): formats.Excel,
+        ('gml/Bahnhoefe.gml', 'gml/Bahnhoefe.gfs', 'gml/Bahnhoefe.xsd',): formats.GML,
+        ('json/Bahnhoefe.json',): formats.GeoJSON,
+        ('kml/Bahnhoefe.kml',): formats.KML,
+        ('shp/Bahnhoefe.shp', 'shp/Bahnhoefe.shx', 'shp/Bahnhoefe.dbf', 'shp/Bahnhoefe.ili'): formats.Shapefile,
+    }
+
     def handle(self, *args, **options):
         user = TestBase.get_test_user()
 
-        with open(TestBase.get_test_file_path('test-addresses.csv'), 'r') as f:
-            doc = DocumentModel(name='Testdatei', description='Mit http://www.fakenamegenerator.com/ generierte Namen',
+        for files, format in self.IMPORT.iteritems():
+            fg = FileGroup.from_files(*[TestBase.get_test_file_path(f) for f in files])
+
+            doc = DocumentModel(name='Test {}'.format(', '.join(fg.names)),
+                                description='Testdaten im {} Originalformat'.format(format.name),
                                 private=False, owner=user)
             doc.save()
 
             file_group = FileGroupModel(document=doc, format=None)
             file_group.save()
 
-            file_model = FileModel(file_name=os.path.basename(f.name), data=f.read(), file_group=file_group)
-            file_model.save()
+            for f in fg:
+                file_model = FileModel(file_name=f.name, data=f.stream.getvalue(), file_group=file_group)
+                file_model.save()

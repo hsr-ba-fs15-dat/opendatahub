@@ -88,6 +88,9 @@ class FileGroup(object):
         elif isinstance(ix_or_key, basestring):
             return self.get_by_name(ix_or_key)
 
+    def __repr__(self):
+        return 'FileGroup({})'.format(', '.join([f.name for f in self.files]))
+
 
 class File(object):
     """ In-memory file wrapper with added meta
@@ -164,18 +167,21 @@ class File(object):
         """
         :return: DataFrame which contains only exportable data (no objects)
         """
-        df = pandas.DataFrame(self.to_df())
+        df = pandas.DataFrame(self.to_df().copy(True))
         for col in df.columns:
-            # todo performance considerations (check if it's not already a string -> also dtype object in pandas)
-            if df[col].dtype == object:
-                df[col] = df[col].astype(unicode)
+            temp = df[col].dropna()
+            if len(temp) and temp.dtype == object and not isinstance(temp.iloc[0], unicode):
+                try:
+                    df[col] = df[col].astype(unicode)
+                except:
+                    pass
 
         return df
 
     def to_format(self, format):
         from hub import formatters, formats
 
-        if not isinstance(format, formats.Format):
+        if isinstance(format, basestring):
             format = str(format).lower()
             try:
                 format = next((f for f in formats.Format.formats.itervalues() if format == f.__name__.lower()))
@@ -186,6 +192,9 @@ class File(object):
 
     def __contains__(self, string):
         return string in self.ustream.read()
+
+    def __repr__(self):
+        return 'File({})'.format(self.name)
 
 
 if __name__ == '__main__':

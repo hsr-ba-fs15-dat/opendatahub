@@ -34,6 +34,8 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# correct protocol (http vs. https) when behind reverse proxy like heroku
+USE_X_FORWARDED_HOST = True
 
 # Application definition
 
