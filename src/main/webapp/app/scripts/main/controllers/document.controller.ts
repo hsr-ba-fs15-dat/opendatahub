@@ -63,7 +63,7 @@ module odh {
         public downloadAs(group, formatName) {
             this.$log.debug('Triggered download of ', group, 'as', formatName);
             group.canDownload(formatName).then(() => {
-               this.$window.open(group.data + '?fmt=' + formatName);
+               this.$window.location.href = group.data + '?fmt=' + formatName;
             }).catch(() => {
                 this.ToastService.failure('Die Datei konnte nicht ins gewünschte Format konvertiert werden.');
             });

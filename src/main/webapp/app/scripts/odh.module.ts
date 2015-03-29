@@ -81,7 +81,12 @@ module openDataHub {
                     }
                 });
         })
-        .run(($http:ng.IHttpService) => {
+        .run(($http:ng.IHttpService, $window:ng.IWindowService) => {
+            // todo remove once djangorestframework returns http(s) urls in linked fields
+            if ($window.location.protocol === 'https:') {
+                $window.location.href = 'http://' + window.location.host + '/' + window.location.hash;
+            }
+
             $http.defaults.xsrfHeaderName = 'X-CSRFToken';
             $http.defaults.xsrfCookieName = 'csrftoken';
         });

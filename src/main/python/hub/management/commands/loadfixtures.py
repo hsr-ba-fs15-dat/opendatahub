@@ -8,6 +8,10 @@ from hub.tests.testutils import TestBase
 from hub.models import DocumentModel, FileGroupModel, FileModel
 from hub import formats
 from hub.structures.file import FileGroup
+import logging
+
+
+logging.getLogger('django.db.backends').setLevel(logging.WARN)
 
 
 class Command(BaseCommand):

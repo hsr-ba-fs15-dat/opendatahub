@@ -51,7 +51,6 @@ class Formatter(RegistrationMixin):
                 logging.debug(
                     '{} was not able to format {} with target format {}'.format(formatter.__name__, file.name,
                                                                                 format.__name__))
-                raise
                 continue
 
         raise NoFormatterException('Unable to format {} as {}'.format(file.name, format.name))
@@ -129,7 +128,7 @@ class OGRFormatter(Formatter):
                 file_group = FileGroup.from_files(*[os.path.join(temp_dir, f) for f in os.listdir(temp_dir)])
             finally:
                 shutil.rmtree(temp_dir)
-        if isinstance(df, pandas.DataFrame):
+        elif isinstance(df, pandas.DataFrame):
             file = CSVFormatter.format(file, formats.CSV)
             file_group = ogr2ogr.ogr2ogr(file, ogr2ogr.CSV)
         else:
