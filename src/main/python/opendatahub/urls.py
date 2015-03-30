@@ -23,9 +23,9 @@ urlpatterns = (
 
 if PRODUCTION:
     urlpatterns += (
-        url(r'^$', 'django.views.static.serve', {'path': 'index.html', 'document_root': '../webapp/dist'}),
+        url(r'^$', 'django.views.static.serve', {'path': 'index.html', 'document_root': 'src/main/webapp/dist'}),
         url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': STATIC_ROOT}),
-        url(r'^(?P<path>.*)$', 'django.views.static.serve', {'document_root': '../webapp/dist'}),
+        url(r'^(?P<path>.*)$', 'django.views.static.serve', {'document_root': 'src/main/webapp/dist'}),
     )
 else:
     urlpatterns += (
