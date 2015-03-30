@@ -82,6 +82,11 @@ module openDataHub {
                 });
         })
         .run(($http:ng.IHttpService, $window:ng.IWindowService) => {
+            // force https on heroku
+            if ($window.location.protocol === 'http:') {
+                $window.location.href = 'https://' + window.location.host + '/' + window.location.hash;
+            }
+
             $http.defaults.xsrfHeaderName = 'X-CSRFToken';
             $http.defaults.xsrfCookieName = 'csrftoken';
         });
