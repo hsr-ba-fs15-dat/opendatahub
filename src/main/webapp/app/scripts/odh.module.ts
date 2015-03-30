@@ -36,6 +36,7 @@ module openDataHub {
             $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
             RestangularProvider.setBaseUrl('/api/v1/');
+            RestangularProvider.setRequestSuffix('/');
             RestangularProvider.addResponseInterceptor(function (data, operation/*, what, url, response, deferred*/) {
                 var extractedData;
                 if (operation === 'getList' && data.results) {
@@ -82,11 +83,6 @@ module openDataHub {
                 });
         })
         .run(($http:ng.IHttpService, $window:ng.IWindowService) => {
-            // force https on heroku
-            if ($window.location.protocol === 'http:') {
-                $window.location.href = 'https://' + window.location.host + '/' + window.location.hash;
-            }
-
             $http.defaults.xsrfHeaderName = 'X-CSRFToken';
             $http.defaults.xsrfCookieName = 'csrftoken';
         });

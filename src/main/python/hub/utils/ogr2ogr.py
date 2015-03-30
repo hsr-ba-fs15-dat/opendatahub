@@ -68,6 +68,6 @@ def ogr2ogr(file_group, to_type):
 
         file_group_converted = FileGroup.from_files(*files)
         # some ogr2ogr drivers don't retain the name (evil!), let's rename them ourselves
-        file_group.rename_all(main_file.basename)
+        file_group_converted.rename_all(main_file.basename)
 
         return file_group_converted

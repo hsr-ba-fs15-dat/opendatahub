@@ -28,7 +28,8 @@
     "restangular": "~1.4.0",
     "bootstrap-social-buttons": "~1.0.0",
     "satellizer": "https://github.com/hsr-ba-fs15-dat/satellizer.git#0.9.4.2",
-    "angular-loading-bar": "~0.7.1"
+    "angular-loading-bar": "~0.7.1",
+    "blockui": "*"
   },
   "devDependencies": {
     "angular-mocks": "^1.4.0"

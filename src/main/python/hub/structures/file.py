@@ -124,7 +124,7 @@ class File(object):
     @basename.setter
     def basename(self, basename):
         ext = self.extension
-        self.name = '{}{}{}'.format(self.basename, bool(ext) * '.', ext)
+        self.name = '{}{}{}'.format(basename, bool(ext) * '.', ext)
 
     @property
     def extension(self):

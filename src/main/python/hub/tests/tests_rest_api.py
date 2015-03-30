@@ -25,7 +25,7 @@ class RestApiTests(testutils.TestBase):
         return client
 
     def do_post(self, client):
-        self.response = client.post('/api/v1/document', self.data)
+        self.response = client.post('/api/v1/document/', self.data)
         self.response_json = json.loads(self.response.content)
 
     def test_post(self):
@@ -56,7 +56,7 @@ class RestApiTests(testutils.TestBase):
         self.assertIn('id', self.response_json)
 
         document_id = self.response_json['id']
-        result = self.get_client(authenticate=False).get('/api/v1/document/%d' % document_id)
+        result = self.get_client(authenticate=False).get('/api/v1/document/%d/' % document_id)
 
         result_json = json.loads(result.content)
 
