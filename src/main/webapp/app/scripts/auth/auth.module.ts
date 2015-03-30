@@ -6,7 +6,6 @@ module odh.auth {
         .module(
         'openDataHub.auth', [
             'ngCookies',
-            'ngResource',
             'ngSanitize',
             'ngRoute',
             'satellizer'

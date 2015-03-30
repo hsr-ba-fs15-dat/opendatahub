@@ -28,12 +28,15 @@ SECRET_KEY = 'r)gg!i^!6=62c8p416@n^x0@nc3#h)dj3ge10l*977u@np6=--'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+logging.getLogger('Fiona').setLevel(logging.WARN)  # default verbosity slows down everything way too much
 logging.basicConfig(level=logging.DEBUG)
 
 TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# correct protocol (http vs. https) when behind reverse proxy like heroku
+USE_X_FORWARDED_HOST = True
 
 # Application definition
 
@@ -86,6 +89,21 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 DATABASES = {
     # Heroku compliance
     'default': dj_database_url.config(default='postgres://opendatahub:opendatahub@localhost:5432/opendatahub')
+}
+
+CACHES = {
+    'formats': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'formats_cache',
+        'TIMEOUT': 3000,
+        'OPTIONS': {
+            'MAX_ENTRIES': 1000
+        }
+    },
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'default_cache'
+    }
 }
 
 # Internationalization

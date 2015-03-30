@@ -5,10 +5,9 @@
 import unittest
 
 import os
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'opendatahub.settings')
 
 from authentication.models import UserProfile
-
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'opendatahub.settings')
 
 from django.core.exceptions import ObjectDoesNotExist
 

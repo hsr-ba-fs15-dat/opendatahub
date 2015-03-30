@@ -48,6 +48,7 @@ def initialize(project):
     # E128: visual indent
     project.set_property('flake8_ignore', 'E128')
     project.set_property('flake8_max_line_length', 120)
+    project.set_property('flake8_exclude_patterns', '0001_*.py')
     project.set_property('pylint_fail_on_ids', [
         'E*',
         'F*',

@@ -53,12 +53,21 @@ module odh {
 
         public availableFormats:odh.main.IFormat[];
 
-        constructor(private $log:ng.ILogService, private $state:ng.ui.IStateService,
-                    private $stateParams:any, private $window:ng.IWindowService,
+        constructor(private $log:ng.ILogService, private $stateParams:any, private $window:ng.IWindowService,
                     private DocumentService:odh.main.DocumentService, private ToastService:odh.utils.ToastService,
                     private FormatService:odh.main.FormatService, private FileGroupService:odh.main.FileGroupService) {
             this.documentId = $stateParams.id;
             this.retrieveData();
+        }
+
+        public downloadAs(group, formatName) {
+            this.$log.debug('Triggered download of ', group, 'as', formatName);
+            group.canDownload(formatName).then(() => {
+               this.$window.location.href = group.data + '?fmt=' + formatName;
+            }).catch(() => {
+                this.ToastService.failure('Die Datei konnte nicht ins gewünschte Format konvertiert werden.');
+            });
+
         }
 
         private retrieveData() {

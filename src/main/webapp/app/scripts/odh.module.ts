@@ -9,14 +9,12 @@ module openDataHub {
             'ngAria',
             'ngCookies',
             'ngMessages',
-            'ngResource',
             'ngSanitize',
             'ngTouch',
             'ui.router',
             'ui.utils',
             'ui.select',
             'ui.bootstrap',
-            'ui.grid',
             'restangular',
             'openDataHub.auth',
             'openDataHub.utils',
@@ -25,7 +23,7 @@ module openDataHub {
 
         .config(($stateProvider:ng.ui.IStateProvider, $urlRouterProvider:ng.ui.IUrlRouterProvider,
                  UrlServiceProvider:odh.utils.UrlService, paginationConfig:ng.ui.bootstrap.IPaginationConfig,
-                 RestangularProvider:restangular.IProvider) => {
+                 RestangularProvider:restangular.IProvider, $httpProvider:ng.IHttpProvider) => {
 
             (<any>$).material.init();
 
@@ -34,9 +32,10 @@ module openDataHub {
             paginationConfig.nextText = 'Nächste';
             paginationConfig.previousText = 'Zurück';
 
+            // django request.is_ajax() compatibility
+            $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
             RestangularProvider.setBaseUrl('/api/v1/');
-
             RestangularProvider.addResponseInterceptor(function (data, operation/*, what, url, response, deferred*/) {
                 var extractedData;
                 if (operation === 'getList' && data.results) {
@@ -82,7 +81,12 @@ module openDataHub {
                     }
                 });
         })
-        .run(($http:ng.IHttpService) => {
+        .run(($http:ng.IHttpService, $window:ng.IWindowService) => {
+            // todo remove once djangorestframework returns http(s) urls in linked fields
+            if ($window.location.protocol === 'https:') {
+                $window.location.href = 'http://' + window.location.host + '/' + window.location.hash;
+            }
+
             $http.defaults.xsrfHeaderName = 'X-CSRFToken';
             $http.defaults.xsrfCookieName = 'csrftoken';
         });

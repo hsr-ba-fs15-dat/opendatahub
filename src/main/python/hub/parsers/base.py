@@ -83,7 +83,7 @@ class OGRParser(Parser):
             name = '{}.{}'.format(file.basename, ogr2ogr.SHP.extension)
 
         with file_group.on_filesystem() as temp_dir:
-            return geopandas.read_file(os.path.join(temp_dir, name), encoding='UTF-8')
+            return geopandas.read_file(os.path.join(temp_dir, name))
 
 
 class GenericXMLParser(Parser):
@@ -97,24 +97,3 @@ class GenericXMLParser(Parser):
         from lxml import etree
         et = etree.parse(file.stream)
         return pandas.DataFrame([dict(text=e.text, **e.attrib) for e in et.getroot()])
-
-
-if __name__ == '__main__':
-    from hub.tests.testutils import TestBase
-    from hub.structures.file import FileGroup
-
-    files = (
-        ('mockaroo.com.csv', formats.CSV),
-        ('mockaroo.com.json', formats.JSON),
-        ('gml/Bahnhoefe.gml', formats.GML),
-        ('mockaroo.com.xls', formats.Excel),
-    )
-
-    print formats.Format.formats
-    for filename, cls in files:
-        fg = FileGroup.from_files(TestBase.get_test_file_path(filename))
-        identified_formats = [formats.identify(f) for f in fg]
-        assert cls in identified_formats
-
-        f = fg[0]
-        df = Parser.parse(f, cls)

@@ -3,10 +3,13 @@ language: python
 python:
   - 2.7
 
+# sadly caches only work in travis docker containers (sudo-less)
 cache:
+  apt: true
   directories:
-    - $HOME/.pip-cache/
-    - /home/travis/virtualenv/python2.7
+    - $HOME/.cache/pip
+    - /home/travis/virtualenv/python2.7.9/lib/python2.7/site-packages
+    - /home/travis/virtualenv/python2.7.9/bin
 
 addons:
   postgresql: 9.3
@@ -22,7 +25,7 @@ install:
   - npm cache clean
   - npm install -g bower grunt-cli
   - npm install -g tsd@next
-  - gem update --system
+  # - gem update --system
   # - gem install compass # SASS/SCSS
   - wget -qO- https://toolbelt.heroku.com/install-ubuntu.sh | sh
   - sudo apt-get install gdal-bin libgdal-dev libgdal1h libgdal1-dev # ogr2ogr/GDAL

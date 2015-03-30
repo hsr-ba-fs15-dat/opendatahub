@@ -20,7 +20,7 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li ng-repeat="format in doc.availableFormats">
-                            <a ng-href="{{ group.data }}?fmt={{ format.name }}">{{ format.label }}</a>
+                            <a ng-click="doc.downloadAs(group, format.name)">{{ format.label }}</a>
                         </li>
                     </ul>
                 </div>
