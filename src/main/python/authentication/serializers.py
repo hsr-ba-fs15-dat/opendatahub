@@ -1,3 +1,4 @@
+from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 from social.apps.django_app.default.models import UserSocialAuth
 
@@ -5,9 +6,18 @@ from authentication.models import UserProfile
 
 
 class UserSocialAuthSerializer(ModelSerializer):
+    login = serializers.SerializerMethodField('get_the_login')
+
     class Meta:
         model = UserSocialAuth
-        fields = ('provider', 'uid')
+        fields = ('provider', 'uid', 'login')
+
+    def get_the_login(self, obj):
+        try:
+            login = obj.extra_data['login']
+        except KeyError:
+            login = obj.uid
+        return login
 
 
 class UserSerializer(ModelSerializer):

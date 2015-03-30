@@ -1,6 +1,7 @@
 import urlparse
 
 from abc import abstractmethod
+from social.backends.base import BaseAuth
 from social.backends.github import GithubOAuth2
 from social.backends.open_id import OpenIdAuth
 from social.exceptions import AuthMissingParameter
@@ -23,10 +24,24 @@ class LiveJournalOpenId(OpenIdAuth):
         return 'http://%s.livejournal.com' % self.data['openid_lj_user']
 
 
+class SuisseId(BaseAuth):
+    def auth_html(self):
+        pass
+
+    def auth_url(self):
+        pass
+
+    def auth_complete(self, *args, **kwargs):
+        pass
+
+    def get_user_details(self, response):
+        pass
+
+
 class OdhGithubOAuth2(GithubOAuth2):
     @abstractmethod
     def auth_html(self):
         return
 
-    def get_user_id(self, details, response):
-        return response.get('login')
+    # def get_user_id(self, details, response):
+    #     return response.get('login')
