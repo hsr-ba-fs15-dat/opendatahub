@@ -163,4 +163,5 @@ SOCIAL_AUTH_PIPELINE = (
 JWT_ALLOW_REFRESH = True
 JWT_AUTH_HEADER_PREFIX = "Bearer"
 SOCIAL_AUTH_GITHUB_EXTRA_DATA = [('login', 'login')]
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https')
+# Honor the 'X-Forwarded-Proto' header for request.is_secure()
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
