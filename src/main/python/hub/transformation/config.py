@@ -32,8 +32,8 @@ class OQLParser(object):
         join_condition_list = join_single_condition ^ join_multi_condition
 
         join = Group(Suppress(CaselessKeyword('join')) + data_source + Optional(
-            Suppress(CaselessKeyword('as')) + identifier("alias")) + Suppress(CaselessKeyword(
-            'on')) + join_condition_list)
+            Suppress(CaselessKeyword('as')) + identifier("alias")) + Suppress(
+            CaselessKeyword('on')) + join_condition_list)
 
         data_source_declaration = Suppress(CaselessKeyword('from')) + data_source + ZeroOrMore(join)("join")
 
