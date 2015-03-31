@@ -17,7 +17,7 @@ module odh {
                     $auth.removeToken();
                     $window.location.reload();
                 } else {
-                    ToastService.failure('Etwas ist schief gelaufen. Bitter versuchen Sie es später erneut!');
+                    ToastService.failure('Etwas ist schief gelaufen. Bitte versuchen Sie es später erneut!');
                 }
             });
         }
