@@ -1,8 +1,7 @@
 from pyparsing import nums
-from pyparsing import Word, CaselessKeyword, QuotedString
-from pyparsing import Optional, ZeroOrMore, OneOrMore, Or, Suppress, Group, NotAny
-
-from pyparsing import delimitedList, srange
+from pyparsing import Word, CaselessKeyword, QuotedString, Regex
+from pyparsing import Optional, ZeroOrMore, Or, Suppress, Group, NotAny
+from pyparsing import delimitedList
 
 
 class OQLParser(object):
@@ -11,16 +10,15 @@ class OQLParser(object):
 
     @classmethod
     def build_grammar(cls):
-        identifier_chars = srange('[a-zA-Z_]')
 
-        identifier = Word(identifier_chars) | QuotedString('"')
+        identifier = Regex(r'[a-zA-Z_][a-zA-Z0-9_]*') | QuotedString('"')
 
-        alias = Suppress(CaselessKeyword('as')) + identifier
+        alias = Suppress(CaselessKeyword('as')) + identifier('alias')
 
-        field = identifier.copy() + NotAny('(')
+        field = Optional(identifier.copy()('prefix') + Suppress('.')) + identifier.copy()('name') + NotAny('(')
         field.setParseAction(Field.parse)
 
-        aliased_field = field + Optional(alias)  # defaults to using name as alias
+        aliased_field = field('field') + Optional(alias)  # defaults to using name as alias
         aliased_field.setParseAction(AliasedField.parse)
 
         integer_value = Word(nums)
@@ -45,25 +43,28 @@ class OQLParser(object):
 
         field_declaration_list = Suppress(CaselessKeyword('select')) + delimitedList(field_declaration)
 
-        and_or = (CaselessKeyword('and') | CaselessKeyword('or'))
-
         data_source = identifier('name') + Optional(alias)
         data_source.setParseAction(DataSource.parse)
 
-        join_single_condition = field + '=' + field
-        join_multi_condition = '(' + join_single_condition + OneOrMore(and_or + join_single_condition) + ')'
-        join_condition_list = join_single_condition ^ join_multi_condition
+        join_single_condition = field('left') + Suppress('=') + field('right')
+        join_single_condition.setParseAction(JoinCondition.parse)
 
-        join = Group(Suppress(CaselessKeyword('join')) + data_source + Suppress(
-            CaselessKeyword('on')) + join_condition_list)
+        join_multi_condition = Suppress('(') + delimitedList(join_single_condition,
+                                                             delim=Suppress(CaselessKeyword('and'))) + Suppress(')')
+        join_multi_condition.setParseAction(JoinConditionList.parse)
 
-        data_source_declaration = Optional(
-            Suppress(CaselessKeyword('from')) + data_source + ZeroOrMore(join)("join")
-        )
+        join_condition_list = join_single_condition | join_multi_condition
+
+        join = Suppress(CaselessKeyword('join')) + data_source.copy()('datasource') + Suppress(
+            CaselessKeyword('on')) + join_condition_list.copy()('condition')
+        join.setParseAction(JoinedDataSource.parse)
+
+        data_source_declaration = Suppress(CaselessKeyword('from')) + data_source + ZeroOrMore(join)
 
         filter = field + '=' + value | field + CaselessKeyword('in') + '(' + value + ')' | field + CaselessKeyword(
             'is') + CaselessKeyword('null')
 
+        and_or = (CaselessKeyword('and') | CaselessKeyword('or'))
         filter_declaration = Optional(CaselessKeyword('where') + delimitedList(filter, and_or))
 
         order_by_field = field + Optional(Or([CaselessKeyword('asc'), CaselessKeyword('desc')]))
@@ -77,43 +78,45 @@ class OQLParser(object):
 
 
 class Field(object):
-    def __init__(self, name):
+    def __init__(self, name, prefix=None):
+        self.prefix = prefix
         self.name = name
 
     def __repr__(self):
-        return '<Field name=\'{}\'>'.format(self.name)
+        return '<Field name=\'{}\' prefix=\'{}\'>'.format(self.name, self.prefix)
 
     @classmethod
     def parse(cls, tokens):
-        if len(tokens) < 1:
+        if 'name' not in tokens:
             raise ParseException()
 
-        name = tokens[0]
+        name = tokens.get('name')
+        prefix = tokens.get('prefix', None)
 
-        return cls(name)
+        return cls(name, prefix)
 
 
 class AliasedField(Field):
-    def __init__(self, name, alias=None):
-        super(AliasedField, self).__init__(name)
+    def __init__(self, name, prefix=None, alias=None):
+        super(AliasedField, self).__init__(name, prefix)
         self.alias = alias or name
 
     def __repr__(self):
-        return '<Field name=\'{}\' alias=\'{}\'>'.format(self.name, self.alias)
+        return '<Field name=\'{}\' prefix=\'{}\' alias=\'{}\'>'.format(self.name, self.prefix, self.alias)
 
     @classmethod
     def parse(cls, tokens):
-        if len(tokens) < 1:
+        if 'field' not in tokens:
             raise ParseException()
 
-        field = tokens[0]
+        field = tokens.get('field')
 
         if not isinstance(field, Field):
             raise ParseException("expected field, got %s" % type(field))
 
-        alias = tokens[1] if len(tokens) > 1 else None
+        alias = tokens.get('alias', None)
 
-        return cls(field.name, alias)
+        return cls(field.name, field.prefix, alias)
 
 
 class Expression(object):
@@ -121,7 +124,7 @@ class Expression(object):
         self.value = value
 
     def __repr__(self):
-        return '<Expr value=\'{}\'>'.format(self.value)
+        return '<Expr value={}>'.format(self.value)
 
     @classmethod
     def parse(cls, tokens):
@@ -153,7 +156,7 @@ class AliasedExpression(Expression):
         super(AliasedExpression, self).__init__(value)
 
     def __repr__(self):
-        return '<Expr value=\'{}\' alias=\'{}\'>'.format(self.value, self.alias)
+        return '<Expr value={} alias=\'{}\'>'.format(self.value, self.alias)
 
     @classmethod
     def parse(cls, tokens):
@@ -186,7 +189,7 @@ class Function(object):
         return cls(name, args)
 
     def __repr__(self):
-        return '<Function name=\'{}\' args=\'{}\'>'.format(self.name, self.args or '')
+        return '<Function name=\'{}\' args={}>'.format(self.name, self.args or '')
 
 
 class AliasedFunction(Function):
@@ -208,7 +211,7 @@ class AliasedFunction(Function):
         return cls(func.name, func.args, alias)
 
     def __repr__(self):
-        return '<Function name=\'{}\' args=\'{}\' alias=\'{}\'>'.format(self.name, self.args or '', self.alias)
+        return '<Function name=\'{}\' args={} alias=\'{}\'>'.format(self.name, self.args or '', self.alias)
 
 
 class DataSource(object):
@@ -221,13 +224,79 @@ class DataSource(object):
         if len(tokens) < 1:
             raise ParseException()
 
-        name = tokens[0]
-        alias = tokens[1] if len(tokens) > 1 else None
+        name = tokens.get('name')
+        alias = tokens.get('alias', None)
 
         return cls(name, alias)
 
     def __repr__(self):
         return '<DataSource name=\'{}\' alias=\'{}\'>'.format(self.name, self.alias)
+
+
+class JoinCondition(object):
+    def __init__(self, left, right):
+        self.left = left
+        self.right = right
+
+    @classmethod
+    def parse(cls, tokens):
+        if 'left' not in tokens or 'right' not in tokens:
+            raise ParseException('invalid join condition')
+
+        left = tokens.get('left')
+        right = tokens.get('right')
+
+        if not isinstance(left, Field) or not isinstance(right, Field):
+            raise ParseException('expected field = field, got %s = %s' % (type(left, type(right))))
+
+        return cls(left, right)
+
+    def __repr__(self):
+        return '<JoinCondition left={} right={}>'.format(self.left, self.right)
+
+
+class JoinConditionList(object):
+    def __init__(self, conditions):
+        self.conditions = conditions
+
+    def __len__(self):
+        return len(self.conditions)
+
+    def __getitem__(self, index):
+        return self.conditions[index]
+
+    @classmethod
+    def parse(cls, tokens):
+        if len(tokens) == 0:
+            raise ParseException()
+
+        conditions = list(tokens)
+        return cls(conditions)
+
+    def __repr__(self):
+        return '<JoinConditionList conditions={}>'.format(self.conditions)
+
+
+class JoinedDataSource(DataSource):
+    def __init__(self, name, alias, condition):
+        super(JoinedDataSource, self).__init__(name, alias)
+
+        self.condition = condition
+
+    @classmethod
+    def parse(cls, tokens):
+        if 'datasource' not in tokens:
+            raise ParseException('join without datasource')
+        if 'condition' not in tokens:
+            raise ParseException('join without conditions')
+
+        datasource = tokens.get('datasource')
+        condition = tokens.get('condition')
+
+        return cls(datasource.name, datasource.alias, condition)
+
+    def __repr__(self):
+        return '<JoinedDataSource name=\'{}\' alias=\'{}\' condition={}>'.format(self.name, self.alias, self.condition)
 
 
 class ParseException(Exception):

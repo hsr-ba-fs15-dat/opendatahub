@@ -7,7 +7,7 @@ import hub.transformation.config as oql
 class TestParser(TestBase):
     def test_simple_field_mapping(self):
         p = oql.OQLParser()
-        result = p.parse('select a, "b", c as d from b')
+        result = p.parse('select b.a, "b", c as d from b')
 
         fields = (f for f in result.fields)
 
@@ -99,3 +99,80 @@ class TestParser(TestBase):
         self.assertIsInstance(datasource, oql.DataSource)
         self.assertEqual('test', datasource.name)
         self.assertEqual('t', datasource.alias)
+
+    def test_joins(self):
+        p = oql.OQLParser()
+        result = p.parse('select stuff '
+                         'from first_name as first_alias '
+                         'join second_name on first_alias.first_field = second_name.first_field '
+                         'join third_name as third_alias on (third_alias.first_field = first_alias.first_field) '
+                         'join fourth_name on (fourth_name.first_field = first_alias.first_field '
+                         'and fourth_name.second_field = second_name.second_field)')
+
+        datasources = (d for d in result.datasources)
+
+        ds = next(datasources)
+        self.assertIsInstance(ds, oql.DataSource)
+        self.assertEqual('first_name', ds.name)
+        self.assertEqual('first_alias', ds.alias)
+
+        ds = next(datasources)
+        self.assertIsInstance(ds, oql.JoinedDataSource)
+        self.assertEqual('second_name', ds.name)
+        self.assertEqual('second_name', ds.alias)
+
+        self.assertIsInstance(ds.condition, oql.JoinCondition)
+
+        self.assertIsInstance(ds.condition.left, oql.Field)
+        self.assertEqual(ds.condition.left.prefix, 'first_alias')
+        self.assertEqual(ds.condition.left.name, 'first_field')
+
+        self.assertIsInstance(ds.condition.right, oql.Field)
+        self.assertEqual(ds.condition.right.prefix, 'second_name')
+        self.assertEqual(ds.condition.right.name, 'first_field')
+
+        ds = next(datasources)
+        self.assertIsInstance(ds, oql.JoinedDataSource)
+        self.assertEqual('third_name', ds.name)
+        self.assertEqual('third_alias', ds.alias)
+
+        self.assertIsInstance(ds.condition, oql.JoinConditionList)
+        self.assertEqual(1, len(ds.condition))
+
+        self.assertIsInstance(ds.condition[0], oql.JoinCondition)
+
+        self.assertIsInstance(ds.condition[0].left, oql.Field)
+        self.assertEqual(ds.condition[0].left.prefix, 'third_alias')
+        self.assertEqual(ds.condition[0].left.name, 'first_field')
+
+        self.assertIsInstance(ds.condition[0].right, oql.Field)
+        self.assertEqual(ds.condition[0].right.prefix, 'first_alias')
+        self.assertEqual(ds.condition[0].right.name, 'first_field')
+
+        ds = next(datasources)
+        self.assertIsInstance(ds, oql.JoinedDataSource)
+        self.assertEqual('fourth_name', ds.name)
+        self.assertEqual('fourth_name', ds.alias)
+
+        self.assertIsInstance(ds.condition, oql.JoinConditionList)
+        self.assertEqual(2, len(ds.condition))
+
+        self.assertIsInstance(ds.condition[0], oql.JoinCondition)
+
+        self.assertIsInstance(ds.condition[0].left, oql.Field)
+        self.assertEqual(ds.condition[0].left.prefix, 'fourth_name')
+        self.assertEqual(ds.condition[0].left.name, 'first_field')
+
+        self.assertIsInstance(ds.condition[0].right, oql.Field)
+        self.assertEqual(ds.condition[0].right.prefix, 'first_alias')
+        self.assertEqual(ds.condition[0].right.name, 'first_field')
+
+        self.assertIsInstance(ds.condition[1], oql.JoinCondition)
+
+        self.assertIsInstance(ds.condition[1].left, oql.Field)
+        self.assertEqual(ds.condition[1].left.prefix, 'fourth_name')
+        self.assertEqual(ds.condition[1].left.name, 'second_field')
+
+        self.assertIsInstance(ds.condition[1].right, oql.Field)
+        self.assertEqual(ds.condition[1].right.prefix, 'second_name')
+        self.assertEqual(ds.condition[1].right.name, 'second_field')
