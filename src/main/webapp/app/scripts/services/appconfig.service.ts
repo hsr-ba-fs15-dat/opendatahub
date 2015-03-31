@@ -21,7 +21,9 @@ module odh {
             $http.get(UrlService.get('config')).success((data:any) => {
                 angular.extend(appConfig, data);
                 this.deferred.resolve(appConfig);
-            }).catch(this.deferred.reject);
+            }).catch((res) => {
+                this.deferred.reject(res);
+            });
 
             return this.deferred.promise;
         }

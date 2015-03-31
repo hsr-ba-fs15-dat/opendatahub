@@ -13,15 +13,14 @@ module odh.auth {
     ).config(($stateProvider:ng.ui.IStateProvider, $authProvider) => {
             $authProvider.authorizationPrefix = 'jwt';
             $authProvider.facebook({
-                url: '/api/v1/auth/social/',
+                url: '',
                 clientId: ''
             });
             $authProvider.github({
-                url: '/api/v1/auth/social/',
+                url: '',
                 clientId: ''
             });
             $stateProvider
-
                 .state('login', {
                     url: '/login',
                     controller: 'LoginController as lc',
@@ -53,12 +52,14 @@ module odh.auth {
         .run(run);
 
 
-    function run(AppConfig:odh.IAppConfig, satellizerConfig:any) {
+    function run(AppConfig:odh.IAppConfig, satellizerConfig:any, UrlService:odh.utils.UrlService) {
         AppConfig.then((config) => {
-            satellizerConfig.providers.github.clientId = config.GITHUB_PUBLIC;
+            satellizerConfig.providers.github.url = UrlService.get('auth/social');
             satellizerConfig.providers.facebook.clientId = config.FACEBOOK_PUBLIC;
+            satellizerConfig.providers.github.clientId = config.GITHUB_PUBLIC;
+            satellizerConfig.providers.facebook.url = UrlService.get('auth/social');
         });
     }
 
-    run.$inject = ['AppConfig', 'satellizer.config'];
+    run.$inject = ['AppConfig', 'satellizer.config', 'UrlService'];
 }

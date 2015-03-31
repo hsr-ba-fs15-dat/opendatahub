@@ -7,13 +7,18 @@ module odh {
     class RootController {
 
         constructor(public AppLoader:odh.utils.AppLoader, private AppConfig:odh.IAppConfig,
-                    private ToastService:odh.utils.ToastService) {
+                    private ToastService:odh.utils.ToastService, private $auth, private $window:ng.IWindowService) {
             AppLoader.acquire();
 
             AppConfig.then((config) => {
                 AppLoader.release();
-            }).catch(() => {
-                ToastService.failure('Etwas ist schief gelaufen. Bitter versuchen Sie es später erneut!');
+            }).catch((res) => {
+                if (res.status === 403) {
+                    $auth.removeToken();
+                    $window.location.reload();
+                } else {
+                    ToastService.failure('Etwas ist schief gelaufen. Bitter versuchen Sie es später erneut!');
+                }
             });
         }
 

@@ -8,8 +8,7 @@ module odh.auth {
 
         public temp:{};
 
-        constructor(private $http:ng.IHttpService,
-                    private $auth) {
+        constructor(private $http:ng.IHttpService, private $auth, private UrlService:odh.utils.UrlService) {
 
         }
 
@@ -18,7 +17,7 @@ module odh.auth {
         }
 
         public profile() {
-            return this.$http.get('/api/v1/auth/' + 'user/');
+            return this.$http.get(this.UrlService.get('auth/user'));
         }
 
         public isAuthenticated() {
