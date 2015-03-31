@@ -27,7 +27,7 @@ PRODUCTION = os.getenv('CONFIGURATION') == 'PRODUCTION'
 SECRET_KEY = 'r)gg!i^!6=62c8p416@n^x0@nc3#h)dj3ge10l*977u@np6=--'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+
 logging.getLogger('Fiona').setLevel(logging.WARN)  # default verbosity slows down everything way too much
 logging.basicConfig(level=logging.DEBUG)
 
@@ -65,6 +65,7 @@ except:
     pass
 
 MIDDLEWARE_CLASSES = (
+    'sslify.middleware.SSLifyMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -165,3 +166,7 @@ JWT_AUTH_HEADER_PREFIX = "Bearer"
 SOCIAL_AUTH_GITHUB_EXTRA_DATA = [('login', 'login')]
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+if not PRODUCTION:
+    SSLIFY_DISABLE = True
+DEBUG = True

@@ -10,49 +10,56 @@ module odh.auth {
             'ngRoute',
             'satellizer'
         ]
-    ).config(config)
-    ;
-
-    function config($stateProvider:ng.ui.IStateProvider, $authProvider) {
-        $authProvider.authorizationPrefix = 'jwt';
-        $authProvider.facebook({
-            url: '/api/v1/auth/social/',
-            // clientId: '401522313351953' // this is the local id
-            clientId: '401520096685508' // this is the heroku id
-        });
-        $authProvider.github({
-            url: '/api/v1/auth/social/',
-            // clientId: 'f29d882c342818c82e0b' // this is the local id
-            clientId: '8ef558ed3fb0f5385da5' // this is the heroku id
-            // clientId: 'b24753ec88ca98150354' // localhost id
-        });
-        $stateProvider
-
-            .state('login', {
-                url: '/login',
-                controller: 'LoginController as lc',
-                templateUrl: 'views/authentication/login.html',
-                resolve: {
-                    authenticated: ['$auth', function ($auth) {
-                        return $auth.isAuthenticated();
-                    }]
-                }
-            })
-            .state('userProfile', {
-                url: '/userProfile',
-                controller: 'UserProfileController as up',
-                templateUrl: '/views/authentication/userprofile.html'
-            })
-            .state('logout', {
-                url: '/logout',
-                controller: 'LogoutController',
-                templateUrl: '/views/authentication/logout.html',
-                resolve: {
-                    authenticated: ['$auth', function ($auth) {
-                        return $auth.isAuthenticated();
-                    }]
-                }
+    ).config(($stateProvider:ng.ui.IStateProvider, $authProvider) => {
+            $authProvider.authorizationPrefix = 'jwt';
+            $authProvider.facebook({
+                url: '',
+                clientId: ''
             });
+            $authProvider.github({
+                url: '',
+                clientId: ''
+            });
+            $stateProvider
+                .state('login', {
+                    url: '/login',
+                    controller: 'LoginController as lc',
+                    templateUrl: 'views/authentication/login.html',
+                    resolve: {
+                        authenticated: ['$auth', function ($auth) {
+                            return $auth.isAuthenticated();
+                        }]
+                    }
+                })
+                .state('userProfile', {
+                    url: '/userProfile',
+                    controller: 'UserProfileController as up',
+                    templateUrl: '/views/authentication/userprofile.html'
+                })
+                .state('logout', {
+                    url: '/logout',
+                    controller: 'LogoutController',
+                    templateUrl: '/views/authentication/logout.html',
+                    resolve: {
+                        authenticated: ['$auth', function ($auth) {
+                            return $auth.isAuthenticated();
+                        }]
+                    }
+                });
 
+        })
+
+        .run(run);
+
+
+    function run(AppConfig:odh.IAppConfig, satellizerConfig:any, UrlService:odh.utils.UrlService) {
+        AppConfig.then((config) => {
+            satellizerConfig.providers.github.url = UrlService.get('auth/social');
+            satellizerConfig.providers.facebook.clientId = config.FACEBOOK_PUBLIC;
+            satellizerConfig.providers.github.clientId = config.GITHUB_PUBLIC;
+            satellizerConfig.providers.facebook.url = UrlService.get('auth/social');
+        });
     }
+
+    run.$inject = ['AppConfig', 'satellizer.config', 'UrlService'];
 }

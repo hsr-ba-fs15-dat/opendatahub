@@ -36,6 +36,7 @@ module openDataHub {
             $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
             RestangularProvider.setBaseUrl('/api/v1/');
+            RestangularProvider.setRequestSuffix('/');
             RestangularProvider.addResponseInterceptor(function (data, operation/*, what, url, response, deferred*/) {
                 var extractedData;
                 if (operation === 'getList' && data.results) {

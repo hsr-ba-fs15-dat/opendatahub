@@ -29,15 +29,16 @@
     <!-- endbuild -->
 
     <!-- build:css(.tmp) styles/main.css -->
-        <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/main.css">
     <!-- endbuild -->
 
     <base href="/"/>
 </head>
 
-<body ng-app="openDataHub">
-<div id="wrap" ng-cloak>
-       <toast></toast>
+<body ng-app="openDataHub" ng-controller="RootController as root" odh-block="!root.AppLoader.isLoaded">
+<toast></toast>
+
+<div id="wrap" ng-cloak ng-class="{'visibility-hidden': !root.AppLoader.isLoaded}">
 
     <!--[if lt IE 7]>
     <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
@@ -56,14 +57,14 @@
     </div>
 </div>
 
-<div class="footer">
+<div class="footer" ng-cloak ng-class="{'visibility-hidden': !root.AppLoader.isLoaded}">
     <div class="container">
-            <div class="pull-right">
+        <div class="pull-right">
             &copy;
             <a target="_blank" href="http://www.hsr.ch/geometalab">2015 Geometa Lab</a>,
             <a target="_blank" href="http://www.hsr.ch/">HSR</a> |
             <a target="_blank" href="https://github.com/hsr-ba-fs15-dat/">GitHub</a>
-            </div>
+        </div>
     </div>
 </div>
 
@@ -110,6 +111,7 @@
 <script src="bower_components/restangular/dist/restangular.js"></script>
 <script src="bower_components/satellizer/satellizer.js"></script>
 <script src="bower_components/angular-loading-bar/build/loading-bar.js"></script>
+<script src="bower_components/blockui/jquery.blockUI.js"></script>
 <!-- endbower -->
 <!-- endbuild -->
 
@@ -119,20 +121,24 @@
 <script src="scripts/main/main.module.js"></script>
 <script src="scripts/auth/auth.module.js"></script>
 
+<script src="scripts/controllers/root.controller.js"></script>
+<script src="scripts/services/appconfig.service.js"></script>
 <script src="scripts/temp/hubPlumb.js"></script>
+<script src="scripts/utils/apploader.service.js"></script>
+<script src="scripts/utils/block.directive.js"></script>
 <script src="scripts/utils/toast.service.js"></script>
 <script src="scripts/utils/url.service.js"></script>
-<script src="scripts/main/services/document.service.js"></script>
-<script src="scripts/auth/services/user.service.js"></script>
-<script src="scripts/main/directives/focus.js"></script>
 <script src="scripts/auth/controllers/userprofile.controller.js"></script>
-<script src="scripts/main/controllers/document.controller.js"></script>
-<script src="scripts/main/services/format.service.js"></script>
-<script src="scripts/auth/controllers/login.controller.js"></script>
+<script src="scripts/main/services/document.service.js"></script>
 <script src="scripts/main/controllers/about.controller.js"></script>
+<script src="scripts/auth/controllers/login.controller.js"></script>
+<script src="scripts/main/directives/focus.js"></script>
+<script src="scripts/main/controllers/document.controller.js"></script>
 <script src="scripts/main/controllers/main.controller.js"></script>
 <script src="scripts/main/controllers/navbar.controller.js"></script>
 <script src="scripts/main/controllers/offer.controller.js"></script>
+<script src="scripts/auth/services/user.service.js"></script>
+<script src="scripts/main/services/format.service.js"></script>
 <!-- endbuild -->
 
 </body>

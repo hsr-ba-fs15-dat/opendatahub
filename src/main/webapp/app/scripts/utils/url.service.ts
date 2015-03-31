@@ -20,7 +20,9 @@ module odh.utils {
         }
 
         public get(url:string, replace:any = {}):string {
-            return this.$interpolate(this.apiPrefix + url)(replace);
+            url = this.$interpolate(this.apiPrefix + url)(replace);
+            url += url.substring(url.length - 1) === '/' ? '' : '/';
+            return url;
         }
 
     }
