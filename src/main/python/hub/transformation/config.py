@@ -1,4 +1,4 @@
-from pyparsing import alphas, nums
+from pyparsing import nums
 from pyparsing import Word, CaselessKeyword, QuotedString
 from pyparsing import Optional, ZeroOrMore, OneOrMore, Or, Suppress, Group, NotAny
 
@@ -20,7 +20,7 @@ class OQLParser(object):
         field = identifier.copy() + NotAny('(')
         field.setParseAction(Field.parse)
 
-        aliased_field = field + Optional(alias) # defaults to using name as alias
+        aliased_field = field + Optional(alias)  # defaults to using name as alias
         aliased_field.setParseAction(AliasedField.parse)
 
         integer_value = Word(nums)
@@ -47,19 +47,18 @@ class OQLParser(object):
 
         and_or = (CaselessKeyword('and') | CaselessKeyword('or'))
 
-        data_source = Group(identifier('name'))
+        data_source = identifier('name') + Optional(alias)
+        data_source.setParseAction(DataSource.parse)
 
         join_single_condition = field + '=' + field
         join_multi_condition = '(' + join_single_condition + OneOrMore(and_or + join_single_condition) + ')'
         join_condition_list = join_single_condition ^ join_multi_condition
 
-        data_source_with_alias = data_source + Optional(Suppress(CaselessKeyword('as')) + identifier("alias"))
-
-        join = Group(Suppress(CaselessKeyword('join')) + data_source_with_alias + Suppress(
+        join = Group(Suppress(CaselessKeyword('join')) + data_source + Suppress(
             CaselessKeyword('on')) + join_condition_list)
 
         data_source_declaration = Optional(
-            Suppress(CaselessKeyword('from')) + data_source_with_alias + ZeroOrMore(join)("join")
+            Suppress(CaselessKeyword('from')) + data_source + ZeroOrMore(join)("join")
         )
 
         filter = field + '=' + value | field + CaselessKeyword('in') + '(' + value + ')' | field + CaselessKeyword(
@@ -82,7 +81,7 @@ class Field(object):
         self.name = name
 
     def __repr__(self):
-        return '[Field name=\'{}\']'.format(self.name)
+        return '<Field name=\'{}\'>'.format(self.name)
 
     @classmethod
     def parse(cls, tokens):
@@ -100,7 +99,7 @@ class AliasedField(Field):
         self.alias = alias or name
 
     def __repr__(self):
-        return '[Field name=\'{}\' alias=\'{}\']'.format(self.name, self.alias)
+        return '<Field name=\'{}\' alias=\'{}\'>'.format(self.name, self.alias)
 
     @classmethod
     def parse(cls, tokens):
@@ -122,7 +121,7 @@ class Expression(object):
         self.value = value
 
     def __repr__(self):
-        return '[Expr value=\'{}\']'.format(self.value)
+        return '<Expr value=\'{}\'>'.format(self.value)
 
     @classmethod
     def parse(cls, tokens):
@@ -154,7 +153,7 @@ class AliasedExpression(Expression):
         super(AliasedExpression, self).__init__(value)
 
     def __repr__(self):
-        return '[Expr value=\'{}\' alias=\'{}\']'.format(self.value, self.alias)
+        return '<Expr value=\'{}\' alias=\'{}\'>'.format(self.value, self.alias)
 
     @classmethod
     def parse(cls, tokens):
@@ -187,7 +186,7 @@ class Function(object):
         return cls(name, args)
 
     def __repr__(self):
-        return '[Function name=\'{}\' args=\'{}\']'.format(self.name, self.args or '')
+        return '<Function name=\'{}\' args=\'{}\'>'.format(self.name, self.args or '')
 
 
 class AliasedFunction(Function):
@@ -209,7 +208,26 @@ class AliasedFunction(Function):
         return cls(func.name, func.args, alias)
 
     def __repr__(self):
-        return '[Function name=\'{}\' args=\'{}\' alias=\'{}\']'.format(self.name, self.args or '', self.alias)
+        return '<Function name=\'{}\' args=\'{}\' alias=\'{}\'>'.format(self.name, self.args or '', self.alias)
+
+
+class DataSource(object):
+    def __init__(self, name, alias=None):
+        self.name = name
+        self.alias = alias or name
+
+    @classmethod
+    def parse(cls, tokens):
+        if len(tokens) < 1:
+            raise ParseException()
+
+        name = tokens[0]
+        alias = tokens[1] if len(tokens) > 1 else None
+
+        return cls(name, alias)
+
+    def __repr__(self):
+        return '<DataSource name=\'{}\' alias=\'{}\'>'.format(self.name, self.alias)
 
 
 class ParseException(Exception):

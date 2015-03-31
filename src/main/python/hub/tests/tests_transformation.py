@@ -1,7 +1,7 @@
+import types
+
 from hub.tests.testutils import TestBase
 import hub.transformation.config as oql
-
-import types
 
 
 class TestParser(TestBase):
@@ -10,7 +10,7 @@ class TestParser(TestBase):
         result = p.parse('select a, "b", c as d from b')
 
         fields = (f for f in result.fields)
-        
+
         field = next(fields)
         self.assertIsInstance(field, oql.AliasedField)
         self.assertEqual('a', field.name)
@@ -93,4 +93,11 @@ class TestParser(TestBase):
         self.assertIsInstance(field.args[1], oql.Expression)
         self.assertEqual(2, field.args[1].value)
 
+    def test_datasource(self):
+        p = oql.OQLParser()
+        result = p.parse('select a from test as t')
 
+        datasource = result.datasources[0]
+        self.assertIsInstance(datasource, oql.DataSource)
+        self.assertEqual('test', datasource.name)
+        self.assertEqual('t', datasource.alias)
