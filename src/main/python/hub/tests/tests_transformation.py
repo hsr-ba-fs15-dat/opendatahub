@@ -49,8 +49,6 @@ class TestParser(TestBase):
         self.assertEqual(4.5, field.value)
         self.assertEqual('float', field.alias)
 
-        self.assertDictContainsSubset({'name': 'b'}, result.datasources[0])
-
     def test_function_call(self):
         p = oql.OQLParser()
         result = p.parse('select nullary() as first, unary_str(\'a\') as "second", unary_num(3.14) as third, '
