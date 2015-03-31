@@ -7,8 +7,14 @@
 // Override @primary color with one took from _colors.less
 @primary: @blue-700;
 
-.visibility-hidden {
-	visibility: hidden;
+#loading-bar .bar {
+  background: @darkbg-text !important;
+}
+
+#loading-bar-spinner .spinner-icon {
+  display: none;
+  border-top-color: @darkbg-text;
+  border-left-color: @darkbg-text;
 }
 
 .form-horizontal .checkbox {
