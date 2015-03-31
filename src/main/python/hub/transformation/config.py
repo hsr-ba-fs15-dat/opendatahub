@@ -1,4 +1,4 @@
-from pyparsing import alphas, nums
+from pyparsing import nums
 from pyparsing import Word, CaselessKeyword, QuotedString
 from pyparsing import Optional, ZeroOrMore, OneOrMore, Or, Suppress, Group, NotAny
 
@@ -20,7 +20,7 @@ class OQLParser(object):
         field = identifier.copy() + NotAny('(')
         field.setParseAction(Field.parse)
 
-        aliased_field = field + Optional(alias) # defaults to using name as alias
+        aliased_field = field + Optional(alias)  # defaults to using name as alias
         aliased_field.setParseAction(AliasedField.parse)
 
         integer_value = Word(nums)
