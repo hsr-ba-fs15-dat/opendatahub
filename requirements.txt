@@ -41,3 +41,4 @@ XlsxWriter==0.7.1
 lxml==3.4.2
 html5lib==0.999
 beautifulsoup4==4.3.2
+django-sslify>=0.2.0
