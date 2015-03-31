@@ -16,6 +16,8 @@ module openDataHub {
             'ui.select',
             'ui.bootstrap',
             'restangular',
+            'angular-loading-bar',
+            'cfp.loadingBar',
             'openDataHub.auth',
             'openDataHub.utils',
             'openDataHub.main'

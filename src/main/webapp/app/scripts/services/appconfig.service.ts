@@ -18,7 +18,7 @@ module odh {
             this.deferred = $q.defer();
             var appConfig:any = {};
 
-            $http.get(UrlService.get('config')).success((data:any) => {
+            $http.get(UrlService.get('config'), {ignoreLoadingBar: true}).success((data:any) => {
                 angular.extend(appConfig, data);
                 this.deferred.resolve(appConfig);
             }).catch((res) => {

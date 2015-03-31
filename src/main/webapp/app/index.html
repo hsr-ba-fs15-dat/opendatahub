@@ -38,11 +38,11 @@
 <body ng-app="openDataHub" ng-controller="RootController as root" odh-block="!root.AppLoader.isLoaded">
 <toast></toast>
 
-<div id="wrap" ng-cloak ng-class="{'visibility-hidden': !root.AppLoader.isLoaded}">
+<div id="wrap" ng-cloak ng-show="root.AppLoader.isLoaded">
 
     <!--[if lt IE 7]>
-    <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
-        your browser</a> to improve your experience.</p>
+    <p class="browsehappy">Sie verwenden einen <strong>veralteten</strong> Browser. Bitte <a href="http://browsehappy.com/">aktualisieren
+        Sie Ihren Browser</a> um OpenDataHub zu benutzen.</p>
     <![endif]-->
 
     <!-- Add your site or application content here -->
@@ -52,12 +52,12 @@
 
     <div class="container">
         <div class="well">
-            <div ui-view></div>
+            <div ng-cloak ui-view></div>
         </div>
     </div>
 </div>
 
-<div class="footer" ng-cloak ng-class="{'visibility-hidden': !root.AppLoader.isLoaded}">
+<div class="footer" ng-cloak ng-show="root.AppLoader.isLoaded">
     <div class="container">
         <div class="pull-right">
             &copy;
