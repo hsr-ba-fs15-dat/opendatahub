@@ -218,7 +218,7 @@ class TestParser(TestBase):
             ('select 1 as a from test1, test2', 'multiple data sources need to be defined using joins')
         ]
 
-        for expr,reason in expressions_to_test:
+        for expr, reason in expressions_to_test:
             try:
                 p.parse(expr)
                 self.fail(reason)

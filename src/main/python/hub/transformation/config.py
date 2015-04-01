@@ -10,7 +10,6 @@ class OQLParser(object):
 
     @classmethod
     def build_grammar(cls):
-
         identifier = Regex(r'[a-zA-Z_][a-zA-Z0-9_]*') | QuotedString('"')
 
         alias = Suppress(CaselessKeyword('as')) + identifier('alias')
@@ -34,7 +33,8 @@ class OQLParser(object):
         aliased_value.setParseAction(AliasedExpression.parse)
 
         function = Forward()
-        function << identifier + Suppress('(') + Optional(Group(delimitedList(field | value | function))) + Suppress(')')
+        function << identifier + Suppress('(') + Optional(Group(delimitedList(field | value | function))) + Suppress(
+            ')')
         function.setParseAction(Function.parse)
 
         aliased_function = function + alias
@@ -131,7 +131,7 @@ class Expression(object):
 
     @classmethod
     def parse(cls, tokens):
-        if not 'value' in tokens:
+        if 'value' not in tokens:
             raise ParseException('malformed Expression (no value)')
 
         value = tokens.get('value')
@@ -163,10 +163,10 @@ class AliasedExpression(Expression):
 
     @classmethod
     def parse(cls, tokens):
-        if not 'value' in tokens:
+        if 'value' not in tokens:
             raise ParseException('malformed AliasedExpression (no value)')
 
-        if not 'alias' in tokens:
+        if 'alias' not in tokens:
             raise ParseException('malformed AliasedExpression (no alias)')
 
         value = tokens.get('value')
