@@ -354,7 +354,8 @@ class TestParser(TestBase):
             ('select 1', 'no data source'),
             ('select 1 as a from test1, test2', 'multiple data sources need to be defined using joins'),
             ('select func( as f from test', 'malformed function call'),
-            ('select outer(inner() as f from test', 'malformed nested function call')
+            ('select outer(inner() as f from test', 'malformed nested function call'),
+            ('select 1 as b from test where func()', 'malformed where condition')
         ]
 
         for expr, reason in expressions_to_test:
