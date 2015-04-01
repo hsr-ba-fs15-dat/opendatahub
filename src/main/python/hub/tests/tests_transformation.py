@@ -213,9 +213,12 @@ class TestParser(TestBase):
         expressions_to_test = [
             ('select 1 as \'A\' from test', 'single quotes are not valid for aliases'),
             ('select 1 from test', 'expressions need aliases'),
+            ('select f() from test', 'function calls need aliases'),
             ('asdfasdf', 'garbage input'),
             ('select 1', 'no data source'),
-            ('select 1 as a from test1, test2', 'multiple data sources need to be defined using joins')
+            ('select 1 as a from test1, test2', 'multiple data sources need to be defined using joins'),
+            ('select func( as f from test', 'malformed function call'),
+            ('select outer(inner() as f from test', 'malformed nested function call')
         ]
 
         for expr, reason in expressions_to_test:
