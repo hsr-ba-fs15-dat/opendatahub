@@ -225,13 +225,32 @@ class TestParser(TestBase):
         self.assertEqual(1, len(comb))
 
         equal = comb[0]
-        self.assertIsInstance(equal, odhql.EqualsCondition)
+        self.assertIsInstance(equal, odhql.BinaryCondition)
         self.assertIsInstance(equal.left, odhql.Field)
         self.assertEqual('a', equal.left.name)
         self.assertEqual('t', equal.left.prefix)
 
+        self.assertEqual(odhql.BinaryCondition.Operator.equals, equal.operator)
+
         self.assertIsInstance(equal.right, odhql.Expression)
         self.assertEqual(1, equal.right.value)
+
+    def test_binary_condition_operators(self):
+        p = odhql.OdhQLParser()
+        result = p.parse('select t.a from t where t.equals = 1 and t.not_equals != 1 and t.less < 1 '
+                         'and t.less_or_equal <= 1 and t.greater > 1 and t.greater_or_equal >= 1')
+
+        self.assertIsInstance(result.filter_definitions, odhql.FilterAlternative)
+        self.assertIsInstance(result.filter_definitions[0], odhql.FilterCombination)
+
+        for cond in result.filter_definitions[0]:
+            self.assertIsInstance(cond, odhql.BinaryCondition)
+
+            self.assertIsInstance(cond.left, odhql.Field)
+            self.assertIsInstance(cond.right, odhql.Expression)
+
+            self.assertEqual(str(cond.operator), 'Operator.{}'.format(cond.left.name))
+
 
     def test_single_isnull(self):
         p = odhql.OdhQLParser()
@@ -260,7 +279,7 @@ class TestParser(TestBase):
         self.assertEqual(1, len(comb))
 
         equal = comb[0]
-        self.assertIsInstance(equal, odhql.EqualsCondition)
+        self.assertIsInstance(equal, odhql.BinaryCondition)
         self.assertIsInstance(equal.left, odhql.Expression)
         self.assertIsInstance(equal.right, odhql.Field)
 
@@ -273,7 +292,7 @@ class TestParser(TestBase):
         self.assertEqual(1, len(comb))
 
         equal = comb[0]
-        self.assertIsInstance(equal, odhql.EqualsCondition)
+        self.assertIsInstance(equal, odhql.BinaryCondition)
         self.assertIsInstance(equal.left, odhql.Field)
         self.assertIsInstance(equal.right, odhql.Expression)
 
@@ -288,14 +307,14 @@ class TestParser(TestBase):
         """
         This is about as ugly as conditions get. (I lied, they get worse due to more nesting).
 
-        Expected structure (A = FilterAlternative (or), C = FilterCombination (and), E = EqualsCondition (=),
+        Expected structure (A = FilterAlternative (or), C = FilterCombination (and), B = BinaryCondition (=),
             I = IsNullCondition:
 
         A[                                          (1)
             C[                                      (2)
                 A[                                  (3)
-                    C[ E(1 = t.a) ],                (4)
-                    C [ E[(t.b = 'b')]              (5)
+                    C[ B(1 = t.a) ],                (4)
+                    C [ B[(t.b = 'b')]              (5)
                 ],
                 I(t.c is null)                      (6)
             ]
@@ -315,11 +334,11 @@ class TestParser(TestBase):
 
         self.assertIsInstance(alt[0], odhql.FilterCombination)  # 4
         self.assertEqual(1, len(alt[0]))
-        self.assertIsInstance(alt[0][0], odhql.EqualsCondition)
+        self.assertIsInstance(alt[0][0], odhql.BinaryCondition)
 
         self.assertIsInstance(alt[1], odhql.FilterCombination)  # 5
         self.assertEqual(1, len(alt[1]))
-        self.assertIsInstance(alt[1][0], odhql.EqualsCondition)
+        self.assertIsInstance(alt[1][0], odhql.BinaryCondition)
 
         self.assertIsInstance(comb[1], odhql.IsNullCondition)  # 6
 

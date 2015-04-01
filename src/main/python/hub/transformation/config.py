@@ -1,9 +1,10 @@
+from collections import Sequence
+
 from pyparsing import nums
 from pyparsing import Word, CaselessKeyword, QuotedString, Regex, Literal
 from pyparsing import Optional, ZeroOrMore, Or, Suppress, Group, NotAny, Forward
 from pyparsing import delimitedList
-
-from collections import Sequence
+from enum import Enum
 
 
 class OdhQLParser(object):
@@ -43,7 +44,7 @@ class OdhQLParser(object):
                      Optional(Group(delimitedList(field | value | function)))('args') + Suppress(')'))
         function.setParseAction(Function.parse)
 
-        aliased_function = function + alias
+        aliased_function = function('function') + alias
         aliased_function.setParseAction(AliasedFunction.parse)
 
         field_declaration = aliased_function | aliased_value | aliased_field
@@ -69,9 +70,11 @@ class OdhQLParser(object):
 
         condition_side = field | value | function
 
-        equals_condition = condition_side.copy()('left') + Or(
-            [Literal('!=')('invert'), Literal('=')]) + condition_side.copy()('right')
-        equals_condition.setParseAction(EqualsCondition.parse)
+        operator = Literal('=') | '!=' | '<' | '<=' | '>' | '>='
+        operator.setParseAction(BinaryCondition.parse_operator)
+
+        binary_condition = condition_side.copy()('left') + operator('operator') + condition_side.copy()('right')
+        binary_condition.setParseAction(BinaryCondition.parse)
 
         in_condition = (condition_side.copy()('left') + Optional(CaselessKeyword('not'))('invert') +
                         Suppress(CaselessKeyword('in')) + Suppress('(') +
@@ -90,7 +93,7 @@ class OdhQLParser(object):
         filter_alternative = delimitedList(filter_combination, delim=kw_or)
         filter_alternative.setParseAction(FilterAlternative.parse)
 
-        single_filter << (null_condition | equals_condition | in_condition |
+        single_filter << (null_condition | binary_condition | in_condition |
                           Suppress('(') + filter_alternative + Suppress(')'))
 
         filter_declaration = Suppress(CaselessKeyword('where')) + filter_alternative
@@ -281,14 +284,16 @@ class AliasedFunction(Function):
 
     @classmethod
     def parse(cls, tokens):
-        if len(tokens) < 2:
-            raise ParseException()
+        if 'function' not in tokens:
+            raise ParseException('malformed AliasedFunction (no name)')
+        if 'alias' not in tokens:
+            raise ParseException('malformed AliasedFunction (no alias)')
 
-        func = tokens[0]
-        alias = tokens[1]
+        func = tokens.get('function')
+        alias = tokens.get('alias')
 
         if not isinstance(func, Function):
-            raise ParseException('function expected, got {}'.format(type(func)))
+            raise ParseException('expected Function, got {}'.format(type(func)))
 
         return cls(func.name, func.args, alias)
 
@@ -404,23 +409,35 @@ class JoinedDataSource(DataSource):
         self.condition.accept(visitor)
 
 
-class EqualsCondition(ASTBase):
-    def __init__(self, left, right, invert):
+class BinaryCondition(ASTBase):
+    class Operator(Enum):
+        equals = 1
+        not_equals = 2
+        less = 3
+        less_or_equal = 4
+        greater = 5
+        greater_or_equal = 6
+
+    def __init__(self, left, operator, right, invert):
         self.left = left
+        self.operator = operator
         self.right = right
         self.invert = invert
 
     @classmethod
     def parse(cls, tokens):
         if 'left' not in tokens:
-            raise ParseException('malformed EqualsCondition (no left side)')
+            raise ParseException('malformed BinaryCondition (no left side)')
 
         if 'right' not in tokens:
-            raise ParseException('malformed EqualsCondition (no right side)')
+            raise ParseException('malformed BinaryCondition (no right side)')
+
+        if 'operator' not in tokens:
+            raise ParseException('malformed BinaryCondition (no operator)')
 
         left = tokens.get('left')
         right = tokens.get('right')
-
+        op = tokens.get('operator')
         invert = 'invert' in tokens
 
         v = FindClassVisitor(Field)
@@ -428,12 +445,34 @@ class EqualsCondition(ASTBase):
         if not v.found:
             right.accept(v)
             if not v.found:
-                raise ParseException('illegal EqualsCondition: at least one side needs to reference a Field')
+                raise ParseException('illegal BinaryCondition: at least one side needs to reference a Field')
 
-        return cls(left, right, invert)
+        return cls(left, op, right, invert)
+
+    @classmethod
+    def parse_operator(cls, tokens):
+        if len(tokens) < 1:
+            raise ParseException('malformed operator (no operator)')
+
+        op = tokens[0]
+
+        if op == '=':
+            return cls.Operator.equals
+        if op == '!=':
+            return cls.Operator.not_equals
+        if op == '<':
+            return cls.Operator.less
+        if op == '<=':
+            return cls.Operator.less_or_equal
+        if op == '>':
+            return cls.Operator.greater
+        if op == '!=':
+            return cls.Operator.greater_or_equal
+
+        raise ParseException('unregistered operation: {}'.format(op))
 
     def __repr__(self):
-        return '<EqualsCondition left={} right={} invert={}>'.format(self.left, self.right, self.invert)
+        return '<BinaryCondition left={} op={} right={} invert={}>'.format(self.left, self.operator, self.right, self.invert)
 
     def accept(self, visitor):
         visitor.visit(self)
