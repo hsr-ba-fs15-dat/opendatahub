@@ -15,7 +15,7 @@ class OQLParser(object):
 
         alias = Suppress(CaselessKeyword('as')) + identifier('alias')
 
-        field = Optional(identifier.copy()('prefix') + Suppress('.')) + identifier.copy()('name') + NotAny('(')
+        field = identifier.copy()('prefix') + Suppress('.') + identifier.copy()('name') + NotAny('(')
         field.setParseAction(Field.parse)
 
         aliased_field = field('field') + Optional(alias)  # defaults to using name as alias
@@ -27,7 +27,7 @@ class OQLParser(object):
 
         string_value = QuotedString('\'')
 
-        value = (number_value | string_value)
+        value = (number_value | string_value)('value')
         value.setParseAction(Expression.parse)
 
         aliased_value = (value + alias)
@@ -88,10 +88,12 @@ class Field(object):
     @classmethod
     def parse(cls, tokens):
         if 'name' not in tokens:
-            raise ParseException()
+            raise ParseException('malformed Field (name not found)')
+        if 'prefix' not in tokens:
+            raise ParseException('malformed Field (prefix not found)')
 
         name = tokens.get('name')
-        prefix = tokens.get('prefix', None)
+        prefix = tokens.get('prefix')
 
         return cls(name, prefix)
 
@@ -107,7 +109,7 @@ class AliasedField(Field):
     @classmethod
     def parse(cls, tokens):
         if 'field' not in tokens:
-            raise ParseException()
+            raise ParseException('malformed AliasedField (field not found)')
 
         field = tokens.get('field')
 
@@ -128,10 +130,10 @@ class Expression(object):
 
     @classmethod
     def parse(cls, tokens):
-        if len(tokens) < 1:
-            raise ParseException()
+        if not 'value' in tokens:
+            raise ParseException('malformed Expression (no value)')
 
-        value = tokens[0]
+        value = tokens.get('value')
 
         return cls(value)
 
@@ -160,15 +162,20 @@ class AliasedExpression(Expression):
 
     @classmethod
     def parse(cls, tokens):
-        if len(tokens) < 2:
-            raise ParseException('missing alias')
+        if not 'value' in tokens:
+            raise ParseException('malformed AliasedExpression (no value)')
 
-        value = tokens[0]
+        if not 'alias' in tokens:
+            raise ParseException('malformed AliasedExpression (no alias)')
 
-        if isinstance(value, Expression):
-            value = value.value
+        value = tokens.get('value')
 
-        alias = tokens[1]
+        if not isinstance(value, Expression):
+            raise ParseException('expected Expression, got %s' % type(value))
+
+        value = value.value
+
+        alias = tokens.get('alias')
 
         return cls(value, alias)
 

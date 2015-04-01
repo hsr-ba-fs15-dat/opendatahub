@@ -7,7 +7,7 @@ import hub.transformation.config as oql
 class TestParser(TestBase):
     def test_simple_field_mapping(self):
         p = oql.OQLParser()
-        result = p.parse('select b.a, "b", c as d from b')
+        result = p.parse('select b.a, b."b", b.c as d from b')
 
         fields = (f for f in result.fields)
 
@@ -52,9 +52,9 @@ class TestParser(TestBase):
     def test_function_call(self):
         p = oql.OQLParser()
         result = p.parse('select nullary() as first, unary_str(\'a\') as "second", unary_num(3.14) as third, '
-                         'binary(\'one\', 2) as fourth from test')
+                         'binary(\'one\', 2) as fourth, unary_field(test.one) as fifth from test')
 
-        self.assertEqual(4, len(result.fields))
+        self.assertEqual(5, len(result.fields))
 
         fields = (f for f in result.fields)
 
@@ -91,9 +91,18 @@ class TestParser(TestBase):
         self.assertIsInstance(field.args[1], oql.Expression)
         self.assertEqual(2, field.args[1].value)
 
+        field = next(fields)
+        self.assertIsInstance(field, oql.AliasedFunction)
+        self.assertEqual('unary_field', field.name)
+        self.assertEqual('fifth', field.alias)
+        self.assertIsInstance(field.args, types.ListType)
+        self.assertIsInstance(field.args[0], oql.Field)
+        self.assertEqual('one', field.args[0].name)
+        self.assertEqual('test', field.args[0].prefix)
+
     def test_datasource(self):
         p = oql.OQLParser()
-        result = p.parse('select a from test as t')
+        result = p.parse('select t.a from test as t')
 
         datasource = result.datasources[0]
         self.assertIsInstance(datasource, oql.DataSource)
@@ -102,7 +111,7 @@ class TestParser(TestBase):
 
     def test_joins(self):
         p = oql.OQLParser()
-        result = p.parse('select stuff '
+        result = p.parse('select first_alias.stuff '
                          'from first_name as first_alias '
                          'join second_name on first_alias.first_field = second_name.first_field '
                          'join third_name as third_alias on (third_alias.first_field = first_alias.first_field) '
@@ -176,3 +185,21 @@ class TestParser(TestBase):
         self.assertIsInstance(ds.condition[1].right, oql.Field)
         self.assertEqual(ds.condition[1].right.prefix, 'second_name')
         self.assertEqual(ds.condition[1].right.name, 'second_field')
+
+    def test_malformed_expressions(self):
+        p = oql.OQLParser()
+
+        expressions_to_test = [
+            ('select 1 as \'A\' from test', 'single quotes are not valid for aliases'),
+            ('select 1 from test', 'expressions need aliases'),
+            ('asdfasdf', 'garbage input'),
+            ('select 1', 'no data source'),
+            ('select 1 as a from test1, test2', 'multiple data sources need to be defined using joins')
+        ]
+
+        for expr,reason in expressions_to_test:
+            try:
+                p.parse(expr)
+                self.fail(reason)
+            except:
+                pass
