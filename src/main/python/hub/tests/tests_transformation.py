@@ -214,6 +214,8 @@ class TestParser(TestBase):
             ('select 1 as \'A\' from test', 'single quotes are not valid for aliases'),
             ('select 1 from test', 'expressions need aliases'),
             ('select f() from test', 'function calls need aliases'),
+            ('select f from test', 'prefixes are mandatory'),
+            ('select 1 as a b from test', 'aliases containing spaces need double quotes'),
             ('asdfasdf', 'garbage input'),
             ('select 1', 'no data source'),
             ('select 1 as a from test1, test2', 'multiple data sources need to be defined using joins'),
