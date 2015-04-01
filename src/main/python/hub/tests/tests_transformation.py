@@ -1,56 +1,61 @@
 import types
 
 from hub.tests.testutils import TestBase
-import hub.transformation.config as oql
+import hub.transformation.config as odhql
 
 
 class TestParser(TestBase):
     def test_simple_field_mapping(self):
-        p = oql.OQLParser()
+        p = odhql.OdhQLParser()
         result = p.parse('select b.a, b."b", b.c as d from b')
 
         fields = (f for f in result.fields)
 
         field = next(fields)
-        self.assertIsInstance(field, oql.AliasedField)
+        self.assertIsInstance(field, odhql.AliasedField)
         self.assertEqual('a', field.name)
         self.assertEqual('a', field.alias)
 
         field = next(fields)
-        self.assertIsInstance(field, oql.AliasedField)
+        self.assertIsInstance(field, odhql.AliasedField)
         self.assertEqual('b', field.name)
         self.assertEqual('b', field.alias)
 
         field = next(fields)
-        self.assertIsInstance(field, oql.AliasedField)
+        self.assertIsInstance(field, odhql.AliasedField)
         self.assertEqual('c', field.name)
         self.assertEqual('d', field.alias)
 
     def test_expressions(self):
-        p = oql.OQLParser()
-        result = p.parse('select \'te st\' as "bl ub", 3 as "integer", 4.5 as float from b')
+        p = odhql.OdhQLParser()
+        result = p.parse('select \'te st\' as "bl ub", 3 as "integer", 4.5 as float, null as "null" from b')
 
         fields = (f for f in result.fields)
 
         field = next(fields)
-        self.assertIsInstance(field, oql.AliasedExpression)
+        self.assertIsInstance(field, odhql.AliasedExpression)
         self.assertEqual('te st', field.value)
         self.assertEqual('bl ub', field.alias)
 
         field = next(fields)
-        self.assertIsInstance(field, oql.AliasedExpression)
+        self.assertIsInstance(field, odhql.AliasedExpression)
         self.assertIsInstance(field.value, int)
         self.assertEqual(3, field.value)
         self.assertEqual('integer', field.alias)
 
         field = next(fields)
-        self.assertIsInstance(field, oql.AliasedExpression)
+        self.assertIsInstance(field, odhql.AliasedExpression)
         self.assertIsInstance(field.value, float)
         self.assertEqual(4.5, field.value)
         self.assertEqual('float', field.alias)
 
+        field = next(fields)
+        self.assertIsInstance(field, odhql.AliasedExpression)
+        self.assertIsNone(field.value)
+        self.assertEqual('null', field.alias)
+
     def test_function_call(self):
-        p = oql.OQLParser()
+        p = odhql.OdhQLParser()
         result = p.parse('select nullary() as first, unary_str(\'a\') as "second", unary_num(3.14) as third, '
                          'binary(\'one\', 2) as fourth, unary_field(test.one) as fifth from test')
 
@@ -59,79 +64,79 @@ class TestParser(TestBase):
         fields = (f for f in result.fields)
 
         field = next(fields)
-        self.assertIsInstance(field, oql.AliasedFunction)
+        self.assertIsInstance(field, odhql.AliasedFunction)
         self.assertEqual('nullary', field.name)
         self.assertEqual('first', field.alias)
         self.assertIsInstance(field.args, types.ListType)
         self.assertEqual(0, len(field.args))
 
         field = next(fields)
-        self.assertIsInstance(field, oql.AliasedFunction)
+        self.assertIsInstance(field, odhql.AliasedFunction)
         self.assertEqual('unary_str', field.name)
         self.assertEqual('second', field.alias)
         self.assertIsInstance(field.args, types.ListType)
-        self.assertIsInstance(field.args[0], oql.Expression)
+        self.assertIsInstance(field.args[0], odhql.Expression)
         self.assertEqual('a', field.args[0].value)
 
         field = next(fields)
-        self.assertIsInstance(field, oql.AliasedFunction)
+        self.assertIsInstance(field, odhql.AliasedFunction)
         self.assertEqual('unary_num', field.name)
         self.assertEqual('third', field.alias)
         self.assertIsInstance(field.args, types.ListType)
-        self.assertIsInstance(field.args[0], oql.Expression)
+        self.assertIsInstance(field.args[0], odhql.Expression)
         self.assertEqual(3.14, field.args[0].value)
 
         field = next(fields)
-        self.assertIsInstance(field, oql.AliasedFunction)
+        self.assertIsInstance(field, odhql.AliasedFunction)
         self.assertEqual('binary', field.name)
         self.assertEqual('fourth', field.alias)
         self.assertIsInstance(field.args, types.ListType)
-        self.assertIsInstance(field.args[0], oql.Expression)
+        self.assertIsInstance(field.args[0], odhql.Expression)
         self.assertEqual('one', field.args[0].value)
-        self.assertIsInstance(field.args[1], oql.Expression)
+        self.assertIsInstance(field.args[1], odhql.Expression)
         self.assertEqual(2, field.args[1].value)
 
         field = next(fields)
-        self.assertIsInstance(field, oql.AliasedFunction)
+        self.assertIsInstance(field, odhql.AliasedFunction)
         self.assertEqual('unary_field', field.name)
         self.assertEqual('fifth', field.alias)
         self.assertIsInstance(field.args, types.ListType)
-        self.assertIsInstance(field.args[0], oql.Field)
+        self.assertIsInstance(field.args[0], odhql.Field)
         self.assertEqual('one', field.args[0].name)
         self.assertEqual('test', field.args[0].prefix)
 
     def test_nested_function_call(self):
-        p = oql.OQLParser()
+        p = odhql.OdhQLParser()
         result = p.parse('select outer(inner(t.some_field)) as func from test as t')
 
         outer = result.fields[0]
-        self.assertIsInstance(outer, oql.AliasedFunction)
+        self.assertIsInstance(outer, odhql.AliasedFunction)
         self.assertEqual('outer', outer.name)
         self.assertEqual('func', outer.alias)
 
         self.assertEqual(1, len(outer.args))
 
         inner = outer.args[0]
-        self.assertIsInstance(inner, oql.Function)
+        self.assertIsInstance(inner, odhql.Function)
         self.assertEqual('inner', inner.name)
 
         self.assertEqual(1, len(inner.args))
         inner_arg = inner.args[0]
-        self.assertIsInstance(inner_arg, oql.Field)
+        self.assertIsInstance(inner_arg, odhql.Field)
         self.assertEqual('some_field', inner_arg.name)
         self.assertEqual('t', inner_arg.prefix)
 
     def test_datasource(self):
-        p = oql.OQLParser()
+        p = odhql.OdhQLParser()
         result = p.parse('select t.a from test as t')
 
-        datasource = result.datasources[0]
-        self.assertIsInstance(datasource, oql.DataSource)
+        datasource = result.data_sources[0]
+        self.assertIsInstance(datasource, odhql.DataSource)
         self.assertEqual('test', datasource.name)
         self.assertEqual('t', datasource.alias)
 
     def test_joins(self):
-        p = oql.OQLParser()
+        p = odhql.OdhQLParser()
         result = p.parse('select first_alias.stuff '
                          'from first_name as first_alias '
                          'join second_name on first_alias.first_field = second_name.first_field '
@@ -139,76 +144,187 @@ class TestParser(TestBase):
                          'join fourth_name on (fourth_name.first_field = first_alias.first_field '
                          'and fourth_name.second_field = second_name.second_field)')
 
-        datasources = (d for d in result.datasources)
+        datasources = (d for d in result.data_sources)
 
         ds = next(datasources)
-        self.assertIsInstance(ds, oql.DataSource)
+        self.assertIsInstance(ds, odhql.DataSource)
         self.assertEqual('first_name', ds.name)
         self.assertEqual('first_alias', ds.alias)
 
         ds = next(datasources)
-        self.assertIsInstance(ds, oql.JoinedDataSource)
+        self.assertIsInstance(ds, odhql.JoinedDataSource)
         self.assertEqual('second_name', ds.name)
         self.assertEqual('second_name', ds.alias)
 
-        self.assertIsInstance(ds.condition, oql.JoinCondition)
+        self.assertIsInstance(ds.condition, odhql.JoinCondition)
 
-        self.assertIsInstance(ds.condition.left, oql.Field)
+        self.assertIsInstance(ds.condition.left, odhql.Field)
         self.assertEqual(ds.condition.left.prefix, 'first_alias')
         self.assertEqual(ds.condition.left.name, 'first_field')
 
-        self.assertIsInstance(ds.condition.right, oql.Field)
+        self.assertIsInstance(ds.condition.right, odhql.Field)
         self.assertEqual(ds.condition.right.prefix, 'second_name')
         self.assertEqual(ds.condition.right.name, 'first_field')
 
         ds = next(datasources)
-        self.assertIsInstance(ds, oql.JoinedDataSource)
+        self.assertIsInstance(ds, odhql.JoinedDataSource)
         self.assertEqual('third_name', ds.name)
         self.assertEqual('third_alias', ds.alias)
 
-        self.assertIsInstance(ds.condition, oql.JoinConditionList)
+        self.assertIsInstance(ds.condition, odhql.JoinConditionList)
         self.assertEqual(1, len(ds.condition))
 
-        self.assertIsInstance(ds.condition[0], oql.JoinCondition)
+        self.assertIsInstance(ds.condition[0], odhql.JoinCondition)
 
-        self.assertIsInstance(ds.condition[0].left, oql.Field)
+        self.assertIsInstance(ds.condition[0].left, odhql.Field)
         self.assertEqual(ds.condition[0].left.prefix, 'third_alias')
         self.assertEqual(ds.condition[0].left.name, 'first_field')
 
-        self.assertIsInstance(ds.condition[0].right, oql.Field)
+        self.assertIsInstance(ds.condition[0].right, odhql.Field)
         self.assertEqual(ds.condition[0].right.prefix, 'first_alias')
         self.assertEqual(ds.condition[0].right.name, 'first_field')
 
         ds = next(datasources)
-        self.assertIsInstance(ds, oql.JoinedDataSource)
+        self.assertIsInstance(ds, odhql.JoinedDataSource)
         self.assertEqual('fourth_name', ds.name)
         self.assertEqual('fourth_name', ds.alias)
 
-        self.assertIsInstance(ds.condition, oql.JoinConditionList)
+        self.assertIsInstance(ds.condition, odhql.JoinConditionList)
         self.assertEqual(2, len(ds.condition))
 
-        self.assertIsInstance(ds.condition[0], oql.JoinCondition)
+        self.assertIsInstance(ds.condition[0], odhql.JoinCondition)
 
-        self.assertIsInstance(ds.condition[0].left, oql.Field)
+        self.assertIsInstance(ds.condition[0].left, odhql.Field)
         self.assertEqual(ds.condition[0].left.prefix, 'fourth_name')
         self.assertEqual(ds.condition[0].left.name, 'first_field')
 
-        self.assertIsInstance(ds.condition[0].right, oql.Field)
+        self.assertIsInstance(ds.condition[0].right, odhql.Field)
         self.assertEqual(ds.condition[0].right.prefix, 'first_alias')
         self.assertEqual(ds.condition[0].right.name, 'first_field')
 
-        self.assertIsInstance(ds.condition[1], oql.JoinCondition)
+        self.assertIsInstance(ds.condition[1], odhql.JoinCondition)
 
-        self.assertIsInstance(ds.condition[1].left, oql.Field)
+        self.assertIsInstance(ds.condition[1].left, odhql.Field)
         self.assertEqual(ds.condition[1].left.prefix, 'fourth_name')
         self.assertEqual(ds.condition[1].left.name, 'second_field')
 
-        self.assertIsInstance(ds.condition[1].right, oql.Field)
+        self.assertIsInstance(ds.condition[1].right, odhql.Field)
         self.assertEqual(ds.condition[1].right.prefix, 'second_name')
         self.assertEqual(ds.condition[1].right.name, 'second_field')
 
+    def test_single_equals(self):
+        p = odhql.OdhQLParser()
+        result = p.parse('select t.a from t where t.a = 1')
+
+        alt = result.filter_definitions
+        self.assertIsInstance(alt, odhql.FilterAlternative)
+        self.assertEqual(1, len(alt))
+
+        comb = alt[0]
+        self.assertIsInstance(comb, odhql.FilterCombination)
+        self.assertEqual(1, len(comb))
+
+        equal = comb[0]
+        self.assertIsInstance(equal, odhql.EqualsCondition)
+        self.assertIsInstance(equal.left, odhql.Field)
+        self.assertEqual('a', equal.left.name)
+        self.assertEqual('t', equal.left.prefix)
+
+        self.assertIsInstance(equal.right, odhql.Expression)
+        self.assertEqual(1, equal.right.value)
+
+    def test_single_isnull(self):
+        p = odhql.OdhQLParser()
+        result = p.parse('select t.a from t where t.a is null')
+
+        self.assertIsInstance(result.filter_definitions, odhql.FilterAlternative)
+        self.assertIsInstance(result.filter_definitions[0], odhql.FilterCombination)
+
+        condition = result.filter_definitions[0][0]  # see test_single_equals
+        self.assertIsInstance(condition, odhql.IsNullCondition)
+        self.assertIsInstance(condition.field, odhql.Field)
+        self.assertEqual('a', condition.field.name)
+
+    def test_or_filter(self):
+        p = odhql.OdhQLParser()
+        result = p.parse('select t.a from t where 1 = t.a or t.b = \'b\'')
+
+        alt = result.filter_definitions
+        self.assertIsInstance(alt, odhql.FilterAlternative)
+        self.assertEqual(2, len(alt))
+
+        combinations = (c for c in alt)
+
+        comb = next(combinations)
+        self.assertIsInstance(comb, odhql.FilterCombination)
+        self.assertEqual(1, len(comb))
+
+        equal = comb[0]
+        self.assertIsInstance(equal, odhql.EqualsCondition)
+        self.assertIsInstance(equal.left, odhql.Expression)
+        self.assertIsInstance(equal.right, odhql.Field)
+
+        self.assertEqual(1, equal.left.value)
+        self.assertEqual('a', equal.right.name)
+        self.assertEqual('t', equal.right.prefix)
+
+        comb = next(combinations)
+        self.assertIsInstance(comb, odhql.FilterCombination)
+        self.assertEqual(1, len(comb))
+
+        equal = comb[0]
+        self.assertIsInstance(equal, odhql.EqualsCondition)
+        self.assertIsInstance(equal.left, odhql.Field)
+        self.assertIsInstance(equal.right, odhql.Expression)
+
+        self.assertEqual('b', equal.left.name)
+        self.assertEqual('t', equal.left.prefix)
+        self.assertEqual('b', equal.right.value)
+
+    def test_complex_filter(self):
+        p = odhql.OdhQLParser()
+        result = p.parse('select t.a from t where (1 = t.a or t.b = \'b\') and t.c is null')
+
+        """
+        This is about as ugly as conditions get. (I lied, they get worse due to more nesting).
+
+        Expected structure (A = FilterAlternative (or), C = FilterCombination (and), E = EqualsCondition (=),
+            I = IsNullCondition:
+
+        A[                                          (1)
+            C[                                      (2)
+                A[                                  (3)
+                    C[ E(1 = t.a) ],                (4)
+                    C [ E[(t.b = 'b')]              (5)
+                ],
+                I(t.c is null)                      (6)
+            ]
+        ]
+        """
+
+        self.assertIsInstance(result.filter_definitions, odhql.FilterAlternative)  # 1
+        self.assertEqual(1, len(result.filter_definitions))
+
+        comb = result.filter_definitions[0]  # 2
+        self.assertIsInstance(comb, odhql.FilterCombination)
+        self.assertEqual(2, len(comb))
+
+        alt = comb[0]  # 3
+        self.assertIsInstance(alt, odhql.FilterAlternative)
+        self.assertEqual(2, len(alt))
+
+        self.assertIsInstance(alt[0], odhql.FilterCombination)  # 4
+        self.assertEqual(1, len(alt[0]))
+        self.assertIsInstance(alt[0][0], odhql.EqualsCondition)
+
+        self.assertIsInstance(alt[1], odhql.FilterCombination)  # 5
+        self.assertEqual(1, len(alt[1]))
+        self.assertIsInstance(alt[1][0], odhql.EqualsCondition)
+
+        self.assertIsInstance(comb[1], odhql.IsNullCondition)  # 6
+
     def test_malformed_expressions(self):
-        p = oql.OQLParser()
+        p = odhql.OdhQLParser()
 
         expressions_to_test = [
             ('select 1 as \'A\' from test', 'single quotes are not valid for aliases'),

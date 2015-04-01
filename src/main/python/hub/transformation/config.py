@@ -1,16 +1,18 @@
 from pyparsing import nums
-from pyparsing import Word, CaselessKeyword, QuotedString, Regex
+from pyparsing import Word, CaselessKeyword, QuotedString, Regex, Literal
 from pyparsing import Optional, ZeroOrMore, Or, Suppress, Group, NotAny, Forward
 from pyparsing import delimitedList
 
 
-class OQLParser(object):
+class OdhQLParser(object):
     def __init__(self):
         self.grammar = self.build_grammar()
 
     @classmethod
     def build_grammar(cls):
         identifier = Regex(r'[a-zA-Z_][a-zA-Z0-9_]*') | QuotedString('"')
+        kw_and = Suppress(CaselessKeyword('and'))
+        kw_or = Suppress(CaselessKeyword('or'))
 
         alias = Suppress(CaselessKeyword('as')) + identifier('alias')
 
@@ -25,16 +27,18 @@ class OQLParser(object):
         number_value.setParseAction(Expression.parse_number)
 
         string_value = QuotedString('\'')
+        null_value = CaselessKeyword('null')
+        null_value.setParseAction(Expression.parse_null)
 
-        value = (number_value | string_value)('value')
+        value = (number_value | string_value | null_value)('value')
         value.setParseAction(Expression.parse)
 
         aliased_value = (value + alias)
         aliased_value.setParseAction(AliasedExpression.parse)
 
         function = Forward()
-        function << identifier + Suppress('(') + Optional(Group(delimitedList(field | value | function))) + Suppress(
-            ')')
+        function << (identifier.copy()('name') + Suppress('(') +
+                     Optional(Group(delimitedList(field | value | function)))('args') + Suppress(')'))
         function.setParseAction(Function.parse)
 
         aliased_function = function + alias
@@ -50,35 +54,91 @@ class OQLParser(object):
         join_single_condition = field('left') + Suppress('=') + field('right')
         join_single_condition.setParseAction(JoinCondition.parse)
 
-        join_multi_condition = Suppress('(') + delimitedList(join_single_condition,
-                                                             delim=Suppress(CaselessKeyword('and'))) + Suppress(')')
+        join_multi_condition = Suppress('(') + delimitedList(join_single_condition, delim=kw_and) + Suppress(')')
         join_multi_condition.setParseAction(JoinConditionList.parse)
 
         join_condition_list = join_single_condition | join_multi_condition
 
-        join = Suppress(CaselessKeyword('join')) + data_source.copy()('datasource') + Suppress(
-            CaselessKeyword('on')) + join_condition_list.copy()('condition')
+        join = (Suppress(CaselessKeyword('join')) + data_source.copy()('datasource') +
+                Suppress(CaselessKeyword('on')) + join_condition_list.copy()('condition'))
         join.setParseAction(JoinedDataSource.parse)
 
         data_source_declaration = Suppress(CaselessKeyword('from')) + data_source + ZeroOrMore(join)
 
-        filter = field + '=' + value | field + CaselessKeyword('in') + '(' + value + ')' | field + CaselessKeyword(
-            'is') + CaselessKeyword('null')
+        condition_side = field | value | function
 
-        and_or = (CaselessKeyword('and') | CaselessKeyword('or'))
-        filter_declaration = Optional(CaselessKeyword('where') + delimitedList(filter, and_or))
+        equals_condition = condition_side.copy()('left') + Or(
+            [Literal('!=')('invert'), Literal('=')]) + condition_side.copy()('right')
+        equals_condition.setParseAction(EqualsCondition.parse)
+
+        in_condition = (condition_side.copy()('left') + Optional(CaselessKeyword('not'))('invert') +
+                        Suppress(CaselessKeyword('in')) + Suppress('(') +
+                        Group(delimitedList(value))('in_list') + Suppress(')'))
+        in_condition.setParseAction(InCondition.parse)
+
+        null_condition = (field.copy()('field') + CaselessKeyword('is') + Optional(CaselessKeyword('not'))('invert') +
+                          CaselessKeyword('null'))
+        null_condition.setParseAction(IsNullCondition.parse)
+
+        single_filter = Forward()
+
+        filter_combination = delimitedList(single_filter, delim=kw_and)
+        filter_combination.setParseAction(FilterCombination.parse)
+
+        filter_alternative = delimitedList(filter_combination, delim=kw_or)
+        filter_alternative.setParseAction(FilterAlternative.parse)
+
+        single_filter << (null_condition | equals_condition | in_condition |
+                          Suppress('(') + filter_alternative + Suppress(')'))
+
+        filter_declaration = Suppress(CaselessKeyword('where')) + filter_alternative
 
         order_by_field = field + Optional(Or([CaselessKeyword('asc'), CaselessKeyword('desc')]))
         order_by_declaration = Optional(CaselessKeyword('order by') + delimitedList(order_by_field))
 
-        return field_declaration_list('fields') + data_source_declaration(
-            'datasources') + filter_declaration + order_by_declaration
+        query = field_declaration_list('fields') + data_source_declaration(
+            'datasources') + Optional(filter_declaration)('filter') + Optional(order_by_declaration)('sort')
+        query.setParseAction(Query.parse)
+
+        return query
 
     def parse(self, input):
-        return self.grammar.parseString(input)
+        return self.grammar.parseString(input)[0]
 
 
-class Field(object):
+class ASTBase(object):
+    def accept(self, visitor):
+        visitor.visit(self)
+
+
+class Query(ASTBase):
+    def __init__(self, fields, data_sources, filter_definitions, order):
+        self.fields = fields
+        self.data_sources = data_sources
+        self.filter_definitions = filter_definitions
+        self.order = order
+
+    @classmethod
+    def parse(cls, tokens):
+        if 'fields' not in tokens:
+            raise ParseException('malformed Query (no fields)')
+        if 'datasources' not in tokens:
+            raise ParseException('malformed Query (no data sources)')
+
+        fields = list(tokens.get('fields'))
+        data_sources = list(tokens.get('datasources'))
+        filter_definitions = tokens.get('filter')[0] if 'filter' in tokens else None
+        order = list(tokens.get('sort')) if 'sort' in tokens else None
+
+        return cls(fields, data_sources, filter_definitions, order)
+
+    def __repr__(self):
+        return '<Query fields={} data_sources={} filter_definitions={} order={}>'.format(self.fields, self.data_sources,
+                                                                                         self.filter_definitions,
+                                                                                         self.order)
+
+
+class Field(ASTBase):
     def __init__(self, name, prefix=None):
         self.prefix = prefix
         self.name = name
@@ -115,14 +175,14 @@ class AliasedField(Field):
         field = tokens.get('field')
 
         if not isinstance(field, Field):
-            raise ParseException("expected field, got %s" % type(field))
+            raise ParseException("expected field, got {}".format(type(field)))
 
         alias = tokens.get('alias', None)
 
         return cls(field.name, field.prefix, alias)
 
 
-class Expression(object):
+class Expression(ASTBase):
     def __init__(self, value):
         self.value = value
 
@@ -151,6 +211,10 @@ class Expression(object):
         except:
             pass
 
+    @classmethod
+    def parse_null(cls, tokens):
+        return [None]
+
 
 class AliasedExpression(Expression):
     def __init__(self, value, alias):
@@ -172,7 +236,7 @@ class AliasedExpression(Expression):
         value = tokens.get('value')
 
         if not isinstance(value, Expression):
-            raise ParseException('expected Expression, got %s' % type(value))
+            raise ParseException('expected Expression, got {}'.format(type(value)))
 
         value = value.value
 
@@ -181,23 +245,31 @@ class AliasedExpression(Expression):
         return cls(value, alias)
 
 
-class Function(object):
+class Function(ASTBase):
     def __init__(self, name, args):
         self.name = name
         self.args = args
 
     @classmethod
     def parse(cls, tokens):
-        if len(tokens) < 1:
-            raise ParseException()
+        if 'name' not in tokens:
+            raise ParseException('malformed Function (no name)')
 
-        name = tokens[0]
+        name = tokens.get('name')
+        # this one is weird: access by name makes it almost impossible to get a simple list of our own
+        # classes (i.e. no ParseResults)
         args = list(tokens[1]) if len(tokens) > 1 else []  # get rid of ParseResult
 
         return cls(name, args)
 
     def __repr__(self):
         return '<Function name=\'{}\' args={}>'.format(self.name, self.args or '')
+
+    def accept(self, visitor):
+        visitor.visit(self)
+
+        for arg in self.args:
+            arg.accept(visitor)
 
 
 class AliasedFunction(Function):
@@ -214,15 +286,21 @@ class AliasedFunction(Function):
         alias = tokens[1]
 
         if not isinstance(func, Function):
-            raise ParseException('function expected, got %s' % type(func))
+            raise ParseException('function expected, got {}'.format(type(func)))
 
         return cls(func.name, func.args, alias)
 
     def __repr__(self):
         return '<Function name=\'{}\' args={} alias=\'{}\'>'.format(self.name, self.args or '', self.alias)
 
+    def accept(self, visitor):
+        visitor.visit(self)
 
-class DataSource(object):
+        for arg in self.args:
+            arg.accept(visitor)
+
+
+class DataSource(ASTBase):
     def __init__(self, name, alias=None):
         self.name = name
         self.alias = alias or name
@@ -241,7 +319,7 @@ class DataSource(object):
         return '<DataSource name=\'{}\' alias=\'{}\'>'.format(self.name, self.alias)
 
 
-class JoinCondition(object):
+class JoinCondition(ASTBase):
     def __init__(self, left, right):
         self.left = left
         self.right = right
@@ -255,15 +333,21 @@ class JoinCondition(object):
         right = tokens.get('right')
 
         if not isinstance(left, Field) or not isinstance(right, Field):
-            raise ParseException('expected field = field, got %s = %s' % (type(left, type(right))))
+            raise ParseException('expected field = field, got {} = {}'.format(type(left), type(right)))
 
         return cls(left, right)
 
     def __repr__(self):
         return '<JoinCondition left={} right={}>'.format(self.left, self.right)
 
+    def accept(self, visitor):
+        visitor.visit(self)
 
-class JoinConditionList(object):
+        self.left.accept(visitor)
+        self.right.accept(visitor)
+
+
+class JoinConditionList(ASTBase):
     def __init__(self, conditions):
         self.conditions = conditions
 
@@ -283,6 +367,12 @@ class JoinConditionList(object):
 
     def __repr__(self):
         return '<JoinConditionList conditions={}>'.format(self.conditions)
+
+    def accept(self, visitor):
+        visitor.visit(self)
+
+        for cond in self.conditions:
+            cond.accept(visitor)
 
 
 class JoinedDataSource(DataSource):
@@ -305,6 +395,155 @@ class JoinedDataSource(DataSource):
 
     def __repr__(self):
         return '<JoinedDataSource name=\'{}\' alias=\'{}\' condition={}>'.format(self.name, self.alias, self.condition)
+
+    def accept(self, visitor):
+        visitor.visit(self)
+
+        self.condition.accept(visitor)
+
+
+class EqualsCondition(ASTBase):
+    def __init__(self, left, right, invert):
+        self.left = left
+        self.right = right
+        self.invert = invert
+
+    @classmethod
+    def parse(cls, tokens):
+        if 'left' not in tokens:
+            raise ParseException('malformed EqualsCondition (no left side)')
+
+        if 'right' not in tokens:
+            raise ParseException('malformed EqualsCondition (no right side)')
+
+        left = tokens.get('left')
+        right = tokens.get('right')
+
+        invert = 'invert' in tokens
+
+        v = FindClassVisitor(Field)
+        left.accept(v)
+        if not v.found:
+            right.accept(v)
+            if not v.found:
+                raise ParseException('illegal EqualsCondition: at least one side needs to reference a Field')
+
+        return cls(left, right, invert)
+
+    def __repr__(self):
+        return '<EqualsCondition left={} right={} invert={}>'.format(self.left, self.right, self.invert)
+
+    def accept(self, visitor):
+        visitor.visit(self)
+
+        self.left.accept(visitor)
+        self.right.accept(visitor)
+
+
+class InCondition(ASTBase):
+    def __init__(self, left, in_list, invert):
+        self.left = left
+        self.in_list = in_list
+        self.invert = invert
+
+    @classmethod
+    def parse(cls, tokens):
+        if 'left' not in tokens:
+            raise ParseException('malformed InCondition (no left side)')
+
+        if 'in_list' not in tokens:
+            raise ParseException('malformed InCondition (no in_list)')
+
+        left = tokens.get('left')
+        in_list = tokens.get('in_list')
+        invert = 'invert' in tokens
+
+        return cls(left, in_list, invert)
+
+    def __repr__(self):
+        return '<InCondition left={} in_list={}>'.format(self.left, self.in_list)
+
+    def accept(self, visitor):
+        visitor.visit(self)
+
+        self.left.accept(visitor)
+
+        for item in self.in_list:
+            item.accept(visitor)
+
+
+class IsNullCondition(ASTBase):
+    def __init__(self, field, invert):
+        self.field = field
+        self.invert = invert
+
+    @classmethod
+    def parse(cls, tokens):
+        if 'field' not in tokens:
+            raise ParseException('malformed IsNullCondition')
+
+        field = tokens.get('field')
+        invert = 'invert' in tokens
+
+        if not isinstance(field, Field):
+            raise ParseException('expected Field, got {}'.format(type(field)))
+
+        return cls(field, invert)
+
+    def accept(self, visitor):
+        visitor.visit(self)
+
+        self.field.accept(visitor)
+
+    def __repr__(self):
+        return '<IsNullCondition field={} invert={}>'.format(self.field, self.invert)
+
+
+class FilterListBase(ASTBase):
+    def __init__(self, conditions):
+        self.conditions = conditions
+
+    @classmethod
+    def parse(cls, tokens):
+        if len(tokens) < 1:
+            raise ParseException('malformed {} (no conditions)'.format(cls.__name__))
+
+        conditions = list(tokens[:])
+
+        return cls(conditions)
+
+    def accept(self, visitor):
+        visitor.visit(self)
+
+        for cond in self.conditions:
+            cond.accept(visitor)
+
+    def __len__(self):
+        return len(self.conditions)
+
+    def __getitem__(self, item):
+        return self.conditions[item]
+
+    def __repr__(self):
+        return '<{} conditions={}>'.format(self.__class__.__name__, self.conditions)
+
+
+class FilterCombination(FilterListBase):
+    """list of filters joined by AND"""
+
+
+class FilterAlternative(FilterListBase):
+    """list of filters joined by OR"""
+
+
+class FindClassVisitor(object):
+    def __init__(self, target_class):
+        self.target = target_class
+        self.found = False
+
+    def visit(self, obj):
+        if isinstance(obj, self.target):
+            self.found = True
 
 
 class ParseException(Exception):
