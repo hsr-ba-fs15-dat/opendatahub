@@ -1,6 +1,6 @@
 from pyparsing import nums
 from pyparsing import Word, CaselessKeyword, QuotedString, Regex
-from pyparsing import Optional, ZeroOrMore, Or, Suppress, Group, NotAny
+from pyparsing import Optional, ZeroOrMore, Or, Suppress, Group, NotAny, Forward
 from pyparsing import delimitedList
 
 
@@ -33,7 +33,8 @@ class OQLParser(object):
         aliased_value = (value + alias)
         aliased_value.setParseAction(AliasedExpression.parse)
 
-        function = identifier + Suppress('(') + Optional(Group(delimitedList(field | value))) + Suppress(')')
+        function = Forward()
+        function << identifier + Suppress('(') + Optional(Group(delimitedList(field | value | function))) + Suppress(')')
         function.setParseAction(Function.parse)
 
         aliased_function = function + alias

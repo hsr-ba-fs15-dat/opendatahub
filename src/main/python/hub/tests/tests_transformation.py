@@ -100,6 +100,27 @@ class TestParser(TestBase):
         self.assertEqual('one', field.args[0].name)
         self.assertEqual('test', field.args[0].prefix)
 
+    def test_nested_function_call(self):
+        p = oql.OQLParser()
+        result = p.parse('select outer(inner(t.some_field)) as func from test as t')
+
+        outer = result.fields[0]
+        self.assertIsInstance(outer, oql.AliasedFunction)
+        self.assertEqual('outer', outer.name)
+        self.assertEqual('func', outer.alias)
+
+        self.assertEqual(1, len(outer.args))
+
+        inner = outer.args[0]
+        self.assertIsInstance(inner, oql.Function)
+        self.assertEqual('inner', inner.name)
+
+        self.assertEqual(1, len(inner.args))
+        inner_arg = inner.args[0]
+        self.assertIsInstance(inner_arg, oql.Field)
+        self.assertEqual('some_field', inner_arg.name)
+        self.assertEqual('t', inner_arg.prefix)
+
     def test_datasource(self):
         p = oql.OQLParser()
         result = p.parse('select t.a from test as t')
