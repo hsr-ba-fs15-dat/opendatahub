@@ -3,6 +3,8 @@ from pyparsing import Word, CaselessKeyword, QuotedString, Regex, Literal
 from pyparsing import Optional, ZeroOrMore, Or, Suppress, Group, NotAny, Forward
 from pyparsing import delimitedList
 
+from collections import Sequence
+
 
 class OdhQLParser(object):
     def __init__(self):
@@ -347,7 +349,7 @@ class JoinCondition(ASTBase):
         self.right.accept(visitor)
 
 
-class JoinConditionList(ASTBase):
+class JoinConditionList(ASTBase, Sequence):
     def __init__(self, conditions):
         self.conditions = conditions
 
@@ -499,7 +501,7 @@ class IsNullCondition(ASTBase):
         return '<IsNullCondition field={} invert={}>'.format(self.field, self.invert)
 
 
-class FilterListBase(ASTBase):
+class FilterListBase(ASTBase, Sequence):
     def __init__(self, conditions):
         self.conditions = conditions
 
