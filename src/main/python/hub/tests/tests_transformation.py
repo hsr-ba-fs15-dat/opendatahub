@@ -251,7 +251,6 @@ class TestParser(TestBase):
 
             self.assertEqual(str(cond.operator), 'Operator.{}'.format(cond.left.name))
 
-
     def test_single_isnull(self):
         p = odhql.OdhQLParser()
         result = p.parse('select t.a from t where t.a is null')

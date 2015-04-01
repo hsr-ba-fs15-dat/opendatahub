@@ -472,7 +472,8 @@ class BinaryCondition(ASTBase):
         raise ParseException('unregistered operation: {}'.format(op))
 
     def __repr__(self):
-        return '<BinaryCondition left={} op={} right={} invert={}>'.format(self.left, self.operator, self.right, self.invert)
+        return '<BinaryCondition left={} op={} right={} invert={}>'.format(self.left, self.operator, self.right,
+                                                                           self.invert)
 
     def accept(self, visitor):
         visitor.visit(self)
