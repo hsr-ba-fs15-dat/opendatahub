@@ -2,7 +2,7 @@
 """
 import pandas as pd
 import numpy as np
-import hub.transformation.config as ast
+import hub.transformation.parser as ast
 from opendatahub.utils.plugins import RegistrationMixin
 import inspect
 

@@ -1,7 +1,7 @@
 from collections import Sequence
 
 from pyparsing import nums
-from pyparsing import Word, CaselessKeyword, QuotedString, Regex, Literal
+from pyparsing import Word, CaselessKeyword, QuotedString, Regex, Literal, Suppress
 from pyparsing import Optional, ZeroOrMore, Or, Group, NotAny, Forward, StringEnd
 from pyparsing import delimitedList
 from enum import Enum
@@ -118,7 +118,7 @@ class OdhQLParser(object):
 
         function = Forward()
         function << (identifier.copy()('name') +
-                     '(' + Optional(Group(delimitedList(field | value | function)))('args') + ')')
+                     '(' + Optional(delimitedList(field | value | function))('args') + ')')
         function.setParseAction(Function.parse)
 
         aliased_function = function('function') + alias
@@ -126,7 +126,7 @@ class OdhQLParser(object):
 
         field_declaration = aliased_function | aliased_value | aliased_field
 
-        field_declaration_list = CaselessKeyword('select') + delimitedList(field_declaration)
+        field_declaration_list = Suppress(CaselessKeyword('select')) + delimitedList(field_declaration)
 
         data_source = identifier('name') + Optional(alias)
         data_source.setParseAction(DataSource.parse)
@@ -134,7 +134,7 @@ class OdhQLParser(object):
         join_single_condition = field('left') + '=' + field('right')
         join_single_condition.setParseAction(JoinCondition.parse)
 
-        join_multi_condition = Literal('(') + delimitedList(join_single_condition, delim=kw_and) + ')'
+        join_multi_condition = Literal('(') + delimitedList(join_single_condition, delim=kw_and)('conditions') + ')'
         join_multi_condition.setParseAction(JoinConditionList.parse)
 
         join_condition_list = join_single_condition | join_multi_condition
@@ -143,7 +143,7 @@ class OdhQLParser(object):
                 CaselessKeyword('on') + join_condition_list.copy()('condition'))
         join.setParseAction(JoinedDataSource.parse)
 
-        data_source_declaration = CaselessKeyword('from') + data_source + ZeroOrMore(join)
+        data_source_declaration = Suppress(CaselessKeyword('from')) + data_source + ZeroOrMore(join)
 
         condition_side = field | value | function
 
@@ -169,16 +169,17 @@ class OdhQLParser(object):
         filter_alternative = delimitedList(filter_combination, delim=kw_or)
         filter_alternative.setParseAction(FilterAlternative.parse)
 
-        single_filter << (null_condition | binary_condition | in_condition | '(' + filter_alternative + ')')
+        single_filter << (null_condition | binary_condition | in_condition |
+                          Suppress('(') + filter_alternative + Suppress(')'))
 
-        filter_declaration = CaselessKeyword('where') + filter_alternative
+        filter_declaration = Suppress(CaselessKeyword('where')) + filter_alternative.copy()('conditions')
 
         order_by_field = field + Optional(Or([CaselessKeyword('asc'), CaselessKeyword('desc')]))('direction')
-        order_by_field.setParseAction(OrderBy.parse_field)
+        order_by_field.setParseAction(OrderBy.parse)
 
-        order_by_declaration = Optional(
-            CaselessKeyword('order') + CaselessKeyword('by') + delimitedList(order_by_field)('fields'))
-        order_by_declaration.setParseAction(OrderBy.parse_list)
+        order_by_declaration = (Suppress(CaselessKeyword('order') + CaselessKeyword('by')) +
+                                delimitedList(order_by_field)('fields'))
+        order_by_declaration.setParseAction(Query.parse_order_by)
 
         query = (field_declaration_list('fields') + data_source_declaration('datasources') +
                  Optional(filter_declaration('filter')) + Optional(order_by_declaration)('sort') + StringEnd())
@@ -214,9 +215,17 @@ class Query(ASTBase):
         fields = list(tokens.get('fields'))
         data_sources = list(tokens.get('datasources'))
         filter_definitions = tokens.get('filter')[0] if 'filter' in tokens else None
-        order = list(tokens.get('sort')) if 'sort' in tokens else None
+        order = list(tokens.get('sort')[0]) if 'sort' in tokens else None
 
         return cls(fields, data_sources, filter_definitions, order)
+
+    @classmethod
+    def parse_order_by(cls, tokens):
+        if 'fields' not in tokens:
+            raise ParseException('malformed OrderBy (no fields)')
+
+        return [tokens.get('fields')]
+
 
     def __repr__(self):
         return '<Query fields={} data_sources={} filter_definitions={} order={}>'.format(self.fields, self.data_sources,
@@ -353,7 +362,7 @@ class Function(ASTBase):
         name = tokens.get('name')
         # this one is weird: access by name makes it almost impossible to get a simple list of our own
         # classes (i.e. no ParseResults)
-        args = list(tokens[1]) if len(tokens) > 1 else []  # get rid of ParseResult
+        args = list(tokens.get('args')) if 'args' in tokens else []  # get rid of ParseResult
 
         return cls(name, args)
 
@@ -459,7 +468,7 @@ class JoinConditionList(ASTBase, Sequence):
         if len(tokens) == 0:
             raise ParseException()
 
-        conditions = list(tokens)
+        conditions = list(tokens.get('conditions'))
         return cls(conditions)
 
     def __repr__(self):
@@ -645,7 +654,7 @@ class FilterListBase(ASTBase, Sequence):
 
         conditions = list(tokens[:])
 
-        return cls(conditions)
+        return [cls(conditions)]
 
     def accept(self, visitor):
         visitor.visit(self)
@@ -681,7 +690,7 @@ class OrderBy(ASTBase):
         self.direction = direction
 
     @classmethod
-    def parse_field(cls, tokens):
+    def parse(cls, tokens):
         if 'field' not in tokens:
             raise ParseException('malformed OrderByField (no field)')
 
@@ -694,13 +703,6 @@ class OrderBy(ASTBase):
             direction = OrderBy.Direction.ascending
 
         return cls(field, direction)
-
-    @classmethod
-    def parse_list(cls, tokens):
-        if 'fields' not in tokens:
-            raise ParseException('malformed OrderBy (no fields)')
-
-        return list(tokens.get('fields'))
 
     def __repr__(self):
         return '<OrderBy field={} direction={}>'.format(self.field, self.direction)

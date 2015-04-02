@@ -1,7 +1,7 @@
 import types
 
 from hub.tests.testutils import TestBase
-import hub.transformation.config as odhql
+import hub.transformation.parser as odhql
 
 
 class TestParser(TestBase):
