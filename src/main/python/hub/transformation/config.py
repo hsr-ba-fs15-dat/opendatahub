@@ -2,7 +2,7 @@ from collections import Sequence
 
 from pyparsing import nums
 from pyparsing import Word, CaselessKeyword, QuotedString, Regex, Literal
-from pyparsing import Optional, ZeroOrMore, Or, Suppress, Group, NotAny, Forward
+from pyparsing import Optional, ZeroOrMore, Or, Suppress, Group, NotAny, Forward, StringEnd
 from pyparsing import delimitedList
 from enum import Enum
 
@@ -70,7 +70,7 @@ class OdhQLParser(object):
 
         condition_side = field | value | function
 
-        operator = Literal('=') | '!=' | '<' | '<=' | '>' | '>='
+        operator = Literal('=') | '!=' | '<=' | '<'  | '>=' | '>'
         operator.setParseAction(BinaryCondition.parse_operator)
 
         binary_condition = condition_side.copy()('left') + operator('operator') + condition_side.copy()('right')
@@ -101,9 +101,11 @@ class OdhQLParser(object):
         order_by_field = field + Optional(Or([CaselessKeyword('asc'), CaselessKeyword('desc')]))
         order_by_declaration = Optional(CaselessKeyword('order by') + delimitedList(order_by_field))
 
-        query = field_declaration_list('fields') + data_source_declaration(
-            'datasources') + Optional(filter_declaration)('filter') + Optional(order_by_declaration)('sort')
+        query = (field_declaration_list('fields') + data_source_declaration('datasources') +
+                 Optional(filter_declaration('filter')) + Optional(order_by_declaration)('sort') + StringEnd())
         query.setParseAction(Query.parse)
+
+        query.validate()
 
         return query
 
@@ -141,6 +143,10 @@ class Query(ASTBase):
         return '<Query fields={} data_sources={} filter_definitions={} order={}>'.format(self.fields, self.data_sources,
                                                                                          self.filter_definitions,
                                                                                          self.order)
+
+    @classmethod
+    def trailing_garbage(cls, *args, **kwargs):
+        raise ParseFatalException('trailing garbage detected '+ ', '.join(map(str, list(args))))
 
 
 class Field(ASTBase):
@@ -466,7 +472,7 @@ class BinaryCondition(ASTBase):
             return cls.Operator.less_or_equal
         if op == '>':
             return cls.Operator.greater
-        if op == '!=':
+        if op == '>=':
             return cls.Operator.greater_or_equal
 
         raise ParseException('unregistered operation: {}'.format(op))

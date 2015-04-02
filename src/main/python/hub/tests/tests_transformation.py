@@ -237,11 +237,18 @@ class TestParser(TestBase):
 
     def test_binary_condition_operators(self):
         p = odhql.OdhQLParser()
-        result = p.parse('select t.a from t where t.equals = 1 and t.not_equals != 1 and t.less < 1 '
-                         'and t.less_or_equal <= 1 and t.greater > 1 and t.greater_or_equal >= 1')
+        result = p.parse('select t.a from t '
+                         'where t.equals = 1 '
+                         'and t.not_equals != 1 '
+                         'and t.less < 1 '
+                         'and t.less_or_equal <= 1 '
+                         'and t.greater > 1 '
+                         'and t.greater_or_equal >= 1')
 
         self.assertIsInstance(result.filter_definitions, odhql.FilterAlternative)
         self.assertIsInstance(result.filter_definitions[0], odhql.FilterCombination)
+
+        self.assertEqual(6, len(result.filter_definitions[0]))
 
         for cond in result.filter_definitions[0]:
             self.assertIsInstance(cond, odhql.BinaryCondition)
@@ -344,6 +351,8 @@ class TestParser(TestBase):
     def test_malformed_expressions(self):
         p = odhql.OdhQLParser()
 
+      #  res = p.parse('select 1 as a from test WHERE 7dcasxa33sx')
+
         expressions_to_test = [
             ('select 1 as \'A\' from test', 'single quotes are not valid for aliases'),
             ('select 1 from test', 'expressions need aliases'),
@@ -355,12 +364,16 @@ class TestParser(TestBase):
             ('select 1 as a from test1, test2', 'multiple data sources need to be defined using joins'),
             ('select func( as f from test', 'malformed function call'),
             ('select outer(inner() as f from test', 'malformed nested function call'),
-            ('select 1 as b from test where func()', 'malformed where condition')
+            ('select 1 as b from test where func()', 'malformed where condition'),
+            ('select 1 as a from test WHERE 7dcasxa33sx', 'trailing garbage')
+            #,('select t.a from t where (1 = t.a or t.b = \'b\') and t.c is null', '')
         ]
 
         for expr, reason in expressions_to_test:
             try:
                 p.parse(expr)
                 self.fail(reason)
+            except AssertionError:
+                raise
             except:
                 pass
