@@ -9,7 +9,7 @@ module odh {
         public dataSource:string = 'online';
         public name:string;
         public description:string;
-        public isprivate:boolean;
+        public isPrivate:boolean;
         public params:any = {};
         public progress = 0;
         public submitted:boolean = false;
@@ -54,7 +54,7 @@ module odh {
             if (this.params.file) {
                 promise = this.$upload.upload({
                     url: url,
-                    fields: {name: this.name, description: this.description, 'private': this.isprivate},
+                    fields: {name: this.name, description: this.description, 'private': this.isPrivate},
                     file: this.params.file
                 });
 
@@ -77,7 +77,7 @@ module odh {
 
         private createSuccess(data) {
             // todo remove demo/test
-            this.ToastService.success('Datei erfolgreich abgelegt');
+            this.ToastService.success('Ihre Daten wurden gespeichert ');
             this.$state.go('document', {id: data.data.id});
         }
 

@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding="UTF-8" ?>
+<schema
+   targetNamespace="http://mapserver.gis.umn.edu/mapserver" 
+   xmlns:ms="http://mapserver.gis.umn.edu/mapserver" 
+   xmlns:ogc="http://www.opengis.net/ogc"
+   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+   xmlns="http://www.w3.org/2001/XMLSchema"
+   xmlns:gml="http://www.opengis.net/gml"
+   elementFormDefault="qualified" version="0.1" >
+
+  <import namespace="http://www.opengis.net/gml"
+          schemaLocation="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd" />
+
+  <element name="baustellen-detailansicht" 
+           type="ms:baustellen-detailansichtType" 
+           substitutionGroup="gml:_Feature" />
+
+  <complexType name="baustellen-detailansichtType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="geometry" type="gml:SurfacePropertyType" minOccurs="0" maxOccurs="1"/>
+          <element name="strassenbez" type="string"/>
+          <element name="kmvon" type="string"/>
+          <element name="kmbis" type="string"/>
+          <element name="strassenname" type="string"/>
+          <element name="gemeindename" type="string"/>
+          <element name="ansprechperson" type="string"/>
+          <element name="oe" type="string"/>
+          <element name="telefonnummer" type="string"/>
+          <element name="beschreibung" type="string"/>
+          <element name="verkehrsfuehrung" type="string"/>
+          <element name="status_baustelle" type="string"/>
+          <element name="datum_baubeginn" type="date"/>
+          <element name="datum_bauende" type="date"/>
+          <element name="lmutdat" type="date"/>
+          <element name="weiteregemeinden" type="string"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+
+  <element name="baustellen-uebersicht" 
+           type="ms:baustellen-uebersichtType" 
+           substitutionGroup="gml:_Feature" />
+
+  <complexType name="baustellen-uebersichtType">
+    <complexContent>
+      <extension base="gml:AbstractFeatureType">
+        <sequence>
+          <element name="geometry" type="gml:PointPropertyType" minOccurs="0" maxOccurs="1"/>
+          <element name="strassenbez" type="string"/>
+          <element name="kmvon" type="string"/>
+          <element name="kmbis" type="string"/>
+          <element name="strassenname" type="string"/>
+          <element name="gemeindename" type="string"/>
+          <element name="ansprechperson" type="string"/>
+          <element name="oe" type="string"/>
+          <element name="telefonnummer" type="string"/>
+          <element name="beschreibung" type="string"/>
+          <element name="verkehrsfuehrung" type="string"/>
+          <element name="status_baustelle" type="string"/>
+          <element name="datum_baubeginn" type="date"/>
+          <element name="datum_bauende" type="date"/>
+          <element name="lmutdat" type="date"/>
+          <element name="weiteregemeinden" type="string"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+
+</schema>
