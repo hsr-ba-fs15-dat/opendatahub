@@ -226,7 +226,6 @@ class Query(ASTBase):
 
         return [tokens.get('fields')]
 
-
     def __repr__(self):
         return '<Query fields={} data_sources={} filter_definitions={} order={}>'.format(self.fields, self.data_sources,
                                                                                          self.filter_definitions,
