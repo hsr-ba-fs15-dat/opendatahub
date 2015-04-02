@@ -2,27 +2,101 @@ from collections import Sequence
 
 from pyparsing import nums
 from pyparsing import Word, CaselessKeyword, QuotedString, Regex, Literal
-from pyparsing import Optional, ZeroOrMore, Or, Suppress, Group, NotAny, Forward, StringEnd
+from pyparsing import Optional, ZeroOrMore, Or, Group, NotAny, Forward, StringEnd
 from pyparsing import delimitedList
 from enum import Enum
 
 
 class OdhQLParser(object):
+    """
+    Parser for the OpenDataHub Query Language (OdhQL).
+
+    Syntax borrows heavily from ANSI SQLs SELECT statement, but there are some differences.
+
+    All keywords are case-insensitive.
+
+    Identifiers: Everything that doesn't match r'[a-zA-Z_][a-zA-Z0-9_]*' needs to be quoted using "double quotes".
+    If you need to include quote chars inside your strings, escape with a backslash ('\').
+
+    All field references must be prefixed by the name of the data source they're coming from.
+
+    Description in EBNF (as checked by http://www.icosaedro.it/bnf_chk/bnf_chk-on-line.html, because that seemed
+    sensible):
+
+    ---------------------------------------------------------------------------
+
+    Query = FieldSelection DataSourceSelection [ FilterList ] [ OrderByList ] ;
+
+    FieldSelection = "select" AliasedFieldEquiv { "," AliasedFieldEquiv } ;
+
+    AliasedFieldEquiv = FieldEquiv "as" Alias ;
+    FieldEquiv = Function | Value | Field ;
+
+    Function = Identifier "(" ListOfFunctionArguments ")" ;
+    ListOfFunctionArguments = [ FieldEquiv [ { "," FieldEquiv } ] ] ;
+
+    Value = SingleQuotedString | Number | Boolean | Null ;
+    Number = Integer | Float ;
+    Float = Integer "." Integer ;
+    Boolean = "true" | "false" ;
+    Null = "null" ;
+
+    Field = DataSourceNameOrAlias "." FieldName ;
+
+    DataSourceSelection = "from" DataSourceName [ "as" Alias ] { JoinDefinition } ;
+    JoinDefinition = "join" DataSourceName [ "as" Alias ] "on" JoinCondition ;
+
+    JoinCondition = SingleJoinCondition | "(" SingleJoinCondition { "and" SingleJoinCondition } ")" ;
+    SingleJoinCondition = Field "=" Field ;
+
+    DataSourceNameOrAlias = DataSourceName | Alias ;
+
+    FilterList = "where" FilterAlternative ;
+
+    FilterAlternative = FilterCombination { "or" FilterCombination } ;
+    FilterCombination = FilterDefinition { "and" FilterDefinition } ;
+    FilterDefinition = BinaryCondition | InCondition |
+                       IsNullCondition | "(" FilterAlternative ")" ;
+
+    # Note that at least one side must reference a real field somewhere
+    BinaryCondition = FieldEquiv BinaryOperator FieldEquiv ;
+    BinaryOperator = "=" | "!=" | "<" | "<=" | ">" | ">=" | "like" ;
+
+    InCondition = FieldEquiv [ "not" ] "in" "(" Value { "," Value } ")" ;
+    IsNullCondition = Field "is" [ "not" ] Null ;
+
+    OrderByList = "order" "by" OrderByField { "," OrderByField } ;
+    OrderByField = Field [ "asc" | "desc" ] ;
+    Integer = { "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" } ;
+
+    DataSourceName = Identifier ;
+    FieldName = Identifier ;
+    Alias = Identifier ;
+
+    # SingleQuotedString = string in single quotes
+    # DoubleQuotedString = string in double quotes
+
+    Identifier = ( "a..z" | "A..Z" | "_" ) { "a..z" | "A..Z" | "_" | Integer } | DoubleQuotedString ;
+
+    ---------------------------------------------------------------------------
+    """
+
     def __init__(self):
         self.grammar = self.build_grammar()
 
     @classmethod
     def build_grammar(cls):
-        identifier = Regex(r'[a-zA-Z_][a-zA-Z0-9_]*') | QuotedString('"')
-        kw_and = Suppress(CaselessKeyword('and'))
-        kw_or = Suppress(CaselessKeyword('or'))
+        escape_char = '\\'
+        identifier = Regex(r'[a-zA-Z_][a-zA-Z0-9_]*') | QuotedString('"', escChar=escape_char)
+        kw_and = CaselessKeyword('and')
+        kw_or = CaselessKeyword('or')
 
-        alias = Suppress(CaselessKeyword('as')) + identifier('alias')
+        alias = CaselessKeyword('as') + identifier('alias')
 
-        field = identifier.copy()('prefix') + Suppress('.') + identifier.copy()('name') + NotAny('(')
+        field = (identifier.copy()('prefix') + '.' + identifier.copy()('name') + NotAny('('))('field')
         field.setParseAction(Field.parse)
 
-        aliased_field = field('field') + Optional(alias)  # defaults to using name as alias
+        aliased_field = field + Optional(alias)  # defaults to using name as alias
         aliased_field.setParseAction(AliasedField.parse)
 
         integer_value = Word(nums)
@@ -32,7 +106,7 @@ class OdhQLParser(object):
         boolean_value = CaselessKeyword('true') | CaselessKeyword('false')
         boolean_value.setParseAction(Expression.parse_boolean)
 
-        string_value = QuotedString('\'')
+        string_value = QuotedString('\'', escChar=escape_char)
         null_value = CaselessKeyword('null')
         null_value.setParseAction(Expression.parse_null)
 
@@ -43,8 +117,8 @@ class OdhQLParser(object):
         aliased_value.setParseAction(AliasedExpression.parse)
 
         function = Forward()
-        function << (identifier.copy()('name') + Suppress('(') +
-                     Optional(Group(delimitedList(field | value | function)))('args') + Suppress(')'))
+        function << (identifier.copy()('name') +
+                     '(' + Optional(Group(delimitedList(field | value | function)))('args') + ')')
         function.setParseAction(Function.parse)
 
         aliased_function = function('function') + alias
@@ -52,24 +126,24 @@ class OdhQLParser(object):
 
         field_declaration = aliased_function | aliased_value | aliased_field
 
-        field_declaration_list = Suppress(CaselessKeyword('select')) + delimitedList(field_declaration)
+        field_declaration_list = CaselessKeyword('select') + delimitedList(field_declaration)
 
         data_source = identifier('name') + Optional(alias)
         data_source.setParseAction(DataSource.parse)
 
-        join_single_condition = field('left') + Suppress('=') + field('right')
+        join_single_condition = field('left') + '=' + field('right')
         join_single_condition.setParseAction(JoinCondition.parse)
 
-        join_multi_condition = Suppress('(') + delimitedList(join_single_condition, delim=kw_and) + Suppress(')')
+        join_multi_condition = Literal('(') + delimitedList(join_single_condition, delim=kw_and) + ')'
         join_multi_condition.setParseAction(JoinConditionList.parse)
 
         join_condition_list = join_single_condition | join_multi_condition
 
-        join = (Suppress(CaselessKeyword('join')) + data_source.copy()('datasource') +
-                Suppress(CaselessKeyword('on')) + join_condition_list.copy()('condition'))
+        join = (CaselessKeyword('join') + data_source.copy()('datasource') +
+                CaselessKeyword('on') + join_condition_list.copy()('condition'))
         join.setParseAction(JoinedDataSource.parse)
 
-        data_source_declaration = Suppress(CaselessKeyword('from')) + data_source + ZeroOrMore(join)
+        data_source_declaration = CaselessKeyword('from') + data_source + ZeroOrMore(join)
 
         condition_side = field | value | function
 
@@ -80,11 +154,10 @@ class OdhQLParser(object):
         binary_condition.setParseAction(BinaryCondition.parse)
 
         in_condition = (condition_side.copy()('left') + Optional(CaselessKeyword('not'))('invert') +
-                        Suppress(CaselessKeyword('in')) + Suppress('(') +
-                        Group(delimitedList(value))('in_list') + Suppress(')'))
+                        CaselessKeyword('in') + '(' + Group(delimitedList(value))('in_list') + ')')
         in_condition.setParseAction(InCondition.parse)
 
-        null_condition = (field.copy()('field') + CaselessKeyword('is') + Optional(CaselessKeyword('not'))('invert') +
+        null_condition = (field + CaselessKeyword('is') + Optional(CaselessKeyword('not'))('invert') +
                           CaselessKeyword('null'))
         null_condition.setParseAction(IsNullCondition.parse)
 
@@ -96,13 +169,16 @@ class OdhQLParser(object):
         filter_alternative = delimitedList(filter_combination, delim=kw_or)
         filter_alternative.setParseAction(FilterAlternative.parse)
 
-        single_filter << (null_condition | binary_condition | in_condition |
-                          Suppress('(') + filter_alternative + Suppress(')'))
+        single_filter << (null_condition | binary_condition | in_condition | '(' + filter_alternative + ')')
 
-        filter_declaration = Suppress(CaselessKeyword('where')) + filter_alternative
+        filter_declaration = CaselessKeyword('where') + filter_alternative
 
-        order_by_field = field + Optional(Or([CaselessKeyword('asc'), CaselessKeyword('desc')]))
-        order_by_declaration = Optional(CaselessKeyword('order by') + delimitedList(order_by_field))
+        order_by_field = field + Optional(Or([CaselessKeyword('asc'), CaselessKeyword('desc')]))('direction')
+        order_by_field.setParseAction(OrderBy.parse_field)
+
+        order_by_declaration = Optional(
+            CaselessKeyword('order') + CaselessKeyword('by') + delimitedList(order_by_field)('fields'))
+        order_by_declaration.setParseAction(OrderBy.parse_list)
 
         query = (field_declaration_list('fields') + data_source_declaration('datasources') +
                  Optional(filter_declaration('filter')) + Optional(order_by_declaration)('sort') + StringEnd())
@@ -593,6 +669,41 @@ class FilterCombination(FilterListBase):
 
 class FilterAlternative(FilterListBase):
     """list of filters joined by OR"""
+
+
+class OrderBy(ASTBase):
+    class Direction(Enum):
+        ascending = 1
+        descending = 2
+
+    def __init__(self, field, direction):
+        self.field = field
+        self.direction = direction
+
+    @classmethod
+    def parse_field(cls, tokens):
+        if 'field' not in tokens:
+            raise ParseException('malformed OrderByField (no field)')
+
+        field = tokens.get('field')
+        dir = str(tokens.get('direction', 'asc')).lower()
+
+        if dir == 'desc':
+            direction = OrderBy.Direction.descending
+        else:
+            direction = OrderBy.Direction.ascending
+
+        return cls(field, direction)
+
+    @classmethod
+    def parse_list(cls, tokens):
+        if 'fields' not in tokens:
+            raise ParseException('malformed OrderBy (no fields)')
+
+        return list(tokens.get('fields'))
+
+    def __repr__(self):
+        return '<OrderBy field={} direction={}>'.format(self.field, self.direction)
 
 
 class FindClassVisitor(object):

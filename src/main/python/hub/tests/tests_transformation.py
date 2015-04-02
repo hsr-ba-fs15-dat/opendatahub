@@ -367,6 +367,20 @@ class TestParser(TestBase):
 
         self.assertIsInstance(comb[1], odhql.IsNullCondition)  # 6
 
+    def test_order_by(self):
+        p = odhql.OdhQLParser()
+
+        result = p.parse('select a.a from a order by a.a')
+
+        self.assertEqual(1, len(result.order))
+
+        order = result.order[0]
+        self.assertIsInstance(order, odhql.OrderBy)
+
+        self.assertEqual('a', order.field.name)
+        self.assertEqual('a', order.field.prefix)
+        self.assertEqual(odhql.OrderBy.Direction.ascending, order.direction)
+
     def test_malformed_expressions(self):
         p = odhql.OdhQLParser()
 
