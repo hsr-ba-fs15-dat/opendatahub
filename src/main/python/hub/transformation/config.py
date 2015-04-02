@@ -29,11 +29,14 @@ class OdhQLParser(object):
         number_value = Group(integer_value + Optional('.' + integer_value))
         number_value.setParseAction(Expression.parse_number)
 
+        boolean_value = CaselessKeyword('true') | CaselessKeyword('false')
+        boolean_value.setParseAction(Expression.parse_boolean)
+
         string_value = QuotedString('\'')
         null_value = CaselessKeyword('null')
         null_value.setParseAction(Expression.parse_null)
 
-        value = (number_value | string_value | null_value)('value')
+        value = (number_value | boolean_value | string_value | null_value)('value')
         value.setParseAction(Expression.parse)
 
         aliased_value = (value + alias)
@@ -70,7 +73,7 @@ class OdhQLParser(object):
 
         condition_side = field | value | function
 
-        operator = Literal('=') | '!=' | '<=' | '<'  | '>=' | '>'
+        operator = Literal('=') | '!=' | '<=' | '<' | '>=' | '>' | CaselessKeyword('like')
         operator.setParseAction(BinaryCondition.parse_operator)
 
         binary_condition = condition_side.copy()('left') + operator('operator') + condition_side.copy()('right')
@@ -143,10 +146,6 @@ class Query(ASTBase):
         return '<Query fields={} data_sources={} filter_definitions={} order={}>'.format(self.fields, self.data_sources,
                                                                                          self.filter_definitions,
                                                                                          self.order)
-
-    @classmethod
-    def trailing_garbage(cls, *args, **kwargs):
-        raise ParseFatalException('trailing garbage detected '+ ', '.join(map(str, list(args))))
 
 
 class Field(ASTBase):
@@ -221,6 +220,15 @@ class Expression(ASTBase):
                 return [int(num.pop())]
         except:
             pass
+
+    @classmethod
+    def parse_boolean(cls, tokens):
+        if len(tokens) < 1:
+            raise ParseException('malformed boolean value (no value)')
+
+        value = tokens[0]
+
+        return str(value).lower() == 'true'
 
     @classmethod
     def parse_null(cls, tokens):
@@ -423,6 +431,7 @@ class BinaryCondition(ASTBase):
         less_or_equal = 4
         greater = 5
         greater_or_equal = 6
+        like = 7
 
     def __init__(self, left, operator, right, invert):
         self.left = left
@@ -474,6 +483,8 @@ class BinaryCondition(ASTBase):
             return cls.Operator.greater
         if op == '>=':
             return cls.Operator.greater_or_equal
+        if str(op).lower() == 'like':
+            return cls.Operator.like
 
         raise ParseException('unregistered operation: {}'.format(op))
 

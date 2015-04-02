@@ -28,7 +28,8 @@ class TestParser(TestBase):
 
     def test_expressions(self):
         p = odhql.OdhQLParser()
-        result = p.parse('select \'te st\' as "bl ub", 3 as "integer", 4.5 as float, null as "null" from b')
+        result = p.parse('select \'te st\' as "bl ub", 3 as "integer", 4.5 as float, null as "null", '
+                         'true as "true", false as "false" from b')
 
         fields = (f for f in result.fields)
 
@@ -53,6 +54,22 @@ class TestParser(TestBase):
         self.assertIsInstance(field, odhql.AliasedExpression)
         self.assertIsNone(field.value)
         self.assertEqual('null', field.alias)
+
+        field = next(fields)
+        self.assertIsInstance(field, odhql.AliasedExpression)
+        self.assertTrue(field.value)
+        self.assertEqual('true', field.alias)
+
+        field = next(fields)
+        self.assertIsInstance(field, odhql.AliasedExpression)
+        self.assertFalse(field.value)
+        self.assertEqual('false', field.alias)
+
+        try:
+            next(fields)
+            self.fail('test doesn\'t check all fields')
+        except StopIteration:
+            pass
 
     def test_function_call(self):
         p = odhql.OdhQLParser()
@@ -243,12 +260,14 @@ class TestParser(TestBase):
                          'and t.less < 1 '
                          'and t.less_or_equal <= 1 '
                          'and t.greater > 1 '
-                         'and t.greater_or_equal >= 1')
+                         'and t.greater_or_equal >= 1 '
+                         'and t."like" like \'test%\'')
 
         self.assertIsInstance(result.filter_definitions, odhql.FilterAlternative)
         self.assertIsInstance(result.filter_definitions[0], odhql.FilterCombination)
 
-        self.assertEqual(6, len(result.filter_definitions[0]))
+        self.assertEqual(len(odhql.BinaryCondition.Operator), len(result.filter_definitions[0]),
+                         msg='Missing operator test')
 
         for cond in result.filter_definitions[0]:
             self.assertIsInstance(cond, odhql.BinaryCondition)
@@ -351,7 +370,7 @@ class TestParser(TestBase):
     def test_malformed_expressions(self):
         p = odhql.OdhQLParser()
 
-      #  res = p.parse('select 1 as a from test WHERE 7dcasxa33sx')
+        # res = p.parse('select 1 as a from test WHERE 7dcasxa33sx')
 
         expressions_to_test = [
             ('select 1 as \'A\' from test', 'single quotes are not valid for aliases'),
@@ -366,7 +385,6 @@ class TestParser(TestBase):
             ('select outer(inner() as f from test', 'malformed nested function call'),
             ('select 1 as b from test where func()', 'malformed where condition'),
             ('select 1 as a from test WHERE 7dcasxa33sx', 'trailing garbage')
-            #,('select t.a from t where (1 = t.a or t.b = \'b\') and t.c is null', '')
         ]
 
         for expr, reason in expressions_to_test:
