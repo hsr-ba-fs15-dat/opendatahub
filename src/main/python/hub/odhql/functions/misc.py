@@ -1,11 +1,21 @@
 """
-ANSI SQL (SQL 92) Functions
+Misc. functions/utils
 """
+
+import pandas as pd
+import numpy as np
 
 from hub.odhql.functions.core import VectorizedFunction, OdhQLExecutionException
 
 
-class CastFunction(VectorizedFunction):
+class NVL(VectorizedFunction):
+    name = 'NVL'
+
+    def apply(self, a, b):
+        return a.where(~pd.isnull(a), b)
+
+
+class Cast(VectorizedFunction):
     name = 'CAST'
 
     type_map = {
@@ -23,17 +33,12 @@ class CastFunction(VectorizedFunction):
         'double precision': float,
         'real': float,
         'null': None,
+        'bool': np.bool_,
+        'boolean': np.bool_,
     }
 
     def apply(self, values, dtypes):
         type_ = self.type_map.get(dtypes[0].lower())
-        if not type:
+        if not type_:
             raise OdhQLExecutionException('CAST: Type "{}" does not exist'.format(type_))
-        return values.astype(type)
-
-
-class ConcatFunction(VectorizedFunction):
-    name = 'CONCAT'
-
-    def apply(self, a, b, *args):
-        return a.str.cat([b] + list(args))
+        return values.astype(type_)

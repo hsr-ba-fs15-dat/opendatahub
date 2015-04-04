@@ -12,9 +12,9 @@ import logging
 
 EMPLOYEES_CSV = """
 Id,Prename,Surname,Boss
-0,Dieter,Holzmann,
-1,Lukas,Boehm,0
-2,Eric,Koertig,0
+0,Dieter ,Holzmann,
+1, Lukas,Boehm,0
+2, Eric ,Koertig,0
 3,Markus,Schäfer,0
 4,Anna,Oster,1
 5,Christina,Peters,1
@@ -39,24 +39,34 @@ Id,Parent,Prename,Surname,Age
 """
 
 
-class TestInterpreter(TestBase):
+class TestInterpreterBase(TestBase):
     def setUp(self):
-        self.employees = File.from_string('employees.csv', EMPLOYEES_CSV).to_df()
-        self.children = File.from_string('children.csv', CHILDREN_CSV).to_df()
-
-        self.source_dfs = {
-            'employee': self.employees,
-            'child': self.children
-        }
+        self.source_dfs = self.get_source_dfs()
 
         self.parser = OdhQLParser()
         self.interpreter = OdhQLInterpreter(self.source_dfs)
+
+    def get_source_dfs(self):
+        raise NotImplementedError
 
     def execute(self, query):
         logging.info('Executing query "%s"', query)
         df = self.interpreter.execute(query)
         logging.info('Query result: %s', df)
         return df
+
+
+class TestInterpreter(TestInterpreterBase):
+    def setUp(self):
+        self.employees = File.from_string('employees.csv', EMPLOYEES_CSV).to_df()
+        self.children = File.from_string('children.csv', CHILDREN_CSV).to_df()
+        super(TestInterpreter, self).setUp()
+
+    def get_source_dfs(self):
+        return {
+            'employee': self.employees,
+            'child': self.children
+        }
 
     def test_select(self):
         df = self.execute('SELECT employee.Id, employee.Prename FROM employee')

@@ -5,6 +5,9 @@
 import inspect
 
 import pandas as pd
+import numpy as np
+import sre_constants
+import re
 
 from opendatahub.utils.plugins import RegistrationMixin
 from ..exceptions import OdhQLExecutionException
@@ -15,6 +18,13 @@ class OdhQLFunction(RegistrationMixin):
     functions = {}
 
     name = ''
+
+    _type_assertions = {
+        'integer': int,
+        'string': basestring,
+        'float': float,
+        'boolean': np.bool_,
+    }
 
     def __init__(self, raw_args=None):
         self.raw_args = raw_args or []
@@ -47,6 +57,36 @@ class OdhQLFunction(RegistrationMixin):
             raise OdhQLExecutionException('Function "{}" does not exist'.format(name))
 
         return cls(args)
+
+    def assert_in(self, name, value, possible_values):
+        if value not in possible_values:
+            raise OdhQLExecutionException('Expected parameter "{}" of function "{}" to be one of following: {}. '
+                                          'Got "{}" instead'.format(name, self.name, ', '.join(possible_values), value))
+
+    def assert_type(self, name, value, type_name):
+        type_ = self._type_assertions[type_name]
+        if not isinstance(value, type_):
+            raise OdhQLExecutionException('Expected parameter "{}" of function "{}" to be of type "{}". '
+                                          'Got value "{}" of type "{}" instead'.format(name, self.name, type_name,
+                                                                                       value,
+                                                                                       type(value).__name__))
+
+    def assert_int(self, name, value):
+        self.assert_type(name, value, 'integer')
+
+    def assert_str(self, name, value):
+        self.assert_type(name, value, 'string')
+
+    def assert_bool(self, name, value):
+        self.assert_type(name, value, 'boolean')
+
+    def assert_regex(self, name, value):
+        self.assert_str(name, value)
+        try:
+            re.compile(value)
+        except sre_constants.error as e:
+            raise OdhQLExecutionException('Invalid regular expression for parameter "{}" of function "{}": "{}"'
+                                          .format(name, self.name, e.message))
 
 
 class VectorizedFunction(OdhQLFunction):
