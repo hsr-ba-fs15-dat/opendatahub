@@ -1,7 +1,9 @@
 """
 """
 import pandas as pd
+import geopandas as gp
 import numpy as np
+import collections
 
 import hub.odhql.parser as parser
 import hub.odhql.functions as functions
@@ -40,8 +42,22 @@ class OdhQLInterpreter(object):
 
         # select requested fields from filtered dataframe
         if self.df.shape[0]:
+            cls = self.df.__class__
+            kw = {}
+
             cols = [self.interpret_field(self.df, f) for f in query.fields]
-            self.df = self.df.__class__(cols).T
+
+            geoseries = collections.OrderedDict(
+                [(series.name, series) for series in cols if isinstance(series, gp.GeoSeries)])
+            if geoseries:
+                cls = gp.GeoDataFrame
+                geometry = geoseries.get('geometry', geoseries.values()[0])
+                geometry.name = 'geometry'
+                kw['crs'] = geometry.crs
+
+            self.df = cls(cols, **kw).T
+        else:
+            self.df = pd.DataFrame(columns=[getattr(f, 'alias', f.name) for f in query.fields])
 
         return self.df
 
@@ -61,7 +77,7 @@ class OdhQLInterpreter(object):
             right = self.dfs[cond.right.prefix]
             name_left = self.make_name(cond.left.prefix, cond.left.name)
             name_right = self.make_name(cond.right.prefix, cond.right.name)
-            df = left.merge(right, how='left', left_on=name_left, right_on=name_right)
+            df = left.merge(right, how='left', left_on=[name_left], right_on=[name_right])
             self.dfs[cond.left.prefix] = self.dfs[cond.right.prefix] = df
             return df
 
@@ -71,7 +87,7 @@ class OdhQLInterpreter(object):
         else:
             assert False, 'Unexpected DataSource type "{}"'.format(type(ds))
 
-    def interpret_field(self, df, field):
+    def interpret_field(self, df, field, expand=True):
         alias = getattr(field, 'alias', None)
 
         if isinstance(field, parser.Field):
@@ -82,14 +98,17 @@ class OdhQLInterpreter(object):
         elif isinstance(field, parser.Expression):
             value = field.value
 
+            if not expand:
+                return value
+
             if not isinstance(value, pd.Series):
                 value = np.full(df.shape[0], value, dtype=object if isinstance(value, basestring) else type(value))
 
             series = pd.Series(value, name=alias)
 
         elif isinstance(field, parser.Function):
-            args = [self.interpret_field(df, arg) for arg in field.args]
-            series = functions.execute(field.name, args)
+            args = [self.interpret_field(df, arg, expand=False) for arg in field.args]
+            series = functions.execute(field.name, df.shape[0], args)
 
         else:
             assert False, 'Unknown field type "{}"'.format(type(field))

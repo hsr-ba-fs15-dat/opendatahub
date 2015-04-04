@@ -1,5 +1,5 @@
 """
-ANSI SQL (SQL 92) Functions
+OdhQL string functions
 """
 
 from hub.odhql.functions.core import VectorizedFunction, OdhQLExecutionException
@@ -9,9 +9,10 @@ class Concat(VectorizedFunction):
     name = 'CONCAT'
 
     def apply(self, a, b, *args):
-        for arg in [a, b] + list(args):
-            self.assert_str('strings', arg[0])
-        return a.str.cat([b] + list(args))
+        args = [self.expand(arg) for arg in [a, b] + list(args)]
+        for arg in args:
+            self.assert_str('string', arg[0])
+        return args[0].str.cat(args[1:])
 
 
 class Trim(VectorizedFunction):
@@ -65,11 +66,11 @@ class Length(VectorizedFunction):
 class Extract(VectorizedFunction):
     name = 'EXTRACT'
 
-    def apply(self, strings, patterns):
+    def apply(self, strings, pattern):
         self.assert_str('string', strings[0])
-        self.assert_regex('pattern', patterns[0])
+        self.assert_regex('pattern', pattern)
         try:
-            return strings.str.extract(patterns[0])
+            return strings.str.extract(pattern)
         except ValueError as e:
             raise OdhQLExecutionException(e.message)
 
@@ -79,8 +80,8 @@ class StartsWith(VectorizedFunction):
 
     def apply(self, strings, start):
         self.assert_str('string', strings[0])
-        self.assert_str('start', start[0])
-        return strings.str.startswith(start[0])
+        self.assert_str('start', start)
+        return strings.str.startswith(start)
 
 
 class EndsWith(VectorizedFunction):
@@ -88,8 +89,8 @@ class EndsWith(VectorizedFunction):
 
     def apply(self, strings, end):
         self.assert_str('string', strings[0])
-        self.assert_str('end', end[0])
-        return strings.str.endswith(end[0])
+        self.assert_str('end', end)
+        return strings.str.endswith(end)
 
 
 class Get(VectorizedFunction):
@@ -97,8 +98,8 @@ class Get(VectorizedFunction):
 
     def apply(self, strings, index):
         self.assert_str('string', strings[0])
-        self.assert_int('index', index[0])
-        return strings.str.get(index[0])
+        self.assert_int('index', index)
+        return strings.str.get(index)
 
 
 class Contains(VectorizedFunction):
@@ -106,9 +107,9 @@ class Contains(VectorizedFunction):
 
     def apply(self, strings, pattern, match_case):
         self.assert_str('string', strings[0])
-        self.assert_regex('pattern', pattern[0])
-        self.assert_bool('match_case', match_case[0])
-        return strings.str.contains(pattern[0], match_case[0])
+        self.assert_regex('pattern', pattern)
+        self.assert_bool('match_case', match_case)
+        return strings.str.contains(pattern, match_case)
 
 
 class Replace(VectorizedFunction):
@@ -116,40 +117,45 @@ class Replace(VectorizedFunction):
 
     def apply(self, strings, pattern, replace, match_case):
         self.assert_str('string', strings[0])
-        self.assert_regex('pattern', pattern[0])
-        self.assert_str('replace', replace[0])
-        self.assert_bool('match_case', match_case[0])
-        return strings.str.replace(pattern[0], replace[0], case=match_case[0])
+        self.assert_regex('pattern', pattern)
+        self.assert_str('replace', replace)
+        self.assert_bool('match_case', match_case)
+        return strings.str.replace(pattern, replace, case=match_case)
 
 
 class Repeat(VectorizedFunction):
     name = 'REPEAT'
 
     def apply(self, strings, times):
-        return strings.str.match(times[0])
+        self.assert_str('string', strings[0])
+        self.assert_int('times', times)
+        return strings.str.repeat(times)
 
 
 class Pad(VectorizedFunction):
     name = 'PAD'
 
     def apply(self, strings, width, side):
-        self.assert_in('side', side[0], ['left', 'right', 'both'])
-        self.assert_type('width', width[0], int)
-        return strings.str.pad(width[0], side[0])
+        self.assert_str('string', strings[0])
+        self.assert_in('side', side, ['left', 'right', 'both'])
+        self.assert_int('width', width)
+        return strings.str.pad(width, side)
 
 
 class Count(VectorizedFunction):
     name = 'COUNT'
 
     def apply(self, strings, pattern):
-        self.assert_regex('pattern', pattern[0])
-        return strings.str.count(pattern[0])
+        self.assert_str('string', strings[0])
+        self.assert_regex('pattern', pattern)
+        return strings.str.count(pattern)
 
 
 class Substring(VectorizedFunction):
     name = 'SUBSTRING'
 
     def apply(self, strings, start, end):
-        self.assert_int('start', start[0])
-        self.assert_int('end', end[0])
-        return strings.str.slice(start[0], end[0])
+        self.assert_str('string', strings[0])
+        self.assert_int('start', start)
+        self.assert_int('end', end)
+        return strings.str.slice(start, end)

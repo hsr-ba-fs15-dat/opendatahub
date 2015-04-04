@@ -1,17 +1,21 @@
 # -*- coding: utf-8 -*-
+"""
+Tests for OdhQL functions.
+Are compared to python equivalents ("known" to operate correctly) instead of fixed/floored values.
+"""
 
+import pandas as pd
 
 from hub.tests.tests_interpreter import TestInterpreterBase, CHILDREN_CSV, EMPLOYEES_CSV
 from hub.structures.file import File
 from hub.odhql.exceptions import OdhQLExecutionException
-import pandas as pd
 
 
-class TestInterpreter(TestInterpreterBase):
+class TestStringFunctions(TestInterpreterBase):
     def setUp(self):
         self.employees = File.from_string('employees.csv', EMPLOYEES_CSV).to_df()
         self.children = File.from_string('children.csv', CHILDREN_CSV).to_df()
-        super(TestInterpreter, self).setUp()
+        super(TestStringFunctions, self).setUp()
 
     def get_source_dfs(self):
         return {
@@ -72,18 +76,24 @@ class TestInterpreter(TestInterpreterBase):
         self.assertListEqual(df.contains_ann.tolist(), ['ann' in n.lower() for n in self.employees.Prename.tolist()])
 
     def test_replace(self):
-        self.execute('SELECT REPLACE(e.prename, \'ann\', \'ANN\', False) as replaced FROM employee AS e')
+        df = self.execute('SELECT REPLACE(e.prename, \'ann\', \'ANN\', False) as replaced FROM employee AS e')
+        self.assertTrue(all(['ANN' in n for n in df.replaced.tolist() if 'ann' in n.lower()]))
 
-    def test_cast_int_to_str(self):
-        df = self.execute('SELECT CAST(c.age, \'str\') AS age FROM child AS c')
-        self.assertIsInstance(df.age[0], basestring)
+    def test_repeat(self):
+        df = self.execute('SELECT REPEAT(e.prename, 4) as repeated FROM employee AS e')
+        self.assertListEqual(df.repeated.tolist(), [4 * n for n in self.employees.Prename.tolist()])
 
-    def test_cast_unknown_param(self):
-        self.assertRaises(OdhQLExecutionException,
-                          lambda: self.execute('SELECT CAST(e.surname, \'foobar\') AS test FROM employee AS e'))
+    def test_pad_left(self):
+        df = self.execute('SELECT PAD(e.prename, 20, \'left\') as padded FROM employee AS e')
+        self.assertListEqual(df.padded.tolist(), [(' ' * (20 - len(n))) + n for n in self.employees.Prename.tolist()])
 
-    def test_nvl(self):
-        self.execute('SELECT NVL(c.age, c.id) AS with_col, NVL(c.age, \'no age\') AS with_literal FROM child AS c')
+    def test_count(self):
+        df = self.execute('SELECT COUNT(e.prename, \'i\') as occurrences FROM employee AS e')
+        self.assertListEqual(df.occurrences.tolist(), [n.count('i') for n in self.employees.Prename.tolist()])
+
+    def test_substring(self):
+        df = self.execute('SELECT SUBSTRING(e.prename, 0, 2) as subs FROM employee AS e')
+        self.assertListEqual(df.subs.tolist(), [n[0:2] for n in self.employees.Prename.tolist()])
 
     def test_fails(self):
         statements = (
@@ -104,7 +114,79 @@ class TestInterpreter(TestInterpreterBase):
             'SELECT ENDSWITH(c.age, \'Ann\') AS test FROM child AS c',
             'SELECT CONTAINS(c.prename, 4, True) AS test FROM child AS c',
             'SELECT CONTAINS(c.prename, \'str\', 4) AS test FROM child AS c',
+            'SELECT REPLACE(c.prename, \'str\', 4) AS test FROM child AS c',
+            'SELECT REPLACE(c.prename, 4, \'str\') AS test FROM child AS c',
+            'SELECT REPLACE(c.age, \'str\', \'other\') AS test FROM child AS c',
+            'SELECT REPEAT(c.age, 4) AS test FROM child AS c',
+            'SELECT REPEAT(c.prename, \'str\') AS test FROM child AS c',
+            'SELECT PAD(c.prename, 20, \'some_side\') AS test FROM child AS c',
+            'SELECT PAD(c.age, 20, \'left\') AS test FROM child AS c',
+            'SELECT PAD(c.prename, \'str\', \'left\') AS test FROM child AS c',
+            'SELECT COUNT(c.age, \'i\') AS test FROM child AS c',
+            'SELECT COUNT(c.prename, 4) AS test FROM child AS c',
+            'SELECT SUBSTRING(c.prename, 4, \'a\') AS test FROM child AS c',
+            'SELECT SUBSTRING(c.prename, \'a\', 4) AS test FROM child AS c',
+            'SELECT SUBSTRING(c.age, 0, 4) AS test FROM child AS c',
         )
 
         for statement in statements:
             self.assertRaises(OdhQLExecutionException, lambda: self.execute(statement))
+
+
+class TestMiscFunctions(TestInterpreterBase):
+    def setUp(self):
+        self.employees = File.from_string('employees.csv', EMPLOYEES_CSV).to_df()
+        self.children = File.from_string('children.csv', CHILDREN_CSV).to_df()
+        super(TestMiscFunctions, self).setUp()
+
+    def get_source_dfs(self):
+        return {
+            'employee': self.employees,
+            'child': self.children
+        }
+
+    def test_cast_int_to_str(self):
+        df = self.execute('SELECT CAST(c.age, \'str\') AS age FROM child AS c')
+        self.assertIsInstance(df.age[0], basestring)
+
+    def test_nvl(self):
+        self.execute('SELECT NVL(c.age, c.id) AS with_col, NVL(c.age, \'no age\') AS with_literal FROM child AS c')
+
+    def test_fails(self):
+        statements = (
+            'SELECT CAST(e.surname, \'foobar\') AS test FROM employee AS e',
+
+        )
+
+        for statement in statements:
+            self.assertRaises(OdhQLExecutionException, lambda: self.execute(statement))
+
+
+class TestGeometryFunctions(TestInterpreterBase):
+    def setUp(self):
+        self.employees = File.from_string('employees.csv', EMPLOYEES_CSV).to_df()
+        self.children = File.from_string('children.csv', CHILDREN_CSV).to_df()
+        super(TestGeometryFunctions, self).setUp()
+
+    def get_source_dfs(self):
+        return {
+            'employee': self.employees,
+            'child': self.children
+        }
+
+    def test_geom_from_text(self):
+        self.execute('SELECT c.prename, ST_GeomFromText(\'POINT(4 6)\') as blabla FROM child AS c')
+
+    def test_set_srid(self):
+        df = self.execute('SELECT c.prename, ST_SetSRID(ST_GeomFromText(\'POINT(48.8183157 7.2234283)\'), 4326) as hsr '
+                          'FROM child AS c')
+        self.assertTrue(df.crs['init'], 'epsg:4326')
+
+    def test_srid(self):
+        self.execute('SELECT c.prename, '
+                     'ST_SRID(ST_SetSRID(ST_GeomFromText(\'POINT(48.8183157 7.2234283)\'), 4326)) as hsr '
+                     'FROM child AS c')
+
+    def test_astext(self):
+        self.execute('SELECT c.prename, ST_AsText(ST_GeomFromText(\'POINT(48.8183157 7.2234283)\')) as hsr '
+                     'FROM child AS c')

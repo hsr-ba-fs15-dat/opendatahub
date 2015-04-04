@@ -23,10 +23,11 @@ class OdhQLFunction(RegistrationMixin):
         'integer': int,
         'string': basestring,
         'float': float,
-        'boolean': np.bool_,
+        'boolean': bool,
     }
 
-    def __init__(self, raw_args=None):
+    def __init__(self, num_rows=1, raw_args=None):
+        self.num_rows = num_rows
         self.raw_args = raw_args or []
         self.check_args()
 
@@ -36,7 +37,7 @@ class OdhQLFunction(RegistrationMixin):
         given_args = len(self.raw_args)
         if not (argspec.keywords or argspec.varargs) and given_args != expected_args:
             raise OdhQLExecutionException(
-                '{} takes exactly {} arguments, {} given'.format(self.name, expected_args, given_args))
+                '{} takes exactly {} arguments, {} given.'.format(self.name, expected_args, given_args))
 
     @classmethod
     def register_child(cls, name, bases, own_dict):
@@ -45,31 +46,32 @@ class OdhQLFunction(RegistrationMixin):
             cls.functions[name.lower()] = cls
 
     @staticmethod
-    def execute(name, args):
-        fn = OdhQLFunction.create(name, args)
+    def execute(name, num_rows, args):
+        fn = OdhQLFunction.create(name, num_rows, args)
         return fn.execute()
 
     @staticmethod
-    def create(name, args):
+    def create(name, num_rows, args):
         try:
             cls = OdhQLFunction.functions[name.lower()]
         except KeyError:
-            raise OdhQLExecutionException('Function "{}" does not exist'.format(name))
+            raise OdhQLExecutionException('Function "{}" does not exist.'.format(name))
 
-        return cls(args)
+        return cls(num_rows, args)
 
     def assert_in(self, name, value, possible_values):
         if value not in possible_values:
             raise OdhQLExecutionException('Expected parameter "{}" of function "{}" to be one of following: {}. '
-                                          'Got "{}" instead'.format(name, self.name, ', '.join(possible_values), value))
+                                          'Got "{}" instead.'.format(name, self.name, ', '.join(possible_values),
+                                                                     value))
 
     def assert_type(self, name, value, type_name):
         type_ = self._type_assertions[type_name]
         if not isinstance(value, type_):
             raise OdhQLExecutionException('Expected parameter "{}" of function "{}" to be of type "{}". '
-                                          'Got value "{}" of type "{}" instead'.format(name, self.name, type_name,
-                                                                                       value,
-                                                                                       type(value).__name__))
+                                          'Got value "{}" of type "{}" instead.'.format(name, self.name, type_name,
+                                                                                        value,
+                                                                                        type(value).__name__))
 
     def assert_int(self, name, value):
         self.assert_type(name, value, 'integer')
@@ -93,11 +95,16 @@ class VectorizedFunction(OdhQLFunction):
     _is_abstract = True
 
     def execute(self):
-        df = pd.DataFrame({str(i): series for i, series in enumerate(self.raw_args)})
-        return self.apply(*[df[c] for c in df.columns])
+        return self.apply(*self.raw_args)
 
     def apply(self, *args):
         raise NotImplementedError
+
+    def expand(self, arg):
+        if not isinstance(arg, pd.Series):
+            arg = pd.Series(np.full(self.num_rows, arg, dtype=object if isinstance(arg, basestring) else type(arg)))
+
+        return arg
 
 
 class ElementFunction(OdhQLFunction):

@@ -37,8 +37,9 @@ class Cast(VectorizedFunction):
         'boolean': np.bool_,
     }
 
-    def apply(self, values, dtypes):
-        type_ = self.type_map.get(dtypes[0].lower())
+    def apply(self, values, type_):
+        self.assert_str('type', type_)
+        type_ = self.type_map.get(type_.lower())
         if not type_:
             raise OdhQLExecutionException('CAST: Type "{}" does not exist'.format(type_))
         return values.astype(type_)
