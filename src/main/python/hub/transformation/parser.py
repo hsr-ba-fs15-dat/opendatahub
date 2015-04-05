@@ -182,12 +182,15 @@ class OdhQLParser(object):
         order_by_declaration.setParseAction(Query.parse_order_by)
 
         query = (field_declaration_list('fields') + data_source_declaration('datasources') +
-                 Optional(filter_declaration('filter')) + Optional(order_by_declaration)('sort') + StringEnd())
+                 Optional(filter_declaration('filter')) + Optional(order_by_declaration)('sort'))
         query.setParseAction(Query.parse)
 
         query.validate()
 
-        return query
+        union_query = delimitedList(query, delim=CaselessKeyword('union')) + StringEnd()
+        union_query.setParseAction(Union.parse)
+
+        return union_query
 
     def parse(self, input):
         return self.grammar.parseString(input)[0]
@@ -196,6 +199,24 @@ class OdhQLParser(object):
 class ASTBase(object):
     def accept(self, visitor):
         visitor.visit(self)
+
+
+class Union(ASTBase):
+    def __init__(self, queries):
+        self.queries = queries
+
+    @classmethod
+    def parse(cls, tokens):
+        if len(tokens) < 1:
+            raise ParseException('malformed Union (no queries)')
+
+        if len(tokens) < 2:
+            return
+
+        return cls(list(tokens[:]))
+
+    def __repr__(self):
+        return '<Union queries={}>'.format(self.queries)
 
 
 class Query(ASTBase):

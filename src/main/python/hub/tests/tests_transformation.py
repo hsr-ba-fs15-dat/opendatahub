@@ -381,6 +381,23 @@ class TestParser(TestBase):
         self.assertEqual('a', order.field.prefix)
         self.assertEqual(odhql.OrderBy.Direction.ascending, order.direction)
 
+    def test_union(self):
+        p = odhql.OdhQLParser()
+
+        result = p.parse('select a.a from a order by a.a union select b.a from b order by b.b')
+
+        self.assertIsInstance(result, odhql.Union)
+
+        queries = (q for q in result.queries)
+
+        query = next(queries)
+        self.assertIsInstance(query, odhql.Query)
+        self.assertEqual(1, len(query.fields))
+
+        query = next(queries)
+        self.assertIsInstance(query, odhql.Query)
+        self.assertEqual(1, len(query.fields))
+
     def test_malformed_expressions(self):
         p = odhql.OdhQLParser()
 
