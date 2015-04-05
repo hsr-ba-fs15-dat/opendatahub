@@ -1,0 +1,6 @@
+"""
+"""
+
+
+class OdhQLExecutionException(Exception):
+    pass
