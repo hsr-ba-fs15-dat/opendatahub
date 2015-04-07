@@ -384,7 +384,7 @@ class TestParser(TestBase):
     def test_union(self):
         p = odhql.OdhQLParser()
 
-        result = p.parse('select a.a from a order by a.a union select b.a from b order by b.b')
+        result = p.parse('select a.a from a union select b.a from b order by b.b')
 
         self.assertIsInstance(result, odhql.Union)
 
@@ -415,7 +415,8 @@ class TestParser(TestBase):
             ('select func( as f from test', 'malformed function call'),
             ('select outer(inner() as f from test', 'malformed nested function call'),
             ('select 1 as b from test where func()', 'malformed where condition'),
-            ('select 1 as a from test WHERE 7dcasxa33sx', 'trailing garbage')
+            ('select 1 as a from test WHERE 7dcasxa33sx', 'trailing garbage'),
+            ('select a.a from a order by a.a union select b.a from b order by b.b', 'order only at end of unions')
         ]
 
         for expr, reason in expressions_to_test:

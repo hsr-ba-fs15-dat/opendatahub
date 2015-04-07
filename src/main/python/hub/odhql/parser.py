@@ -20,64 +20,51 @@ class OdhQLParser(object):
 
     All field references must be prefixed by the name of the data source they're coming from.
 
-    Description in EBNF (as checked by http://www.icosaedro.it/bnf_chk/bnf_chk-on-line.html, because that seemed
-    sensible):
+    Description in BNF (as used by the diagram generator at http://bottlecaps.de/rr/ui):
 
     ---------------------------------------------------------------------------
+    UnionQuery ::= Query ( "union" Query )* ( OrderByList )?
+    Query ::= FieldSelection DataSourceSelection ( FilterList )?
 
-    Query = FieldSelection DataSourceSelection [ FilterList ] [ OrderByList ] ;
+    FieldSelection ::= "select" AliasedFieldEquiv ( "," AliasedFieldEquiv )*
+    AliasedFieldEquiv ::= FieldEquiv "as" Alias
+    FieldEquiv ::= Function | Value | Field
+    Function ::= Identifier "(" ( ListOfFunctionArguments )? ")"
+    ListOfFunctionArguments ::= FieldEquiv ( ( "," FieldEquiv )* )?
 
-    FieldSelection = "select" AliasedFieldEquiv { "," AliasedFieldEquiv } ;
 
-    AliasedFieldEquiv = FieldEquiv "as" Alias ;
-    FieldEquiv = Function | Value | Field ;
+    Field ::= DataSourceNameOrAlias "." FieldName
+    DataSourceSelection ::= "from" DataSourceName ( "as" Alias )? ( JoinDefinition )*
+    JoinDefinition ::= "join" DataSourceName ( "as" Alias )? "on" JoinCondition
+    JoinCondition ::= SingleJoinCondition | "(" SingleJoinCondition ( "and" SingleJoinCondition )* ")"
+    SingleJoinCondition ::= Field "=" Field
+    DataSourceNameOrAlias ::= DataSourceName | Alias
+    FilterList ::= "where" FilterAlternative
+    FilterAlternative ::= FilterCombination ( "or" FilterCombination )*
+    FilterCombination ::= FilterDefinition ( "and" FilterDefinition )*
+    FilterDefinition ::= BinaryCondition | InCondition |
+                       IsNullCondition | "(" FilterAlternative ")"
+    BinaryCondition ::= FieldEquiv BinaryOperator FieldEquiv
+    BinaryOperator ::= "=" | "!=" | "<" | "<=" | ">" | ">=" | "like"
+    InCondition ::= FieldEquiv ( "not" )? "in" "(" Value ( "," Value )* ")"
+    IsNullCondition ::= Field "is" ( "not" )? Null
+    OrderByList ::= "order" "by" OrderByField ( "," OrderByField )*
+    OrderByField ::= Field ( "asc" | "desc" )?
+    Integer ::= ( "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" )*
+    DataSourceName ::= Identifier
+    FieldName ::= Identifier
+    Alias ::= Identifier
 
-    Function = Identifier "(" ListOfFunctionArguments ")" ;
-    ListOfFunctionArguments = [ FieldEquiv [ { "," FieldEquiv } ] ] ;
+    Value ::= SingleQuotedString | Number | Boolean | Null
+    Number ::= Integer | Float
+    Float ::= Integer "." Integer
+    Boolean ::= "true" | "false"
+    Null ::= "null"
 
-    Value = SingleQuotedString | Number | Boolean | Null ;
-    Number = Integer | Float ;
-    Float = Integer "." Integer ;
-    Boolean = "true" | "false" ;
-    Null = "null" ;
+    SingleQuotedString ::= "string in single quotes"
+    DoubleQuotedString ::= "string in double quotes"
 
-    Field = DataSourceNameOrAlias "." FieldName ;
-
-    DataSourceSelection = "from" DataSourceName [ "as" Alias ] { JoinDefinition } ;
-    JoinDefinition = "join" DataSourceName [ "as" Alias ] "on" JoinCondition ;
-
-    JoinCondition = SingleJoinCondition | "(" SingleJoinCondition { "and" SingleJoinCondition } ")" ;
-    SingleJoinCondition = Field "=" Field ;
-
-    DataSourceNameOrAlias = DataSourceName | Alias ;
-
-    FilterList = "where" FilterAlternative ;
-
-    FilterAlternative = FilterCombination { "or" FilterCombination } ;
-    FilterCombination = FilterDefinition { "and" FilterDefinition } ;
-    FilterDefinition = BinaryCondition | InCondition |
-                       IsNullCondition | "(" FilterAlternative ")" ;
-
-    # Note that at least one side must reference a real field somewhere
-    BinaryCondition = FieldEquiv BinaryOperator FieldEquiv ;
-    BinaryOperator = "=" | "!=" | "<" | "<=" | ">" | ">=" | "like" ;
-
-    InCondition = FieldEquiv [ "not" ] "in" "(" Value { "," Value } ")" ;
-    IsNullCondition = Field "is" [ "not" ] Null ;
-
-    OrderByList = "order" "by" OrderByField { "," OrderByField } ;
-    OrderByField = Field [ "asc" | "desc" ] ;
-    Integer = { "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" } ;
-
-    DataSourceName = Identifier ;
-    FieldName = Identifier ;
-    Alias = Identifier ;
-
-    # SingleQuotedString = string in single quotes
-    # DoubleQuotedString = string in double quotes
-
-    Identifier = ( "a..z" | "A..Z" | "_" ) { "a..z" | "A..Z" | "_" | Integer } | DoubleQuotedString ;
-
+    Identifier ::= ( "a..z" | "A..Z" | "_" ) ( "a..z" | "A..Z" | "_" | Integer )* | DoubleQuotedString
     ---------------------------------------------------------------------------
     """
 
@@ -182,12 +169,13 @@ class OdhQLParser(object):
         order_by_declaration.setParseAction(Query.parse_order_by)
 
         query = (field_declaration_list('fields') + data_source_declaration('datasources') +
-                 Optional(filter_declaration('filter')) + Optional(order_by_declaration)('sort'))
+                 Optional(filter_declaration('filter')) )
         query.setParseAction(Query.parse)
 
         query.validate()
 
-        union_query = delimitedList(query, delim=CaselessKeyword('union')) + StringEnd()
+        union_query = (delimitedList(query, delim=CaselessKeyword('union'))('queries') +
+                       Optional(order_by_declaration)('sort') + StringEnd())
         union_query.setParseAction(Union.parse)
 
         return union_query
@@ -202,8 +190,9 @@ class ASTBase(object):
 
 
 class Union(ASTBase):
-    def __init__(self, queries):
+    def __init__(self, queries, order):
         self.queries = queries
+        self.order = order
 
     @classmethod
     def parse(cls, tokens):
@@ -213,18 +202,20 @@ class Union(ASTBase):
         if len(tokens) < 2:
             return
 
-        return cls(list(tokens[:]))
+        queries = list(tokens.get('queries'))
+        order = list(tokens.get('sort')[0]) if 'sort' in tokens else None
+
+        return cls(queries, order)
 
     def __repr__(self):
         return '<Union queries={}>'.format(self.queries)
 
 
 class Query(ASTBase):
-    def __init__(self, fields, data_sources, filter_definitions, order):
+    def __init__(self, fields, data_sources, filter_definitions):
         self.fields = fields
         self.data_sources = data_sources
         self.filter_definitions = filter_definitions
-        self.order = order
 
     @classmethod
     def parse(cls, tokens):
@@ -236,9 +227,8 @@ class Query(ASTBase):
         fields = list(tokens.get('fields'))
         data_sources = list(tokens.get('datasources'))
         filter_definitions = tokens.get('filter')[0] if 'filter' in tokens else None
-        order = list(tokens.get('sort')[0]) if 'sort' in tokens else None
 
-        return cls(fields, data_sources, filter_definitions, order)
+        return cls(fields, data_sources, filter_definitions)
 
     @classmethod
     def parse_order_by(cls, tokens):
