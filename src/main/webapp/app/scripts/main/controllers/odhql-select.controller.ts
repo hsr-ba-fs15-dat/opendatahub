@@ -24,6 +24,9 @@ module odh.main {
                 resolve: {
                     items: () => {
                         return this.items;
+                    },
+                    selected: () => {
+                        return this.selected;
                     }
                 }
             });
@@ -41,12 +44,9 @@ module odh.main {
 
     class OdhqlSelectInstanceController {
 
-        selected:any;
-
-        constructor(private $modalInstance, private items) {
+        constructor(private $modalInstance, private items, private selected) {
             this.selected = {
-                item: this.items[0],
-                items: [],
+                items: selected || [],
                 remove: (item) => {
                     var index = this.selected.items.indexOf(item);
                     if (index > -1) {

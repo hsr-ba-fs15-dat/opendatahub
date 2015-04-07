@@ -89,8 +89,8 @@ module openDataHub {
                     controller: 'OdhQLConsoleController as vm',
                     templateUrl: 'views/odhql-console.html'
                 })
-                .state('ODHSQL', {
-                    url: '/odhsql',
+                .state('odhql', {
+                    url: '/odhql',
                     templateUrl: 'views/odhql-new.html',
                     controller: 'OdhQLController as vm'
 
