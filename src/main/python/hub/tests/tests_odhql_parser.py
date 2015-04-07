@@ -370,15 +370,26 @@ class TestParser(TestBase):
     def test_order_by(self):
         p = odhql.OdhQLParser()
 
-        result = p.parse('select a.a from a order by a.a')
+        result = p.parse('select a.a, a.b from a order by a.a, 2 desc, a')
 
-        self.assertEqual(1, len(result.order))
+        self.assertEqual(3, len(result.order))
 
         order = result.order[0]
         self.assertIsInstance(order, odhql.OrderBy)
 
+        self.assertIsInstance(order.field, odhql.Field)
         self.assertEqual('a', order.field.name)
         self.assertEqual('a', order.field.prefix)
+        self.assertEqual(odhql.OrderBy.Direction.ascending, order.direction)
+
+        order = result.order[1]
+        self.assertIsInstance(order.field, odhql.OrderByPosition)
+        self.assertEqual(2, order.field.position)
+        self.assertEqual(odhql.OrderBy.Direction.descending, order.direction)
+
+        order = result.order[2]
+        self.assertIsInstance(order.field, odhql.OrderByAlias)
+        self.assertEqual('a', order.field.alias)
         self.assertEqual(odhql.OrderBy.Direction.ascending, order.direction)
 
     def test_union(self):

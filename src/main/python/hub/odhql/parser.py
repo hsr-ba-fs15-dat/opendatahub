@@ -161,11 +161,20 @@ class OdhQLParser(object):
 
         filter_declaration = Suppress(CaselessKeyword('where')) + filter_alternative.copy()('conditions')
 
-        order_by_field = field + Optional(Or([CaselessKeyword('asc'), CaselessKeyword('desc')]))('direction')
+        order_by_position = Word(nums)
+        order_by_position.setParseAction(OrderByPosition.parse)
+
+        order_by_alias = identifier.copy()
+        order_by_alias.setParseAction(OrderByAlias.parse)
+
+        order_by_field_equiv = field | order_by_alias | order_by_position
+
+        order_by_field = (order_by_field_equiv('field') + Optional(Or([
+            CaselessKeyword('asc'), CaselessKeyword('desc')]))('direction'))
         order_by_field.setParseAction(OrderBy.parse)
 
         order_by_declaration = (Suppress(CaselessKeyword('order') + CaselessKeyword('by')) +
-                                delimitedList(order_by_field)('fields'))
+                                delimitedList(order_by_field, delim=',')('fields'))
         order_by_declaration.setParseAction(Query.parse_order_by)
 
         query = (field_declaration_list('fields') + data_source_declaration('datasources') +
@@ -208,7 +217,15 @@ class Union(ASTBase):
         return cls(queries, order)
 
     def __repr__(self):
-        return '<Union queries={}>'.format(self.queries)
+        return '<Union queries={} order={}>'.format(self.queries, self.order)
+
+    def accept(self, visitor):
+        visitor.visit(self)
+
+        for q in self.queries:
+            q.accept(visitor)
+
+        self.order.accept(visitor)
 
 
 class Query(ASTBase):
@@ -238,9 +255,20 @@ class Query(ASTBase):
         return [tokens.get('fields')]
 
     def __repr__(self):
-        return '<Query fields={} data_sources={} filter_definitions={} order={}>'.format(self.fields, self.data_sources,
-                                                                                         self.filter_definitions,
-                                                                                         self.order)
+        return '<Query fields={} data_sources={} filter_definitions={}>'.format(self.fields, self.data_sources,
+                                                                                self.filter_definitions)
+
+    def accept(self, visitor):
+        visitor.visit(self)
+
+        for f in self.fields:
+            f.accept(visitor)
+
+        for d in self.data_sources:
+            d.accept(visitor)
+
+        for f in self.filter_definitions:
+            f.accept(visitor)
 
 
 class Field(ASTBase):
@@ -688,6 +716,40 @@ class FilterCombination(FilterListBase):
 
 class FilterAlternative(FilterListBase):
     """list of filters joined by OR"""
+
+
+class OrderByPosition(ASTBase):
+    def __init__(self, position):
+        self.position = position
+
+    @classmethod
+    def parse(cls, tokens):
+        if len(tokens) < 1:
+            raise ParseException('malformed OrderByPosition (no position)')
+
+        try:
+            position = int(tokens[0])
+            return cls(position)
+        except ValueError:
+            pass
+
+    def __repr__(self):
+        return '<OrderByPosition position={}>'.format(self.position)
+
+
+class OrderByAlias(ASTBase):
+    def __init__(self, alias):
+        self.alias = alias
+
+    @classmethod
+    def parse(cls, tokens):
+        if len(tokens) < 1:
+            raise ParseException('malformed OrderByAlias (no alias)')
+
+        return cls(tokens[0])
+
+    def __repr__(self):
+        return '<OrderByAlias alias={}>'.format(self.alias)
 
 
 class OrderBy(ASTBase):
