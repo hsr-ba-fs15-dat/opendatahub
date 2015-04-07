@@ -89,11 +89,13 @@ module openDataHub {
                     controller: 'OdhQLConsoleController as vm',
                     templateUrl: 'views/odhql-console.html'
                 })
-                .state('newODHSQL', {
+                .state('ODHSQL', {
                     url: '/odhsql',
-                    controller: 'OdhQLController as snippet',
-                    templateUrl: 'views/odhql-new.html'
+                    templateUrl: 'views/odhql-new.html',
+                    controller: 'OdhQLController as vm'
+
                 })
+
             ;
         })
         .run(($http:ng.IHttpService, $window:ng.IWindowService) => {

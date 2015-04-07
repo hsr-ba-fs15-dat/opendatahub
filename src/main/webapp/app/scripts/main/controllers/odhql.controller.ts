@@ -9,6 +9,7 @@ module odh {
         public query:string;
         public columns:string[];
         public rows:{};
+        public submitted:boolean = false;
 
 
         constructor(private $http:ng.IHttpService, private $state:ng.ui.IStateService, private $scope:any,

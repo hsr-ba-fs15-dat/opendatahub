@@ -1,7 +1,7 @@
 <form name="form" class="form-horizontal">
     <fieldset>
 
-        <div class="form-group" ng-class="{'has-error': form.name.$invalid && snippet.submitted}">
+        <div class="form-group" ng-class="{'has-error': form.name.$invalid && vm.submitted}">
             <label class="col-md-3 control-label" for="name">Name/Titel</label>
 
             <div class="col-md-9">
@@ -19,7 +19,7 @@
         </div>
 
         <!-- Textarea -->
-        <div class="form-group" ng-class="{'has-error': form.description.$invalid && snippet.submitted}">
+        <div class="form-group" ng-class="{'has-error': form.description.$invalid && vm.submitted}">
             <label class="col-md-3 control-label" for="description">Beschreibung</label>
 
             <div class="col-md-9">
@@ -30,7 +30,7 @@
                           rows="4"
                         ></textarea>
 
-                <div ng-messages="form.description.$error" ng-show="snippet.submitted">
+                <div ng-messages="form.description.$error" ng-show="vm.submitted">
                     <span class="help-block">
                         <div ng-message="required">Bitte geben Sie eine Beschreibung an</div>
                     </span>
@@ -39,35 +39,79 @@
             </div>
         </div>
         <!-- /Textarea -->
-        <div ng-controller="odhqlSelectController">
-        <script type="text/ng-template" id="odhql-source-select.html">
-        <div class="modal-header">
-            <h3 class="modal-title">Wählen Sie Ihre Datenquellen aus</h3>
-        </div>
-        <div class="modal-body">
-            <ul>
-                <li ng-repeat="item in items">
-                    <a ng-click="selected.item = item">{{ item }}</a>
-                </li>
-            </ul>
-            Selected: <b>{{ selected.item }}</b>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-primary" ng-click="ok()">OK</button>
-            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
-        </div>
-    </script>
+        <div ng-controller="odhqlSelectController as odh">
+            <script type="text/ng-template" id="odhql-source-select.html">
+                <div class="modal-header">
+                    <h3 class="modal-title">Wählen Sie Ihre Datenquellen aus</h3>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-striped">
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Beschreibung</th>
+                            <th>Hinzufügen</th>
+                        </tr>
+                        <tr ng-repeat="item in IOdh.items">
+                            <td>{{ item.id }}</td>
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.description }}</td>
+                            <td><i ng-click="IOdh.selected.add(item);" class="fa fa-plus-circle" ng-hide="IOdh.selected.items.indexOf(item) > -1"></i></td>
+                        </tr>
+                    </table>
 
-        <div class="form-group">
-            <label class="col-md-4 control-label" for="add"></label>
+                    Selected: <b>{{ IOdh.selected.items.length }}</b>
+                    <table class="table table-striped" ng-if="IOdh.selected.items.length > 0">
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Beschreibung</th>
+                            <th>Entfernen</th>
+                        </tr>
+                        <tr ng-repeat="item in IOdh.selected.items">
+                            <td>{{ item.id }}</td>
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.description }}</td>
+                            <td><i ng-click="IOdh.selected.remove(item)" class="fa fa-minus-circle"></i></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" ng-click="IOdh.ok()">OK</button>
+                    <button class="btn btn-warning" ng-click="IOdh.cancel()">Cancel</button>
+                </div>
+            </script>
 
-            <div class="col-md-8">
-                <button ng-click="open()" id="add" name="add" class="btn btn-primary pull-right">Quellen Auswählen</button>
+            <div class="form-group">
+                <label class="col-md-4 control-label" for="add"></label>
+
+                <div class="col-md-8">
+                    <button ng-click="odh.open()" id="add" name="add" class="btn btn-primary pull-right">Quellen
+                        Auswählen
+                    </button>
+                </div>
             </div>
+            <table class="table table-striped" ng-show="odh.selected">
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Beschreibung</th>
+                    <th>Unique Name</th>
+                </tr>
+                <tr ng-repeat="item in odh.selected">
+                    <td>{{ item.id }}</td>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.description }}</td>
+                    <td><label>
+                        <input type="text" ng-value="item.uniqueid">
+                    </label></td>
+                </tr>
+            </table>
         </div>
         <!-- Textarea -->
-        <div class="form-group" ng-class="{'has-error': form.description.$invalid && snippet.submitted}">
-            <label class="col-md-3 control-label" for="description">odhSQL Snippet <i class="fa fa-question-circle"></i></label>
+        <div class="form-group" ng-class="{'has-error': form.description.$invalid && vm.submitted}">
+            <label class="col-md-3 control-label" for="description">odhSQL Snippet <i
+                    class="fa fa-question-circle"></i></label>
 
             <div class="col-md-9">
                 <textarea class="form-control" id="description" name="description"
@@ -76,7 +120,7 @@
                           required
                         ></textarea>
 
-                <div ng-messages="form.description.$error" ng-show="offer.submitted">
+                <div ng-messages="form.description.$error" ng-show="vm.submitted">
                     <span class="help-block">
                         <div ng-message="required">Bitte geben Sie das odhSQL Snippet an.</div>
                     </span>
@@ -91,8 +135,12 @@
             <label class="col-md-4 control-label" for="add"></label>
 
             <div class="col-md-8">
-                <button ng-click="snippet.submit()" id="add" name="add" class="btn btn-primary pull-right">Speichern</button>
-                <button ng-click="snippet.preview()" id="cancel" name="cancel" class="btn btn-info pull-right">Vorschau</button>
+                <button ng-click="snippet.submit()" id="add" name="add" class="btn btn-primary pull-right">
+                    Speichern
+                </button>
+                <button ng-click="snippet.preview()" id="cancel" name="cancel" class="btn btn-info pull-right">
+                    Vorschau
+                </button>
             </div>
         </div>
 

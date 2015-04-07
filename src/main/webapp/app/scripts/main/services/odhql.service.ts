@@ -16,10 +16,6 @@ module odh.main {
             return this.$http.post('/api/v1/method', {query: query});
         }
 
-        private myPrivateMethod():{} {
-            return {};
-        }
-
     }
     angular.module('openDataHub.main').service('OdhQLService', OdhQLService);
 }
