@@ -38,7 +38,7 @@ module odh.main {
 
     export class FileGroupService {
         constructor(private $log:ng.ILogService, private $http:ng.IHttpService,
-                    private Restangular:restangular.IService) {
+                    private Restangular:restangular.IService, private $q:ng.IQService) {
 
             (<any>Restangular).extendModel('filegroup', function (filegroup) {
                 filegroup.canDownload = function (formatName) {
@@ -48,9 +48,38 @@ module odh.main {
             });
         }
 
-        public getAll(documentId) {
+        public getAll(documentId, withPreview = false) {
+            var promise:ng.IPromise<any>;
+
             this.$log.debug('Fetching all filegroups of document ', documentId);
-            return this.Restangular.one('document', documentId).getList('filegroup');
+            promise = this.Restangular.one('document', documentId).getList('filegroup');
+
+            if (withPreview) {
+                var deferred = this.$q.defer();
+
+                promise.then((data) => {
+                    var promises = [];
+                    angular.forEach(data, (fg, i) => {
+                        var d = this.$q.defer();
+                        promises.push(d.promise);
+
+                        this.$http.get(fg.preview)
+                            .then(data => {
+                                fg.preview = data.data;
+                                d.resolve(data);
+                            })
+                            .catch((e) => d.reject(e));
+                    });
+                    this.$q.all(promises).then(() => {
+                        deferred.resolve(data);
+                    });
+
+                });
+
+                promise = deferred.promise;
+            }
+
+            return promise;
         }
     }
 

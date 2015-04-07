@@ -16,6 +16,7 @@ module openDataHub {
             'ui.select',
             'ui.bootstrap',
             'restangular',
+            'truncate',
             'angular-loading-bar',
             'cfp.loadingBar',
             'openDataHub.auth',
@@ -82,7 +83,13 @@ module openDataHub {
                     params: {
                         'id': 0
                     }
-                });
+                })
+                .state('console', {
+                    url: '/console',
+                    controller: 'OdhQLConsoleController as vm',
+                    templateUrl: 'views/odhql-console.html'
+                })
+            ;
         })
         .run(($http:ng.IHttpService, $window:ng.IWindowService) => {
             $http.defaults.xsrfHeaderName = 'X-CSRFToken';

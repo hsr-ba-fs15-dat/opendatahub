@@ -1,9 +1,13 @@
 """
 """
+from __future__ import unicode_literals
+import collections
+import itertools
+
 import pandas as pd
 import geopandas as gp
 import numpy as np
-import collections
+import re
 
 import hub.odhql.parser as parser
 import hub.odhql.functions as functions
@@ -11,11 +15,30 @@ from hub.odhql.exceptions import OdhQLExecutionException
 
 
 class OdhQLInterpreter(object):
+    FILE_GROUP_RE = re.compile('ODH([1-9]\d?)', re.IGNORECASE)
+
     def __init__(self, source_dfs):
         self.source_dfs = {alias.lower(): df for alias, df in source_dfs.iteritems()}
 
         self.df = None
         self.dfs = None
+
+    @classmethod
+    def parse_sources(cls, query):
+        if isinstance(query, basestring):
+            query = parser.OdhQLParser().parse(query)
+
+        data_sources = itertools.chain(*[q.data_sources for q in query.queries]) if isinstance(query, parser.Union) \
+            else query.data_sources
+
+        ids = {}
+        for ds in data_sources:
+            try:
+                ids[ds.name] = int(cls.FILE_GROUP_RE.match(ds.name).group(1))
+            except Exception:
+                raise OdhQLExecutionException('Table "{}" is not a valid OpenDataHub source'.format(ds.name))
+
+        return ids
 
     def execute(self, query):
         if isinstance(query, basestring):
@@ -28,36 +51,40 @@ class OdhQLInterpreter(object):
             raise OdhQLExecutionException('{} does not exist'.format(e.message))
 
     def interpret(self, query):
-        # load dataframes and prepare them (prefix) for querying
-        self.load(query)
 
-        # build one big/dataframe
-        for ds in query.data_sources:
-            self.df = self.interpret_data_source(ds)
-
-        # filter selected rows
-        if query.filter_definitions:
-            mask = self.interpret_filter(query.filter_definitions)
-            self.df = self.df[mask]
-
-        # select requested fields from filtered dataframe
-        if self.df.shape[0]:
-            cls = self.df.__class__
-            kw = {}
-
-            cols = [self.interpret_field(self.df, f) for f in query.fields]
-
-            geoseries = collections.OrderedDict(
-                [(series.name, series) for series in cols if isinstance(series, gp.GeoSeries)])
-            if geoseries:
-                cls = gp.GeoDataFrame
-                geometry = geoseries.get('geometry', geoseries.values()[0])
-                geometry.name = 'geometry'
-                kw['crs'] = geometry.crs
-
-            self.df = cls(cols, **kw).T
+        if isinstance(query, parser.Union):
+            self.df = self.interpret_union(query.queries)
         else:
-            self.df = pd.DataFrame(columns=[getattr(f, 'alias', f.name) for f in query.fields])
+            # load dataframes and prepare them (prefix) for querying
+            self.load(query)
+
+            # build one big/dataframe
+            for ds in query.data_sources:
+                self.df = self.interpret_data_source(ds)
+
+            # filter selected rows
+            if query.filter_definitions:
+                mask = self.interpret_filter(query.filter_definitions)
+                self.df = self.df[mask]
+
+            # select requested fields from filtered dataframe
+            if self.df.shape[0]:
+                cls = self.df.__class__
+                kw = {}
+
+                cols = [self.interpret_field(self.df, f) for f in query.fields]
+
+                geoseries = collections.OrderedDict(
+                    [(series.name, series) for series in cols if isinstance(series, gp.GeoSeries)])
+                if geoseries:
+                    cls = gp.GeoDataFrame
+                    geometry = geoseries.get('geometry', geoseries.values()[0])
+                    geometry.name = 'geometry'
+                    kw['crs'] = geometry.crs
+
+                self.df = cls(cols, **kw).T
+            else:
+                self.df = pd.DataFrame(columns=[getattr(f, 'alias', f.name) for f in query.fields])
 
         return self.df
 
@@ -69,6 +96,25 @@ class OdhQLInterpreter(object):
     @classmethod
     def make_name(cls, prefix, name):
         return '{}.{}'.format(prefix.lower(), name.lower())
+
+    def interpret_union(self, queries):
+        if len({len(q.fields) for q in queries}) > 1:
+            raise OdhQLExecutionException('The number of selected fields for each query must match exactly.')
+
+        merged = None
+        columns = []
+
+        for df in (self.__class__(self.source_dfs).execute(query) for query in queries):
+            if merged is None:
+                merged = df
+                columns = merged.columns.tolist()
+                merged.rename(columns={col: str(i) for i, col in enumerate(df)}, inplace=True)
+            else:
+                df.rename(columns={col: str(i) for i, col in enumerate(df)}, inplace=True)
+                merged = merged.append(df)
+
+        merged.rename(columns={str(i): col for i, col in enumerate(columns)}, inplace=True)
+        return merged
 
     def interpret_data_source(self, ds):
         if isinstance(ds, parser.JoinedDataSource):

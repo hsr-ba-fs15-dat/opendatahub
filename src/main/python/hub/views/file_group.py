@@ -7,8 +7,8 @@ from django.http.response import HttpResponse, HttpResponseNotFound, HttpRespons
 
 from hub.models import FileGroupModel, FileModel
 from hub.serializers import FileGroupSerializer, FileSerializer
-
 from authentication.permissions import IsOwnerOrPublic
+from hub.utils.pandasutils import DataFrameUtils
 
 
 class FileGroupViewSet(viewsets.ModelViewSet):
@@ -65,4 +65,11 @@ class FileGroupViewSet(viewsets.ModelViewSet):
 
     @detail_route()
     def preview(self, request, pk):
-        return HttpResponseNotFound(reason='Testing!')
+        model = FileGroupModel.objects.get(id=pk)
+        df = model.to_file_group().to_df()
+        df = DataFrameUtils.make_serializable(df).fillna('NULL')
+
+        return JsonResponse({
+            'columns': df.columns.tolist(),
+            'data': df.iloc[:5].to_dict(orient='records')
+        })

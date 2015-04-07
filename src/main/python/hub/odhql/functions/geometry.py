@@ -52,3 +52,11 @@ class AsText(VectorizedFunction):
     def apply(self, geoms):
         # todo assert geom
         return geoms.astype(str)
+
+
+class Centroid(VectorizedFunction):
+    name = 'ST_Centroid'
+
+    def apply(self, geoms):
+        # todo assert geom
+        return gp.GeoSeries(geoms).centroid

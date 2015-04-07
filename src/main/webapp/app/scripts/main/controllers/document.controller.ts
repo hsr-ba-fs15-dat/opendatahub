@@ -86,7 +86,7 @@ module odh {
                         this.$log.error(error);
                     });
 
-                this.fileGroups = this.FileGroupService.getAll(this.documentId)
+                this.fileGroups = this.FileGroupService.getAll(this.documentId, true)
                     .then(data => {
                         this.$log.debug('File Groups for document ' + this.documentId, data);
                         this.fileGroups = data;

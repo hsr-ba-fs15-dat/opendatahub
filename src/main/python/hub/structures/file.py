@@ -2,16 +2,20 @@
 """
 
 from cStringIO import StringIO
-import codecs
 import contextlib
 import tempfile
+
 import shutil
 
+import codecs
 import os
-
-import pandas
 from django.utils.encoding import force_bytes
+
 from hub import formats
+
+from hub.utils.pandasutils import DataFrameUtils
+
+# noinspection PyUnresolvedReferences
 from django.core.cache import caches  # noqa
 
 
@@ -163,20 +167,8 @@ class File(object):
 
         return self.df
 
-    def to_normalized_df(self):
-        """
-        :return: DataFrame which contains only exportable data (no objects)
-        """
-        df = pandas.DataFrame(self.to_df().copy(True))
-        for col in df.columns:
-            temp = df[col].dropna()
-            if len(temp) and temp.dtype == object and not isinstance(temp.iloc[0], unicode):
-                try:
-                    df[col] = df[col].astype(unicode)
-                except:
-                    pass
-
-        return df
+    def to_serializable_df(self):
+        return DataFrameUtils.make_serializable(self.to_df())
 
     def to_format(self, format):
         from hub import formatters, formats

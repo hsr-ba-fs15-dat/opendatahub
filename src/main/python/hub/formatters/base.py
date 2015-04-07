@@ -62,7 +62,7 @@ class CSVFormatter(Formatter):
     @classmethod
     def format(cls, file, format, *args, **kwargs):
         return File.from_string(file.basename + '.csv',
-                                file.to_normalized_df().to_csv(index=False, encoding='UTF-8')).file_group
+                                file.to_serializable_df().to_csv(index=False, encoding='UTF-8')).file_group
 
 
 class JSONFormatter(Formatter):
@@ -71,7 +71,7 @@ class JSONFormatter(Formatter):
     @classmethod
     def format(cls, file, format, *args, **kwargs):
         return File.from_string(file.basename + '.json',
-                                file.to_normalized_df().to_json(orient='records')).file_group
+                                file.to_serializable_df().to_json(orient='records')).file_group
 
 
 class ExcelFormatter(Formatter):
@@ -80,7 +80,7 @@ class ExcelFormatter(Formatter):
     @classmethod
     def format(cls, file, format, *args, **kwargs):
         with tempfile.NamedTemporaryFile(suffix=".xlsx") as f:
-            file.to_normalized_df().to_excel(f.name, engine='xlsxwriter', index=False)
+            file.to_serializable_df().to_excel(f.name, engine='xlsxwriter', index=False)
             f.seek(0)
             return File.from_string(file.basename + '.xlsx', f.read()).file_group
 
@@ -90,7 +90,7 @@ class XMLFormatter(Formatter):
 
     @classmethod
     def format(cls, file, format, *args, **kwargs):
-        df = file.to_normalized_df()
+        df = file.to_serializable_df()
         root = etree.Element('root', {'origin': ', '.join(file.file_group.names)})
         for i, row in df.iterrows():
             etree.SubElement(root, 'row', row.dropna().astype(unicode).to_dict())

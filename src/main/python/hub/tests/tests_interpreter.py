@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 
 
+import logging
+
 import pandas as pd
 
 from hub.tests.testutils import TestBase
 from hub.structures.file import File
 from hub.odhql.parser import OdhQLParser
 from hub.odhql.interpreter import OdhQLInterpreter
-import logging
 
 
 EMPLOYEES_CSV = """
@@ -144,3 +145,29 @@ class TestInterpreter(TestInterpreterBase):
     def test_join(self):
         df = self.execute('SELECT c.prename, e.prename AS parent FROM child AS c JOIN employee AS e ON c.parent = e.id')
         self.assertEqual(len(df), len(self.children))
+
+    def test_self_join(self):
+        df = self.execute('SELECT e.prename, ee.prename AS boss '
+                          'FROM employee as e JOIN employee AS ee ON e.boss = ee.id WHERE e.boss IS NOT NULL')
+        self.assertListEqual(
+            [self.employees.iloc[e.Boss].Prename for i, e in self.employees.iterrows() if not pd.isnull(e.Boss)],
+            df.boss.tolist())
+
+    def test_multi_join(self):
+        pass  # todo test
+
+    def test_multicondition_join(self):
+        pass  # todo implement & test
+
+    def test_union(self):
+        df = self.execute('SELECT e.prename FROM employee AS e UNION SELECT c.prename FROM child AS c')
+        self.assertListEqual(df.prename.tolist(),
+            [p for p in self.employees.Prename.tolist() + self.children.Prename.tolist()])
+
+    def test_order_desc(self):
+        pass  # todo implement & test
+        # self.execute('SELECT e.prename FROM employee AS e ORDER BY e.prename')
+
+    def test_parse_sources(self):
+        ids = OdhQLInterpreter.parse_sources('SELECT e.prename FROM ODH12 AS e UNION SELECT c.prename FROM ODH88 AS c')
+        self.assertDictEqual(ids, {'ODH12': 12, 'ODH88': 88})
