@@ -169,7 +169,7 @@ class OdhQLParser(object):
         order_by_declaration.setParseAction(Query.parse_order_by)
 
         query = (field_declaration_list('fields') + data_source_declaration('datasources') +
-                 Optional(filter_declaration('filter')) )
+                 Optional(filter_declaration('filter')))
         query.setParseAction(Query.parse)
 
         query.validate()
