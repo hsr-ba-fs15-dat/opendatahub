@@ -2,9 +2,11 @@
 
 
 import logging
+import traceback
 
 import pandas as pd
 
+from hub.odhql.exceptions import OdhQLExecutionException
 from hub.tests.testutils import TestBase
 from hub.structures.file import File
 from hub.odhql.parser import OdhQLParser
@@ -165,9 +167,35 @@ class TestInterpreter(TestInterpreterBase):
             [p for p in self.employees.Prename.tolist() + self.children.Prename.tolist()])
 
     def test_order_desc(self):
-        pass  # todo implement & test
-        # self.execute('SELECT e.prename FROM employee AS e ORDER BY e.prename')
+        df = self.execute('SELECT e.prename FROM employee AS e ORDER BY e.prename DESC')
+        self.assertListEqual(df.prename.tolist(), sorted(self.employees.Prename.tolist())[::-1])
+
+    def test_order_asc(self):
+        df = self.execute('SELECT e.prename FROM employee AS e ORDER BY e.prename ASC')
+        self.assertListEqual(df.prename.tolist(), sorted(self.employees.Prename.tolist()))
+
+    def test_order_positional(self):
+        df = self.execute('SELECT e.prename FROM employee AS e ORDER BY 0 ASC')
+        self.assertListEqual(df.prename.tolist(), sorted(self.employees.Prename.tolist()))
+
+    def test_aliased_positional(self):
+        df = self.execute('SELECT e.prename FROM employee AS e ORDER BY prename ASC')
+        self.assertListEqual(df.prename.tolist(), sorted(self.employees.Prename.tolist()))
 
     def test_parse_sources(self):
         ids = OdhQLInterpreter.parse_sources('SELECT e.prename FROM ODH12 AS e UNION SELECT c.prename FROM ODH88 AS c')
         self.assertDictEqual(ids, {'ODH12': 12, 'ODH88': 88})
+
+    def test_fails(self):
+        statements = (
+            ('SELECT e.prename FROM employee AS e ORDER BY nonexistent', 'Non-existent ORDER BY field'),
+            ('SELECT e.prename FROM employee AS e ORDER BY e.nonexistent', 'Non-existent ORDER BY field'),
+            ('SELECT e.prename FROM employee AS e ORDER BY 99', 'Invalid ORDER BY position'),
+        )
+
+        for statement, message in statements:
+            try:
+                self.assertRaises(OdhQLExecutionException, lambda: self.execute(statement))
+            except:
+                logging.info(traceback.format_exc())
+                self.fail(message)

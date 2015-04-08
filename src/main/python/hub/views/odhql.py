@@ -6,7 +6,7 @@ from hub.odhql.interpreter import OdhQLInterpreter
 from hub.utils.pandasutils import DataFrameUtils
 
 
-class AdhocOdhqlView(View):
+class AdHocOdhQLView(View):
     def get(self, request):
         statement = request.GET['query']
         request.GET.get('rows', 10)  # todo

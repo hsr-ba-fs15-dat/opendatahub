@@ -9,7 +9,7 @@ from hub.views.file_group import FileGroupViewSet
 from hub.views.file import FileViewSet
 from hub.views.format import FormatView
 from opendatahub.views import ConfigView
-from hub.views.odhql import AdhocOdhqlView
+from hub.views.odhql import AdHocOdhQLView
 
 
 router = routers.DefaultRouter(trailing_slash=True)
@@ -24,7 +24,7 @@ urlpatterns = (
     url(r'api/v1/', include(router.urls)),
     url(r'^admin/', include(admin.site.urls)),
     url(r'api/v1/auth/', include('authentication.urls')),
-    url(r'api/v1/odhql', AdhocOdhqlView.as_view()),
+    url(r'api/v1/odhql', AdHocOdhQLView.as_view()),
 )
 
 WEBAPP_DIR = os.path.join(os.path.dirname(BASE_DIR), 'webapp')
