@@ -32,13 +32,19 @@ class OdhQLParser(object):
     Function ::= Identifier "(" ( ListOfFunctionArguments )? ")"
     ListOfFunctionArguments ::= FieldEquiv ( ( "," FieldEquiv )* )?
 
+    DataSourceName ::= Identifier
+    FieldName ::= Identifier
+    Alias ::= Identifier
 
     Field ::= DataSourceNameOrAlias "." FieldName
+
+    DataSourceNameOrAlias ::= DataSourceName | Alias
+
     DataSourceSelection ::= "from" DataSourceName ( "as" Alias )? ( JoinDefinition )*
     JoinDefinition ::= "join" DataSourceName ( "as" Alias )? "on" JoinCondition
     JoinCondition ::= SingleJoinCondition | "(" SingleJoinCondition ( "and" SingleJoinCondition )* ")"
     SingleJoinCondition ::= Field "=" Field
-    DataSourceNameOrAlias ::= DataSourceName | Alias
+
     FilterList ::= "where" FilterAlternative
     FilterAlternative ::= FilterCombination ( "or" FilterCombination )*
     FilterCombination ::= FilterDefinition ( "and" FilterDefinition )*
@@ -49,18 +55,14 @@ class OdhQLParser(object):
     InCondition ::= FieldEquiv ( "not" )? "in" "(" Value ( "," Value )* ")"
     IsNullCondition ::= Field "is" ( "not" )? Null
     OrderByList ::= "order" "by" OrderByField ( "," OrderByField )*
-    OrderByField ::= Field ( "asc" | "desc" )?
+    OrderByField ::= ( Field | Alias | Position) ( "asc" | "desc" )?
     Integer ::= ( "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" )*
-    DataSourceName ::= Identifier
-    FieldName ::= Identifier
-    Alias ::= Identifier
 
     Value ::= SingleQuotedString | Number | Boolean | Null
     Number ::= Integer | Float
     Float ::= Integer "." Integer
     Boolean ::= "true" | "false"
     Null ::= "null"
-
     SingleQuotedString ::= "string in single quotes"
     DoubleQuotedString ::= "string in double quotes"
 
