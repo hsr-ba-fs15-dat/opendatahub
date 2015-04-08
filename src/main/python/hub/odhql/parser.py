@@ -82,7 +82,7 @@ class OdhQLParser(object):
 
         alias = CaselessKeyword('as') + identifier('alias')
 
-        field = (identifier.copy()('prefix') + '.' + identifier.copy()('name') + NotAny('('))('field')
+        field = (identifier('prefix') + '.' + identifier('name') + NotAny('('))('field')
         field.setParseAction(Field.parse)
 
         aliased_field = field + Optional(alias)  # defaults to using name as alias
@@ -106,8 +106,7 @@ class OdhQLParser(object):
         aliased_value.setParseAction(AliasedExpression.parse)
 
         function = Forward()
-        function << (identifier.copy()('name') +
-                     '(' + Optional(delimitedList(field | value | function))('args') + ')')
+        function << (identifier('name') + '(' + Optional(delimitedList(field | value | function))('args') + ')')
         function.setParseAction(Function.parse)
 
         aliased_function = function('function') + alias
