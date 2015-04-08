@@ -83,7 +83,10 @@ class OdhQLInterpreter(object):
                 colnames = [c.name for c in cols]
                 addtl_colnames = set(df.columns.tolist()) - set(colnames)
                 addtl_cols = [df[c].reset_index(drop=True) for c in addtl_colnames]
-                df = cls(cols + addtl_cols, **kw).T
+                df = pd.concat(cols + addtl_cols, axis=1)
+                df.__class__ = cls
+                for attr, val in kw.iteritems():
+                    setattr(df, attr, val)
 
             else:
                 colnames = [getattr(f, 'alias', f.name) for f in query.fields]
@@ -204,7 +207,7 @@ class OdhQLInterpreter(object):
                 assert False, 'Unknown operator "{}"'.format(filter.operator)
 
         elif isinstance(filter, parser.InCondition):
-            in_list = pd.DataFrame([self.interpret_field(df, el) for el in filter.in_list])
+            in_list = pd.concat([self.interpret_field(df, el) for el in filter.in_list], axis=1).T
             left = self.interpret_field(df, filter.left)
             mask = np.logical_or.reduce(left == in_list)
 

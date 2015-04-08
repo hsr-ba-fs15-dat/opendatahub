@@ -3,6 +3,7 @@
 
 import logging
 import traceback
+import time
 
 import pandas as pd
 
@@ -43,14 +44,32 @@ Id,Parent,Prename,Surname,Age
 
 
 class TestInterpreterBase(TestBase):
+    @classmethod
+    def setUpClass(cls):
+        cls.read_data()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.employees = None
+        cls.children = None
+        cls.source_dfs = None
+
+    @classmethod
+    def get_source_dfs(cls):
+        return cls.source_dfs
+
+    @classmethod
+    def read_data(cls):
+        cls.employees = File.from_string('employees.csv', EMPLOYEES_CSV).to_df()
+        cls.children = File.from_string('children.csv', CHILDREN_CSV).to_df()
+        cls.source_dfs = {
+            'employee': cls.employees,
+            'child': cls.children
+        }
+
     def setUp(self):
-        self.source_dfs = self.get_source_dfs()
-
         self.parser = OdhQLParser()
-        self.interpreter = OdhQLInterpreter(self.source_dfs)
-
-    def get_source_dfs(self):
-        raise NotImplementedError
+        self.interpreter = OdhQLInterpreter(self.get_source_dfs())
 
     def execute(self, query):
         logging.info('Executing query "%s"', query)
@@ -60,17 +79,6 @@ class TestInterpreterBase(TestBase):
 
 
 class TestInterpreter(TestInterpreterBase):
-    def setUp(self):
-        self.employees = File.from_string('employees.csv', EMPLOYEES_CSV).to_df()
-        self.children = File.from_string('children.csv', CHILDREN_CSV).to_df()
-        super(TestInterpreter, self).setUp()
-
-    def get_source_dfs(self):
-        return {
-            'employee': self.employees,
-            'child': self.children
-        }
-
     def test_select(self):
         df = self.execute('SELECT employee.Id, employee.Prename FROM employee')
         self.assertListEqual(df.columns.tolist(), ['Id', 'Prename'])
@@ -186,6 +194,9 @@ class TestInterpreter(TestInterpreterBase):
         ids = OdhQLInterpreter.parse_sources('SELECT e.prename FROM ODH12 AS e UNION SELECT c.prename FROM ODH88 AS c')
         self.assertDictEqual(ids, {'ODH12': 12, 'ODH88': 88})
 
+    def test_temp(self):
+        pass
+
     def test_fails(self):
         statements = (
             ('SELECT e.prename FROM employee AS e ORDER BY nonexistent', 'Non-existent ORDER BY field'),
@@ -199,3 +210,47 @@ class TestInterpreter(TestInterpreterBase):
             except:
                 logging.info(traceback.format_exc())
                 self.fail(message)
+
+
+class TestInterpreterPerformance(TestInterpreterBase):
+    @classmethod
+    def read_data(cls):
+        cls.employees = File.from_file(cls.get_test_file_path('perf/employees.csv')).to_df()
+        cls.children = File.from_file(cls.get_test_file_path('perf/children.csv')).to_df()
+        cls.source_dfs = {
+            'employee': cls.employees,
+            'child': cls.children
+        }
+
+    def assert_time(self, statement, sec):
+        t0 = time.time()
+        df = self.execute(statement)
+        t = round(time.time() - t0, 2)
+        msg = '"{}" took {}s.'.format(statement, t)
+        logging.info(msg)
+        if t > sec:
+            self.fail('{} Expected less than {}s.'.format(msg, sec))
+        return df
+
+    def test_select(self):
+        self.assert_time('SELECT e.prename FROM employee AS e', 2)
+
+    def test_where(self):
+        self.assert_time('SELECT e.prename FROM employee AS e WHERE e.prename = \'Julia\'', 2)
+
+    def test_like(self):
+        self.assert_time('SELECT e.prename FROM employee AS e WHERE e.prename LIKE \'^E.+a\'', 3)
+
+    def test_join(self):
+        self.assert_time('SELECT c.prename, e.prename AS parent FROM child AS c JOIN employee AS e ON c.parent = e.id',
+                        5)
+
+
+if __name__ == '__main__':
+    import cProfile
+
+    employees = File.from_file(TestBase.get_test_file_path('perf/employees.csv')).to_df()
+    children = File.from_file(TestBase.get_test_file_path('perf/children.csv')).to_df()
+    i = OdhQLInterpreter({'employee': employees, 'child': children})
+    cProfile.run(
+        'i.execute("SELECT c.prename, e.prename AS parent FROM child AS c JOIN employee AS e ON c.parent = e.id")')
