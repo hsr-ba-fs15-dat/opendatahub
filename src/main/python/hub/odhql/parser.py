@@ -1,7 +1,7 @@
 from collections import Sequence
 
 from pyparsing import nums
-from pyparsing import Word, CaselessKeyword, QuotedString, Regex, Literal, Suppress
+from pyparsing import Word, CaselessKeyword, QuotedString, Regex, Literal, Suppress, Combine
 from pyparsing import Optional, ZeroOrMore, Or, Group, NotAny, Forward, StringEnd
 from pyparsing import delimitedList
 from enum import Enum
@@ -88,8 +88,8 @@ class OdhQLParser(object):
         aliased_field = field + Optional(alias)  # defaults to using name as alias
         aliased_field.setParseAction(AliasedField.parse)
 
-        integer_value = Word(nums)
-        number_value = Group(integer_value + Optional('.' + integer_value))
+        integer_value = Combine(Optional('-') + Word(nums))
+        number_value = Group(integer_value + Optional('.' + Word(nums)))
         number_value.setParseAction(Expression.parse_number)
 
         boolean_value = CaselessKeyword('true') | CaselessKeyword('false')
@@ -727,6 +727,10 @@ class OrderByPosition(ASTBase):
 
         try:
             position = int(tokens[0])
+
+            if position < 1:
+                raise ParseException('invalid OrderByPosition: Needs to be at least 1')
+
             return cls(position)
         except ValueError:
             pass
