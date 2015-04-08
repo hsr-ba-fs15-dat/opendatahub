@@ -214,7 +214,7 @@ class Union(ASTBase):
             return
 
         queries = list(tokens.get('queries'))
-        order = list(tokens.get('sort')[0]) if 'sort' in tokens else None
+        order = list(tokens.get('sort')[0]) if 'sort' in tokens else []
 
         return cls(queries, order)
 
@@ -227,7 +227,9 @@ class Union(ASTBase):
         for q in self.queries:
             q.accept(visitor)
 
-        self.order.accept(visitor)
+        if self.order:
+            for o in self.order:
+                o.accept(visitor)
 
 
 class Query(ASTBase):
@@ -269,8 +271,9 @@ class Query(ASTBase):
         for d in self.data_sources:
             d.accept(visitor)
 
-        for f in self.filter_definitions:
-            f.accept(visitor)
+        if self.filter_definitions:
+            for f in self.filter_definitions:
+                f.accept(visitor)
 
 
 class Field(ASTBase):
@@ -438,12 +441,6 @@ class AliasedFunction(Function):
 
     def __repr__(self):
         return '<Function name=\'{}\' args={} alias=\'{}\'>'.format(self.name, self.args or '', self.alias)
-
-    def accept(self, visitor):
-        visitor.visit(self)
-
-        for arg in self.args:
-            arg.accept(visitor)
 
 
 class DataSource(ASTBase):
