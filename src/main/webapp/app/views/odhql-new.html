@@ -1,4 +1,9 @@
-<form name="form" class="form-horizontal">
+<style>
+    .container {
+        max-width: 1300px;
+    }
+</style>
+<form name="form" class="form-horizontal" ng-controller="OdhQLController as vm">
     <fieldset>
 
         <div class="form-group" ng-class="{'has-error': form.name.$invalid && vm.submitted}">
@@ -39,97 +44,95 @@
             </div>
         </div>
         <!-- /Textarea -->
-        <div ng-controller="odhqlSelectController as odh">
-            <script type="text/ng-template" id="odhql-source-select.html">
-                <div class="modal-header">
-                    <h3 class="modal-title">Wählen Sie Ihre Datenquellen aus</h3>
-                </div>
-                <div class="modal-body">
-                    <table class="table table-striped">
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Beschreibung</th>
-                            <th>Hinzufügen</th>
-                        </tr>
-                        <tr ng-repeat="item in IOdh.items">
-                            <td>{{ item.id }} </td>
-                            <td>{{ item.name }}</td>
-                            <td>{{ item.description }}</td>
-                            <td><i ng-click="IOdh.selected.add(item);" class="fa fa-plus-circle" ng-hide="IOdh.selected.items.indexOf(item) > -1"></i></td>
-                        </tr>
-                    </table>
 
-                    Selected: <b>{{ IOdh.selected.items.length }}</b>
-                    <table class="table table-striped" ng-if="IOdh.selected.items.length > 0">
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Beschreibung</th>
-                            <th>Entfernen</th>
-                        </tr>
-                        <tr ng-repeat="item in IOdh.selected.items">
-                            <td>{{ item.id }}</td>
-                            <td>{{ item.name }}</td>
-                            <td>{{ item.description }}</td>
-                            <td><i ng-click="IOdh.selected.remove(item)" class="fa fa-minus-circle"></i></td>
-                        </tr>
-                    </table>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-primary" ng-click="IOdh.ok()">OK</button>
-                    <button class="btn btn-warning" ng-click="IOdh.cancel()">Cancel</button>
-                </div>
-            </script>
-
-            <div class="form-group">
-                <label class="col-md-4 control-label" for="add"></label>
-
-                <div class="col-md-8">
-                    <button ng-click="odh.open()" id="add" name="add" class="btn btn-primary pull-right">Quellen
-                        Auswählen
-                    </button>
-                </div>
-            </div>
-            <table class="table table-striped" ng-show="odh.selected">
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Beschreibung</th>
-                    <th>Unique Name</th>
-                </tr>
-                <tr ng-repeat="item in odh.selected">
-                    <td>{{ item.id }}
-                        <i class="fa fa-question-circle" tooltip-placement="left" tooltip="Verfügbare Felder: \\todo"></i>
-                        <i class="fa fa-plus-circle" ng-click="vm.getFileGroup(item.id, item.uniqueid);"></i>
-                    </td>
-                    <td>{{ item.name }}</td>
-                    <td>{{ item.description }}</td>
-                    <td><label>
-                        <input type="text" ng-value="item.uniqueid">
-                    </label></td>
-                </tr>
-            </table>
+        <div class="well" ng-repeat-start="group in vm.selected.items" ng-show="$index > 0">
+            UNION
         </div>
+        <div class="well" ng-repeat-end="group in vm.selected.items">
+            Wählen Sie die benötigten Felder aus:
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th ng-repeat="col in group.cols"
+                            ng-class="vm.selected.fields[group.uniqueid].indexOf(col) > -1 ? 'selected': ''"
+                                >
+                            <input type="text" ng-model="col.alias"/>
+                        </th>
+                    </tr>
+                    </thead>
+                    <tr ng-repeat="row in group.preview.data | limitTo: 3">
+                        <td ng-class="vm.selected.fields[group.uniqueid].indexOf(col) > -1 ? 'selected': ''"
+                            ng-repeat="col in group.cols" ng-click="vm.addField(col, group)">
+                            {{ row[col.name] | characters:25 :true }}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <a ng-click="vm.addFields(group)">Alle hinzufügen</a>
+            <a ng-click="vm.selected.remove(group)">Tabelle entfernen</a>
+        </div>
+
+        <table class="table table-bordered">
+            <thead>
+
+            <tr>
+                <th></th>
+                <th>Dateiname</th>
+                <th>Dateityp</th>
+                <th>FileGroupID</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat-start="fgItems in vm.items" class="active">
+                <th>{{ fgItems[0].name }}</th>
+                <td colspan="3">{{ fgItems[0].description }}</td>
+            </tr>
+            <tr ng-repeat-end ng-repeat="item in fgItems | limitTo:99:1">
+                <td rowspan="{{ fgItems.length -1 }}" ng-if="$first">{{ fgItems.length -1 }} Dateien</td>
+                <td>{{ item.files[0].file_name }}</td>
+                <td>{{ item.file_format }}</td>
+                <td>{{ item.id }} <i ng-click="vm.selected.add(item);" class="fa fa-plus-circle"
+                                     ng-hide="vm.selected.items.indexOf(item) > -1"></i></td>
+            </tr>
+
+            </tbody>
+        </table>
+
+        <table class="table table-striped" ng-if="vm.selected.items.length > 0">
+            <tr>
+                <th>ID</th>
+                <th>Dokument Name</th>
+                <th>Dateiname</th>
+                <th>Entfernen</th>
+            </tr>
+            <tr ng-repeat="item in vm.selected.items">
+                <td>{{ item.id }}</td>
+                <td>{{ item.document.name }}</td>
+                <td>{{ item.files[0].file_name }}</td>
+                <td><i ng-click="vm.selected.remove(item)" class="fa fa-minus-circle"></i></td>
+            </tr>
+        </table>
+
         <div class="row" ng-repeat="group in vm.fileGroups" style="margin-left:0.5em">
-                <div class="col-md-12 table-responsive">
-                    Feld anklicken um es zum ??Snippet?? hinzuzufügen.
-        <table class="table table-striped table-hover">
-                        <thead>
-                        <tr>
-                            <th ng-repeat="col in group.preview.columns">{{ col }}</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr ng-repeat="row in group.preview.data | limitTo: 3">
-                            <td ng-repeat="col in group.preview.columns" ng-click="vm.insert(col)">
-                                {{ row[col] | characters:25 :true }}
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
+            <div class="col-md-12 table-responsive">
+                Feld anklicken um es zum ??Snippet?? hinzuzufügen.
+                <table class="table table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th ng-repeat="col in group.preview.columns">{{ col }}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="row in group.preview.data | limitTo: 3">
+                        <td ng-repeat="col in group.preview.columns" ng-click="vm.insert(col)">
+                            {{ row[col] | characters:25 :true }}
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
-            </div>
+        </div>
         <!-- Textarea -->
         <div class="form-group" ng-class="{'has-error': form.description.$invalid && vm.submitted}">
             <label class="col-md-3 control-label" for="description">odhSQL Snippet <i
@@ -137,7 +140,8 @@
 
             <div class="col-md-9">
                 <textarea class="form-control" id="odhsqlinput" name="description"
-                          ng-model="vm.odhsqlinput" rows="10"
+                          ng-model="vm.odhqlInput" rows="10"
+                          ng-model-options="{ getterSetter: true }"
                           placeholder="SELECT x FROM y WHERE z is 123;"
                           required
                         ></textarea>
@@ -157,21 +161,42 @@
             <label class="col-md-4 control-label" for="add"></label>
 
             <div class="col-md-8">
-                <button ng-click="snippet.submit()" id="add" name="add" class="btn btn-primary pull-right">
+                <button ng-click="vm.submit()" id="add" name="add" class="btn btn-primary pull-right">
                     Speichern
                 </button>
-                <button ng-click="snippet.preview()" id="cancel" name="cancel" class="btn btn-info pull-right">
+                <button ng-click="vm.preview()" id="cancel" name="cancel" class="btn btn-info pull-right">
                     Vorschau
                 </button>
             </div>
         </div>
 
-        <div ng-show="snippet.progress" class="col-md-offset-3 col-md-6">
+        <div ng-show="vm.progress" class="col-md-offset-3 col-md-6">
             <progressbar class="progress-striped active" max="100"
                          value="offer.progress" type="info">
             </progressbar>
         </div>
 
     </fieldset>
+    <h1>Resultat: </h1>
+
+    <div class="row">
+        <div class="col-md-12 table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                <tr>
+                    <th ng-repeat="col in vm.columns">{{ col }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="row in vm.rows | limitTo: 50">
+                    <td ng-repeat="col in vm.columns">
+                        {{ row[col] }}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </form>
+
 
