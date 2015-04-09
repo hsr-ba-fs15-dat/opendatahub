@@ -183,7 +183,7 @@ class TestInterpreter(TestInterpreterBase):
         self.assertListEqual(df.prename.tolist(), sorted(self.employees.Prename.tolist()))
 
     def test_order_positional(self):
-        df = self.execute('SELECT e.prename FROM employee AS e ORDER BY 0 ASC')
+        df = self.execute('SELECT e.prename FROM employee AS e ORDER BY 1 ASC')
         self.assertListEqual(df.prename.tolist(), sorted(self.employees.Prename.tolist()))
 
     def test_aliased_positional(self):
