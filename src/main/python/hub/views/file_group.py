@@ -73,5 +73,5 @@ class FileGroupViewSet(viewsets.ModelViewSet):
                 'columns': df.columns.tolist(),
                 'data': df.iloc[:5].to_dict(orient='records')
             })
-        except Exception, e:
-            return JsonResponse({})
+        except Exception,e :
+            return JsonResponse({'error': e})
