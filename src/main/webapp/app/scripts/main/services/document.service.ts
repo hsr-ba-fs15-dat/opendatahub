@@ -48,17 +48,11 @@ module odh.main {
             });
         }
 
-        public getAll(documentId:any = false, withPreview = false) {
+        public getAll(documentId, withPreview = false) {
             var promise:ng.IPromise<any>;
-            if (!documentId) {
-                this.$log.debug('Fetching all filegroups');
-                promise = this.Restangular.all('fileGroup').getList();
-            }
-            else {
 
-                this.$log.debug('Fetching all filegroups of document ', documentId);
-                promise = this.Restangular.one('document', documentId).getList('filegroup');
-            }
+            this.$log.debug('Fetching all filegroups of document ', documentId);
+            promise = this.Restangular.one('document', documentId).getList('filegroup');
 
             if (withPreview) {
                 var deferred = this.$q.defer();
