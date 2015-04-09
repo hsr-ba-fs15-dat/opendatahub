@@ -1,7 +1,7 @@
 from collections import Sequence
 
 from pyparsing import nums
-from pyparsing import Word, CaselessKeyword, QuotedString, Regex, Literal, Suppress
+from pyparsing import Word, CaselessKeyword, QuotedString, Regex, Literal, Suppress, Combine
 from pyparsing import Optional, ZeroOrMore, Or, Group, NotAny, Forward, StringEnd
 from pyparsing import delimitedList
 from enum import Enum
@@ -32,13 +32,19 @@ class OdhQLParser(object):
     Function ::= Identifier "(" ( ListOfFunctionArguments )? ")"
     ListOfFunctionArguments ::= FieldEquiv ( ( "," FieldEquiv )* )?
 
+    DataSourceName ::= Identifier
+    FieldName ::= Identifier
+    Alias ::= Identifier
 
     Field ::= DataSourceNameOrAlias "." FieldName
+
+    DataSourceNameOrAlias ::= DataSourceName | Alias
+
     DataSourceSelection ::= "from" DataSourceName ( "as" Alias )? ( JoinDefinition )*
     JoinDefinition ::= "join" DataSourceName ( "as" Alias )? "on" JoinCondition
     JoinCondition ::= SingleJoinCondition | "(" SingleJoinCondition ( "and" SingleJoinCondition )* ")"
     SingleJoinCondition ::= Field "=" Field
-    DataSourceNameOrAlias ::= DataSourceName | Alias
+
     FilterList ::= "where" FilterAlternative
     FilterAlternative ::= FilterCombination ( "or" FilterCombination )*
     FilterCombination ::= FilterDefinition ( "and" FilterDefinition )*
@@ -49,18 +55,14 @@ class OdhQLParser(object):
     InCondition ::= FieldEquiv ( "not" )? "in" "(" Value ( "," Value )* ")"
     IsNullCondition ::= Field "is" ( "not" )? Null
     OrderByList ::= "order" "by" OrderByField ( "," OrderByField )*
-    OrderByField ::= Field ( "asc" | "desc" )?
+    OrderByField ::= ( Field | Alias | Position) ( "asc" | "desc" )?
     Integer ::= ( "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" )*
-    DataSourceName ::= Identifier
-    FieldName ::= Identifier
-    Alias ::= Identifier
 
     Value ::= SingleQuotedString | Number | Boolean | Null
     Number ::= Integer | Float
     Float ::= Integer "." Integer
     Boolean ::= "true" | "false"
     Null ::= "null"
-
     SingleQuotedString ::= "string in single quotes"
     DoubleQuotedString ::= "string in double quotes"
 
@@ -80,14 +82,14 @@ class OdhQLParser(object):
 
         alias = CaselessKeyword('as') + identifier('alias')
 
-        field = (identifier.copy()('prefix') + '.' + identifier.copy()('name') + NotAny('('))('field')
+        field = (identifier('prefix') + '.' + identifier('name') + NotAny('('))('field')
         field.setParseAction(Field.parse)
 
         aliased_field = field + Optional(alias)  # defaults to using name as alias
         aliased_field.setParseAction(AliasedField.parse)
 
-        integer_value = Word(nums)
-        number_value = Group(integer_value + Optional('.' + integer_value))
+        integer_value = Combine(Optional('-') + Word(nums))
+        number_value = Group(integer_value + Optional('.' + Word(nums)))
         number_value.setParseAction(Expression.parse_number)
 
         boolean_value = CaselessKeyword('true') | CaselessKeyword('false')
@@ -104,8 +106,7 @@ class OdhQLParser(object):
         aliased_value.setParseAction(AliasedExpression.parse)
 
         function = Forward()
-        function << (identifier.copy()('name') +
-                     '(' + Optional(delimitedList(field | value | function))('args') + ')')
+        function << (identifier('name') + '(' + Optional(delimitedList(field | value | function))('args') + ')')
         function.setParseAction(Function.parse)
 
         aliased_function = function('function') + alias
@@ -212,7 +213,7 @@ class Union(ASTBase):
             return
 
         queries = list(tokens.get('queries'))
-        order = list(tokens.get('sort')[0]) if 'sort' in tokens else None
+        order = list(tokens.get('sort')[0]) if 'sort' in tokens else []
 
         return cls(queries, order)
 
@@ -225,7 +226,9 @@ class Union(ASTBase):
         for q in self.queries:
             q.accept(visitor)
 
-        self.order.accept(visitor)
+        if self.order:
+            for o in self.order:
+                o.accept(visitor)
 
 
 class Query(ASTBase):
@@ -267,8 +270,9 @@ class Query(ASTBase):
         for d in self.data_sources:
             d.accept(visitor)
 
-        for f in self.filter_definitions:
-            f.accept(visitor)
+        if self.filter_definitions:
+            for f in self.filter_definitions:
+                f.accept(visitor)
 
 
 class Field(ASTBase):
@@ -436,12 +440,6 @@ class AliasedFunction(Function):
 
     def __repr__(self):
         return '<Function name=\'{}\' args={} alias=\'{}\'>'.format(self.name, self.args or '', self.alias)
-
-    def accept(self, visitor):
-        visitor.visit(self)
-
-        for arg in self.args:
-            arg.accept(visitor)
 
 
 class DataSource(ASTBase):
@@ -729,6 +727,10 @@ class OrderByPosition(ASTBase):
 
         try:
             position = int(tokens[0])
+
+            if position < 1:
+                raise ParseException('invalid OrderByPosition: Needs to be at least 1')
+
             return cls(position)
         except ValueError:
             pass

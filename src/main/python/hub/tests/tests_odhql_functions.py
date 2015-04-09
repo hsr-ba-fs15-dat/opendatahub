@@ -6,23 +6,11 @@ Are compared to python equivalents ("known" to operate correctly) instead of fix
 
 import pandas as pd
 
-from hub.tests.tests_interpreter import TestInterpreterBase, CHILDREN_CSV, EMPLOYEES_CSV
-from hub.structures.file import File
+from hub.tests.tests_interpreter import TestInterpreterBase
 from hub.odhql.exceptions import OdhQLExecutionException
 
 
 class TestStringFunctions(TestInterpreterBase):
-    def setUp(self):
-        self.employees = File.from_string('employees.csv', EMPLOYEES_CSV).to_df()
-        self.children = File.from_string('children.csv', CHILDREN_CSV).to_df()
-        super(TestStringFunctions, self).setUp()
-
-    def get_source_dfs(self):
-        return {
-            'employee': self.employees,
-            'child': self.children
-        }
-
     def test_concat(self):
         df = self.execute('SELECT e.prename, e.surname, CONCAT(e.prename, \' \', e.surname) AS fullname '
                           'FROM employee AS e')
@@ -134,17 +122,6 @@ class TestStringFunctions(TestInterpreterBase):
 
 
 class TestMiscFunctions(TestInterpreterBase):
-    def setUp(self):
-        self.employees = File.from_string('employees.csv', EMPLOYEES_CSV).to_df()
-        self.children = File.from_string('children.csv', CHILDREN_CSV).to_df()
-        super(TestMiscFunctions, self).setUp()
-
-    def get_source_dfs(self):
-        return {
-            'employee': self.employees,
-            'child': self.children
-        }
-
     def test_cast_int_to_str(self):
         df = self.execute('SELECT CAST(c.age, \'str\') AS age FROM child AS c')
         self.assertIsInstance(df.age[0], basestring)
@@ -163,17 +140,6 @@ class TestMiscFunctions(TestInterpreterBase):
 
 
 class TestGeometryFunctions(TestInterpreterBase):
-    def setUp(self):
-        self.employees = File.from_string('employees.csv', EMPLOYEES_CSV).to_df()
-        self.children = File.from_string('children.csv', CHILDREN_CSV).to_df()
-        super(TestGeometryFunctions, self).setUp()
-
-    def get_source_dfs(self):
-        return {
-            'employee': self.employees,
-            'child': self.children
-        }
-
     def test_geom_from_text(self):
         self.execute('SELECT c.prename, ST_GeomFromText(\'POINT(4 6)\') as blabla FROM child AS c')
 

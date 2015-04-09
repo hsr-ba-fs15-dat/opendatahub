@@ -28,7 +28,7 @@ class TestParser(TestBase):
 
     def test_expressions(self):
         p = odhql.OdhQLParser()
-        result = p.parse('select \'te st\' as "bl ub", 3 as "integer", 4.5 as float, null as "null", '
+        result = p.parse('select \'te st\' as "bl ub", 3 as "integer", -3 as negative, 4.5 as float, null as "null", '
                          'true as "true", false as "false" from b')
 
         fields = (f for f in result.fields)
@@ -43,6 +43,12 @@ class TestParser(TestBase):
         self.assertIsInstance(field.value, int)
         self.assertEqual(3, field.value)
         self.assertEqual('integer', field.alias)
+
+        field = next(fields)
+        self.assertIsInstance(field, odhql.AliasedExpression)
+        self.assertIsInstance(field.value, int)
+        self.assertEqual(-3, field.value)
+        self.assertEqual('negative', field.alias)
 
         field = next(fields)
         self.assertIsInstance(field, odhql.AliasedExpression)
@@ -427,7 +433,10 @@ class TestParser(TestBase):
             ('select outer(inner() as f from test', 'malformed nested function call'),
             ('select 1 as b from test where func()', 'malformed where condition'),
             ('select 1 as a from test WHERE 7dcasxa33sx', 'trailing garbage'),
-            ('select a.a from a order by a.a union select b.a from b order by b.b', 'order only at end of unions')
+            ('select a.a from a order by a.a union select b.a from b order by b.b', 'order only at end of unions'),
+            ('select a.a from a order by -1', 'negative order by position is invalid'),
+            ('select a.a from a order by 0', 'zero as order by position is invalid'),
+            ('select 1.-1 as a from a', 'invalid float')
         ]
 
         for expr, reason in expressions_to_test:
