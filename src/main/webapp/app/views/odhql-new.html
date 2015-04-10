@@ -46,7 +46,21 @@
         <!-- /Textarea -->
 
         <div class="well" ng-repeat-start="group in vm.selected.items" ng-show="$index > 0">
-            UNION
+            <select
+                    ng-options="opt as opt.label for opt in vm.joinOperations"
+                    ng-model="vm.joinOperationsSelection[group.uniqueid]">
+            </select>
+
+            <select
+                    ng-options="opt as opt.alias for opt in vm.selected.fields[vm.selected.items[$index - 1].uniqueid]"
+                    ng-show="vm.joinOperationsSelection[group.uniqueid].label == 'JOIN'"
+                    ng-model="vm.join_fields[group.uniqueid][vm.selected.items[$index - 1].uniqueid]">
+            </select>
+            <select
+                    ng-options="opt as opt.alias for opt in vm.selected.fields[vm.selected.items[$index].uniqueid]"
+                    ng-show="vm.joinOperationsSelection[group.uniqueid].label == 'JOIN'"
+                    ng-model="vm.join_fields[group.uniqueid][vm.selected.items[$index].uniqueid]">
+            </select>
         </div>
         <div class="well" ng-repeat-end="group in vm.selected.items">
             Wählen Sie die benötigten Felder aus:
