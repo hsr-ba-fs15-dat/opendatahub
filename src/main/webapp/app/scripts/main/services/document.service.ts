@@ -86,6 +86,17 @@ module odh.main {
 
             return promise;
         }
+
+        public getPreview(filegroup:any){
+            var promise;
+            var d = this.$q.defer();
+            this.$http.get(filegroup.preview).then(data => {
+                filegroup.preview = data.data;
+                d.resolve(data);
+            }).catch(e => d.reject(e));
+            promise = d.promise;
+            return promise;
+        }
     }
 
     angular.module('openDataHub.main')

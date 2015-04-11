@@ -26,7 +26,7 @@ module odh {
                     private UrlService:odh.utils.UrlService, private FileGroupService:main.FileGroupService,
                     private $log:ng.ILogService) {
             var fg = {};
-            FileGroupService.getAll(false, true).then(res => {
+            FileGroupService.getAll(false, false).then(res => {
                 angular.forEach(res, (value) => {
                     if (fg[value.document.id] === undefined) {
                         fg[value.document.id] = [value.document];
@@ -49,11 +49,14 @@ module odh {
                 ,
                 add: (item) => {
                     if (this.selected.items.indexOf(item) === -1) {
-                        item.uniqueid = 'ODH' + item.id;
                         item.cols = [];
-                        angular.forEach(item.preview.columns, (col) => {
-                            item.cols.push({name: col, alias: col});
+                        this.FileGroupService.getPreview(item).then(data => {
+                            item.preview = data.data;
+                            angular.forEach(item.preview.columns, (col) => {
+                                item.cols.push({name: col, alias: col});
+                            });
                         });
+                        item.uniqueid = 'ODH' + item.id;
                         this.selected.items.push(item);
                     }
                 }
