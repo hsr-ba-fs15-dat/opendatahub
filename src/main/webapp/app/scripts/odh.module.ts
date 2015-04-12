@@ -11,6 +11,7 @@ module openDataHub {
             'ngMessages',
             'ngSanitize',
             'ngTouch',
+            'ngTable',
             'ui.router',
             'ui.utils',
             'ui.select',

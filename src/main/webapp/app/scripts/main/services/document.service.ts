@@ -87,7 +87,7 @@ module odh.main {
             return promise;
         }
 
-        public getPreview(filegroup:any){
+        public getPreview(filegroup:any) {
             var promise;
             var d = this.$q.defer();
             this.$http.get(filegroup.preview).then(data => {
