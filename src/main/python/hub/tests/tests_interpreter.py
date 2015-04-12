@@ -73,8 +73,11 @@ class TestInterpreterBase(TestBase):
 
     def execute(self, query):
         logging.info('Executing query "%s"', query)
+        t0 = time.time()
         df = self.interpreter.execute(query)
+        self.time = round(time.time() - t0, 2)
         logging.info('Query result: %s', df)
+        logging.info('"{}" took {}s.'.format(query, self.time))
         return df
 
 
@@ -202,6 +205,7 @@ class TestInterpreter(TestInterpreterBase):
             ('SELECT e.prename FROM employee AS e ORDER BY nonexistent', 'Non-existent ORDER BY field'),
             ('SELECT e.prename FROM employee AS e ORDER BY e.nonexistent', 'Non-existent ORDER BY field'),
             ('SELECT e.prename FROM employee AS e ORDER BY 99', 'Invalid ORDER BY position'),
+            ('SELECT e.prename FROM employee AS e UNION SELECT c.age FROM child AS c', 'UNION type mismatch')
         )
 
         for statement, message in statements:
@@ -223,13 +227,9 @@ class TestInterpreterPerformance(TestInterpreterBase):
         }
 
     def assert_time(self, statement, sec):
-        t0 = time.time()
         df = self.execute(statement)
-        t = round(time.time() - t0, 2)
-        msg = '"{}" took {}s.'.format(statement, t)
-        logging.info(msg)
-        if t > sec:
-            self.fail('{} Expected less than {}s.'.format(msg, sec))
+        if self.time > sec:
+            self.fail('Expected max. execution time of {}s.'.format(sec))
         return df
 
     def test_select(self):
@@ -243,7 +243,10 @@ class TestInterpreterPerformance(TestInterpreterBase):
 
     def test_join(self):
         self.assert_time('SELECT c.prename, e.prename AS parent FROM child AS c JOIN employee AS e ON c.parent = e.id',
-                        5)
+                         5)
+
+    def test_union(self):
+        self.assert_time('SELECT e.prename FROM employee AS e UNION SELECT c.prename FROM child AS c', 3)
 
 
 if __name__ == '__main__':

@@ -4,6 +4,9 @@ Tests for OdhQL functions.
 Are compared to python equivalents ("known" to operate correctly) instead of fixed/floored values.
 """
 
+import traceback
+import logging
+
 import pandas as pd
 
 from hub.tests.tests_interpreter import TestInterpreterBase
@@ -141,18 +144,38 @@ class TestMiscFunctions(TestInterpreterBase):
 
 class TestGeometryFunctions(TestInterpreterBase):
     def test_geom_from_text(self):
-        self.execute('SELECT c.prename, ST_GeomFromText(\'POINT(4 6)\') as blabla FROM child AS c')
+        self.execute('SELECT c.prename, ST_GeomFromText(\'POINT(4 6)\') AS blabla FROM child AS c')
 
     def test_set_srid(self):
-        df = self.execute('SELECT c.prename, ST_SetSRID(ST_GeomFromText(\'POINT(48.8183157 7.2234283)\'), 4326) as hsr '
+        df = self.execute('SELECT c.prename, ST_SetSRID(ST_GeomFromText(\'POINT(7.2234283 48.8183157)\'), 4326) AS hsr '
                           'FROM child AS c')
         self.assertTrue(df.crs['init'], 'epsg:4326')
 
     def test_srid(self):
         self.execute('SELECT c.prename, '
-                     'ST_SRID(ST_SetSRID(ST_GeomFromText(\'POINT(48.8183157 7.2234283)\'), 4326)) as hsr '
+                     'ST_SRID(ST_SetSRID(ST_GeomFromText(\'POINT(7.2234283 48.8183157)\'), 4326)) AS hsr '
                      'FROM child AS c')
 
     def test_astext(self):
-        self.execute('SELECT c.prename, ST_AsText(ST_GeomFromText(\'POINT(48.8183157 7.2234283)\')) as hsr '
+        self.execute('SELECT c.prename, ST_AsText(ST_GeomFromText(\'POINT(7.2234283 48.8183157)\')) AS hsr '
                      'FROM child AS c')
+
+    def test_union(self):
+        self.execute('SELECT ST_SetSRID(ST_GeomFromText(\'POINT(7.2234283 48.8183157)\'), 4326) AS hsr '
+                     'FROM child AS c UNION '
+                     'SELECT ST_SetSRID(ST_GeomFromText(\'POINT(804108.360138 6244089.40913)\'), 3857) AS hsr '
+                     'FROM child AS c'
+                     )
+        # todo assert
+
+    def test_fails(self):
+        statements = (
+            # todo different/no crs
+        )
+
+        for statement, message in statements:
+            try:
+                self.assertRaises(OdhQLExecutionException, lambda: self.execute(statement))
+            except:
+                logging.info(traceback.format_exc())
+                self.fail(message)
