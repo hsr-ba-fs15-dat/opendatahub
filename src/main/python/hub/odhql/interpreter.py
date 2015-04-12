@@ -8,7 +8,10 @@ import pandas as pd
 import geopandas as gp
 import numpy as np
 import re
+from shapely.geometry.base import BaseGeometry
+import datetime as dt
 
+from hub.utils.pandasutils import DataFrameUtils
 import hub.odhql.parser as parser
 import hub.odhql.functions as functions
 from hub.odhql.exceptions import OdhQLExecutionException
@@ -17,8 +20,34 @@ from hub.odhql.exceptions import OdhQLExecutionException
 class OdhQLInterpreter(object):
     FILE_GROUP_RE = re.compile('ODH([1-9]\d?)', re.IGNORECASE)
 
+    TYPE_MAP = {
+        int: 'INTEGER',
+        float: 'FLOAT',
+        str: 'STRING',
+        unicode: 'STRING',
+        BaseGeometry: 'GEOMETRY',
+        dt.datetime: 'DATETIME',
+        dt.timedelta: 'INTERVAL',
+        bool: 'BOOLEAN',
+    }
+
     def __init__(self, source_dfs):
         self.source_dfs = {alias.lower(): df for alias, df in source_dfs.iteritems()}
+
+    @classmethod
+    def resolve_type(cls, type_):
+        if isinstance(type_, BaseGeometry):
+            type_ = BaseGeometry
+
+        return cls.TYPE_MAP[type_]
+
+    @classmethod
+    def assert_crs(self, series, name=None):
+        if not getattr(series, 'crs', None):
+            name = name or series.name
+            raise OdhQLExecutionException('Unknown reference system for column "{}". '
+                                          'Please use ST_SetSRID to specify the reference system.'
+                                          .format(name))
 
     @classmethod
     def parse_sources(cls, query):
@@ -83,10 +112,15 @@ class OdhQLInterpreter(object):
                 colnames = [c.name for c in cols]
                 addtl_colnames = set(df.columns.tolist()) - set(colnames)
                 addtl_cols = [df[c].reset_index(drop=True) for c in addtl_colnames]
-                df = pd.concat(cols + addtl_cols, axis=1)
+                all_cols = cols + addtl_cols
+
+                df = DataFrameUtils.preserve_meta(pd.concat(all_cols, axis=1), df)
                 df.__class__ = cls
+
                 for attr, val in kw.iteritems():
                     setattr(df, attr, val)
+                for i, c in enumerate(df):
+                    DataFrameUtils.preserve_meta(df[c], all_cols[i])
 
             else:
                 colnames = [getattr(f, 'alias', f.name) for f in query.fields]
@@ -113,18 +147,45 @@ class OdhQLInterpreter(object):
             raise OdhQLExecutionException('The number of selected fields for each query must match exactly.')
 
         merged = None
+        coltypes = {}
         columns = []
 
         for df in (self.interpret(query) for query in queries):
             if merged is None:
                 merged = df
                 columns = merged.columns.tolist()
+                coltypes = DataFrameUtils.get_col_types(df).values()
+
+                old = df.copy()
                 merged.rename(columns={col: str(i) for i, col in enumerate(df)}, inplace=True)
+                merged = DataFrameUtils.preserve_series_meta(merged, old)
+
             else:
+                for i, (ct0, ct1) in enumerate(zip(coltypes, DataFrameUtils.get_col_types(df).values())):
+                    ct0, ct1 = self.resolve_type(ct0), self.resolve_type(ct1)
+                    if ct0 != ct1:
+                        raise OdhQLExecutionException('UNION: Type mismatch for column {} ({}). '
+                                                      'Expected "{}" got "{}" instead'
+                                                      .format(i + 1, columns[i], ct0, ct1))
+
+                old = df.copy()
                 df.rename(columns={col: str(i) for i, col in enumerate(df)}, inplace=True)
+                df = DataFrameUtils.preserve_series_meta(df, old)
+
+                for i, (old, new) in enumerate(zip(columns, old.columns.tolist())):
+                    colname = str(i)
+                    s_new = df[str(colname)]
+                    if isinstance(s_new, gp.GeoSeries):
+                        s_old = merged[str(colname)]
+                        self.assert_crs(s_old, old)
+                        self.assert_crs(s_new, new)
+                        df[str(colname)] = s_new.to_crs(merged.crs)
+
                 merged = merged.append(df)
 
+        old = merged.copy()
         merged.rename(columns={str(i): col for i, col in enumerate(columns)}, inplace=True)
+        merged = DataFrameUtils.preserve_series_meta(merged, old)
         return merged
 
     def interpret_data_sources(self, dfs, data_sources):
