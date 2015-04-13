@@ -48,7 +48,10 @@ class FileGroup(object):
         return [f for f in self.files if f.extension == extension]
 
     def get_main_file(self):
-        return next((f for f in self.files if not issubclass(f.get_format(), formats.Other)))
+        try:
+            return next((f for f in self.files if not issubclass(f.get_format(), formats.Other)))
+        except StopIteration:
+            return None
 
     @property
     def names(self):
@@ -115,7 +118,10 @@ class File(object):
     @classmethod
     def from_file(cls, path, *args, **kwargs):
         with open(path, 'rb') as f:
-            return cls(os.path.basename(path), StringIO(f.read()), *args, **kwargs)
+            file = cls(os.path.basename(path), StringIO(f.read()), *args, **kwargs)
+
+        file.format = formats.identify(file)
+        return file
 
     @classmethod
     def from_string(cls, name, string, *args, **kwargs):
