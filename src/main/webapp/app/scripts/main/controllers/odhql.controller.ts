@@ -11,6 +11,7 @@ module odh {
         public rows:{};
         public submitted:boolean = false;
         public fg;
+        public documents:Object[];
         public fileGroups;
         public odhqlInputString = '';
         public uniqueName;
@@ -25,39 +26,33 @@ module odh {
         constructor(private $http:ng.IHttpService, private $state:ng.ui.IStateService, private $scope:any,
                     private ToastService:odh.utils.ToastService, private $window:ng.IWindowService, private $upload,
                     private UrlService:odh.utils.UrlService, private FileGroupService:main.FileGroupService,
+                    private DocumentService:main.DocumentService,
                     private $log:ng.ILogService, private ngTableParams, public $filter:ng.IFilterService) {
-            var fg = {};
-            var fileGroups = [];
 
-            FileGroupService.getAll(false, false).then(res => {
-                angular.forEach(res, (value) => {
-                    if (fg[value.document.id] === undefined) {
-                        fg[value.document.id] = [value.document];
-                    }
-                    fg[value.document.id].push(value);
-                    console.log(value);
-                    value.documentId = value.document.id;
-                    value.file_name = value.files[0].file_name;
-                    fileGroups.push(value);
-                    console.log('fg', fileGroups);
-                });
-                this.items = fg;
-                this.tableParams = new ngTableParams({
-                    page: 1,            // show first page
-                    count: 10           // count per page
-                }, {
-                    groupBy: 'documentId',
-                    total: fileGroups.length, // length of data
-                    getData: ($defer, params) => {
-                        var orderedData = params.sorting() ?
-                            $filter('orderBy')(fileGroups, this.tableParams.orderBy()) : fileGroups;
-                        orderedData = params.filter ? $filter('filter')(orderedData, params.filter()) : orderedData;
-                        $defer.resolve(
-                            orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count())
-                        );
-                    }
-                });
+            this.tableParams = new ngTableParams({
+                page: 1,            // show first page
+                count: 10,           // count per page
+                limit: 10
+            }, {
+                counts: [10, 25, 50, 100],
+                total: 0, // length of data
+                getData: ($defer, params) => {
+                    console.log(params.url());
+                    DocumentService.getList(params.url()).then(result => {
+                        console.log(result);
+                        params.total(result.count);
+                        $defer.resolve(result.results);
+                    });
+
+
+                },
+                getFileGroups: ($defer, params) => {
+
+                    console.debug($defer, params);
+                }
             });
+            console.log(this.tableParams.settings());
+
             this.selected = {
                 items: [],
                 fields: {},
@@ -93,6 +88,19 @@ module odh {
                 }
             };
 
+        }
+
+        public getFileGroup(document) {
+            this.FileGroupService.getAll(document.id, true).then(filegroup => {
+                document.$showRows = !document.$showRows;
+                if (document.$showRows) {
+                    document.fileGroup = filegroup;
+                }else
+                {
+                    document.fileGroup = [];
+                }
+                console.log(document.$showRows);
+            });
         }
 
 

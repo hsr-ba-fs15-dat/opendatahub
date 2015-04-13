@@ -6,44 +6,42 @@
 <form name="form" class="form-horizontal" ng-controller="OdhQLController as vm">
     <fieldset>
 
-        <div class="form-group" ng-class="{'has-error': form.name.$invalid && vm.submitted}">
-            <label class="col-md-3 control-label" for="name">Name/Titel</label>
 
-            <div class="col-md-9">
-                <input id="name" name="name" type="text" placeholder="Name für odhSQL Snippet."
-                       class="form-control input-md"
-                       ng-model="snippet.name"
-                       required>
+        <p><strong>Page:</strong> {{vm.tableParams.page()}}
 
-                <div ng-messages="form.name.$error" ng-show="form.name.submitted">
-                    <span class="help-block">
-                        <div ng-message="required">Bitte geben Sie einen Namen an</div>
-                    </span>
-                </div>
-            </div>
+        <p><strong>Count per page:</strong> {{vm.tableParams.count()}}
+
+        <p><strong>Total:</strong> {{vm.tableParams.total()}}
+
+        <div loading-container="tableParams.settings().$loading">
+            <table class="table" ng-table="vm.tableParams" show-filter="true">
+                <tbody ng-repeat="document in $data">
+                <tr>
+                    <td data-title="'Name'" sortable="name" filter="{ 'name': 'text' }">
+                        <a href="" ng-click="vm.getFileGroup(document)">
+                            <span class="glyphicon"
+                                  ng-class="{ 'glyphicon-chevron-right': !document.$showRows, 'glyphicon-chevron-down': document.$showRows }"></span>
+                            <strong>{{ document.name }}</strong>
+                        </a>
+                    </td>
+                    <td data-title="'Beschreibung'">
+                        {{document.description}}
+                    </td>
+                </tr>
+
+
+                <tr ng-repeat="fileGroup in document.fileGroup">
+                    <td>
+                        {{fileGroup.files[0].file_name}}
+                    </td>
+                    <td>
+                        <a ng-click="vm.selected.add(fileGroup)">Dieses File verwenden</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
         </div>
 
-        <!-- Textarea -->
-        <div class="form-group" ng-class="{'has-error': form.description.$invalid && vm.submitted}">
-            <label class="col-md-3 control-label" for="description">Beschreibung</label>
-
-            <div class="col-md-9">
-                <textarea class="form-control" id="description" name="description"
-                          ng-model="snippet.description"
-                          placeholder="z.B. Transformiert alle Vornamen zu Nachnamen"
-                          required
-                          rows="4"
-                        ></textarea>
-
-                <div ng-messages="form.description.$error" ng-show="vm.submitted">
-                    <span class="help-block">
-                        <div ng-message="required">Bitte geben Sie eine Beschreibung an</div>
-                    </span>
-                </div>
-
-            </div>
-        </div>
-        <!-- /Textarea -->
 
         <div class="well" ng-repeat-start="group in vm.selected.items" ng-show="$index > 0">
             Wählen Sie die Verbindung zwischen diesen 2 Tabellen aus:
@@ -87,33 +85,44 @@
 
             <a ng-click="vm.selected.remove(group)">Tabelle entfernen</a>
         </div>
+        <div class="form-group" ng-class="{'has-error': form.name.$invalid && vm.submitted}">
+            <label class="col-md-3 control-label" for="name">Name/Titel</label>
 
-        <table class="table" ng-table="vm.tableParams" show-filter="true">
-            <tbody ng-repeat="group in $groups">
-            <tr class="ng-table-group">
-                <td colspan="{{ $columns.length }} ">
-                    <a href="" ng-click="group.$hideRows = !group.$hideRows">
-                        <span class="glyphicon"
-                              ng-class="{ 'glyphicon-chevron-right': group.$hideRows, 'glyphicon-chevron-down': !group.$hideRows }"></span>
-                        <strong>{{ group.data[0].document.name }}</strong>
+            <div class="col-md-9">
+                <input id="name" name="name" type="text" placeholder="Name für odhSQL Snippet."
+                       class="form-control input-md"
+                       ng-model="snippet.name"
+                       required>
 
-                    </a>
-                    <small>{{ group.data[0].document.description }}</small>
-                </td>
-            </tr>
-            <tr ng-hide="group.$hideRows" ng-repeat="item in group.data">
-                <td data-title="'Name'" filter="{ 'file_name': 'text' }">
-                    <i ng-click="vm.selected.add(item);" class="fa fa-plus-circle"
-                       ng-hide="vm.selected.items.indexOf(item) > -1"></i>
-                    {{item.file_name}}
-                </td>
-                <td data-title="'Dateiformat'">
-                    {{item.file_format}}
-                </td>
-            </tr>
-            </tbody>
-        </table>
+                <div ng-messages="form.name.$error" ng-show="form.name.submitted">
+                    <span class="help-block">
+                        <div ng-message="required">Bitte geben Sie einen Namen an</div>
+                    </span>
+                </div>
+            </div>
+        </div>
 
+        <!-- Textarea -->
+        <div class="form-group" ng-class="{'has-error': form.description.$invalid && vm.submitted}">
+            <label class="col-md-3 control-label" for="description">Beschreibung</label>
+
+            <div class="col-md-9">
+                <textarea class="form-control" id="description" name="description"
+                          ng-model="snippet.description"
+                          placeholder="z.B. Transformiert alle Vornamen zu Nachnamen"
+                          required
+                          rows="4"
+                        ></textarea>
+
+                <div ng-messages="form.description.$error" ng-show="vm.submitted">
+                    <span class="help-block">
+                        <div ng-message="required">Bitte geben Sie eine Beschreibung an</div>
+                    </span>
+                </div>
+
+            </div>
+        </div>
+        <!-- /Textarea -->
         <!-- Textarea -->
         <div class="form-group" ng-class="{'has-error': form.description.$invalid && vm.submitted}">
             <label class="col-md-3 control-label" for="odhsqlinput">odhSQL Snippet <i
@@ -145,7 +154,7 @@
                 <button ng-click="vm.submit()" id="add" name="add" class="btn btn-primary pull-right">
                     Speichern
                 </button>
-                <button ng-click="vm.preview()" id="cancel" name="cancel" class="btn btn-info pull-right">
+                <button ng-click="vm.preview()" class="btn btn-info pull-right">
                     Vorschau
                 </button>
             </div>

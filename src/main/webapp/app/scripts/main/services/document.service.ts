@@ -34,6 +34,10 @@ module odh.main {
             this.$log.debug('Document list parameters', params);
             return this.documents.getList(params);
         }
+
+        public getList(params:any){
+            return this.Restangular.oneUrl('document','').get(params);
+        }
     }
 
     export class FileGroupService {
