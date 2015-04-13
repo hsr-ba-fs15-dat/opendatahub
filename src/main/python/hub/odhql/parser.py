@@ -26,11 +26,13 @@ class OdhQLParser(object):
     UnionQuery ::= Query ( "union" Query )* ( OrderByList )?
     Query ::= FieldSelection DataSourceSelection ( FilterList )?
 
-    FieldSelection ::= "select" AliasedFieldEquiv ( "," AliasedFieldEquiv )*
-    AliasedFieldEquiv ::= FieldEquiv "as" Alias
+    FieldDeclarationList ::= "select" FieldDeclaration ( "," FieldDeclaration )*
+    FieldDeclaration ::= FieldEquiv "as" Alias
+
     FieldEquiv ::= Function | Value | Field
-    Function ::= Identifier "(" ( ListOfFunctionArguments )? ")"
-    ListOfFunctionArguments ::= FieldEquiv ( ( "," FieldEquiv )* )?
+
+    Function ::= Identifier "(" ( FunctionArgumentList )? ")"
+    FunctionArgumentList ::= FieldEquiv ( ( "," FieldEquiv )* )?
 
     DataSourceName ::= Identifier
     FieldName ::= Identifier
@@ -48,10 +50,9 @@ class OdhQLParser(object):
     FilterList ::= "where" FilterAlternative
     FilterAlternative ::= FilterCombination ( "or" FilterCombination )*
     FilterCombination ::= FilterDefinition ( "and" FilterDefinition )*
-    FilterDefinition ::= BinaryCondition | InCondition |
-                       IsNullCondition | "(" FilterAlternative ")"
+    FilterDefinition ::= BinaryCondition | InCondition | IsNullCondition | "(" FilterAlternative ")"
     BinaryCondition ::= FieldEquiv BinaryOperator FieldEquiv
-    BinaryOperator ::= "=" | "!=" | "<" | "<=" | ">" | ">=" | "like"
+    BinaryOperator ::= "=" | "!=" | "<=" | "<"| ">=" | ">" | "like"
     InCondition ::= FieldEquiv ( "not" )? "in" "(" Value ( "," Value )* ")"
     IsNullCondition ::= Field "is" ( "not" )? Null
     OrderByList ::= "order" "by" OrderByField ( "," OrderByField )*
@@ -207,7 +208,7 @@ class Union(ASTBase):
     @classmethod
     def parse(cls, tokens):
         if len(tokens) < 1:
-            raise ParseException('malformed Union (no queries)')
+            raise TokenException('malformed Union (no queries)')
 
         if len(tokens) < 2:
             return
@@ -240,9 +241,9 @@ class Query(ASTBase):
     @classmethod
     def parse(cls, tokens):
         if 'fields' not in tokens:
-            raise ParseException('malformed Query (no fields)')
+            raise TokenException('malformed Query (no fields)')
         if 'datasources' not in tokens:
-            raise ParseException('malformed Query (no data sources)')
+            raise TokenException('malformed Query (no data sources)')
 
         fields = list(tokens.get('fields'))
         data_sources = list(tokens.get('datasources'))
@@ -253,7 +254,7 @@ class Query(ASTBase):
     @classmethod
     def parse_order_by(cls, tokens):
         if 'fields' not in tokens:
-            raise ParseException('malformed OrderBy (no fields)')
+            raise TokenException('malformed OrderBy (no fields)')
 
         return [tokens.get('fields')]
 
@@ -286,9 +287,9 @@ class Field(ASTBase):
     @classmethod
     def parse(cls, tokens):
         if 'name' not in tokens:
-            raise ParseException('malformed Field (name not found)')
+            raise TokenException('malformed Field (name not found)')
         if 'prefix' not in tokens:
-            raise ParseException('malformed Field (prefix not found)')
+            raise TokenException('malformed Field (prefix not found)')
 
         name = tokens.get('name')
         prefix = tokens.get('prefix')
@@ -307,12 +308,12 @@ class AliasedField(Field):
     @classmethod
     def parse(cls, tokens):
         if 'field' not in tokens:
-            raise ParseException('malformed AliasedField (field not found)')
+            raise TokenException('malformed AliasedField (field not found)')
 
         field = tokens.get('field')
 
         if not isinstance(field, Field):
-            raise ParseException("expected field, got {}".format(type(field)))
+            raise TokenException("expected field, got {}".format(type(field)))
 
         alias = tokens.get('alias', None)
 
@@ -329,7 +330,7 @@ class Expression(ASTBase):
     @classmethod
     def parse(cls, tokens):
         if 'value' not in tokens:
-            raise ParseException('malformed Expression (no value)')
+            raise TokenException('malformed Expression (no value)')
 
         value = tokens.get('value')
 
@@ -351,7 +352,7 @@ class Expression(ASTBase):
     @classmethod
     def parse_boolean(cls, tokens):
         if len(tokens) < 1:
-            raise ParseException('malformed boolean value (no value)')
+            raise TokenException('malformed boolean value (no value)')
 
         value = tokens[0]
 
@@ -374,15 +375,15 @@ class AliasedExpression(Expression):
     @classmethod
     def parse(cls, tokens):
         if 'value' not in tokens:
-            raise ParseException('malformed AliasedExpression (no value)')
+            raise TokenException('malformed AliasedExpression (no value)')
 
         if 'alias' not in tokens:
-            raise ParseException('malformed AliasedExpression (no alias)')
+            raise TokenException('malformed AliasedExpression (no alias)')
 
         value = tokens.get('value')
 
         if not isinstance(value, Expression):
-            raise ParseException('expected Expression, got {}'.format(type(value)))
+            raise TokenException('expected Expression, got {}'.format(type(value)))
 
         value = value.value
 
@@ -399,7 +400,7 @@ class Function(ASTBase):
     @classmethod
     def parse(cls, tokens):
         if 'name' not in tokens:
-            raise ParseException('malformed Function (no name)')
+            raise TokenException('malformed Function (no name)')
 
         name = tokens.get('name')
         # this one is weird: access by name makes it almost impossible to get a simple list of our own
@@ -426,15 +427,15 @@ class AliasedFunction(Function):
     @classmethod
     def parse(cls, tokens):
         if 'function' not in tokens:
-            raise ParseException('malformed AliasedFunction (no name)')
+            raise TokenException('malformed AliasedFunction (no name)')
         if 'alias' not in tokens:
-            raise ParseException('malformed AliasedFunction (no alias)')
+            raise TokenException('malformed AliasedFunction (no alias)')
 
         func = tokens.get('function')
         alias = tokens.get('alias')
 
         if not isinstance(func, Function):
-            raise ParseException('expected Function, got {}'.format(type(func)))
+            raise TokenException('expected Function, got {}'.format(type(func)))
 
         return cls(func.name, func.args, alias)
 
@@ -450,7 +451,7 @@ class DataSource(ASTBase):
     @classmethod
     def parse(cls, tokens):
         if len(tokens) < 1:
-            raise ParseException()
+            raise TokenException()
 
         name = tokens.get('name')
         alias = tokens.get('alias', None)
@@ -469,13 +470,13 @@ class JoinCondition(ASTBase):
     @classmethod
     def parse(cls, tokens):
         if 'left' not in tokens or 'right' not in tokens:
-            raise ParseException('invalid join condition')
+            raise TokenException('invalid join condition')
 
         left = tokens.get('left')
         right = tokens.get('right')
 
         if not isinstance(left, Field) or not isinstance(right, Field):
-            raise ParseException('expected field = field, got {} = {}'.format(type(left), type(right)))
+            raise TokenException('expected field = field, got {} = {}'.format(type(left), type(right)))
 
         return cls(left, right)
 
@@ -502,7 +503,7 @@ class JoinConditionList(ASTBase, Sequence):
     @classmethod
     def parse(cls, tokens):
         if len(tokens) == 0:
-            raise ParseException()
+            raise TokenException()
 
         conditions = list(tokens.get('conditions'))
         return cls(conditions)
@@ -526,9 +527,9 @@ class JoinedDataSource(DataSource):
     @classmethod
     def parse(cls, tokens):
         if 'datasource' not in tokens:
-            raise ParseException('join without datasource')
+            raise TokenException('join without datasource')
         if 'condition' not in tokens:
-            raise ParseException('join without conditions')
+            raise TokenException('join without conditions')
 
         datasource = tokens.get('datasource')
         condition = tokens.get('condition')
@@ -563,13 +564,13 @@ class BinaryCondition(ASTBase):
     @classmethod
     def parse(cls, tokens):
         if 'left' not in tokens:
-            raise ParseException('malformed BinaryCondition (no left side)')
+            raise TokenException('malformed BinaryCondition (no left side)')
 
         if 'right' not in tokens:
-            raise ParseException('malformed BinaryCondition (no right side)')
+            raise TokenException('malformed BinaryCondition (no right side)')
 
         if 'operator' not in tokens:
-            raise ParseException('malformed BinaryCondition (no operator)')
+            raise TokenException('malformed BinaryCondition (no operator)')
 
         left = tokens.get('left')
         right = tokens.get('right')
@@ -581,14 +582,14 @@ class BinaryCondition(ASTBase):
         if not v.found:
             right.accept(v)
             if not v.found:
-                raise ParseException('illegal BinaryCondition: at least one side needs to reference a Field')
+                raise TokenException('illegal BinaryCondition: at least one side needs to reference a Field')
 
         return cls(left, op, right, invert)
 
     @classmethod
     def parse_operator(cls, tokens):
         if len(tokens) < 1:
-            raise ParseException('malformed operator (no operator)')
+            raise TokenException('malformed operator (no operator)')
 
         op = tokens[0]
 
@@ -607,7 +608,7 @@ class BinaryCondition(ASTBase):
         if str(op).lower() == 'like':
             return cls.Operator.like
 
-        raise ParseException('unregistered operation: {}'.format(op))
+        raise TokenException('unregistered operation: {}'.format(op))
 
     def __repr__(self):
         return '<BinaryCondition left={} op={} right={} invert={}>'.format(self.left, self.operator, self.right,
@@ -629,10 +630,10 @@ class InCondition(ASTBase):
     @classmethod
     def parse(cls, tokens):
         if 'left' not in tokens:
-            raise ParseException('malformed InCondition (no left side)')
+            raise TokenException('malformed InCondition (no left side)')
 
         if 'in_list' not in tokens:
-            raise ParseException('malformed InCondition (no in_list)')
+            raise TokenException('malformed InCondition (no in_list)')
 
         left = tokens.get('left')
         in_list = tokens.get('in_list')
@@ -660,13 +661,13 @@ class IsNullCondition(ASTBase):
     @classmethod
     def parse(cls, tokens):
         if 'field' not in tokens:
-            raise ParseException('malformed IsNullCondition')
+            raise TokenException('malformed IsNullCondition')
 
         field = tokens.get('field')
         invert = 'invert' in tokens
 
         if not isinstance(field, Field):
-            raise ParseException('expected Field, got {}'.format(type(field)))
+            raise TokenException('expected Field, got {}'.format(type(field)))
 
         return cls(field, invert)
 
@@ -686,7 +687,7 @@ class FilterListBase(ASTBase, Sequence):
     @classmethod
     def parse(cls, tokens):
         if len(tokens) < 1:
-            raise ParseException('malformed {} (no conditions)'.format(cls.__name__))
+            raise TokenException('malformed {} (no conditions)'.format(cls.__name__))
 
         conditions = list(tokens[:])
 
@@ -723,13 +724,13 @@ class OrderByPosition(ASTBase):
     @classmethod
     def parse(cls, tokens):
         if len(tokens) < 1:
-            raise ParseException('malformed OrderByPosition (no position)')
+            raise TokenException('malformed OrderByPosition (no position)')
 
         try:
             position = int(tokens[0])
 
             if position < 1:
-                raise ParseException('invalid OrderByPosition: Needs to be at least 1')
+                raise TokenException('invalid OrderByPosition: Needs to be at least 1')
 
             return cls(position)
         except ValueError:
@@ -746,7 +747,7 @@ class OrderByAlias(ASTBase):
     @classmethod
     def parse(cls, tokens):
         if len(tokens) < 1:
-            raise ParseException('malformed OrderByAlias (no alias)')
+            raise TokenException('malformed OrderByAlias (no alias)')
 
         return cls(tokens[0])
 
@@ -766,7 +767,7 @@ class OrderBy(ASTBase):
     @classmethod
     def parse(cls, tokens):
         if 'field' not in tokens:
-            raise ParseException('malformed OrderByField (no field)')
+            raise TokenException('malformed OrderByField (no field)')
 
         field = tokens.get('field')
         dir = str(tokens.get('direction', 'asc')).lower()
@@ -792,6 +793,6 @@ class FindClassVisitor(object):
             self.found = True
 
 
-class ParseException(Exception):
+class TokenException(Exception):
     def __init__(self, message='parse error'):
-        super(ParseException, self).__init__(message)
+        super(TokenException, self).__init__(message)
