@@ -136,8 +136,8 @@ class OdhQLParser(object):
 
         condition_side = field | value | function
 
-        operator = ( Literal('=') | '!=' | '<=' | '<' | '>=' | '>' |
-                     Optional(CaselessKeyword('not'))('invert') + CaselessKeyword('like'))
+        operator = (Literal('=') | '!=' | '<=' | '<' | '>=' | '>' |
+                    Optional(CaselessKeyword('not'))('invert') + CaselessKeyword('like'))
         operator.setParseAction(BinaryCondition.parse_operator)
 
         binary_condition = condition_side.copy()('left') + operator('operator') + condition_side.copy()('right')
