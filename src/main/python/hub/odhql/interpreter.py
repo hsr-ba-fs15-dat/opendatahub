@@ -203,8 +203,7 @@ class OdhQLInterpreter(object):
                     names_right.append(self.make_name(right.prefix, right.name))
 
                 df_right = dfs[right.prefix]
-                df = df.merge(df_right, how='left', left_on=names_left, right_on=names_right, suffixes=('', 'r'),
-                              copy=False)  # noqa
+                df = df.merge(df_right, left_on=names_left, right_on=names_right, suffixes=('', 'r'), copy=False)
                 aliases_left.append(right.prefix)
 
             elif isinstance(ds, parser.DataSource):
