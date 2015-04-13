@@ -9,6 +9,7 @@ import collections
 import pandas
 import geopandas
 import os
+import types
 
 from opendatahub.utils.plugins import RegistrationMixin
 from hub import formats
@@ -37,7 +38,10 @@ class Parser(RegistrationMixin):
     def parse(cls, file, format, *args, **kwargs):
         for parser in cls.parsers_by_format[format]:
             try:
-                return parser.parse(file, format=format, *args, **kwargs)
+                res = parser.parse(file, format=format, *args, **kwargs)
+                if isinstance(res, types.ListType):
+                    return res
+                return [res]
             except:
                 raise
                 logging.debug('%s was not able to parse data with format %s', parser.__name__, format.__name__)
@@ -93,6 +97,7 @@ class OGRParser(Parser):
 
         return dataframes
 
+
 class GenericXMLParser(Parser):
     """ Flat XML parser
     """
@@ -102,5 +107,6 @@ class GenericXMLParser(Parser):
     @classmethod
     def parse(cls, file, format, *args, **kwargs):
         from lxml import etree
+
         et = etree.parse(file.stream)
         return pandas.DataFrame([dict(text=e.text, **e.attrib) for e in et.getroot()])
