@@ -69,12 +69,12 @@ class FileGroupViewSet(viewsets.ModelViewSet):
     def preview(self, request, pk):
         try:
             model = FileGroupModel.objects.get(id=pk)
-            df = model.to_file_group().to_df()
-            df = DataFrameUtils.make_serializable(df).fillna('NULL')
-            return JsonResponse({
+            dataframes = model.to_file_group().to_df()
+
+            return JsonResponse([{
                 'columns': df.columns.tolist(),
                 'data': df.iloc[:5].to_dict(orient='records')
-            })
+            } for df in map(lambda df: DataFrameUtils.make_serializable(df).fillna('NULL'), dataframes)], safe=False)
         except Exception, e:
-            # raise
-            return JsonResponse({'error': e.message, 'error_location': 'preview'})
+            raise
+            # return JsonResponse({'error': e.message, 'error_location': 'preview'})
