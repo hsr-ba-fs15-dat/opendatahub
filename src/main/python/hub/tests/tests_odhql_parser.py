@@ -267,7 +267,8 @@ class TestParser(TestBase):
                          'and t.less_or_equal <= 1 '
                          'and t.greater > 1 '
                          'and t.greater_or_equal >= 1 '
-                         'and t."like" like \'test%\'')
+                         'and t."like" like \'test\''
+                         'and t.not_like not like \'text\'')
 
         self.assertIsInstance(result.filter_definitions, odhql.FilterAlternative)
         self.assertIsInstance(result.filter_definitions[0], odhql.FilterCombination)

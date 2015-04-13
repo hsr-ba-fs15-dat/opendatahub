@@ -136,7 +136,8 @@ class OdhQLParser(object):
 
         condition_side = field | value | function
 
-        operator = Literal('=') | '!=' | '<=' | '<' | '>=' | '>' | CaselessKeyword('like')
+        operator = ( Literal('=') | '!=' | '<=' | '<' | '>=' | '>' |
+                     Optional(CaselessKeyword('not'))('invert') + CaselessKeyword('like'))
         operator.setParseAction(BinaryCondition.parse_operator)
 
         binary_condition = condition_side.copy()('left') + operator('operator') + condition_side.copy()('right')
@@ -554,12 +555,12 @@ class BinaryCondition(ASTBase):
         greater = 5
         greater_or_equal = 6
         like = 7
+        not_like = 8
 
-    def __init__(self, left, operator, right, invert):
+    def __init__(self, left, operator, right):
         self.left = left
         self.operator = operator
         self.right = right
-        self.invert = invert
 
     @classmethod
     def parse(cls, tokens):
@@ -575,7 +576,6 @@ class BinaryCondition(ASTBase):
         left = tokens.get('left')
         right = tokens.get('right')
         op = tokens.get('operator')
-        invert = 'invert' in tokens
 
         v = FindClassVisitor(Field)
         left.accept(v)
@@ -584,7 +584,7 @@ class BinaryCondition(ASTBase):
             if not v.found:
                 raise TokenException('illegal BinaryCondition: at least one side needs to reference a Field')
 
-        return cls(left, op, right, invert)
+        return cls(left, op, right)
 
     @classmethod
     def parse_operator(cls, tokens):
@@ -607,12 +607,13 @@ class BinaryCondition(ASTBase):
             return cls.Operator.greater_or_equal
         if str(op).lower() == 'like':
             return cls.Operator.like
+        if str(op).lower() == 'not' and str(tokens[1]).lower() == 'like':
+            return cls.Operator.not_like
 
         raise TokenException('unregistered operation: {}'.format(op))
 
     def __repr__(self):
-        return '<BinaryCondition left={} op={} right={} invert={}>'.format(self.left, self.operator, self.right,
-                                                                           self.invert)
+        return '<BinaryCondition left={} op={} right={}>'.format(self.left, self.operator, self.right)
 
     def accept(self, visitor):
         visitor.visit(self)
