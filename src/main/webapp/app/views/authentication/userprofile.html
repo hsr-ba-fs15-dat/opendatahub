@@ -32,7 +32,7 @@
             <div class="alert alert-warning" ng-if="!up.UserService.isAuthenticated()">
                 Sie müssen eingeloggt sein um diese Seite ansehen zu können.
             </div>
-            <h3>Personal info</h3>
+            <h3>Informationen</h3>
 
             <form role="form" ng-if="up.UserService.isAuthenticated()" name="userProfileForm"
                   ng-submit="up.updateProfile(userProfileForm, up.model)" novalidate>
@@ -44,7 +44,7 @@
                         <input class="form-control" type="text" ng-value="up.model.username" disabled>
                     </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group" ng-hide="true">
                     <label class="col-md-3 control-label">Beschreibung:</label>
 
                     <div class="col-md-8">
@@ -55,8 +55,8 @@
                 <div class="form-group">
                     <label class="col-md-3 control-label"></label>
 
-                    <div class="col-md-8">
-                        <input type="button" class="btn btn-primary" value="Save Changes">
+                    <div class="col-md-8" ng-hide="true">
+                        <input type="button" class="btn btn-primary" value="Speichern">
                         <span></span>
                         <input type="reset" class="btn btn-default" value="Cancel">
                     </div>
