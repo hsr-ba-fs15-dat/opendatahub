@@ -117,7 +117,9 @@ class File(object):
         with open(path, 'rb') as f:
             file = cls(os.path.basename(path), StringIO(f.read()), *args, **kwargs)
 
-        file.format = formats.identify(file)
+        if not file.format:
+            file.format = formats.identify(file)
+
         return file
 
     @classmethod
