@@ -155,22 +155,38 @@ class TestInterpreter(TestInterpreterBase):
         self.assertNotIn('Holzmann', df.surname.tolist())
         self.assertNotIn('Oster', df.surname.tolist())
 
+    def test_where_like(self):
+        df = self.execute('SELECT c.surname FROM child as c WHERE c.surname LIKE \'^H.*\'')
+        self.assertNotIn(False, [s.startswith('H') for s in df.surname])
+
+    def test_where_not_like(self):
+        df = self.execute('SELECT c.surname FROM child as c WHERE c.surname NOT LIKE \'^H.*\'')
+        self.assertNotIn(False, [not s.startswith('H') for s in df.surname])
+
     def test_join(self):
         df = self.execute('SELECT c.prename, e.prename AS parent FROM child AS c JOIN employee AS e ON c.parent = e.id')
         self.assertEqual(len(df), len(self.children))
 
     def test_self_join(self):
         df = self.execute('SELECT e.prename, ee.prename AS boss '
-                          'FROM employee as e JOIN employee AS ee ON e.boss = ee.id WHERE e.boss IS NOT NULL')
+                          'FROM employee AS e JOIN employee AS ee ON e.boss = ee.id WHERE e.boss IS NOT NULL')
         self.assertListEqual(
             [self.employees.iloc[e.Boss].Prename for i, e in self.employees.iterrows() if not pd.isnull(e.Boss)],
             df.boss.tolist())
 
     def test_multi_join(self):
-        pass  # todo test
+        self.execute('SELECT e.prename, ee.prename AS boss, c.prename AS childname, bc.prename AS bosses_child '
+                     'FROM employee AS e '
+                     'JOIN employee AS ee ON e.boss = ee.id '
+                     'JOIN child AS c ON c.parent = e.id '
+                     'JOIN child AS bc ON bc.parent = e.boss '
+                     'WHERE e.boss IS NOT NULL')
 
     def test_multicondition_join(self):
-        pass  # todo implement & test
+        df = self.execute(
+            'SELECT c.prename, e.prename AS parent FROM child AS c JOIN employee AS e ON (c.parent = e.id '
+            'AND e.id = c.parent)')
+        self.assertEqual(len(df), len(self.children))
 
     def test_union(self):
         df = self.execute('SELECT e.prename FROM employee AS e UNION SELECT c.prename FROM child AS c')

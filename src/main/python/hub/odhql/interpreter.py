@@ -3,13 +3,13 @@
 from __future__ import unicode_literals
 import collections
 import itertools
+import datetime as dt
 
 import pandas as pd
 import geopandas as gp
 import numpy as np
 import re
 from shapely.geometry.base import BaseGeometry
-import datetime as dt
 
 from hub.utils.pandasutils import DataFrameUtils
 import hub.odhql.parser as parser
@@ -42,7 +42,7 @@ class OdhQLInterpreter(object):
         return cls.TYPE_MAP[type_]
 
     @classmethod
-    def assert_crs(self, series, name=None):
+    def assert_crs(cls, series, name=None):
         if not getattr(series, 'crs', None):
             name = name or series.name
             raise OdhQLExecutionException('Unknown reference system for column "{}". '
@@ -114,7 +114,7 @@ class OdhQLInterpreter(object):
                 addtl_cols = [df[c].reset_index(drop=True) for c in addtl_colnames]
                 all_cols = cols + addtl_cols
 
-                df = DataFrameUtils.preserve_meta(pd.concat(all_cols, axis=1), df)
+                df = DataFrameUtils.preserve_meta(pd.concat(all_cols, axis=1, copy=False), df)
                 df.__class__ = cls
 
                 for attr, val in kw.iteritems():
@@ -181,7 +181,7 @@ class OdhQLInterpreter(object):
                         self.assert_crs(s_new, new)
                         df[str(colname)] = s_new.to_crs(merged.crs)
 
-                merged = merged.append(df)
+                merged = merged.append(df, ignore_index=True)
 
         old = merged.copy()
         merged.rename(columns={str(i): col for i, col in enumerate(columns)}, inplace=True)
@@ -189,18 +189,27 @@ class OdhQLInterpreter(object):
         return merged
 
     def interpret_data_sources(self, dfs, data_sources):
+        aliases_left = []
+        df = None
         for ds in data_sources:
             if isinstance(ds, parser.JoinedDataSource):
                 cond = ds.condition
-                left = dfs[cond.left.prefix]
-                right = dfs[cond.right.prefix]
-                name_left = self.make_name(cond.left.prefix, cond.left.name)
-                name_right = self.make_name(cond.right.prefix, cond.right.name)
-                df = left.merge(right, how='left', left_on=[name_left], right_on=[name_right])
-                dfs[cond.left.prefix] = dfs[cond.right.prefix] = df
+
+                names_left = []
+                names_right = []
+                for c in cond.conditions if isinstance(cond, parser.JoinConditionList) else (cond,):
+                    left, right = (c.left, c.right) if c.left.prefix in aliases_left else (c.right, c.left)
+                    names_left.append(self.make_name(left.prefix, left.name))
+                    names_right.append(self.make_name(right.prefix, right.name))
+
+                df_right = dfs[right.prefix]
+                df = df.merge(df_right, how='left', left_on=names_left, right_on=names_right, suffixes=('', 'r'),
+                              copy=False)  # noqa
+                aliases_left.append(right.prefix)
 
             elif isinstance(ds, parser.DataSource):
                 df = dfs[ds.alias]
+                aliases_left.append(ds.alias)
 
             else:
                 assert False, 'Unexpected DataSource type "{}"'.format(type(ds))
@@ -239,47 +248,49 @@ class OdhQLInterpreter(object):
         series.name = alias
         return series.reset_index(drop=True)
 
-    def interpret_filter(self, df, filter):
-        if isinstance(filter, parser.FilterAlternative):
-            mask = np.logical_or.reduce([self.interpret_filter(df, c) for c in filter.conditions])
+    def interpret_filter(self, df, filter_):
+        if isinstance(filter_, parser.FilterAlternative):
+            mask = np.logical_or.reduce([self.interpret_filter(df, c) for c in filter_.conditions])
 
-        elif isinstance(filter, parser.FilterCombination):
-            mask = np.logical_and.reduce([self.interpret_filter(df, c) for c in filter.conditions])
+        elif isinstance(filter_, parser.FilterCombination):
+            mask = np.logical_and.reduce([self.interpret_filter(df, c) for c in filter_.conditions])
 
-        elif isinstance(filter, parser.BinaryCondition):
-            left = self.interpret_field(df, filter.left)
-            right = self.interpret_field(df, filter.right)
+        elif isinstance(filter_, parser.BinaryCondition):
+            left = self.interpret_field(df, filter_.left)
+            right = self.interpret_field(df, filter_.right)
 
-            if filter.operator == parser.BinaryCondition.Operator.equals:
+            if filter_.operator == parser.BinaryCondition.Operator.equals:
                 mask = left == right
-            elif filter.operator == parser.BinaryCondition.Operator.not_equals:
+            elif filter_.operator == parser.BinaryCondition.Operator.not_equals:
                 mask = left != right
-            elif filter.operator == parser.BinaryCondition.Operator.greater:
+            elif filter_.operator == parser.BinaryCondition.Operator.greater:
                 mask = left > right
-            elif filter.operator == parser.BinaryCondition.Operator.greater_or_equal:
+            elif filter_.operator == parser.BinaryCondition.Operator.greater_or_equal:
                 mask = left >= right
-            elif filter.operator == parser.BinaryCondition.Operator.less:
+            elif filter_.operator == parser.BinaryCondition.Operator.less:
                 mask = left < right
-            elif filter.operator == parser.BinaryCondition.Operator.less_or_equal:
+            elif filter_.operator == parser.BinaryCondition.Operator.less_or_equal:
                 mask = left <= right
-            elif filter.operator == parser.BinaryCondition.Operator.like:
+            elif filter_.operator == parser.BinaryCondition.Operator.like:
                 mask = left.str.contains(str(right[0]))
+            elif filter_.operator == parser.BinaryCondition.Operator.not_like:
+                mask = ~left.str.contains(str(right[0]))
             else:
-                assert False, 'Unknown operator "{}"'.format(filter.operator)
+                assert False, 'Unknown operator "{}"'.format(filter_.operator)
 
-        elif isinstance(filter, parser.InCondition):
-            in_list = pd.concat([self.interpret_field(df, el) for el in filter.in_list], axis=1).T
-            left = self.interpret_field(df, filter.left)
+        elif isinstance(filter_, parser.InCondition):
+            in_list = pd.concat([self.interpret_field(df, el) for el in filter_.in_list], axis=1, copy=False).T
+            left = self.interpret_field(df, filter_.left)
             mask = np.logical_or.reduce(left == in_list)
 
-        elif isinstance(filter, parser.IsNullCondition):
-            left = self.interpret_field(df, filter.field)
+        elif isinstance(filter_, parser.IsNullCondition):
+            left = self.interpret_field(df, filter_.field)
             mask = pd.isnull(left)
 
         else:
-            assert False, 'Unknown filter type "{}"'.format(type(filter))
+            assert False, 'Unknown filter type "{}"'.format(type(filter_))
 
-        return ~mask if getattr(filter, 'invert', False) else mask
+        return ~mask if getattr(filter_, 'invert', False) else mask
 
     def interpret_order(self, df, orders, colnames):
         cols = []
