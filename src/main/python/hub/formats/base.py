@@ -142,18 +142,18 @@ class KML(Format):
 
 
 # todo figure out how these work
-# class INTERLIS1(Format):
-# label = 'INTERLIS 1'
-#
-# description = """
-#     INTERLIS ist ein Dateiformat zum Austausch von Geodaten.
-#     """
-#
-#     @classmethod
-#     def is_format(self, file, *args, **kwargs):
-#         return file.extension == 'itf'
-#
-#
+class INTERLIS1(Format):
+    label = 'INTERLIS 1'
+
+    description = """
+        INTERLIS ist ein Dateiformat zum Austausch von Geodaten.
+        """
+
+    @classmethod
+    def is_format(self, file, *args, **kwargs):
+        return file.extension == 'itf' or file.extension == 'imd'
+
+
 # class INTERLIS2(Format):
 #     label = 'INTERLIS 2'
 #

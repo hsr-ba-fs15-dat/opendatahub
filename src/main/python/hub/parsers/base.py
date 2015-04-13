@@ -71,20 +71,27 @@ class ExcelParser(Parser):
 
 
 class OGRParser(Parser):
-    accepts = formats.GML, formats.GeoJSON, formats.KML, formats.Shapefile
+    accepts = formats.GML, formats.GeoJSON, formats.KML, formats.Shapefile, formats.INTERLIS1
 
     @classmethod
     def parse(cls, file, format, *args, **kwargs):
-        file_group = file.file_group
-        name = file.name
+        if format in (formats.Shapefile, formats.GeoJSON):
+            file_groups = [file.file_group]
+        else:
+            file_groups = ogr2ogr.ogr2ogr(file.file_group, ogr2ogr.SHP)
 
-        if format not in (formats.Shapefile, formats.GeoJSON):
-            file_group = ogr2ogr.ogr2ogr(file_group, ogr2ogr.SHP)
-            name = '{}.{}'.format(file.basename, ogr2ogr.SHP.extension)
+        dataframes = []
 
-        with file_group.on_filesystem() as temp_dir:
-            return geopandas.read_file(os.path.join(temp_dir, name))
+        for group in file_groups:
+            with group.on_filesystem() as temp_dir:
+                main_file = group.get_main_file()
+                if main_file:
+                    try:
+                        dataframes.append(geopandas.read_file(os.path.join(temp_dir, main_file.name)))
+                    except AttributeError:
+                        pass
 
+        return dataframes
 
 class GenericXMLParser(Parser):
     """ Flat XML parser
