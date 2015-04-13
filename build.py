@@ -142,6 +142,12 @@ def django_collectstatic(project, logger):
 
 @task
 @depends('prepare')
+def django_loadfixtures(project, logger):
+    django_exec(project, logger, ['loadfixtures'], fail_stderr=False)
+
+
+@task
+@depends('prepare')
 def django_flush(project, logger):
     django_exec(project, logger, ['flush', '--noinput'], fail_stderr=False)
 
