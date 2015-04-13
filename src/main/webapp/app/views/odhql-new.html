@@ -27,15 +27,20 @@
                     <td data-title="'Beschreibung'">
                         {{document.description}}
                     </td>
+                    <td data-title="'Anzahl Spalten'"></td>
                 </tr>
 
 
                 <tr ng-repeat="fileGroup in document.fileGroup">
                     <td>
                         {{fileGroup.files[0].file_name}}
+
                     </td>
                     <td>
                         <a ng-click="vm.selected.add(fileGroup)">Dieses File verwenden</a>
+                    </td>
+                    <td>
+                        {{fileGroup.cols.length}}
                     </td>
                 </tr>
                 </tbody>
@@ -45,24 +50,11 @@
 
         <div class="well" ng-repeat-start="group in vm.selected.items" ng-show="$index > 0">
             Wählen Sie die Verbindung zwischen diesen 2 Tabellen aus:
-            <select
-                    ng-options="opt as opt.label for opt in vm.joinOperations"
-                    ng-model="vm.joinOperationsSelection[group.uniqueid]">
-            </select>
 
-            <select
-                    ng-options="opt as opt.alias for opt in vm.selected.fields[vm.selected.items[$index - 1].uniqueid]"
-                    ng-show="vm.joinOperationsSelection[group.uniqueid].label == 'JOIN'"
-                    ng-model="vm.join_fields[group.uniqueid][vm.selected.items[$index - 1].uniqueid]">
-            </select>
-            <select
-                    ng-options="opt as opt.alias for opt in vm.selected.fields[vm.selected.items[$index].uniqueid]"
-                    ng-show="vm.joinOperationsSelection[group.uniqueid].label == 'JOIN'"
-                    ng-model="vm.join_fields[group.uniqueid][vm.selected.items[$index].uniqueid]">
-            </select>
         </div>
         <div class="well" ng-repeat-end="group in vm.selected.items">
-            Wählen Sie die benötigten Felder aus (Klick) und wählen Sie den Tabellennamen:
+            <h2>{{group.uniqueid}}</h2>
+            Wählen Sie die benötigten Felder aus (Klick) und wählen Sie die Spaltennamen:
             <div class="table-responsive">
                 <table class="table table-striped">
                     <thead>
@@ -81,10 +73,45 @@
                         </td>
                     </tr>
                 </table>
+
             </div>
 
-            <a ng-click="vm.selected.remove(group)">Tabelle entfernen</a>
+            <a ng-click="vm.selected.remove(group)">Tabelle entfernen</a><br/>
+
+
+            <div ng-show="$index > 0">
+                <label>Möchten Sie diese Tabelle mit einer anderen Verbinden?
+                    <select
+                            ng-options="opt as opt.label for opt in vm.joinOperations"
+                            ng-model="vm.selected.expression[group.uniqueid].operation">
+                    </select>
+                </label><br/>
+
+                <label ng-show="vm.selected.expression[group.uniqueid].operation == vm.joinOperations.join">
+                    Welches Lokale Feld soll verwendet werden?
+                    <select
+                            ng-options="opt as opt.alias for opt in vm.selected.fields[vm.selected.items[$index].uniqueid]"
+                            ng-model="vm.selected.expression[vm.selected.items[$index].uniqueid].joinField">
+                    </select>
+                </label><br/>
+                <label ng-show="vm.selected.expression[group.uniqueid].operation == vm.joinOperations.join &&
+             vm.selected.expression[vm.selected.items[$index].uniqueid].joinField">
+                    Auf welche Tabelle soll gejoined werden?
+                    <select
+                            ng-options="opt as opt.uniqueid for opt in vm.selected.items | filter:{uniqueid:'!'+group.uniqueid}"
+                            ng-model="vm.selected.expression[vm.selected.items[$index].uniqueid].joinTable">
+                    </select>
+                </label>
+                <label ng-show="vm.selected.expression[group.uniqueid].operation == vm.joinOperations.join &&
+            vm.selected.expression[vm.selected.items[$index].uniqueid].joinTable">
+                    <select
+                            ng-options="opt as opt.alias for opt in vm.selected.fields[vm.selected.expression[vm.selected.items[$index].uniqueid].joinTable.uniqueid]"
+                            ng-model="vm.selected.expression[vm.selected.items[$index].uniqueid].foreignKey">
+                    </select>
+                </label><br/>
+            </div>
         </div>
+
         <div class="form-group" ng-class="{'has-error': form.name.$invalid && vm.submitted}">
             <label class="col-md-3 control-label" for="name">Name/Titel</label>
 
