@@ -416,6 +416,21 @@ class TestParser(TestBase):
         self.assertIsInstance(query, odhql.Query)
         self.assertEqual(1, len(query.fields))
 
+    def test_comments(self):
+        p = odhql.OdhQLParser()
+
+        result = p.parse('select \'--\' as singlequote, -- comment\n \'test\' as "--" -- another comment\n from test')
+
+        self.assertIsInstance(result, odhql.Query)
+
+        self.assertEqual(2, len(result.fields))
+
+        self.assertEqual(result.fields[0].value, '--')
+        self.assertEqual(result.fields[0].alias, 'singlequote')
+
+        self.assertEqual(result.fields[1].value, 'test')
+        self.assertEqual(result.fields[1].alias, '--')
+
     def test_malformed_expressions(self):
         p = odhql.OdhQLParser()
 

@@ -192,8 +192,23 @@ class OdhQLParser(object):
 
         return union_query
 
+    def _strip_line_comment(self, line):
+        comment_chars = '--'
+        comment_start = line.find(comment_chars)
+        if comment_start >= 0:
+            # ignore comments inside strings
+            while (comment_start < len(line) and (line.count('\'', 0, comment_start) % 2 == 1 or
+                   line.count('"', 0, comment_start) % 2 == 1)):
+                comment_start = line.find(comment_chars, comment_start + 1)
+
+            return line[0:comment_start]
+        return line
+
+    def strip_comments(self, input):
+        return '\n'.join(map(self._strip_line_comment, input.splitlines()))
+
     def parse(self, input):
-        return self.grammar.parseString(input)[0]
+        return self.grammar.parseString(self.strip_comments(input))[0]
 
 
 class ASTBase(object):
