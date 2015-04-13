@@ -1,11 +1,12 @@
 """
-
+Core/Infrastructure for OdhQL function implementations
 """
 
 import inspect
 
 import pandas as pd
 import numpy as np
+from shapely.geometry.base import BaseGeometry
 import sre_constants
 import re
 
@@ -24,6 +25,7 @@ class OdhQLFunction(RegistrationMixin):
         'string': basestring,
         'float': float,
         'boolean': bool,
+        'geometry': BaseGeometry,
     }
 
     def __init__(self, num_rows=1, raw_args=None):
@@ -59,6 +61,9 @@ class OdhQLFunction(RegistrationMixin):
 
         return cls(num_rows, args)
 
+    def _get_single_value(self, value):
+        return value.iat[value.first_valid_index() or 0] if isinstance(value, pd.Series) else value
+
     def assert_in(self, name, value, possible_values):
         if value not in possible_values:
             raise OdhQLExecutionException('Expected parameter "{}" of function "{}" to be one of following: {}. '
@@ -74,21 +79,25 @@ class OdhQLFunction(RegistrationMixin):
                                                                                         type(value).__name__))
 
     def assert_int(self, name, value):
-        self.assert_type(name, value, 'integer')
+        self.assert_type(name, self._get_single_value(value), 'integer')
 
     def assert_str(self, name, value):
-        self.assert_type(name, value, 'string')
+        self.assert_type(name, self._get_single_value(value), 'string')
 
     def assert_bool(self, name, value):
-        self.assert_type(name, value, 'boolean')
+        self.assert_type(name, self._get_single_value(value), 'boolean')
 
     def assert_regex(self, name, value):
+        value = self._get_single_value(value)
         self.assert_str(name, value)
         try:
             re.compile(value)
         except sre_constants.error as e:
             raise OdhQLExecutionException('Invalid regular expression for parameter "{}" of function "{}": "{}"'
                                           .format(name, self.name, e.message))
+
+    def assert_geometry(self, name, value):
+        self.assert_type(name, self._get_single_value(value), 'geometry')
 
 
 class VectorizedFunction(OdhQLFunction):
@@ -107,19 +116,20 @@ class VectorizedFunction(OdhQLFunction):
         return arg
 
 
-class ElementFunction(OdhQLFunction):
-    _is_abstract = True
-
-    def execute(self):
-        df = pd.DataFrame({str(i): series for i, series in enumerate(self.raw_args)})
-        return df.apply(lambda s: self.apply(*s), axis=1)
-
-    def apply(self, *args):
-        raise NotImplementedError
-
-
-class SampleElementFunction(ElementFunction):
-    name = 'TEST'
-
-    def apply(self, a, b):
-        return a + b
+# currently unused/not required
+# class ElementFunction(OdhQLFunction):
+# _is_abstract = True
+#
+#     def execute(self):
+#         df = pd.DataFrame({str(i): series for i, series in enumerate(self.raw_args)})
+#         return df.apply(lambda s: self.apply(*s), axis=1)
+#
+#     def apply(self, *args):
+#         raise NotImplementedError
+#
+#
+# class SampleElementFunction(ElementFunction):
+#     name = 'TEST'
+#
+#     def apply(self, a, b):
+#         return a + b
