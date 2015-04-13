@@ -56,6 +56,8 @@ class FileGroupViewSet(viewsets.ModelViewSet):
             else:
                 response['Content-Disposition'] = 'attachment; filename="{}"'.format(result[0].name)
                 response.write(result[0].stream.getvalue())
+
+            response['Content-Type'] = 'application/octet-stream'
             response.flush()
 
             return response
