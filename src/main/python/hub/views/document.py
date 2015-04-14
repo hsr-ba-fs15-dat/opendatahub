@@ -10,7 +10,6 @@ from django.db.models import Q
 from django.db import transaction
 import requests as http
 import os
-from werkzeug.urls import url_decode
 
 from hub.serializers import DocumentSerializer, FileGroupSerializer
 from hub.models import DocumentModel, FileGroupModel, FileModel
@@ -113,7 +112,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
         - search: searches all available text fields.
         Wildcards are not needed.
         """
-        out = {'filter' : {}}
+        out = {'filter': {}}
         params = dict(request.query_params.iterlists())
         prog = re.compile("^filter\[(\w+)\]$")
         for k, v in params.iteritems():
