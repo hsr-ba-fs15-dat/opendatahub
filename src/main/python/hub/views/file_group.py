@@ -1,6 +1,7 @@
 import zipfile
-import types
+import json
 
+import types
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route
@@ -10,7 +11,6 @@ from hub.models import FileGroupModel, FileModel
 from hub.serializers import FileGroupSerializer, FileSerializer
 from authentication.permissions import IsOwnerOrPublic
 from hub.utils.pandasutils import DataFrameUtils
-import json
 from hub.utils import cache
 
 
@@ -76,14 +76,14 @@ class FileGroupViewSet(viewsets.ModelViewSet):
             model = FileGroupModel.objects.get(id=pk)
             cache_key = ('FG', pk, 'preview')
             data = cache.get(cache_key)
-            cache.delete('FG', cascade=True)
+
             if not data:
                 dataframes = model.to_file_group().to_df()
-                
+
                 data = []
                 for df in dataframes:
                     preview = DataFrameUtils.make_serializable(df.head(3).fillna('NULL'))
-                
+
                     data.append({
                         'columns': preview.columns.tolist(),
                         'data': preview.to_dict(orient='records'),

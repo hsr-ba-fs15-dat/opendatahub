@@ -15,7 +15,6 @@ from opendatahub.utils.plugins import RegistrationMixin
 from hub import formats
 from hub.utils import ogr2ogr
 from hub.utils import cache
-import traceback
 
 
 class NoParserException(Exception):
