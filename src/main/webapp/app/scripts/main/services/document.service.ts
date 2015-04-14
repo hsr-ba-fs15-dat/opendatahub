@@ -35,8 +35,8 @@ module odh.main {
             return this.documents.getList(params);
         }
 
-        public getList(params:any){
-            return this.Restangular.oneUrl('document','').get(params);
+        public getList(params:any) {
+            return this.Restangular.oneUrl('document', '').get(params);
         }
     }
 

@@ -113,7 +113,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
         params = dict(request.query_params.iterlists())
         prog = re.compile("^filter\[(\w+)\]$")
         for k, v in params.viewitems():
-            m = re.match(prog,k)
+            m = re.match(prog, k)
             if m:
                 out['filter'] = v
         if out:
@@ -132,7 +132,6 @@ class DocumentViewSet(viewsets.ModelViewSet):
                                              Q(description__icontains=filt))
         if 'owneronly' in params:
             documents = documents.filter(owner__id=request.user.id)
-
 
         serializer = self.get_pagination_serializer(self.paginate_queryset(documents))
         return Response(serializer.data)
