@@ -98,7 +98,7 @@
              vm.selected.expression[vm.selected.items[$index].uniqueid].joinField">
                     Auf welche Tabelle soll gejoined werden?
                     <select
-                            ng-options="opt as opt.uniqueid for opt in vm.selected.items | filter:{uniqueid:'!'+group.uniqueid}"
+                            ng-options="opt as opt.uniqueid for opt in vm.selected.joinTargets | filter:{uniqueid:'!'+group.uniqueid, }"
                             ng-model="vm.selected.expression[vm.selected.items[$index].uniqueid].joinTable">
                     </select>
                 </label>

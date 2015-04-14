@@ -3,12 +3,12 @@
 
 module odh {
     'use strict';
-    interface Field{
+    interface Field {
         name: string;
         alias: string;
     }
 
-    interface IExpression{
+    interface IExpression {
         foreignKey: Field;
         joinField: Field;
         joinTable: any;
@@ -20,19 +20,12 @@ module odh {
         public columns:string[];
         public rows:{};
         public submitted:boolean = false;
-        public fg;
         public documents:Object[];
-        public fileGroups;
         public odhqlInputString = '';
-        public uniqueName;
-        public items;
         public selected;
         public manualEdit:boolean = false;
         public joinOperations:{};
-        public joinOperationsSelection:any = [];
-        public join_fields:any;
         public tableParams:any;
-        public generator:any;
 
         constructor(private $http:ng.IHttpService, private $state:ng.ui.IStateService, private $scope:any,
                     private ToastService:odh.utils.ToastService, private $window:ng.IWindowService, private $upload,
@@ -59,6 +52,8 @@ module odh {
                 items: [],
                 fields: {},
                 expression: {},
+                unionTargets: [],
+                joinTargets: [],
                 remove: (item) => {
                     var index = this.selected.items.indexOf(item);
                     if (index > -1) {
@@ -74,6 +69,14 @@ module odh {
                         this.selected.expression[item.uniqueid] = {};
                         this.selected.items.push(item);
                         this.selected.expression[item.uniqueid].operation = this.joinOperations['none'];
+                    }
+                }
+                ,
+                getItem: (item) => {
+                    for (var i = 0; i < this.selected.items.length; i++) {
+                        if (this.selected.items[i].uniqueid === item) {
+                            return this.selected.items[i];
+                        }
                     }
                 }
             };
@@ -116,7 +119,6 @@ module odh {
 
 
         public odhqlInput(newInput:string = '') {
-            var odhql = [];
             if (newInput) {
                 this.manualEdit = true;
                 this.odhqlInputString = newInput;
@@ -131,35 +133,39 @@ module odh {
                 var joinStatement:string = '';
                 var joinStatements:string[];
                 joinStatements = [];
-                console.log(this.selected.expression);
+                this.selected.joinTargets = [];
                 angular.forEach(this.selected.expression, (value:IExpression, key) => {
                     if (!value.operation.operation) {
                         if (!master) {
                             fields = this.createFieldNames(this.selected.fields[key], key).concat(fields);
                             master = key;
                         }
-                    }
-
-                    if (value.operation.operation == 'join' && value.foreignKey) {
-                        fields = this.createFieldNames(this.selected.fields[key], key)
-                            .concat(fields);
-                        joinStatements.push(
-                            ' JOIN '.concat(
-                                key,
-                                ' on ',
-                                this.createFieldNames([value.foreignKey], value.joinTable.uniqueid, false)[0],
-                                ' = ',
-                                this.createFieldNames([value.joinField], key, false)[0]
-                            )
-                        );
+                        this.selected.joinTargets.push(this.selected.getItem(key));
+                        console.log(this.selected.joinTargets, 't');
 
                     }
+                    if (value.operation.operation == 'union') {
 
-                });
+                    }
+                    if (value.operation.operation == 'join') {
+
+                        if (value.foreignKey) {
+                            fields = this.createFieldNames(this.selected.fields[key], key)
+                                .concat(fields);
+                            joinStatements.push(
+                                ' JOIN '.concat(
+                                    key,
+                                    ' on ',
+                                    this.createFieldNames([value.foreignKey], value.joinTable.uniqueid, false)[0],
+                                    ' = ',
+                                    this.createFieldNames([value.joinField], key, false)[0]
+                                )
+                            );
+                        }
 
 
-                angular.forEach(this.selected.expression, (value, key) => {
-                    value.joinTableDone = false;
+                    }
+
                 });
 
                 this.odhqlInputString = 'SELECT '.concat(
@@ -216,7 +222,7 @@ module odh {
             });
         }
 
-        private createFieldNames(fields:Field[], group:string, checkAlias:boolean=true):string[] {
+        private createFieldNames(fields:Field[], group:string, checkAlias:boolean = true):string[] {
             var newFields = [];
             angular.forEach(fields, (field) => {
                 newFields.push([group, (field.name === field.alias && checkAlias) ? field.name : [field.name, field.alias].join(' AS ')]
