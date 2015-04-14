@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 """
 Tests for OdhQL functions.
 Are compared to python equivalents ("known" to operate correctly) instead of fixed/floored values.
@@ -170,6 +171,9 @@ class TestGeometryFunctions(TestInterpreterBase):
 
     def test_fails(self):
         statements = (
+            ('SELECT c.prename, ST_SetSRID(ST_GeomFromText(\'POINT(7.2234283 48.8183157)\'), 99999) AS hsr '
+            'FROM child AS c', 'Unknown SRID'),
+
             # todo different/no crs
         )
 

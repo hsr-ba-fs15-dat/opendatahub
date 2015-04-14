@@ -13,6 +13,8 @@ import os
 from opendatahub.utils.plugins import RegistrationMixin
 from hub import formats
 from hub.utils import ogr2ogr
+from hub.utils import cache
+import traceback
 
 
 class NoParserException(Exception):
@@ -34,16 +36,33 @@ class Parser(RegistrationMixin):
                 cls.parsers_by_format[format].append(cls)
 
     @classmethod
-    def parse(cls, file, format, *args, **kwargs):
-        for parser in cls.parsers_by_format[format]:
-            try:
-                return parser.parse(file, format=format, *args, **kwargs)
-            except:
-                raise
-                logging.debug('%s was not able to parse data with format %s', parser.__name__, format.__name__)
-                continue
+    def parse(cls, file, format, force=False, *args, **kwargs):
+        id_ = file.file_group.id
+        df = None
+        invalidate = False
 
-        raise NoParserException('Unable to parse data')
+        cache.get(id_)
+        if not force and id_:
+            df = cache.get(id_)
+
+        if df is None:
+            for parser in cls.parsers_by_format[format]:
+                try:
+                    df = parser.parse(file, format=format, *args, **kwargs)
+                    invalidate = True
+                    break
+                except:
+                    logging.debug('%s was not able to parse data with format %s: %s', parser.__name__, format.__name__,
+                                  traceback.format_exc())
+                    continue
+
+        if df is None:
+            raise NoParserException('Unable to parse data')
+
+        if id_ and invalidate:
+            cache.set(id_, df)
+
+        return df
 
 
 class CSVParser(Parser):
@@ -95,5 +114,6 @@ class GenericXMLParser(Parser):
     @classmethod
     def parse(cls, file, format, *args, **kwargs):
         from lxml import etree
+
         et = etree.parse(file.stream)
         return pandas.DataFrame([dict(text=e.text, **e.attrib) for e in et.getroot()])

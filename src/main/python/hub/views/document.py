@@ -1,3 +1,4 @@
+import re
 import urlparse
 import collections
 
@@ -26,7 +27,7 @@ print(hub.formatters.__all__)
 class DocumentViewSet(viewsets.ModelViewSet):
     queryset = DocumentModel.objects.all()
     serializer_class = DocumentSerializer
-
+    paginate_by_param = 'count'
     paginate_by = 50
 
     permission_classes = IsOwnerOrPublic, IsOwnerOrReadOnly,
@@ -108,10 +109,16 @@ class DocumentViewSet(viewsets.ModelViewSet):
         - search: searches all available text fields.
         Wildcards are not needed.
         """
-        params = request.query_params
-
+        out = {}
+        params = dict(request.query_params.iterlists())
+        prog = re.compile("^filter\[(\w+)\]$")
+        for k, v in params.viewitems():
+            m = re.match(prog, k)
+            if m:
+                out['filter'] = v
+        if out:
+            params.update(out)
         documents = DocumentModel.objects.all()
-
         if 'name' in params:
             documents = documents.filter(name__icontains=params['name'])
         if 'description' in params:
@@ -119,6 +126,10 @@ class DocumentViewSet(viewsets.ModelViewSet):
         if 'search' in params:
             documents = documents.filter(Q(name__icontains=params['search']) |
                                          Q(description__icontains=params['search']))
+        if 'filter' in params:
+            for filt in params['filter']:
+                documents = documents.filter(Q(name__icontains=filt) |
+                                             Q(description__icontains=filt))
         if 'owneronly' in params:
             documents = documents.filter(owner__id=request.user.id)
 
