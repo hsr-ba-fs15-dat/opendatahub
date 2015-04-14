@@ -47,7 +47,7 @@ GEO_JSON = OgrFormat('json', 'GeoJSON', False)
 KML = OgrFormat('kml', 'KML', False)
 
 INTERLIS_1 = OgrFormat(['itf', 'ili', 'imd'], 'Interlis 1', True)
-INTERLIS_2 = OgrFormat(['xml', 'ili', 'imd'], 'Interlis 2', True)
+INTERLIS_2 = OgrFormat(['xtf', 'xml', 'ili', 'imd'], 'Interlis 2', True)
 
 
 def _ogr2ogr_cli(arguments, *args, **kwargs):

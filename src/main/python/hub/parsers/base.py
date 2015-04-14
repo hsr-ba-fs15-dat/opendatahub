@@ -75,7 +75,7 @@ class ExcelParser(Parser):
 
 
 class OGRParser(Parser):
-    accepts = formats.GML, formats.GeoJSON, formats.KML, formats.Shapefile, formats.INTERLIS1
+    accepts = formats.GML, formats.GeoJSON, formats.KML, formats.Shapefile, formats.INTERLIS1,  # formats.INTERLIS2
 
     @classmethod
     def parse(cls, file, format, *args, **kwargs):
