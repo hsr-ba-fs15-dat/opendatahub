@@ -169,7 +169,7 @@ class TestInterpreter(TestInterpreterBase):
 
     def test_self_join(self):
         df = self.execute('SELECT e.prename, ee.prename AS boss '
-                          'FROM employee AS e JOIN employee AS ee ON e.boss = ee.id WHERE e.boss IS NOT NULL')
+                          'FROM employee AS e JOIN employee AS ee ON e.boss = ee.id')
         self.assertListEqual(
             [self.employees.iloc[e.Boss].Prename for i, e in self.employees.iterrows() if not pd.isnull(e.Boss)],
             df.boss.tolist())
@@ -179,8 +179,7 @@ class TestInterpreter(TestInterpreterBase):
                      'FROM employee AS e '
                      'JOIN employee AS ee ON e.boss = ee.id '
                      'JOIN child AS c ON c.parent = e.id '
-                     'JOIN child AS bc ON bc.parent = e.boss '
-                     'WHERE e.boss IS NOT NULL')
+                     'JOIN child AS bc ON bc.parent = e.boss')
 
     def test_multicondition_join(self):
         df = self.execute(
