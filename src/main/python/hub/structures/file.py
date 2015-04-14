@@ -4,6 +4,7 @@
 from cStringIO import StringIO
 import contextlib
 import tempfile
+from itertools import ifilter
 import shutil
 
 import codecs
@@ -44,10 +45,7 @@ class FileGroup(object):
         return [f for f in self.files if f.extension == extension]
 
     def get_main_file(self):
-        try:
-            return next((f for f in self.files if not issubclass(f.get_format(), formats.Other)))
-        except StopIteration:
-            return None
+        return next(ifilter(lambda f: not issubclass(f.get_format(), formats.Other), self.files))
 
     @property
     def names(self):
@@ -116,7 +114,9 @@ class File(object):
         with open(path, 'rb') as f:
             file = cls(os.path.basename(path), StringIO(f.read()), *args, **kwargs)
 
-        file.format = formats.identify(file)
+        if not file.format:
+            file.format = formats.identify(file)
+
         return file
 
     @classmethod

@@ -25,6 +25,8 @@ class Format(RegistrationMixin):
     description = ''
     example = ''
 
+    is_export_format = True
+
     @classmethod
     def register_child(cls, name, bases, dct):
         # remove training whitespace cause by being a docstring/multiline comment
@@ -141,29 +143,29 @@ class KML(Format):
         return file.extension == 'kml'
 
 
-# todo figure out how these work
-# class INTERLIS1(Format):
-# label = 'INTERLIS 1'
-#
-# description = """
-#     INTERLIS ist ein Dateiformat zum Austausch von Geodaten.
-#     """
-#
-#     @classmethod
-#     def is_format(self, file, *args, **kwargs):
-#         return file.extension == 'itf'
-#
-#
-# class INTERLIS2(Format):
-#     label = 'INTERLIS 2'
-#
-#     description = """
-#     INTERLIS ist ein Dateiformat zum Austausch von Geodaten.
-#     """
-#
-#     @classmethod
-#     def is_format(self, file, *args, **kwargs):
-#         return file.extension == 'xtf'
+class INTERLIS1(Format):
+    label = 'INTERLIS 1'
+
+    description = """
+    INTERLIS ist ein Dateiformat zum Austausch von Geodaten.
+    """
+
+    @classmethod
+    def is_format(self, file, *args, **kwargs):
+        return file.extension == 'itf' or file.extension == 'imd'
+
+
+class INTERLIS2(Format):
+    label = 'INTERLIS 2'
+    description = """
+    INTERLIS ist ein Dateiformat zum Austausch von Geodaten.
+    """
+
+    is_export_format = False
+
+    @classmethod
+    def is_format(self, file, *args, **kwargs):
+        return file.extension == 'xtf'
 
 
 class GeoJSON(Format):
