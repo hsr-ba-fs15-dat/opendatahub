@@ -4,11 +4,11 @@ Tests for formatters
 
 from hub.tests.testutils import TestBase
 from hub.structures.file import FileGroup
-from hub.formats import Format
+from hub.formatters import Formatter
 
 
 class FormatsTests(TestBase):
-    TO_FORMATS = set(Format.formats.values())
+    TO_FORMATS = set(Formatter.formatters_by_target.keys())
 
     TESTS = {
         # first element in considered the main file
@@ -25,6 +25,6 @@ class FormatsTests(TestBase):
         for files, formats in self.TESTS.iteritems():
             fg = FileGroup.from_files(*[TestBase.get_test_file_path(f) for f in files])
             for format in formats:
-                result = fg[0].to_format(format)
+                result = fg.to_format(format)
                 for r in result:
                     self.assertIsInstance(r, FileGroup)

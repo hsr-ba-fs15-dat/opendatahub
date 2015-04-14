@@ -234,8 +234,8 @@ class TestInterpreter(TestInterpreterBase):
 class TestInterpreterPerformance(TestInterpreterBase):
     @classmethod
     def read_data(cls):
-        cls.employees = File.from_file(cls.get_test_file_path('perf/employees.csv')).to_df()
-        cls.children = File.from_file(cls.get_test_file_path('perf/children.csv')).to_df()
+        cls.employees = File.from_file(cls.get_test_file_path('perf/employees.csv')).to_df()[0]
+        cls.children = File.from_file(cls.get_test_file_path('perf/children.csv')).to_df()[0]
         cls.source_dfs = {
             'employee': cls.employees,
             'child': cls.children

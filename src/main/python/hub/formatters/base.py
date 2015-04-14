@@ -31,7 +31,7 @@ class Formatter(RegistrationMixin):
     _is_abstract = True
 
     formatters = {}
-    formatters_by_tagret = collections.defaultdict(list)
+    formatters_by_target = collections.defaultdict(list)
 
     targets = ()
 
@@ -40,11 +40,11 @@ class Formatter(RegistrationMixin):
         if not dct.get('_is_abstract'):
             cls.formatters[name] = cls
             for format in cls.targets:
-                cls.formatters_by_tagret[format].append(cls)
+                cls.formatters_by_target[format].append(cls)
 
     @classmethod
     def format(cls, file, format, *args, **kwargs):
-        for formatter in cls.formatters_by_tagret[format]:
+        for formatter in cls.formatters_by_target[format]:
             try:
                 return formatter.format(file, format=format, *args, **kwargs)
             except:
@@ -65,8 +65,10 @@ class CSVFormatter(Formatter):
         results = []
 
         for df in dataframes:
-            results.append(File.from_string(file.basename + '.csv', df.to_csv(index=False, encoding='UTF-8')).file_group)
+            results.append(
+                File.from_string(file.basename + '.csv', df.to_csv(index=False, encoding='UTF-8')).file_group)
         return results
+
 
 class JSONFormatter(Formatter):
     targets = formats.JSON,
@@ -79,6 +81,7 @@ class JSONFormatter(Formatter):
         for df in dataframes:
             results.append(File.from_string(file.basename + '.json', df.to_json(orient='records')).file_group)
         return results
+
 
 class ExcelFormatter(Formatter):
     targets = formats.Excel,
@@ -124,13 +127,18 @@ class NoopFormatter(Formatter):
 
 
 class OGRFormatter(Formatter):
-    targets = formats.GeoJSON, formats.GML, formats.KML, formats.Shapefile
+    targets = formats.GeoJSON, formats.GML, formats.KML, formats.Shapefile, formats.INTERLIS1
+
+    # Note: Interlis 2 is not supported for export, because it would need a schema for that. Because it is the only
+    # format with a schema requirement and adding that feature would mean investing a substantial amount of time we
+    # don't currently have, we decided to not support exporting to Interlis 2 at this time.
 
     FORMAT_TO_OGR = {
         formats.GeoJSON: ogr2ogr.GEO_JSON,
         formats.GML: ogr2ogr.GML,
         formats.KML: ogr2ogr.KML,
         formats.Shapefile: ogr2ogr.SHP,
+        formats.INTERLIS1: ogr2ogr.INTERLIS_1
     }
 
     @classmethod
@@ -147,8 +155,9 @@ class OGRFormatter(Formatter):
                 finally:
                     shutil.rmtree(temp_dir)
             elif isinstance(df, pandas.DataFrame):
-                file = CSVFormatter.format(file, formats.CSV)
-                file_group = ogr2ogr.ogr2ogr(file, ogr2ogr.CSV)
+                formatted = CSVFormatter.format(file, formats.CSV)
+                assert len(formatted) == 1, "formatting a single data frame as csv should only result in 1 file"
+                file_group = ogr2ogr.ogr2ogr(formatted[0], ogr2ogr.CSV)[0]
             else:
                 raise FormattingException('Could not format {}'.format(df))
 

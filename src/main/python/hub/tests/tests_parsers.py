@@ -26,4 +26,5 @@ class FormatsTests(TestBase):
     def test_parse(self):
         for files, format in self.TESTS.iteritems():
             fg = FileGroup.from_files(*[TestBase.get_test_file_path(f) for f in files])
-            self.assertIsInstance(fg[0].to_df(), format)
+            for r in fg[0].to_df():
+                self.assertIsInstance(r, format)
