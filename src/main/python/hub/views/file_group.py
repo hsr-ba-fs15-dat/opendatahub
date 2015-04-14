@@ -9,6 +9,8 @@ from hub.models import FileGroupModel, FileModel
 from hub.serializers import FileGroupSerializer, FileSerializer
 from authentication.permissions import IsOwnerOrPublic
 from hub.utils.pandasutils import DataFrameUtils
+import json
+from hub.utils import cache
 
 
 class FileGroupViewSet(viewsets.ModelViewSet):
@@ -28,7 +30,6 @@ class FileGroupViewSet(viewsets.ModelViewSet):
         format_name = request.query_params.get('fmt', 'CSV')
 
         model = FileGroupModel.objects.get(id=pk)
-
         if not model:
             return HttpResponseNotFound(reason='No such file')
 
@@ -69,11 +70,18 @@ class FileGroupViewSet(viewsets.ModelViewSet):
     def preview(self, request, pk):
         try:
             model = FileGroupModel.objects.get(id=pk)
-            df = model.to_file_group().to_df()
-            df = DataFrameUtils.make_serializable(df).fillna('NULL')
-            return JsonResponse({
-                'columns': df.columns.tolist(),
-                'data': df.iloc[:5].to_dict(orient='records')
-            })
-        except Exception, e:
+            cache_key = ('FG', pk, 'preview')
+            data = cache.get(cache_key)
+            cache.delete('FG', cascade=True)
+            if not data:
+                df = model.to_file_group().to_df()
+                preview = DataFrameUtils.make_serializable(df.head(3).fillna('NULL'))
+                data = {
+                    'columns': preview.columns.tolist(),
+                    'data': preview.to_dict(orient='records'),
+                }
+                cache.set(cache_key, data)
+
+            return HttpResponse(content=json.dumps(data), content_type='application/json')
+        except Exception as e:
             return JsonResponse({'error': e.message, 'error_location': 'preview'})
