@@ -26,4 +26,5 @@ class FormatsTests(TestBase):
             fg = FileGroup.from_files(*[TestBase.get_test_file_path(f) for f in files])
             for format in formats:
                 result = fg[0].to_format(format)
-                self.assertIsInstance(result, FileGroup)
+                for r in result:
+                    self.assertIsInstance(r, FileGroup)

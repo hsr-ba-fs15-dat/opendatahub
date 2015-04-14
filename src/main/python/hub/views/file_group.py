@@ -1,4 +1,5 @@
 import zipfile
+import types
 
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -37,25 +38,28 @@ class FileGroupViewSet(viewsets.ModelViewSet):
         response = HttpResponse()
 
         try:
-            result = group.to_format(format_name)
+            result_list = group.to_format(format_name)
 
-            if not result:
+            assert isinstance(result_list, types.ListType)
+
+            if not result_list:
                 return HttpResponseServerError(reason='Transformation failed: no result')
 
             if request.is_ajax():
                 return JsonResponse({})  # just signal that it can be downloaded (200)
 
-            if len(result.files) > 1:
-                filename = group[0].basename + '.zip'
-                response['Content-Disposition'] = 'attachment; filename="{}"'.format(filename)
+            if len(result_list) > 1 or len(result_list) > 0 and len(result_list[0].files) > 1:
+                response['Content-Disposition'] = 'attachment; filename="odh-data.zip"'
 
                 zip = zipfile.ZipFile(response, 'w')
-                for file in result:
-                    zip.writestr(file.name, file.stream.getvalue())
+                for result in result_list:
+                    for file in result:
+                        zip.writestr(file.name, file.stream.getvalue())
                 zip.close()
             else:
-                response['Content-Disposition'] = 'attachment; filename="{}"'.format(result[0].name)
-                response.write(result[0].stream.getvalue())
+                file = result_list[0][0]
+                response['Content-Disposition'] = 'attachment; filename="{}"'.format(file.name)
+                response.write(file.stream.getvalue())
 
             response['Content-Type'] = 'application/octet-stream'
             response.flush()
@@ -74,7 +78,7 @@ class FileGroupViewSet(viewsets.ModelViewSet):
             return JsonResponse([{
                 'columns': df.columns.tolist(),
                 'data': df.iloc[:5].to_dict(orient='records')
-            } for df in map(lambda df: DataFrameUtils.make_serializable(df).fillna('NULL'), dataframes)], safe=False)
-        except Exception, e:
+            } for df in map(lambda df: df.fillna('NULL'), DataFrameUtils.make_serializable(dataframes))], safe=False)
+        except Exception:
             raise
             # return JsonResponse({'error': e.message, 'error_location': 'preview'})

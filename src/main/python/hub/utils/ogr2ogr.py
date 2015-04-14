@@ -76,4 +76,4 @@ def ogr2ogr(file_group, to_type):
         for file in files:
             groups[os.path.splitext(file)[0]].append(file)
 
-        return [FileGroup.from_files(*f) for f in groups.values()]
+        return sorted([FileGroup.from_files(*f) for f in groups.values()], key=lambda fg: fg.get_main_file().name)
