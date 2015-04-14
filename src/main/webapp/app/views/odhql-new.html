@@ -1,5 +1,5 @@
 <div ng-controller="OdhQLController as vm">
-
+    <!-- todo: internal renaming of odhsql to odhql -->
 
     <div loading-container="tableParams.settings().$loading">
         <div class="row">
@@ -115,7 +115,7 @@
             <div class="form-group" ng-class="{'has-error': form.name.$invalid && vm.submitted}">
                 <label for="name">Name/Titel</label>
 
-                <input id="name" name="name" type="text" placeholder="Name für odhSQL Snippet."
+                <input id="name" name="name" type="text" placeholder="Name der Transformation"
                        class="form-control"
                        ng-model="snippet.name"
                        required>
@@ -133,7 +133,7 @@
 
                 <textarea class="form-control" id="description" name="description"
                           ng-model="snippet.description"
-                          placeholder="z.B. Transformiert alle Vornamen zu Nachnamen"
+                          placeholder="z.B. Vereint alle Verkehrshindernisse der Schweiz"
                           required
                           rows="4"
                         ></textarea>
@@ -152,7 +152,7 @@
                 {{alert.msg}}
             </alert>
             <div class="form-group" ng-class="{'has-error': form.description.$invalid && vm.submitted}">
-                <label class="control-label" for="odhsqlinput">odhSQL Snippet <i
+                <label class="control-label" for="odhsqlinput">OdhQL Abfrage <i
                         class="fa fa-question-circle"></i></label>
 
                 <textarea class="form-control" id="odhsqlinput" name="description"
@@ -164,7 +164,7 @@
 
                 <div ng-messages="form.description.$error" ng-show="vm.submitted">
                     <span class="help-block">
-                        <div ng-message="required">Bitte geben Sie das odhSQL Snippet an.</div>
+                        <div ng-message="required">Bitte geben Sie die OdhQL Abfrage an.</div>
                     </span>
                 </div>
 
