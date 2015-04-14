@@ -4,12 +4,10 @@ from django.http.response import JsonResponse
 from hub.models import FileGroupModel
 from hub.odhql.interpreter import OdhQLInterpreter
 from hub.utils.pandasutils import DataFrameUtils
-from profilehooks import profile
 
 
 class AdHocOdhQLView(View):
 
-    @profile(immediate=True)
     def get(self, request):
         statement = request.GET['query']
         count = request.GET.get('count', 20)  # todo pagination features of rest framework?
