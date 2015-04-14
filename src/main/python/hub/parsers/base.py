@@ -14,7 +14,7 @@ import types
 from opendatahub.utils.plugins import RegistrationMixin
 from hub import formats
 from hub.utils import ogr2ogr
-from hub.utils import cache
+import traceback
 
 
 class NoParserException(Exception):
@@ -36,31 +36,17 @@ class Parser(RegistrationMixin):
                 cls.parsers_by_format[format].append(cls)
 
     @classmethod
-    def parse(cls, file, format, force=False, *args, **kwargs):
-        id_ = file.file_group.id
-        df = None
-        invalidate = False
+    def parse(cls, file, format, *args, **kwargs):
+        for parser in cls.parsers_by_format[format]:
+            try:
+                res = parser.parse(file, format=format, *args, **kwargs)
+                return res if isinstance(res, types.ListType) else [res]
+            except:
+                logging.debug('%s was not able to parse data with format %s: %s', parser.__name__, format.__name__,
+                              traceback.format_exc())
+                continue
 
-        cache.get(id_)
-        if not force and id_:
-            df = cache.get(id_)
-        if df is None:
-            for parser in cls.parsers_by_format[format]:
-                try:
-                    res = parser.parse(file, format=format, *args, **kwargs)
-                    df = res if isinstance(res, types.ListType) else [res]
-                except:
-                    raise
-                    logging.debug('%s was not able to parse data with format %s', parser.__name__, format.__name__)
-                    continue
-
-        if df is None:
-            raise NoParserException('Unable to parse data')
-
-        if id_ and invalidate:
-            cache.set(id_, df)
-
-        return df
+        raise NoParserException('Unable to parse data')
 
 
 class CSVParser(Parser):

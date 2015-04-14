@@ -45,10 +45,13 @@ class DataFrameUtils(object):
         """
         :return: DataFrame which contains only exportable data (no objects)
         """
+
+        # todo: this check probably shouldn't be made here
         if isinstance(df, types.ListType):
             return map(DataFrameUtils.make_serializable, df)
 
-        df = pd.DataFrame(df.copy(True))
+        df = df.copy()
+        df.__class__ = pd.DataFrame
         for col in df.columns:
             temp = df[col].dropna()
             if len(temp) and temp.dtype == object and not isinstance(temp.iat[0], unicode):
