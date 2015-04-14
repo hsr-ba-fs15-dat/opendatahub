@@ -1,17 +1,16 @@
-import re
 import urlparse
 import collections
 
+import re
 from rest_framework import viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from django.db.models import Q
-
 from django.db import transaction
-
 import requests as http
 import os
+from werkzeug.urls import url_decode
 
 from hub.serializers import DocumentSerializer, FileGroupSerializer
 from hub.models import DocumentModel, FileGroupModel, FileModel
@@ -38,7 +37,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
         Expected parameters: One of: url, file. Always: description
         """
         if not ('name' in request.data and 'description' in request.data):
-                    raise ValidationError('Insufficient information')
+            raise ValidationError('Insufficient information')
 
         try:
             with transaction.atomic():
@@ -101,6 +100,11 @@ class DocumentViewSet(viewsets.ModelViewSet):
                 file_model = FileModel(file_name=file.name, data=file.read(), file_group=file_group)
                 file_model.save()
 
+    def str2bool(self, v):
+        if v.lower() in ('true', 'false'):
+            return v.lower() in ('true', )
+        return v
+
     def list(self, request, *args, **kwargs):
         """
         Search for documents. Valid query parameters:
@@ -109,13 +113,13 @@ class DocumentViewSet(viewsets.ModelViewSet):
         - search: searches all available text fields.
         Wildcards are not needed.
         """
-        out = {}
+        out = {'filter' : {}}
         params = dict(request.query_params.iterlists())
         prog = re.compile("^filter\[(\w+)\]$")
-        for k, v in params.viewitems():
+        for k, v in params.iteritems():
             m = re.match(prog, k)
             if m:
-                out['filter'] = v
+                out['filter'][m.group(1)] = self.str2bool(v[0])
         if out:
             params.update(out)
         documents = DocumentModel.objects.all()
@@ -127,9 +131,12 @@ class DocumentViewSet(viewsets.ModelViewSet):
             documents = documents.filter(Q(name__icontains=params['search']) |
                                          Q(description__icontains=params['search']))
         if 'filter' in params:
-            for filt in params['filter']:
-                documents = documents.filter(Q(name__icontains=filt) |
-                                             Q(description__icontains=filt))
+            for key, filt in params['filter'].iteritems():
+                if key == 'name':
+                    documents = documents.filter(Q(name__icontains=filt) |
+                                                 Q(description__icontains=filt))
+                if key == 'mineOnly' and filt:
+                    documents = documents.filter(owner__id=request.user.id)
         if 'owneronly' in params:
             documents = documents.filter(owner__id=request.user.id)
 

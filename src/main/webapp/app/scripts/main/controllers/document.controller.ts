@@ -12,11 +12,27 @@ module odh {
         public currentPage:number = 1;
 
         public mineOnly = false;
+        public tableParams:any;
 
         constructor(private $log:ng.ILogService, private DocumentService:odh.main.DocumentService,
                     private ToastService:odh.utils.ToastService,
-                    private $auth:any) {
-            this.retrieveDataAsync();
+                    private $auth:any, private ngTableParams) {
+            this.tableParams = new ngTableParams({
+                    page: 1,
+                    count: 50,
+                    limit: 50
+                },
+                {
+                    counts: [10, 25, 50, 100],
+                    total: 0,
+                    getData: ($defer, params) => {
+                        this.DocumentService.getList(params.url()).then(result => {
+                            console.log(params);
+                            params.total(result.count);
+                            $defer.resolve(result.results);
+                        }).catch(error => this.onError(error));
+                    }
+                });
         }
 
         public isAuthenticated() {
@@ -63,7 +79,7 @@ module odh {
         public downloadAs(group, formatName) {
             this.$log.debug('Triggered download of ', group, 'as', formatName);
             group.canDownload(formatName).then(() => {
-               this.$window.location.href = group.data + '?fmt=' + formatName;
+                this.$window.location.href = group.data + '?fmt=' + formatName;
             }).catch(() => {
                 this.ToastService.failure('Die Datei konnte nicht ins gewünschte Format konvertiert werden.');
             });

@@ -36,7 +36,8 @@ module odh {
                     private ToastService:odh.utils.ToastService, private $window:ng.IWindowService, private $upload,
                     private UrlService:odh.utils.UrlService, private FileGroupService:main.FileGroupService,
                     private DocumentService:main.DocumentService,
-                    private $log:ng.ILogService, private ngTableParams, public $filter:ng.IFilterService) {
+                    private $log:ng.ILogService, private ngTableParams, public $filter:ng.IFilterService,
+                    private $auth:any) {
 
             this.tableParams = new ngTableParams({
                 page: 1,            // show first page
@@ -47,6 +48,7 @@ module odh {
                 total: 0, // length of data
                 getData: ($defer, params) => {
                     DocumentService.getList(params.url()).then(result => {
+                        console.log(params);
                         params.total(result.count);
                         $defer.resolve(result.results);
                     });
@@ -232,6 +234,10 @@ module odh {
 
         public cancel() {
             this.$state.go('main');
+        }
+
+        public isAuthenticated() {
+            return this.$auth.isAuthenticated();
         }
 
         public execute() {

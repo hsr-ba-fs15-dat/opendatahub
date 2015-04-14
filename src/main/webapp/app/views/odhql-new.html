@@ -1,17 +1,22 @@
-<style>
-    .container {
-        max-width: 1300px;
-    }
-</style>
 <div ng-controller="OdhQLController as vm">
 
 
     <div loading-container="tableParams.settings().$loading">
-            <input id="name" name="name" type="text" placeholder="Suche"
-           class="form-control input-md floating-label"
-           ng-model="vm.tableParams.filter()[name]"
-           ng-model-options="{ updateOn: 'default blur', debounce: {'default': 200, 'blur': 0} }"
-            >
+        <div class="row">
+            <div class="col-md-6 inline-checkbox-fix">
+                <input id="name" name="name" type="text" placeholder="Suche"
+                       class="form-control input-md floating-label"
+                       ng-model="vm.tableParams.filter()['name']"
+                       ng-model-options="{ updateOn: 'default blur', debounce: {'default': 200, 'blur': 0} }"
+                        >
+            </div>
+            <div class="col-md-6 checkbox checkbox-inline" ng-show="vm.isAuthenticated()">
+                <label><input type="checkbox" ng-model="vm.tableParams.filter()['mineOnly']"/>
+                    Nur eigene Daten anzeigen</label>
+            </div>
+        </div>
+
+
         <table class="table" ng-table="vm.tableParams">
             <tbody ng-repeat="document in $data">
             <tr>
@@ -35,7 +40,8 @@
 
                 </td>
                 <td>
-                    <a ng-click="vm.selected.add(fileGroup)" ng-hide="vm.selected.items.indexOf(fileGroup) > -1"><i class="fa fa-plus-circle"></i> Dieses Tabelle verwenden</a>
+                    <a ng-click="vm.selected.add(fileGroup)" ng-hide="vm.selected.items.indexOf(fileGroup) > -1"><i
+                            class="fa fa-plus-circle"></i> Dieses Tabelle verwenden</a>
                 </td>
                 <td>
                     {{fileGroup.cols.length}}
