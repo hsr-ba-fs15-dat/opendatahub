@@ -10,6 +10,8 @@ from shapely.geometry.base import BaseGeometry
 import numpy as np
 import collections
 
+import types
+
 
 TYPE_MAP = {
     np.complex256: None,
@@ -43,6 +45,9 @@ class DataFrameUtils(object):
         """
         :return: DataFrame which contains only exportable data (no objects)
         """
+        if isinstance(df, types.ListType):
+            return map(DataFrameUtils.make_serializable, df)
+
         df = pd.DataFrame(df.copy(True))
         for col in df.columns:
             temp = df[col].dropna()
