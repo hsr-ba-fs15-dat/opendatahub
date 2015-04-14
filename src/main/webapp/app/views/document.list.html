@@ -16,16 +16,12 @@
     <div class="col-md-12 table-responsive">
         <table class="table table-striped table-hover" ng-table="docs.tableParams">
             <tr ng-repeat="row in $data">
-                <td data-title="'Titel'" sortable="'name'""><a ui-sref="document({id: row.id})">{{ row.name }}</a></td>
+                <td data-title="'Titel'" sortable="'name'"><a ui-sref="document({id: row.id})">{{ row.name }}</a>
+                <i class="fa fa-eye" ng-show="row.private" tooltip="Dieses Dokument ist Privat"></i></td>
                 <td data-title="'Beschreibung'" sortable="'description'">{{ row.description }}</td>
+                <td data-title="'Besitzer'">{{row.owner.username}}</td>
             </tr>
         </table>
     </div>
 </div>
 
-<div class="row">
-    <div class="col-md-12">
-        <pagination total-items="docs.totalItems" ng-model="docs.currentPage" max-size="7" class="pagination-sm"
-                    boundary-links="true" rotate="false" items-per-page="50" ng-change="pageChanged()"></pagination>
-    </div>
-</div>

@@ -24,7 +24,7 @@
                     <a href="" ng-click="vm.getFileGroup(document)">
                             <span class="glyphicon"
                                   ng-class="{ 'glyphicon-chevron-right': !document.$showRows, 'glyphicon-chevron-down': document.$showRows }"></span>
-                        <strong>{{ document.name }}</strong>
+                        <strong>{{ document.name }}</strong> <i class="fa fa-eye" ng-show="document.private" tooltip="Dieses Dokument ist Privat"></i>
                     </a>
                 </td>
                 <td data-title="'Beschreibung'">
