@@ -26,6 +26,7 @@ module odh {
         public manualEdit:boolean = false;
         public joinOperations:{};
         public tableParams:any;
+        public error;
 
         constructor(private $http:ng.IHttpService, private $state:ng.ui.IStateService, private $scope:any,
                     private ToastService:odh.utils.ToastService, private $window:ng.IWindowService, private $upload,
@@ -132,6 +133,7 @@ module odh {
                 var master:string = '';
                 var joinStatement:string = '';
                 var joinStatements:string[];
+                var unionStatements:string[] = [];
                 joinStatements = [];
                 this.selected.joinTargets = [];
                 angular.forEach(this.selected.expression, (value:IExpression, key) => {
@@ -139,15 +141,19 @@ module odh {
                         if (!master) {
                             fields = this.createFieldNames(this.selected.fields[key], key).concat(fields);
                             master = key;
+                            this.selected.joinTargets.push(this.selected.getItem(key));
+
                         }
-                        this.selected.joinTargets.push(this.selected.getItem(key));
-                        console.log(this.selected.joinTargets, 't');
 
                     }
                     if (value.operation.operation == 'union') {
-
+                        this.selected.joinTargets.push(this.selected.getItem(key));
+                        var unionFields = this.createFieldNames(this.selected.fields[key],key);
+                        unionStatements.push(' \nUNION \n SELECT '.concat(unionFields.join(',\n'),
+                        ' FROM ', key))
                     }
                     if (value.operation.operation == 'join') {
+                        this.selected.joinTargets.push(this.selected.getItem(key));
 
                         if (value.foreignKey) {
                             fields = this.createFieldNames(this.selected.fields[key], key)
@@ -156,9 +162,9 @@ module odh {
                                 ' JOIN '.concat(
                                     key,
                                     ' on ',
-                                    this.createFieldNames([value.foreignKey], value.joinTable.uniqueid, false)[0],
+                                    this.createFieldNames([value.foreignKey], value.joinTable.uniqueid, true)[0],
                                     ' = ',
-                                    this.createFieldNames([value.joinField], key, false)[0]
+                                    this.createFieldNames([value.joinField], key, true)[0]
                                 )
                             );
                         }
@@ -173,10 +179,11 @@ module odh {
                     ' \nFROM ',
                     master,
                     ' \n',
-                    joinStatements.join(' \n')
+                    joinStatements.join(' \n '),
+                    unionStatements.join(' \n')
                 );
-                return this.odhqlInputString;
             }
+            return this.odhqlInputString;
         }
 
         public addFields(group) {
@@ -208,6 +215,12 @@ module odh {
             }).then((data:any) => {
                 this.columns = data.data.columns;
                 this.rows = data.data.data;
+            }).catch((data:any) => {
+                this.$log.error(data);
+                data = data.data.split('\n');
+                this.ToastService.failure(
+                    'Es ist ein Fehler aufgetreten! (Fehlermeldung in der Konsole ersichtlich.) ' + data[1]);
+                //this.error = data;
             });
         }
 
@@ -222,10 +235,10 @@ module odh {
             });
         }
 
-        private createFieldNames(fields:Field[], group:string, checkAlias:boolean = true):string[] {
+        private createFieldNames(fields:Field[], group:string, doNotCheckAlias:boolean = false):string[] {
             var newFields = [];
             angular.forEach(fields, (field) => {
-                newFields.push([group, (field.name === field.alias && checkAlias) ? field.name : [field.name, field.alias].join(' AS ')]
+                newFields.push([group, (field.name === field.alias || doNotCheckAlias) ? field.name : [field.name, field.alias].join(' AS ')]
                     .join('.'));
             });
             return newFields;

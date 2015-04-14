@@ -47,12 +47,7 @@
             </table>
         </div>
 
-
-        <div class="well" ng-repeat-start="group in vm.selected.items" ng-show="$index > 0">
-            Wählen Sie die Verbindung zwischen diesen 2 Tabellen aus:
-
-        </div>
-        <div class="well" ng-repeat-end="group in vm.selected.items">
+        <div class="well" ng-repeat="group in vm.selected.items">
             <h2>{{group.uniqueid}}</h2>
             Wählen Sie die benötigten Felder aus (Klick) und wählen Sie die Spaltennamen:
             <div class="table-responsive">
