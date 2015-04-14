@@ -42,10 +42,8 @@ class FileGroupModel(models.Model):
     format = models.CharField(max_length=50, null=True)
 
     def to_file_group(self):
-        group = FileGroup()
-
-        for file in self.files.all():
-            group.add(file.to_file(group))
+        group = FileGroup(id=self.id)
+        group.add(*[f.to_file(group) for f in self.files.all()])
 
         return group
 

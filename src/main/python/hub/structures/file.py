@@ -12,19 +12,16 @@ import os
 from django.utils.encoding import force_bytes
 
 from hub import formats
-
 from hub.utils.pandasutils import DataFrameUtils
-
-# noinspection PyUnresolvedReferences
-from django.core.cache import caches  # noqa
 
 
 class FileGroup(object):
     """ Container/group for multiple in-memory files
     """
 
-    def __init__(self, files=None):
+    def __init__(self, files=None, id=None):
         self.files = files or []
+        self.id = id
 
     @classmethod
     def from_files(cls, *paths):
@@ -168,7 +165,7 @@ class File(object):
             if not format:
                 return None
 
-            self.df = parsers.parse(self, format)
+            self.df = parsers.parse(self, format, force)
 
         return self.df
 
