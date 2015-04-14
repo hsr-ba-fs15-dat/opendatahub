@@ -11,7 +11,6 @@ from hub.structures.file import FileGroup
 import logging
 from django import db
 
-
 logging.getLogger('django.db.backends').setLevel(logging.WARN)
 
 
@@ -34,10 +33,15 @@ class Command(BaseCommand):
         ('trobdb/Baustellen.kml',): formats.XML,
         ('perf/employees.csv',): formats.CSV,
         ('perf/children.csv',): formats.CSV,
+        ('interlis1/Bahnhoefe.ili', 'interlis1/Bahnhoefe.itf'): formats.INTERLIS1,
+        # ('interlis1/Bahnhoefe.ili', 'interlis1/Bahnhoefe.xml'): formats.INTERLIS2
     }
 
     def add_fg(self, fg, format, name=None, desc=None):
         name = name or 'Test {}'.format(', '.join(fg.names))
+        if len(name) > 200:
+            name = name[:197] + '...'
+
         desc = desc or 'Testdaten'
         doc = DocumentModel(name=name,
                             description=desc + ' (Originalformat: {})'.format(format.name),

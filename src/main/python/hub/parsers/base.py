@@ -9,10 +9,12 @@ import collections
 import pandas
 import geopandas
 import os
+import types
 
 from opendatahub.utils.plugins import RegistrationMixin
 from hub import formats
 from hub.utils import ogr2ogr
+from hub.utils import cache
 
 
 class NoParserException(Exception):
@@ -34,16 +36,31 @@ class Parser(RegistrationMixin):
                 cls.parsers_by_format[format].append(cls)
 
     @classmethod
-    def parse(cls, file, format, *args, **kwargs):
-        for parser in cls.parsers_by_format[format]:
-            try:
-                return parser.parse(file, format=format, *args, **kwargs)
-            except:
-                raise
-                logging.debug('%s was not able to parse data with format %s', parser.__name__, format.__name__)
-                continue
+    def parse(cls, file, format, force=False, *args, **kwargs):
+        id_ = file.file_group.id
+        df = None
+        invalidate = False
 
-        raise NoParserException('Unable to parse data')
+        cache.get(id_)
+        if not force and id_:
+            df = cache.get(id_)
+        if df is None:
+            for parser in cls.parsers_by_format[format]:
+                try:
+                    res = parser.parse(file, format=format, *args, **kwargs)
+                    df = res if isinstance(res, types.ListType) else [res]
+                except:
+                    raise
+                    logging.debug('%s was not able to parse data with format %s', parser.__name__, format.__name__)
+                    continue
+
+        if df is None:
+            raise NoParserException('Unable to parse data')
+
+        if id_ and invalidate:
+            cache.set(id_, df)
+
+        return df
 
 
 class CSVParser(Parser):
@@ -71,19 +88,27 @@ class ExcelParser(Parser):
 
 
 class OGRParser(Parser):
-    accepts = formats.GML, formats.GeoJSON, formats.KML, formats.Shapefile
+    accepts = formats.GML, formats.GeoJSON, formats.KML, formats.Shapefile, formats.INTERLIS1,  # formats.INTERLIS2
 
     @classmethod
     def parse(cls, file, format, *args, **kwargs):
-        file_group = file.file_group
-        name = file.name
+        if format in (formats.Shapefile, formats.GeoJSON):
+            file_groups = [file.file_group]
+        else:
+            file_groups = ogr2ogr.ogr2ogr(file.file_group, ogr2ogr.SHP)
 
-        if format not in (formats.Shapefile, formats.GeoJSON):
-            file_group = ogr2ogr.ogr2ogr(file_group, ogr2ogr.SHP)
-            name = '{}.{}'.format(file.basename, ogr2ogr.SHP.extension)
+        dataframes = []
 
-        with file_group.on_filesystem() as temp_dir:
-            return geopandas.read_file(os.path.join(temp_dir, name))
+        for group in file_groups:
+            with group.on_filesystem() as temp_dir:
+                main_file = group.get_main_file()
+                if main_file:
+                    try:
+                        dataframes.append(geopandas.read_file(os.path.join(temp_dir, main_file.name)))
+                    except AttributeError:
+                        pass
+
+        return dataframes
 
 
 class GenericXMLParser(Parser):
@@ -95,5 +120,6 @@ class GenericXMLParser(Parser):
     @classmethod
     def parse(cls, file, format, *args, **kwargs):
         from lxml import etree
+
         et = etree.parse(file.stream)
         return pandas.DataFrame([dict(text=e.text, **e.attrib) for e in et.getroot()])

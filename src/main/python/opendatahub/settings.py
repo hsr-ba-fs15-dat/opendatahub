@@ -13,6 +13,7 @@ import logging
 import datetime
 
 import os
+import sys
 import dj_database_url
 
 
@@ -91,21 +92,36 @@ DATABASES = {
     # Heroku compliance
     'default': dj_database_url.config(default='postgres://opendatahub:opendatahub@localhost:5432/opendatahub')
 }
-
 CACHES = {
-    'formats': {
-        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-        'LOCATION': 'formats_cache',
-        'TIMEOUT': 3000,
+    # very short-lived basically for inter-request purposes only
+    'L1': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'L1',
         'OPTIONS': {
-            'MAX_ENTRIES': 1000
+            'TIMEOUT': 60,
+            'MAX_ENTRIES': 100,
         }
     },
+    # intermediate-lived general purpose memory cache
     'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'L2',
+        'OPTIONS': {
+            'TIMEOUT': 300,
+            'MAX_ENTRIES': 100,
+        }
+    },
+    # persistent cache
+    'L3': {
         'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-        'LOCATION': 'default_cache'
-    }
+        'LOCATION': 'hub_cache',
+        'OPTIONS': {
+            'TIMEOUT': None,
+            'MAX_ENTRIES': sys.maxint,
+        }
+    },
 }
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/

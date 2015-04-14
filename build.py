@@ -25,7 +25,7 @@ use_plugin('python.flake8')
 use_plugin('python.install_dependencies')
 # use_plugin('pypi:pybuilder_django_enhanced_plugin')
 
-default_task = ['clean', 'install_dependencies', 'django_makemigrations', 'django_migrate',
+default_task = ['clean', 'install_dependencies', 'django_makemigrations', 'django_migrate', 'django_createcachetable',
                 'django_test', 'django_collectstatic', 'grunt', 'analyze', 'publish']
 
 
@@ -148,9 +148,14 @@ def django_loadfixtures(project, logger):
 
 @task
 @depends('prepare')
+def django_createcachetable(project, logger):
+    django_exec(project, logger, ['createcachetable'], fail_stderr=False)
+
+
+@task
+@depends('prepare')
 def django_flush(project, logger):
     django_exec(project, logger, ['flush', '--noinput'], fail_stderr=False)
-
 
 
 @task
