@@ -30,7 +30,7 @@ module odh {
             join: {}
         };
         public tableParams:any;
-        public error;
+        public alerts:Object[] = [];
 
         constructor(private $http:ng.IHttpService, private $state:ng.ui.IStateService, private $scope:any,
                     private ToastService:odh.utils.ToastService, private $window:ng.IWindowService, private $upload,
@@ -209,6 +209,10 @@ module odh {
             }
         }
 
+        public closeAlert(index) {
+            this.alerts.splice(index, 1);
+        }
+
         public preview() {
             this.$http.get(this.UrlService.get('odhql'), {
                 params: {
@@ -219,10 +223,10 @@ module odh {
                 this.columns = data.data.columns;
                 this.rows = data.data.data;
             }).catch((data:any) => {
-                this.$log.error(data);
                 data = data.data.split('\n');
                 this.ToastService.failure(
                     'Es ist ein Fehler aufgetreten! (Fehlermeldung in der Konsole ersichtlich.) ' + data[1]);
+                this.alerts.push({msg: data.slice(0, 3).join('\n'), type: 'danger', title: 'Fehler:'});
             });
         }
 
