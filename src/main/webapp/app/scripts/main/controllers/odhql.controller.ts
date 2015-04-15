@@ -48,7 +48,6 @@ module odh {
                 total: 0, // length of data
                 getData: ($defer, params) => {
                     DocumentService.getList(params.url()).then(result => {
-                        console.log(params);
                         params.total(result.count);
                         $defer.resolve(result.results);
                     });
@@ -107,22 +106,19 @@ module odh {
 
         public getFileGroup(document) {
             this.FileGroupService.getAll(document.id, true).then(filegroups => {
-
-                document.$showRows = !document.$showRows;
-                if (document.$showRows) {
+                if (!document.$showRows) {
                     angular.forEach(filegroups, (fg) => {
                         fg.cols = [];
-                        console.log('fg', fg);
                         angular.forEach(fg.preview[0].columns, (col) => {
                             fg.cols.push({name: col, alias: col});
                         });
                     });
                     document.fileGroup = filegroups;
-
                 } else {
                     document.fileGroup = [];
                 }
-            });
+                document.$showRows = !document.$showRows;
+            }).catch(error => this.ToastService.failure('Es ist ein Fehler aufgetreten.'));
         }
 
 
