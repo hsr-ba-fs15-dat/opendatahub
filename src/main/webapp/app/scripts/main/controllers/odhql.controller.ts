@@ -112,7 +112,8 @@ module odh {
                 if (document.$showRows) {
                     angular.forEach(filegroups, (fg) => {
                         fg.cols = [];
-                        angular.forEach(fg.preview.columns, (col) => {
+                        console.log('fg', fg);
+                        angular.forEach(fg.preview[0].columns, (col) => {
                             fg.cols.push({name: col, alias: col});
                         });
                     });

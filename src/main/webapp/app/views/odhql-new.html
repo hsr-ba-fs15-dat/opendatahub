@@ -20,32 +20,38 @@
         <table class="table" ng-table="vm.tableParams">
             <tbody ng-repeat="document in $data">
             <tr>
+                <td data-title="'ID'">doc{{ document.id}}</td>
                 <td data-title="'Name'" sortable="name" filter="{ 'name': 'text' }">
-                    <a href="" ng-click="vm.getFileGroup(document)">
+                    <a ng-click="vm.getFileGroup(document)">
                             <span class="glyphicon"
-                                  ng-class="{ 'glyphicon-chevron-right': !document.$showRows, 'glyphicon-chevron-down': document.$showRows }"></span>
-                        <strong>{{ document.name }}</strong> <i class="fa fa-eye" ng-show="document.private" tooltip="Dieses Dokument ist Privat"></i>
+                                  ng-class="{ 'glyphicon-chevron-right': !document.$showRows, 'glyphicon-chevron-down': document.$showRows }">
+
+                            </span>
+                        <strong>{{ document.name }}</strong> <i class="fa fa-eye" ng-show="document.private"
+                                                                tooltip="Dieses Dokument ist Privat"></i>
+                        <small>(<i>{{document.owner.username}}</i>)</small>
                     </a>
                 </td>
                 <td data-title="'Beschreibung'">
                     {{document.description}}
                 </td>
-                <td data-title="'Anzahl Spalten'"></td>
+
             </tr>
 
 
             <tr ng-repeat="fileGroup in document.fileGroup">
                 <td>
+                    fg{{ fileGroup.id }}
+                </td>
+                <td>
                     {{fileGroup.files[0].file_name}}
+                </td>
+                <td>
+                    <a ng-click="vm.selected.add(fileGroup)" ng-hide="vm.selected.items.indexOf(fileGroup) > -1">
+                        <i class="fa fa-plus-circle"></i> Dieses Tabelle verwenden
+                    </a>
+                </td>
 
-                </td>
-                <td>
-                    <a ng-click="vm.selected.add(fileGroup)" ng-hide="vm.selected.items.indexOf(fileGroup) > -1"><i
-                            class="fa fa-plus-circle"></i> Dieses Tabelle verwenden</a>
-                </td>
-                <td>
-                    {{fileGroup.cols.length}}
-                </td>
             </tr>
             </tbody>
         </table>
@@ -65,7 +71,7 @@
                     </th>
                 </tr>
                 </thead>
-                <tr ng-repeat="row in group.preview.data | limitTo: 3">
+                <tr ng-repeat="row in group.preview[0].data | limitTo: 3">
                     <td ng-class="vm.selected.fields[group.uniqueid].indexOf(col) > -1 ? 'selected': ''"
                         ng-repeat="col in group.cols" ng-click="vm.addField(col, group)">
                         {{ row[col.name] | characters:25 :true }}

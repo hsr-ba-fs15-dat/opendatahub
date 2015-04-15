@@ -1,7 +1,5 @@
 @import "../../bower_components/bootstrap-material-design/less/roboto.less";
 @import "../../bower_components/bootstrap-material-design/less/material-fullpalette.less";
-
-
 @import "material-spinner.less";
 
 // Override @primary color with one took from _colors.less
@@ -54,7 +52,6 @@ html, body {
   }
 }
 
-
 #wrap {
   min-height: 100%;
   height: auto;
@@ -82,7 +79,6 @@ html, body {
   margin: 30px 0;
 }
 
-
 /* Responsive: Portrait tablets and up */
 @media screen and (min-width: 768px) {
   .container {
@@ -96,6 +92,7 @@ html, body {
     padding-left: 0;
     padding-right: 0;
   }
+
   /* Space out the masthead */
   .header {
     margin-bottom: 30px;
@@ -107,8 +104,8 @@ a {
 }
 
 .gridStyle {
-    border: 1px solid rgb(212,212,212);
-    min-height: 500px;
+  border: 1px solid rgb(212, 212, 212);
+  min-height: 500px;
 }
 
 .drop-box {
@@ -124,16 +121,19 @@ a {
 .row-full-height {
   height: 100%;
 }
+
 .col-full-height {
   height: 100%;
   vertical-align: middle;
 }
+
 .row-same-height {
   display: table;
   width: 100%;
   /* fix overflow */
   table-layout: fixed;
 }
+
 .col-xs-height {
   display: table-cell;
   float: none !important;
@@ -145,9 +145,20 @@ a {
 }
 
 .modal-lg {
-    width: 80%; /* respsonsive width */
+  width: 80%; /* respsonsive width */
 }
 
-.selected{
+.selected {
   background: @light-green-400;
+}
+
+.ng-table-counts {
+  display: inline-block;
+  padding-left: 0;
+  margin: 20px 0;
+  border-radius: 4px;
+}
+
+.ng-table-pager {
+  min-height: 79px;
 }

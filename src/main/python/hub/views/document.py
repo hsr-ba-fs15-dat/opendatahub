@@ -27,7 +27,6 @@ class DocumentViewSet(viewsets.ModelViewSet):
     serializer_class = DocumentSerializer
     paginate_by_param = 'count'
     paginate_by = 50
-
     permission_classes = IsOwnerOrPublic, IsOwnerOrReadOnly,
 
     def create(self, request, *args, **kwargs):
@@ -112,32 +111,34 @@ class DocumentViewSet(viewsets.ModelViewSet):
         - search: searches all available text fields.
         Wildcards are not needed.
         """
-        out = {'filter': {}}
+        out = {'filter': {}, 'sorting': {}}
         params = dict(request.query_params.iterlists())
-        prog = re.compile("^filter\[(\w+)\]$")
+        prog = re.compile("^(filter|sorting)\[(\w+)\]$")
         for k, v in params.iteritems():
             m = re.match(prog, k)
             if m:
-                out['filter'][m.group(1)] = self.str2bool(v[0])
+                out[m.group(1)][m.group(2)] = self.str2bool(v[0])
         if out:
             params.update(out)
         documents = DocumentModel.objects.all()
-        if 'name' in params:
-            documents = documents.filter(name__icontains=params['name'])
-        if 'description' in params:
-            documents = documents.filter(description__icontains=params['description'])
-        if 'search' in params:
-            documents = documents.filter(Q(name__icontains=params['search']) |
-                                         Q(description__icontains=params['search']))
-        if 'filter' in params:
-            for key, filt in params['filter'].iteritems():
-                if key == 'name':
-                    documents = documents.filter(Q(name__icontains=filt) |
-                                                 Q(description__icontains=filt))
-                if key == 'mineOnly' and filt:
-                    documents = documents.filter(owner__id=request.user.id)
-        if 'owneronly' in params:
-            documents = documents.filter(owner__id=request.user.id)
+
+
+        for key, filt in params['filter'].iteritems():
+            if key == 'name':
+                documents = documents.filter(name__icontains=filt)
+            if key == 'description':
+                documents = documents.filter(description__icontains=filt)
+            if key == 'search':
+                documents = documents.filter(Q(name__icontains=filt) |
+                                             Q(description__icontains=filt))
+            if key == 'mineOnly' and filt:
+                documents = documents.filter(owner__id=request.user.id)
+
+        documents = documents.order_by('id')
+        for key, sort in params['sorting'].iteritems():
+            documents = documents.order_by('-' + key if sort=='asc' else key)
+
+
 
         serializer = self.get_pagination_serializer(self.paginate_queryset(documents))
         return Response(serializer.data)
