@@ -16,7 +16,7 @@ class AdHocOdhQLView(View):
         by_id = dict(zip(ids.values(), ids.keys()))
 
         fgs = FileGroupModel.objects.filter(id__in=ids.values())
-        sources = {by_id[fg.id]: fg.to_file_group().to_df() for fg in fgs}
+        sources = {by_id[fg.id]: fg.to_file_group().to_df()[0] for fg in fgs}
 
         df = OdhQLInterpreter(sources).execute(statement).head(count).fillna('NULL')
         df = DataFrameUtils.make_serializable(df)
