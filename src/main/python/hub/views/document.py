@@ -26,7 +26,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
     queryset = DocumentModel.objects.all()
     serializer_class = DocumentSerializer
     paginate_by_param = 'count'
-    paginate_by = 50
+    paginate_by = 20
     permission_classes = IsOwnerOrPublic, IsOwnerOrReadOnly,
 
     def create(self, request, *args, **kwargs):

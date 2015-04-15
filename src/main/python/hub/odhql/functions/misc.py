@@ -15,6 +15,16 @@ class NVL(VectorizedFunction):
         return a.where(~pd.isnull(a), b)
 
 
+class Round(VectorizedFunction):
+    name = 'ROUND'
+
+    def apply(self, col, decimals):
+        self.assert_float('column', col)
+        self.assert_int('decimals', decimals)
+        self.assert_value()
+        return self.expand(col).round(decimals)
+
+
 class Cast(VectorizedFunction):
     name = 'CAST'
 

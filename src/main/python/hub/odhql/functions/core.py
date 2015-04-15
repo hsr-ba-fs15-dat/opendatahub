@@ -38,8 +38,8 @@ class OdhQLFunction(RegistrationMixin):
         expected_args = len(argspec.args) - 1
         given_args = len(self.raw_args)
         if not (argspec.keywords or argspec.varargs) and given_args != expected_args:
-            raise OdhQLExecutionException(
-                '{} takes exactly {} arguments, {} given.'.format(self.name, expected_args, given_args))
+            raise OdhQLExecutionException('{} takes exactly {} arguments, {} given.'
+                                          .format(self.name, expected_args, given_args))
 
     @classmethod
     def register_child(cls, name, bases, own_dict):
@@ -66,20 +66,26 @@ class OdhQLFunction(RegistrationMixin):
 
     def assert_in(self, name, value, possible_values):
         if value not in possible_values:
-            raise OdhQLExecutionException('Expected parameter "{}" of function "{}" to be one of following: {}. '
-                                          'Got "{}" instead.'.format(name, self.name, ', '.join(possible_values),
-                                                                     value))
+            raise OdhQLExecutionException('{}: Expected parameter "{}" to be one of following: {}. Got "{}" instead.'
+                                          .format(self.name, name, ', '.join(possible_values), value))
 
     def assert_type(self, name, value, type_name):
         type_ = self._type_assertions[type_name]
         if not isinstance(value, type_):
-            raise OdhQLExecutionException('Expected parameter "{}" of function "{}" to be of type "{}". '
-                                          'Got value "{}" of type "{}" instead.'.format(name, self.name, type_name,
-                                                                                        value,
-                                                                                        type(value).__name__))
+            raise OdhQLExecutionException('{}: Expected parameter "{}" to be of type "{}". '
+                                          'Got value "{}" of type "{}" instead.'
+                                          .format(self.name, name, type_name, value, type(value).__name__))
 
     def assert_int(self, name, value):
         self.assert_type(name, self._get_single_value(value), 'integer')
+
+    def assert_float(self, name, value):
+        self.assert_type(name, self._get_single_value(value), 'float')
+
+    def assert_value(self, name, value):
+        if not isinstance(value, pd.Series):
+            raise OdhQLExecutionException('{}: Expected "{}" to be a single value. Got column instead.'
+                                          .format(self.name, name))
 
     def assert_str(self, name, value):
         self.assert_type(name, self._get_single_value(value), 'string')
@@ -93,8 +99,8 @@ class OdhQLFunction(RegistrationMixin):
         try:
             re.compile(value)
         except sre_constants.error as e:
-            raise OdhQLExecutionException('Invalid regular expression for parameter "{}" of function "{}": "{}"'
-                                          .format(name, self.name, e.message))
+            raise OdhQLExecutionException('{}: Invalid regular expression for parameter "{}": "{}"{}'
+                                          .format(self.name, name, e.message, (not e.message.endswith('.')) * '.'))
 
     def assert_geometry(self, name, value):
         self.assert_type(name, self._get_single_value(value), 'geometry')
@@ -120,7 +126,7 @@ class VectorizedFunction(OdhQLFunction):
 # class ElementFunction(OdhQLFunction):
 # _is_abstract = True
 #
-#     def execute(self):
+# def execute(self):
 #         df = pd.DataFrame({str(i): series for i, series in enumerate(self.raw_args)})
 #         return df.apply(lambda s: self.apply(*s), axis=1)
 #

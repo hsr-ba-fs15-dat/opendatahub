@@ -13,7 +13,6 @@ from hub.odhql.functions.core import VectorizedFunction, OdhQLExecutionException
 
 
 class VectorizedGeometryFunction(VectorizedFunction):
-
     _is_abstract = True
 
     def apply(self, *args):
@@ -47,7 +46,6 @@ class SetSRID(VectorizedGeometryFunction):
 
     def apply(self, geoms, srid):
         self.assert_geometry('geometry', geoms)
-        # todo assert srid
         self.assert_int('srid', srid)
         geoms.crs = self.get_crs(srid)
         return geoms
@@ -78,3 +76,27 @@ class Centroid(VectorizedGeometryFunction):
     def apply(self, geoms):
         self.assert_geometry('geometry', geoms)
         return gp.GeoSeries(geoms).centroid
+
+
+class GetX(VectorizedGeometryFunction):
+    name = 'ST_X'
+
+    def apply(self, geoms):
+        self.assert_geometry('geometry', geoms)
+        return gp.GeoSeries(geoms).bounds.minx
+
+
+class GetY(VectorizedGeometryFunction):
+    name = 'ST_Y'
+
+    def apply(self, geoms):
+        self.assert_geometry('geometry', geoms)
+        return gp.GeoSeries(geoms).bounds.miny
+
+
+class Area(VectorizedGeometryFunction):
+    name = 'ST_Area'
+
+    def apply(self, geoms):
+        self.assert_geometry('geometry', geoms)
+        return gp.GeoSeries(geoms).area

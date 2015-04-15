@@ -93,14 +93,25 @@ class DataFrameUtils(object):
 
     @staticmethod
     def get_picklable(df):
-        return (df, {k: getattr(df, k, None) for k in df._metadata})
+        """ Returns tuple with containing dataframe and metadata. Use from_unpickled to restore.
+        """
+        get_meta = lambda o: {k: getattr(o, k, None) for k in o._metadata}
+        return (df, get_meta(df), {str(col): get_meta(df[col]) for col in df})
 
     @staticmethod
     def from_unpickled(tup):
-        df, meta = tup
-        for k, m in meta.iteritems():
-            if not getattr(df, k, None):
-                setattr(df, k, m)
+        """ Restores dataframe metadata form get_picklable result, which is usually lost when pickling.
+        """
+        df, meta, col_meta = tup
+
+        def set_meta(obj, metadict):
+            for attr, value in meta.iteritems():
+                if not getattr(obj, attr, None):
+                    setattr(obj, attr, value)
+
+        set_meta(df, meta)
+        for colname, meta in col_meta.iteritems():
+            set_meta(df[colname], meta)
 
         return df
 
@@ -119,6 +130,5 @@ class DataFrameUtils(object):
             'columns': slice_.columns.tolist(),
             'types': {c: OdhQLInterpreter._resolve_type(t) for c, t in DataFrameUtils.get_col_types(df).iteritems()},
             'data': slice_.to_dict(orient='records'),
-            'rows': df.shape[0]
+            'count': df.shape[0]
         }
-
