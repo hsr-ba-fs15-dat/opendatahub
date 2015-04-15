@@ -84,7 +84,7 @@ class DataFrameUtils(object):
         return cols
 
     @staticmethod
-    def preserve_meta(new, old):
+    def restore_meta(new, old):
         new.__class__ = old.__class__
         for attr in getattr(old, '_metadata', []):
             object.__setattr__(new, attr, getattr(old, attr, None))
@@ -92,8 +92,33 @@ class DataFrameUtils(object):
         return new
 
     @staticmethod
+    def get_picklable(df):
+        return (df, {k: getattr(df, k, None) for k in df._metadata})
+
+    @staticmethod
+    def from_unpickled(tup):
+        df, meta = tup
+        for k, m in meta.iteritems():
+            if not getattr(df, k, None):
+                setattr(df, k, m)
+
+        return df
+
+    @staticmethod
     def preserve_series_meta(df_new, df_old):
         for c_new, c_old in zip(df_new.columns, df_old.columns):
-            DataFrameUtils.preserve_meta(df_new[c_new], df_old[c_old])
+            DataFrameUtils.restore_meta(df_new[c_new], df_old[c_old])
 
         return df_new
+
+    @staticmethod
+    def to_json_dict(df, start, count):
+        from hub.odhql.interpreter import OdhQLInterpreter
+        slice_ = DataFrameUtils.make_serializable(df.iloc[start:start + count].fillna('NULL'))
+        return {
+            'columns': slice_.columns.tolist(),
+            'types': {c: OdhQLInterpreter._resolve_type(t) for c, t in DataFrameUtils.get_col_types(df).iteritems()},
+            'data': slice_.to_dict(orient='records'),
+            'rows': df.shape[0]
+        }
+

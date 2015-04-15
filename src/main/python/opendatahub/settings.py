@@ -112,7 +112,8 @@ DATABASES = {
 CACHES = {
     # very short-lived basically for inter-request purposes only
     'L1': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        # django.core.cache.backends.locmem.LocMemCache
+        'BACKEND': 'opendatahub.utils.cache.locmem.LocMemNoPickleCache',
         'LOCATION': 'L1',
         'OPTIONS': {
             'TIMEOUT': 60,
@@ -121,7 +122,7 @@ CACHES = {
     },
     # intermediate-lived general purpose memory cache
     'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'BACKEND': 'opendatahub.utils.cache.locmem.LocMemNoPickleCache',
         'LOCATION': 'L2',
         'OPTIONS': {
             'TIMEOUT': 300,

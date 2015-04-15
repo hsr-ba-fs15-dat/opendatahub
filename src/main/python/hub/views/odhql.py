@@ -10,7 +10,9 @@ class AdHocOdhQLView(View):
 
     def get(self, request):
         statement = request.GET['query']
-        count = request.GET.get('count', 20)  # todo pagination features of rest framework?
+        count = int(request.GET.get('count', 3))
+        page = int(request.GET.get('page', 1))
+        start = count * page - 1
 
         ids = OdhQLInterpreter.parse_sources(statement)
         by_id = dict(zip(ids.values(), ids.keys()))
@@ -18,10 +20,7 @@ class AdHocOdhQLView(View):
         fgs = FileGroupModel.objects.filter(id__in=ids.values())
         sources = {by_id[fg.id]: fg.to_file_group().to_df()[0] for fg in fgs}
 
-        df = OdhQLInterpreter(sources).execute(statement).head(count).fillna('NULL')
-        df = DataFrameUtils.make_serializable(df)
+        df = OdhQLInterpreter(sources).execute(statement)
+        data = DataFrameUtils.to_json_dict(df, start, count)
 
-        return JsonResponse({
-            'columns': df.columns.tolist(),
-            'data': df.to_dict(orient='records')
-        })
+        return JsonResponse(data)
