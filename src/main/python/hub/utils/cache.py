@@ -19,8 +19,9 @@ class CacheWrapper(object):
             key = hash(key)
         return key
 
-    def set(self, key, value, version=None):
-        self._cache.set(self.make_key(key), value, version=version)
+    def set(self, key, value, version=None, async=True):
+        key = self.make_key(key)
+        Thread(target=self._cache.set, args=(key, value), kwargs={'version': version}).start()
 
     def get(self, key, version=None):
         return self._cache.get(self.make_key(key), version=version)
@@ -30,6 +31,7 @@ class CacheWrapper(object):
 
 
 class LocalCacheWrapper(CacheWrapper):
+
     def delete(self, key, version=None, cascade=True):
         key = self._cache.make_key(self.make_key(key))
         if cascade:
@@ -40,9 +42,6 @@ class LocalCacheWrapper(CacheWrapper):
 
 
 class DatabaseCacheWrapper(CacheWrapper):
-    def set(self, key, value, **kw):
-        # fire and forget
-        Thread(target=super(DatabaseCacheWrapper, self).set, args=(key, value), kwargs=kw).start()
 
     def delete(self, key, version=None, cascade=True):
         key = self._cache.make_key(self.make_key(key))
