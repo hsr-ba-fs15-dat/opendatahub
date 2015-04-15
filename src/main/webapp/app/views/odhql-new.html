@@ -44,12 +44,11 @@
                     fg{{ fileGroup.id }}
                 </td>
                 <td>
-                    {{fileGroup.files[0].file_name}}
-                            class="fa fa-plus-circle"></i> Diese Tabelle verwenden</a>
+                    {{fileGroup.files[0].file_name}} <small>(<i>{{fileGroup.cols.length}}</i> Zeilen)</small>
                 </td>
                 <td>
                     <a ng-click="vm.selected.add(fileGroup)" ng-hide="vm.selected.items.indexOf(fileGroup) > -1">
-                        <i class="fa fa-plus-circle"></i> Dieses Tabelle verwenden
+                        <i class="fa fa-plus-circle"></i> Diese Tabelle verwenden
                     </a>
                 </td>
 
