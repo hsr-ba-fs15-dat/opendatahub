@@ -20,8 +20,8 @@
         <table class="table" ng-table="vm.tableParams">
             <tbody ng-repeat="document in $data">
             <tr>
-                <td data-title="'ID'">doc{{ document.id}}</td>
-                <td data-title="'Name'" sortable="name" filter="{ 'name': 'text' }">
+                <td data-title="'ID'" class="col-sm-1 col-md-1 col-lg-1">doc{{ document.id}}</td>
+                <td data-title="'Name'" sortable="name" filter="{ 'name': 'text' }" class="col-sm-4 col-md-4 col-lg-4">
                     <a ng-click="vm.getFileGroup(document)">
                             <span class="glyphicon"
                                   ng-class="{ 'glyphicon-chevron-right': !document.$showRows, 'glyphicon-chevron-down': document.$showRows }">
@@ -32,7 +32,7 @@
                         <small>(<i>{{document.owner.username}}</i>)</small>
                     </a>
                 </td>
-                <td data-title="'Beschreibung'">
+                <td data-title="'Beschreibung'" class="col-sm-7 col-md-7 col-lg-7">
                     {{document.description}}
                 </td>
 
