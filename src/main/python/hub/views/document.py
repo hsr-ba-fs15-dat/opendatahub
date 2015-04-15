@@ -122,7 +122,6 @@ class DocumentViewSet(viewsets.ModelViewSet):
             params.update(out)
         documents = DocumentModel.objects.all()
 
-
         for key, filt in params['filter'].iteritems():
             if key == 'name':
                 documents = documents.filter(name__icontains=filt)
@@ -136,9 +135,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
         documents = documents.order_by('id')
         for key, sort in params['sorting'].iteritems():
-            documents = documents.order_by('-' + key if sort=='asc' else key)
-
-
+            documents = documents.order_by('-' + key if sort == 'asc' else key)
 
         serializer = self.get_pagination_serializer(self.paginate_queryset(documents))
         return Response(serializer.data)
