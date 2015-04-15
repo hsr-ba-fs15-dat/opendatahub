@@ -19,6 +19,9 @@ import dj_database_url
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True
 PRODUCTION = os.getenv('CONFIGURATION') == 'PRODUCTION'
 
 # Quick-start development settings - unsuitable for production
@@ -27,10 +30,24 @@ PRODUCTION = os.getenv('CONFIGURATION') == 'PRODUCTION'
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'r)gg!i^!6=62c8p416@n^x0@nc3#h)dj3ge10l*977u@np6=--'
 
-# SECURITY WARNING: don't run with debug turned on in production!
+
+if DEBUG:
+    logging.basicConfig(level=logging.DEBUG)
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'loggers': {
+        'django.db.backends': {
+            # otherwise prints the base64 encoded files which is simply too much for the console to handle
+            'level': 'WARN',
+            'propagate': True,
+        },
+    },
+}
 
 logging.getLogger('Fiona').setLevel(logging.WARN)  # default verbosity slows down everything way too much
-logging.basicConfig(level=logging.DEBUG)
 
 TEMPLATE_DEBUG = True
 
@@ -185,4 +202,3 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 if not PRODUCTION:
     SSLIFY_DISABLE = True
-DEBUG = True

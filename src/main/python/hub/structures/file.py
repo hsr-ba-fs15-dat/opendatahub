@@ -158,15 +158,24 @@ class File(object):
         return self.format
 
     def to_df(self, force=False):
-        if force or self.df is None:
-            from hub import parsers
+        from hub.utils import cache
+        id_ = self.file_group.id
+        invalidate = False
 
-            format = formats.identify(self)
-            if not format:
-                return None
+        if self.df is None:
+            if not force and id_ is not None:
+                self.df = cache.get(('FG', id_))
 
-            self.df = parsers.parse(self, format, force)
+            if self.df is None:
+                from hub import parsers
+                format = formats.identify(self)
+                if not format:
+                    return None
+                self.df = parsers.parse(self, format)
+                invalidate = True
 
+        if invalidate and id_:
+            cache.set(('FG', id_), self.df)
         return self.df
 
     def to_serializable_df(self):
