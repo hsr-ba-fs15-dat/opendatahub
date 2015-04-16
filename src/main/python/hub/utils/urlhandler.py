@@ -1,5 +1,5 @@
 
-import hub.cache
+import hub.utils.cache
 import collections
 import time
 
