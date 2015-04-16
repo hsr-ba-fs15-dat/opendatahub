@@ -153,13 +153,13 @@ class OdhQLInterpreter(object):
                 addtl_cols = [df[c].reset_index(drop=True) for c in addtl_colnames]
                 all_cols = cols + addtl_cols
 
-                df = DataFrameUtils.preserve_meta(pd.concat(all_cols, axis=1, copy=False), df)
+                df = DataFrameUtils.restore_meta(pd.concat(all_cols, axis=1, copy=False), df)
                 df.__class__ = cls
 
                 for attr, val in kw.iteritems():
                     setattr(df, attr, val)
                 for i, c in enumerate(df):
-                    DataFrameUtils.preserve_meta(df[c], all_cols[i])
+                    DataFrameUtils.restore_meta(df[c], all_cols[i])
 
             else:
                 colnames = [getattr(f, 'alias', f.name) for f in query.fields]

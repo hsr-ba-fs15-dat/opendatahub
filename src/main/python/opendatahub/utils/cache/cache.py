@@ -20,7 +20,8 @@ class CacheWrapper(object):
         return key
 
     def set(self, key, value, version=None):
-        self._cache.set(self.make_key(key), value, version=version)
+        key = self.make_key(key)
+        self._cache.set(key, value, version=version)
 
     def get(self, key, version=None):
         return self._cache.get(self.make_key(key), version=version)
@@ -30,6 +31,7 @@ class CacheWrapper(object):
 
 
 class LocalCacheWrapper(CacheWrapper):
+
     def delete(self, key, version=None, cascade=True):
         key = self._cache.make_key(self.make_key(key))
         if cascade:
@@ -40,9 +42,10 @@ class LocalCacheWrapper(CacheWrapper):
 
 
 class DatabaseCacheWrapper(CacheWrapper):
-    def set(self, key, value, **kw):
-        # fire and forget
-        Thread(target=super(DatabaseCacheWrapper, self).set, args=(key, value), kwargs=kw).start()
+
+    def set(self, key, value, version=None):
+        key = self.make_key(key)
+        Thread(target=super(DatabaseCacheWrapper, self).set, args=(key, value), kwargs={'version': version}).start()
 
     def delete(self, key, version=None, cascade=True):
         key = self._cache.make_key(self.make_key(key))
@@ -61,17 +64,17 @@ L3 = DatabaseCacheWrapper(caches['L3'])
 
 
 def set(key, value, l1=False, l2=True, l3=True, version=None):
-    for cache in [c for c, do in ((L1, l1), (L2, l2), (L3, l2)) if do]:
+    for cache in [c for c, do in ((L1, l1), (L2, l2), (L3, l3)) if do]:
         cache.set(key, value, version=version)
 
 
 def get(key, l1=False, l2=True, l3=True, version=None):
-    for cache in [c for c, do in ((L1, l1), (L2, l2), (L3, l2)) if do]:
+    for cache in [c for c, do in ((L1, l1), (L2, l2), (L3, l3)) if do]:
         value = cache.get(key, version=version)
         if value is not None:
             return value
 
 
 def delete(key, l1=True, l2=True, l3=True, version=None, cascade=True):
-    for cache in [c for c, do in ((L1, l1), (L2, l2), (L3, l2)) if do]:
+    for cache in [c for c, do in ((L1, l1), (L2, l2), (L3, l3)) if do]:
         cache.delete(key, cascade=True, version=version)

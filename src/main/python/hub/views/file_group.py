@@ -1,5 +1,7 @@
 import zipfile
 import json
+import traceback
+import logging
 
 import types
 from rest_framework import viewsets
@@ -11,7 +13,6 @@ from hub.models import FileGroupModel, FileModel
 from hub.serializers import FileGroupSerializer, FileSerializer
 from authentication.permissions import IsOwnerOrPublic
 from hub.utils.pandasutils import DataFrameUtils
-from hub.utils import cache
 
 
 class FileGroupViewSet(viewsets.ModelViewSet):
@@ -72,24 +73,15 @@ class FileGroupViewSet(viewsets.ModelViewSet):
 
     @detail_route()
     def preview(self, request, pk):
+        limit = int(request.GET.get('count', 3))
+        page = int(request.GET.get('page', 1))
+        start = limit * page - 1
+
         try:
             model = FileGroupModel.objects.get(id=pk)
-            cache_key = ('FG', pk, 'preview')
-            data = cache.get(cache_key)
-
-            if not data:
-                dataframes = model.to_file_group().to_df()
-
-                data = []
-                for df in dataframes:
-                    preview = DataFrameUtils.make_serializable(df.head(3).fillna('NULL'))
-
-                    data.append({
-                        'columns': preview.columns.tolist(),
-                        'data': preview.to_dict(orient='records'),
-                    })
-                cache.set(cache_key, data)
-
+            dfs = model.to_file_group().to_df()
+            data = [DataFrameUtils.to_json_dict(df, start, limit) for df in dfs]
             return HttpResponse(content=json.dumps(data), content_type='application/json')
         except Exception as e:
+            logging.warn(traceback.format_exc())
             return JsonResponse({'error': e.message, 'error_location': 'preview'})

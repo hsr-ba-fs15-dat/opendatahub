@@ -158,13 +158,16 @@ class File(object):
         return self.format
 
     def to_df(self, force=False):
-        from hub.utils import cache
+        from opendatahub.utils import cache
+
         id_ = self.file_group.id
         invalidate = False
 
         if self.df is None:
             if not force and id_ is not None:
-                self.df = cache.get(('FG', id_))
+                temp = cache.get(('FG', id_))
+                if temp is not None:
+                    self.df = [DataFrameUtils.from_unpickled(tup) for tup in temp]
 
             if self.df is None:
                 from hub import parsers
@@ -175,7 +178,7 @@ class File(object):
                 invalidate = True
 
         if invalidate and id_:
-            cache.set(('FG', id_), self.df)
+            cache.set(('FG', id_), [DataFrameUtils.get_picklable(df) for df in self.df])
         return self.df
 
     def to_serializable_df(self):
@@ -198,23 +201,3 @@ class File(object):
 
     def __repr__(self):
         return 'File({})'.format(self.name)
-
-
-if __name__ == '__main__':
-    from hub.tests.testutils import TestBase
-
-    files = (
-        ('mockaroo.com.csv', formats.CSV),
-        ('mockaroo.com.json', formats.JSON),
-        ('gml/Bahnhoefe.gml', formats.GML),
-        ('mockaroo.com.xls', formats.Excel),
-    )
-
-    for filename, cls in files:
-        fg = FileGroup.from_files(TestBase.get_test_file_path(filename))
-
-        f = fg[0]
-        df = f.to_df()
-        print df
-
-        print f.to_format('gml').names

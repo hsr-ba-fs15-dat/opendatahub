@@ -162,6 +162,7 @@ def django_flush(project, logger):
 @depends('prepare')
 def django_reset_db(project, logger):
     django_exec(project, logger, ['reset_db', '--noinput'], fail_stderr=False)
+    django_createcachetable(project, logger)
 
 
 @init
