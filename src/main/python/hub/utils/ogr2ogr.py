@@ -2,6 +2,7 @@
 ogr2ogr (GDAL) command line interface wrapper
 Requires ogr2ogr to be installed (e.g. sudo apt-get install gdal-bin)
 """
+from functools import partial
 
 import subprocess
 import collections
@@ -47,7 +48,6 @@ GEO_JSON = OgrFormat('json', 'GeoJSON', False)
 KML = OgrFormat('kml', 'KML', False)
 
 INTERLIS_1 = OgrFormat(['itf', 'ili', 'imd'], 'Interlis 1', True)
-INTERLIS_2 = OgrFormat(['xtf', 'xml', 'ili', 'imd'], 'Interlis 2', True)
 
 
 def _ogr2ogr_cli(arguments, *args, **kwargs):
@@ -75,8 +75,11 @@ def ogr2ogr(file_group, to_type):
         path = os.path.join(temp_dir, 'out')
 
         if from_format and from_format.list_all:
-            _ogr2ogr_cli(['-f', to_type.identifier, path, ','.join([os.path.join(temp_dir, f.name)
-                                                                    for f in file_group])])
+
+            files = sorted([os.path.join(temp_dir, f.name) for f in file_group],
+                           partial(sort_by_extension_index, from_format))
+
+            _ogr2ogr_cli(['-f', to_type.identifier, path, ','.join(files)])
         else:
             _ogr2ogr_cli(['-f', to_type.identifier, path, os.path.join(temp_dir, main_file.name)])
 
@@ -96,3 +99,30 @@ def ogr2ogr(file_group, to_type):
             groups[os.path.splitext(file)[0]].append(file)
 
         return [FileGroup.from_files(*f) for f in groups.values()]
+
+
+def sort_by_extension_index(from_format, a, b):
+    """
+    force main file(s) to appear a) first and b) in the order specified in the format
+    this is a hack to get interlis 1 to work reliably, as ogr2ogr appears to be a bit... touchy about that.
+
+    :param from_format: detected format. used to get the extension list
+    :param a: first object to compare
+    :param b: second object to compare
+    :return: -1, 0, 1 as usual for comparison functions.
+    """
+    get_extension_only = lambda ext: ext[1][1:] if ext and len(ext) > 1 else None
+
+    ext_a = get_extension_only(os.path.splitext(a))
+    ext_b = get_extension_only(os.path.splitext(b))
+
+    if ext_a and ext_a in from_format.extension:
+        if ext_b and ext_b in from_format.extension:
+            return cmp(from_format.extension.index(ext_a), from_format.extension.index(ext_b))
+        else:
+            return -1
+
+    if ext_b and ext_b in from_format.extension:
+        return 1
+
+    return cmp(a, b)
