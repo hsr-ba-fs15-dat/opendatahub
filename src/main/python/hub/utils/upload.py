@@ -1,5 +1,6 @@
 import requests as http
 import urlparse
+import os
 
 import defusedxml.ElementTree as etree
 import collections

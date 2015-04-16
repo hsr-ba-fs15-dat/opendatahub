@@ -1,7 +1,9 @@
-
-import hub.utils.cache
+from opendatahub.utils.cache import cache
 import collections
 import time
+
+import requests as http
+
 
 UrlCacheEntry = collections.namedtuple('UrlCacheEntry', ('id', 'data', 'retrieval_time'))
 
@@ -16,7 +18,7 @@ class UrlHelper(object):
 
             if response.status_code == 200:
                 data = response.text.encode('utf-8')
-                cache_entry = UrlCacheEntry(url_model.id, response.text.encode('utf-8'), int(time.time()))
+                cache_entry = UrlCacheEntry(url_model.id, data, int(time.time()))
                 cache.set(cache_key, cache_entry)
 
         if cache_entry:
