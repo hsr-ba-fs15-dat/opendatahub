@@ -58,14 +58,6 @@ class UrlHandler(object):
         url_model = UrlModel(source_url=url, type=type, document=doc)
         url_model.save()
 
-    def fetchUrl(self, url_model):
-        response = http.get(url_model.source_url)
-
-        if response.status_code == 200:
-            return response.text.encode('utf-8')
-
-        raise
-
     def checkWfs(self, url):
         (scheme, host, path, _, _, _) = urlparse.urlparse(url)
 

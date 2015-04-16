@@ -5,7 +5,8 @@
 from django.db import models
 
 from opendatahub import settings
-from .structures.file import File, FileGroup
+from hub.structures.file import File, FileGroup
+from hub.utils.urlhandler import UrlHelper
 
 
 AUTH_USER_MODEL = getattr(settings, 'AUTH_USER_MODEL', 'auth.User')
@@ -45,6 +46,8 @@ class FileGroupModel(models.Model):
         group = FileGroup(id=self.id)
         group.add(*[f.to_file(group) for f in self.files.all()])
 
+        group.add(*[u.to_file(group) for u in self.urls.all()])
+
         return group
 
 
@@ -64,8 +67,16 @@ class UrlModel(models.Model):
     """
     Refreshable URL.
     """
-    document = models.ForeignKey(DocumentModel, related_name='urls')
+    file_group = models.ForeignKey(FileGroupModel, related_name='urls')
+
+    name = models.CharField(max_length=255)
+    description = models.TextField()
 
     source_url = models.URLField()
-    auto_refresh = models.BooleanField()
+    refresh_after = models.IntegerField(default=24*60*60) # seconds
     type = models.CharField(max_length=10)
+
+    def to_file(self, file_group=None):
+        data = UrlHelper().fetchUrl(self)
+
+        return File.from_string(self.name, data, file_group=file_group)
