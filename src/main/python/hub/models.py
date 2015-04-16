@@ -58,3 +58,14 @@ class FileModel(models.Model):
 
     def to_file(self, file_group=None):
         return File.from_string(self.file_name, self.data, file_group=file_group)
+
+
+class UrlModel(models.Model):
+    """
+    Refreshable URL.
+    """
+    document = models.ForeignKey(DocumentModel, related_name='urls')
+
+    source_url = models.URLField()
+    auto_refresh = models.BooleanField()
+    type = models.CharField(max_length=10)

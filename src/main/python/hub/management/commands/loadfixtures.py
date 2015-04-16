@@ -39,6 +39,7 @@ class Command(BaseCommand):
 
     def add_fg(self, fg, format, name=None, desc=None):
         name = name or 'Test {}'.format(', '.join(fg.names))
+
         if len(name) > 200:
             name = name[:197] + '...'
 

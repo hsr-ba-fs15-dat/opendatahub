@@ -1,4 +1,3 @@
-import urlparse
 import collections
 
 import re
@@ -8,18 +7,15 @@ from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from django.db.models import Q
 from django.db import transaction
-import requests as http
 import os
 
 from hub.serializers import DocumentSerializer, FileGroupSerializer
-from hub.models import DocumentModel, FileGroupModel, FileModel
-import hub.formatters
+from hub.models import DocumentModel, FileGroupModel
+
 from hub.structures.file import File
 from authentication.permissions import IsOwnerOrPublic, IsOwnerOrReadOnly
 
-
-print('Loaded formatters:')
-print(hub.formatters.__all__)
+from hub.utils.upload import UploadHandler
 
 
 class DocumentViewSet(viewsets.ModelViewSet):
@@ -39,16 +35,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
         try:
             with transaction.atomic():
-                doc = DocumentModel(name=request.data['name'], description=request.data['description'],
-                                    private=request.data.get('private', False), owner=request.user)
-                doc.save()
-
-                if 'url' in request.data:
-                    self._handle_url(request, doc)
-                elif 'file' in request.data:
-                    self._handle_file(request, doc)
-                else:
-                    raise ValidationError('No data source specified')
+                doc = UploadHandler().handleUpload(request)
 
             serializer = DocumentSerializer(DocumentModel.objects.get(id=doc.id), context={'request': request})
 
@@ -56,47 +43,6 @@ class DocumentViewSet(viewsets.ModelViewSet):
         except:
             raise  # ValidationError(detail='error handling input')
 
-    def _handle_url(self, request, document):
-        url = request.data['url']
-
-        resp = http.get(url)
-
-        if resp.status_code != 200:
-            raise ValidationError('Failed to retrieve content: Status code %d' % resp.status_code)
-
-        path = urlparse.urlparse(url)[2]
-
-        if path:
-            filename = path.rsplit('/', 1)[1]
-        else:
-            filename = (url[:250] + '...') if len(url) > 250 else url
-
-        file = File(filename, resp.text.encode('utf8'))
-
-        if not file:
-            raise ValidationError('Failed to read content')
-
-        file_group = FileGroupModel(document=document, format=request.data.get('format', None))
-        file_group.save()
-
-        file_model = FileModel(file_name=file.name, data=file.stream, file_group=file_group)
-        file_model.save()
-
-    def _handle_file(self, request, document):
-        files = request.data.getlist('file')
-
-        groups = collections.defaultdict(list)
-        for file in files:
-            name = os.path.splitext(file.name)[0]
-            groups[name].append(file)
-
-        for group in groups.itervalues():
-            file_group = FileGroupModel(document=document, format=request.data.get('format', None))
-            file_group.save()
-
-            for file in group:
-                file_model = FileModel(file_name=file.name, data=file.read(), file_group=file_group)
-                file_model.save()
 
     def str2bool(self, v):
         if v.lower() in ('true', 'false'):
