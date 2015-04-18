@@ -220,6 +220,7 @@ class TestInterpreter(TestInterpreterBase):
         statements = (
             ('SELECT e.prename FROM employee AS e ORDER BY nonexistent', 'Non-existent ORDER BY field'),
             ('SELECT e.prename FROM employee AS e ORDER BY e.nonexistent', 'Non-existent ORDER BY field'),
+            ('SELECT e.prename FROM employee AS e JOIN child AS c ON c.Parent = e.foobar', 'Non-existent JOIN field'),
             ('SELECT e.prename FROM employee AS e ORDER BY 99', 'Invalid ORDER BY position'),
             ('SELECT e.prename FROM employee AS e UNION SELECT c.age FROM child AS c', 'UNION type mismatch')
         )

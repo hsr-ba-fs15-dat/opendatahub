@@ -274,7 +274,10 @@ class OdhQLInterpreter(object):
                     names_right.append(self._make_name(right.prefix, right.name))
 
                 df_right = dfs[right.prefix]
-                df = df.merge(df_right, left_on=names_left, right_on=names_right, suffixes=('', 'r'), copy=False)
+                try:
+                    df = df.merge(df_right, left_on=names_left, right_on=names_right, suffixes=('', 'r'), copy=False)
+                except KeyError as e:
+                    raise OdhQLExecutionException('JOIN: Column "{}" does not exist'.format(e.message))
                 aliases_left.append(right.prefix)
 
             elif isinstance(ds, parser.DataSource):
