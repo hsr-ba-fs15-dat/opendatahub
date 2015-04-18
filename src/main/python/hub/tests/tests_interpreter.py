@@ -212,8 +212,9 @@ class TestInterpreter(TestInterpreterBase):
         ids = OdhQLInterpreter.parse_sources('SELECT e.prename FROM ODH12 AS e UNION SELECT c.prename FROM ODH88 AS c')
         self.assertDictEqual(ids, {'ODH12': 12, 'ODH88': 88})
 
-    def test_temp(self):
-        pass
+    def test_dup_colnames(self):
+        df = self.execute('SELECT e.prename, e.prename, e.surname AS prename FROM employee AS e')
+        self.assertListEqual(df.columns.tolist(), ['prename', 'prename2', 'prename3'])
 
     def test_fails(self):
         statements = (
