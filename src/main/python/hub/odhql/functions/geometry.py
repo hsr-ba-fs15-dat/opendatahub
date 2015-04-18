@@ -95,6 +95,9 @@ class GetY(VectorizedGeometryFunction):
 
 
 class Area(VectorizedGeometryFunction):
+    """
+    Area in square feet
+    """
     name = 'ST_Area'
 
     def apply(self, geoms):
