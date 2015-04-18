@@ -169,15 +169,14 @@ class TestGeometryFunctions(TestInterpreterBase):
                      )
         # todo assert
 
-
     def test_st_x(self):
         df = self.execute('SELECT c.prename, ST_X(ST_GeomFromText(\'POINT(7.2234283 48.8183157)\')) AS hsrx '
-                     'FROM child AS c')
+                          'FROM child AS c')
         self.assertListEqual(len(df) * [7.2234283], df.hsrx.tolist())
 
     def test_st_y(self):
         df = self.execute('SELECT c.prename, ST_Y(ST_GeomFromText(\'POINT(7.2234283 48.8183157)\')) AS hsry '
-                     'FROM child AS c')
+                          'FROM child AS c')
         self.assertListEqual(len(df) * [48.8183157], df.hsry.tolist())
 
     def test_st_area_point(self):
@@ -195,7 +194,7 @@ class TestGeometryFunctions(TestInterpreterBase):
     def test_fails(self):
         statements = (
             ('SELECT c.prename, ST_SetSRID(ST_GeomFromText(\'POINT(7.2234283 48.8183157)\'), 99999) AS hsr '
-            'FROM child AS c', 'Unknown SRID'),
+             'FROM child AS c', 'Unknown SRID'),
 
             # todo different/no crs
         )

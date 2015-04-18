@@ -73,8 +73,8 @@ class OdhQLInterpreter(object):
         """
         seen = collections.defaultdict(int)
         for f in query.fields:
-            n = seen[f.alias]= seen[f.alias] + 1
-            f.alias = '{}{}'.format(f.alias, bool(n-1) * str(n))
+            n = seen[f.alias] = seen[f.alias] + 1
+            f.alias = '{}{}'.format(f.alias, bool(n - 1) * str(n))
 
     @classmethod
     def parse_sources(cls, query):
