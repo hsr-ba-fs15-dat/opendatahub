@@ -6,15 +6,12 @@ separately.
 from __future__ import unicode_literals
 import collections
 import itertools
-import datetime as dt
 
 import pandas as pd
-import geopandas as gp
 import numpy as np
 import re
-from shapely.geometry.base import BaseGeometry
 
-from hub.utils.pandasutils import DataFrameUtils
+from hub.structures.frame import OdhType, OdhSeries, OdhFrame
 import hub.odhql.parser as parser
 import hub.odhql.functions as functions
 from hub.odhql.exceptions import OdhQLExecutionException
@@ -23,30 +20,12 @@ from hub.odhql.exceptions import OdhQLExecutionException
 class OdhQLInterpreter(object):
     FILE_GROUP_RE = re.compile('ODH([1-9]\d?)', re.IGNORECASE)
 
-    TYPE_MAP = {
-        int: 'INTEGER',
-        float: 'FLOAT',
-        str: 'STRING',
-        unicode: 'STRING',
-        BaseGeometry: 'GEOMETRY',
-        dt.datetime: 'DATETIME',
-        dt.timedelta: 'INTERVAL',
-        bool: 'BOOLEAN',
-    }
-
     def __init__(self, source_dfs):
         """
         :param source_dfs: DataFrames required by the underlying OdhQL query.
         :type source_dfs: dict
         """
         self.source_dfs = {alias.lower(): df for alias, df in source_dfs.iteritems()}
-
-    @classmethod
-    def _resolve_type(cls, type_):
-        if isinstance(type_, BaseGeometry):
-            type_ = BaseGeometry
-
-        return cls.TYPE_MAP[type_]
 
     @classmethod
     def _assert_crs(cls, series, name=None):
@@ -99,6 +78,7 @@ class OdhQLInterpreter(object):
 
         return ids
 
+    # @profilehooks.profile(immediate=True)
     def execute(self, query):
         """
         Executes an OdhQL query
@@ -145,39 +125,29 @@ class OdhQLInterpreter(object):
 
             # select requested fields from filtered dataframe
             if df.shape[0]:
-                cls = df.__class__
-                kw = {}
-
-                cols = [self.interpret_field(df, f) for f in query.fields]
+                cols = [self._interpret_field(df, f) for f in query.fields]
 
                 # if we have multiple geometry columns and none of them is aliased "geometry" we pick the first
                 # the formatters require a single geometry column as most file formats only support one
                 # todo move renaming to formatting process and not query
-                geoseries = collections.OrderedDict(
-                    [(series.name, series) for series in cols if isinstance(series, gp.GeoSeries)])
-                if geoseries:
-                    cls = gp.GeoDataFrame
-                    geometry = geoseries.get('geometry', geoseries.values()[0])
-                    geometry.name = 'geometry'
-                    kw['crs'] = geometry.crs
+                # geoseries = collections.OrderedDict(
+                # [(series.name, series) for series in cols if isinstance(series, gp.GeoSeries)])
+                # if geoseries:
+                #     cls = gp.GeoDataFrame
+                #     geometry = geoseries.get('geometry', geoseries.values()[0])
+                #     geometry.name = 'geometry'
+                #     kw['crs'] = geometry.crs
 
                 colnames = [c.name for c in cols]
                 addtl_colnames = set(df.columns.tolist()) - set(colnames)
                 # add non-selected cols to dataframe as well to allow ORDER BY later
                 addtl_cols = [df[c].reset_index(drop=True) for c in addtl_colnames]
                 all_cols = cols + addtl_cols
-
-                df = DataFrameUtils.restore_meta(pd.concat(all_cols, axis=1, copy=False), df)
-                df.__class__ = cls
-
-                for attr, val in kw.iteritems():
-                    setattr(df, attr, val)
-                for i, c in enumerate(df):
-                    DataFrameUtils.restore_meta(df[c], all_cols[i])
+                df = OdhSeries.concat(all_cols, axis=1, copy=False).__finalize__(df)
 
             else:
                 colnames = [getattr(f, 'alias', f.name) for f in query.fields]
-                df = pd.DataFrame(columns=colnames)
+                df = OdhFrame(columns=colnames)
 
         if getattr(query, 'order', None):
             self._interpret_order(df, query.order, colnames)
@@ -219,38 +189,31 @@ class OdhQLInterpreter(object):
             if merged is None:
                 merged = df
                 columns = merged.columns.tolist()
-                coltypes = DataFrameUtils.get_col_types(df).values()
-
-                old = df.copy()
+                coltypes = [df[c].odh_type for c in df.columns]
                 merged.rename(columns={col: str(i) for i, col in enumerate(df)}, inplace=True)
-                merged = DataFrameUtils.preserve_series_meta(merged, old)
-
             else:
-                for i, (ct0, ct1) in enumerate(zip(coltypes, DataFrameUtils.get_col_types(df).values())):
-                    ct0, ct1 = self._resolve_type(ct0), self._resolve_type(ct1)
-                    if ct0 != ct1:
+                for i, c in enumerate(df.columns):
+                    type_left, type_right = coltypes[i], df[c].odh_type
+                    if type_left != type_right:
                         raise OdhQLExecutionException('UNION: Type mismatch for column {} ({}). '
                                                       'Expected "{}" got "{}" instead'
-                                                      .format(i + 1, columns[i], ct0, ct1))
+                                                      .format(i + 1, columns[i], type_left.name, type_right.name))
 
                 old = df.copy()
                 df.rename(columns={col: str(i) for i, col in enumerate(df)}, inplace=True)
-                df = DataFrameUtils.preserve_series_meta(df, old)
 
                 for i, (old, new) in enumerate(zip(columns, old.columns.tolist())):
                     colname = str(i)
                     s_new = df[str(colname)]
-                    if isinstance(s_new, gp.GeoSeries):
+                    if s_new.odh_type == OdhType.GEOMETRY:
                         s_old = merged[str(colname)]
                         self._assert_crs(s_old, old)
                         self._assert_crs(s_new, new)
-                        df[str(colname)] = s_new.to_crs(merged.crs)
+                        df[str(colname)] = s_new.to_crs(s_old.crs)
 
                 merged = merged.append(df, ignore_index=True)
 
-        old = merged.copy()
         merged.rename(columns={str(i): col for i, col in enumerate(columns)}, inplace=True)
-        merged = DataFrameUtils.preserve_series_meta(merged, old)
         return merged
 
     def _interpret_data_sources(self, dfs, data_sources):
@@ -289,7 +252,7 @@ class OdhQLInterpreter(object):
 
         return df
 
-    def interpret_field(self, df, field, expand=True):
+    def _interpret_field(self, df, field, expand=True):
         """
         Selects a field from the dataframe
         :type df: pandas.core.frame.DataFrame
@@ -316,17 +279,17 @@ class OdhQLInterpreter(object):
             if not isinstance(value, pd.Series):
                 value = np.full(df.shape[0], value, dtype=object if isinstance(value, basestring) else type(value))
 
-            series = pd.Series(value, name=alias)
+            series = OdhSeries(value, name=alias)
 
         elif isinstance(field, parser.Function):
-            args = [self.interpret_field(df, arg, expand=False) for arg in field.args]
+            args = [self._interpret_field(df, arg, expand=False) for arg in field.args]
             series = functions.execute(field.name, df.shape[0], args)
 
         else:
             assert False, 'Unknown field type "{}"'.format(type(field))
 
-        series.name = alias
-        return series.reset_index(drop=True)
+        series = OdhSeries(series.reset_index(drop=True), name=alias)
+        return series
 
     def _interpret_filter(self, df, filter_):
         """
@@ -341,8 +304,8 @@ class OdhQLInterpreter(object):
             mask = np.logical_and.reduce([self._interpret_filter(df, c) for c in filter_.conditions])
 
         elif isinstance(filter_, parser.BinaryCondition):
-            left = self.interpret_field(df, filter_.left)
-            right = self.interpret_field(df, filter_.right)
+            left = self._interpret_field(df, filter_.left)
+            right = self._interpret_field(df, filter_.right)
 
             if filter_.operator == parser.BinaryCondition.Operator.equals:
                 mask = left == right
@@ -364,12 +327,12 @@ class OdhQLInterpreter(object):
                 assert False, 'Unknown operator "{}"'.format(filter_.operator)
 
         elif isinstance(filter_, parser.InCondition):
-            in_list = pd.concat([self.interpret_field(df, el) for el in filter_.in_list], axis=1, copy=False).T
-            left = self.interpret_field(df, filter_.left)
+            in_list = pd.concat([self._interpret_field(df, el) for el in filter_.in_list], axis=1, copy=False).T
+            left = self._interpret_field(df, filter_.left)
             mask = np.logical_or.reduce(left == in_list)
 
         elif isinstance(filter_, parser.IsNullCondition):
-            left = self.interpret_field(df, filter_.field)
+            left = self._interpret_field(df, filter_.field)
             mask = pd.isnull(left)
 
         else:

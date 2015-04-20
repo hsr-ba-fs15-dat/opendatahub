@@ -164,10 +164,10 @@ class File(object):
         invalidate = False
 
         if self.df is None:
-            if not force and id_ is not None:
-                temp = cache.get(('FG', id_))
-                if temp is not None:
-                    self.df = [DataFrameUtils.from_unpickled(tup) for tup in temp]
+            # if not force and id_ is not None:
+            #     temp = cache.get(('FG', id_))
+            #     if temp is not None:
+            #         self.df = [DataFrameUtils.from_unpickled(tup) for tup in temp]
 
             if self.df is None:
                 from hub import parsers
@@ -179,6 +179,10 @@ class File(object):
 
         if invalidate and id_:
             cache.set(('FG', id_), [DataFrameUtils.get_picklable(df) for df in self.df])
+
+        from hub.structures.frame import OdhFrame
+        self.df = [OdhFrame.from_df(df, self.basename) for df in self.df]
+
         return self.df
 
     def to_serializable_df(self):

@@ -127,7 +127,7 @@ class TestStringFunctions(TestInterpreterBase):
 
 class TestMiscFunctions(TestInterpreterBase):
     def test_cast_int_to_str(self):
-        df = self.execute('SELECT CAST(c.age, \'str\') AS age FROM child AS c')
+        df = self.execute('SELECT CAST(c.age, \'TEXT\') AS age FROM child AS c')
         self.assertIsInstance(df.age[0], basestring)
 
     def test_nvl(self):
@@ -150,7 +150,7 @@ class TestGeometryFunctions(TestInterpreterBase):
     def test_set_srid(self):
         df = self.execute('SELECT c.prename, ST_SetSRID(ST_GeomFromText(\'POINT(7.2234283 48.8183157)\'), 4326) AS hsr '
                           'FROM child AS c')
-        self.assertTrue(df.crs['init'], 'epsg:4326')
+        self.assertTrue(df.hsr.crs['init'], 'epsg:4326')
 
     def test_srid(self):
         self.execute('SELECT c.prename, '

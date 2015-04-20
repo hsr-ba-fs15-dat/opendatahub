@@ -84,14 +84,6 @@ class DataFrameUtils(object):
         return cols
 
     @staticmethod
-    def restore_meta(new, old):
-        new.__class__ = old.__class__
-        for attr in getattr(old, '_metadata', []):
-            object.__setattr__(new, attr, getattr(old, attr, None))
-
-        return new
-
-    @staticmethod
     def get_picklable(df):
         """ Returns tuple with containing dataframe and metadata. Use from_unpickled to restore.
         """
@@ -114,13 +106,6 @@ class DataFrameUtils(object):
             set_meta(df[colname], meta)
 
         return df
-
-    @staticmethod
-    def preserve_series_meta(df_new, df_old):
-        for c_new, c_old in zip(df_new.columns, df_old.columns):
-            DataFrameUtils.restore_meta(df_new[c_new], df_old[c_old])
-
-        return df_new
 
     @staticmethod
     def to_json_dict(df, start, count):
