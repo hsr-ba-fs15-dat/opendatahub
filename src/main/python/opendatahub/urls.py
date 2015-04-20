@@ -3,6 +3,7 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from rest_framework import routers
 
+from hub.views.transformation import TransformationViewSet
 from opendatahub.settings import PRODUCTION, STATIC_ROOT, BASE_DIR
 from hub.views.document import DocumentViewSet
 from hub.views.file_group import FileGroupViewSet
@@ -18,7 +19,7 @@ router.register(r'fileGroup', FileGroupViewSet)
 router.register(r'file', FileViewSet)
 router.register(r'format', FormatView, 'format')
 router.register(r'config', ConfigView, 'config')
-
+router.register(r'transformation', TransformationViewSet)
 
 urlpatterns = (
     url(r'api/v1/', include(router.urls)),

@@ -58,3 +58,18 @@ class FileModel(models.Model):
 
     def to_file(self, file_group=None):
         return File.from_string(self.file_name, self.data, file_group=file_group)
+
+
+class TransformationModel(models.Model):
+    """
+    A transformation
+    """
+    name = models.CharField(max_length=255)
+    transformation = models.TextField()
+    description = models.TextField()
+    private = models.BooleanField(default=False)
+    owner = models.ForeignKey(AUTH_USER_MODEL, null=True)
+    file_groups = models.ManyToManyField(FileGroupModel)
+
+    def __str__(self):
+        return "[Transformation id={} description={}".format(self.id, cap(self.description, 50))

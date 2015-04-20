@@ -107,7 +107,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 
 DATABASES = {
     # Heroku compliance
-    'default': dj_database_url.config(default='postgres://opendatahub:opendatahub@localhost:5432/opendatahub')
+    'default': dj_database_url.config(default='postgres://postgres:123@localhost:5432/opendatahub')
 }
 CACHES = {
     # very short-lived basically for inter-request purposes only

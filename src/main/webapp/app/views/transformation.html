@@ -1,0 +1,22 @@
+<h1>Transformation</h1>
+<div ui-view></div>
+<h1 ng-show="TransformationController.columns">Resultat: </h1>
+
+<div class="row">
+    <div class="col-md-12 table-responsive">
+        <table class="table table-striped table-hover">
+            <thead>
+            <tr>
+                <th ng-repeat="col in TransformationController.columns">{{ col }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="row in TransformationController.rows | limitTo: 50">
+                <td ng-repeat="col in TransformationController.columns">
+                    {{ row[col] }}
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
