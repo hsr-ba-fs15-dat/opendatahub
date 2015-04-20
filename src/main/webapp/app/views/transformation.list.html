@@ -1,0 +1,28 @@
+<div ng-controller="OdhQLListController as vm">
+    <table ng-table="vm.tableParams">
+        <tbody ng-repeat="transformation in $data">
+        <tr>
+            <td data-title="'ID'" class="col-sm-1 col-md-1 col-lg-1">tf{{ transformation.id}}</td>
+            <td data-title="'Name'" sortable="name" filter="{ 'name': 'text' }" class="col-sm-4 col-md-4 col-lg-4">
+                <a ui-sref="transformation.detail({id: transformation.id})">
+                    <strong>{{ transformation.name }}</strong> <i class="fa fa-eye" ng-show="transformation.private"
+                                                                  tooltip="Dieses Dokument ist Privat"></i>
+                    <small>(<i>{{transformation.owner.username}}</i>)</small>
+                </a>
+            </td>
+            <td data-title="'Beschreibung'" class="col-sm-7 col-md-7 col-lg-7">
+                {{transformation.description}}
+            </td>
+            <td>
+                {{transformation.owner.username}}
+            </td>
+            <td data-title="'Löschen'">
+                <a ng-click="vm.remove(transformation)">
+                    Löschen
+                </a>
+            </td>
+
+        </tr>
+        </tbody>
+    </table>
+</div>

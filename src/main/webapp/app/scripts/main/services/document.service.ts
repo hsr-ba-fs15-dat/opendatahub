@@ -52,7 +52,7 @@ module odh.main {
             });
         }
 
-        public getAll(documentId:any = false, withPreview = false) {
+        public getAll(documentId:any = false, withPreview = false, count = 3) {
             var promise:ng.IPromise<any>;
             if (!documentId) {
                 this.$log.debug('Fetching all filegroups');
@@ -65,16 +65,24 @@ module odh.main {
 
             if (withPreview) {
                 var deferred = this.$q.defer();
-
+                count = count < 3 ? 3 : count;
                 promise.then((data) => {
                     var promises = [];
                     angular.forEach(data, (fg, i) => {
                         var d = this.$q.defer();
                         promises.push(d.promise);
 
-                        this.$http.get(fg.preview)
+                        this.$http({
+                            url: fg.preview,
+                            method: 'GET',
+                            params: {
+                                count: count
+                            }
+                        })
                             .then(data => {
+                                fg.previewUrl = fg.preview;
                                 fg.preview = data.data;
+                                fg.preview.count = count;
                                 d.resolve(data);
                             })
                             .catch((e) => d.reject(e));
@@ -91,11 +99,24 @@ module odh.main {
             return promise;
         }
 
-        public getPreview(filegroup:any) {
+        public getPreview(filegroup:any, count:number = 3) {
             var promise;
             var d = this.$q.defer();
-            this.$http.get(filegroup.preview).then(data => {
+            var url;
+            if (typeof filegroup.preview === 'string') {
+                url = filegroup.preview;
+            } else {
+                url = filegroup.previewUrl;
+            }
+            this.$http({
+                url: url,
+                method: 'GET',
+                params: {
+                    count: count
+                }
+            }).then(data => {
                 filegroup.preview = data.data;
+                filegroup.preview.count = count;
                 d.resolve(data);
             }).catch(e => d.reject(e));
             promise = d.promise;

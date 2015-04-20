@@ -1,6 +1,6 @@
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 
-from hub.models import DocumentModel, FileGroupModel, FileModel
+from hub.models import DocumentModel, FileGroupModel, FileModel, TransformationModel
 
 
 class IsOwnerOrReadOnly(BasePermission):
@@ -8,20 +8,30 @@ class IsOwnerOrReadOnly(BasePermission):
         if request.method in SAFE_METHODS:
             return True
 
+        print 'Owner requesting more privileges: ', obj.owner == request.user
         return obj.owner == request.user
 
 
 class IsOwnerOrPublic(BasePermission):
+
     def has_object_permission(self, request, view, obj):
         if request.method in SAFE_METHODS:
+            print "Request is SAFE!"
             if isinstance(obj, DocumentModel):
                 return self._check_document_permission(obj, request.user)
             elif isinstance(obj, FileGroupModel):
                 return self._check_document_permission(obj.document, request.user)
             elif isinstance(obj, FileModel):
                 return self._check_document_permission(obj.file_group.document, request.user)
+            elif isinstance(obj, TransformationModel):
+                return self._check_document_permission(obj, request.user)
             else:
                 return False
+        else:
+            print 'Owner requesting more privileges: ', obj.owner == request.user
+            print obj.owner, request.user
+            if obj.owner == request.user:
+                return True
 
         return request.user is not None
 

@@ -44,7 +44,8 @@
                     fg{{ fileGroup.id }}
                 </td>
                 <td>
-                    {{fileGroup.files[0].file_name}} <small>(<i>{{fileGroup.cols.length}}</i> Zeilen)</small>
+                    {{fileGroup.files[0].file_name}}
+                    <small>(<i>{{fileGroup.cols.length}}</i> Spalten / {{ fileGroup.preview[0].count }} Zeilen)</small>
                 </td>
                 <td>
                     <a ng-click="vm.selected.add(fileGroup)" ng-hide="vm.selected.items.indexOf(fileGroup) > -1">
@@ -67,14 +68,22 @@
                     <th ng-repeat="col in group.cols"
                         ng-class="vm.selected.fields[group.uniqueid].indexOf(col) > -1 ? 'selected': ''"
                             >
-                        <input type="text" ng-model="col.alias"/>
+                        <input type="text" ng-model="col.alias"/><br/>
+                        :{{ group.preview[0].types[col.name] }}
                     </th>
                 </tr>
                 </thead>
-                <tr ng-repeat="row in group.preview[0].data | limitTo: 3">
+                <tr ng-repeat="row in group.preview[0].data">
                     <td ng-class="vm.selected.fields[group.uniqueid].indexOf(col) > -1 ? 'selected': ''"
                         ng-repeat="col in group.cols" ng-click="vm.addField(col, group)">
                         {{ row[col.name] | characters:25 :true }}
+                    </td>
+                </tr>
+                <tr ng-show="group.preview[0].count > 3">
+                    <td colspan="{{group.preview[0].columns.length}}">
+                        <a ng-click="vm.increaseTablePreview(group)">
+                            Mehr anzeigen
+                        </a>
                     </td>
                 </tr>
             </table>
@@ -95,7 +104,8 @@
             <label ng-show="vm.selected.expression[group.uniqueid].operation == vm.joinOperations.join">
                 Welches Lokale Feld soll verwendet werden?
                 <select
-                        ng-options="opt as opt.alias for opt in vm.selected.fields[vm.selected.items[$index].uniqueid]"
+                        ng-options="opt as (opt.alias == opt.name?opt.alias+'['+opt.type+']':(opt.alias + ' [' + opt.name + ']'))
+                         for opt in vm.selected.fields[vm.selected.items[$index].uniqueid]"
                         ng-model="vm.selected.expression[vm.selected.items[$index].uniqueid].joinField">
                 </select>
             </label><br/>
@@ -110,20 +120,22 @@
             <label ng-show="vm.selected.expression[group.uniqueid].operation == vm.joinOperations.join &&
             vm.selected.expression[vm.selected.items[$index].uniqueid].joinTable">
                 <select
-                        ng-options="opt as opt.alias for opt in vm.selected.fields[vm.selected.expression[vm.selected.items[$index].uniqueid].joinTable.uniqueid]"
+                        ng-options="opt as (opt.alias == opt.name?opt.alias+'['+opt.type+']':(opt.alias + ' [' + opt.name + ']'))
+                         for opt in vm.selected.fields[vm.selected.expression[vm.selected.items[$index].uniqueid].joinTable.uniqueid]
+                         | filter:{type:vm.selected.expression[vm.selected.items[$index].uniqueid].joinField.type, }"
                         ng-model="vm.selected.expression[vm.selected.items[$index].uniqueid].foreignKey">
                 </select>
             </label><br/>
-        </div>
     </div>
-    <form name="form" class="form">
+    </div>
+    <form name="form" class="form" ng-submit="vm.submit()">
         <fieldset>
             <div class="form-group" ng-class="{'has-error': form.name.$invalid && vm.submitted}">
                 <label for="name">Name/Titel</label>
 
                 <input id="name" name="name" type="text" placeholder="Name der Transformation"
                        class="form-control"
-                       ng-model="snippet.name"
+                       ng-model="vm.name"
                        required>
 
                 <div ng-messages="form.name.$error" ng-show="form.name.submitted">
@@ -138,7 +150,7 @@
                 <label class="control-label" for="description">Beschreibung</label>
 
                 <textarea class="form-control" id="description" name="description"
-                          ng-model="snippet.description"
+                          ng-model="vm.description"
                           placeholder="z.B. Vereint alle Verkehrshindernisse der Schweiz"
                           required
                           rows="4"
@@ -162,7 +174,7 @@
                         class="fa fa-question-circle"></i></label>
 
                 <textarea class="form-control" id="odhsqlinput" name="description"
-                          ng-model="vm.odhqlInput" rows="10"
+                          ng-model="vm.transformation" rows="10"
                           ng-model-options="{ getterSetter: true }"
                           placeholder="SELECT x FROM y WHERE z is 123;"
                           required
@@ -182,7 +194,7 @@
                 <label class="col-md-4 control-label" for="add"></label>
 
                 <div class="col-md-8">
-                    <button ng-click="vm.submit()" id="add" name="add" class="btn btn-primary pull-right">
+                    <button id="add" name="add" class="btn btn-primary pull-right">
                         Speichern
                     </button>
                     <button ng-click="vm.preview()" type='button' class="btn btn-info pull-right">

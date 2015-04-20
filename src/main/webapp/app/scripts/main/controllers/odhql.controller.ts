@@ -15,7 +15,8 @@ module odh {
         operation: any;
     }
     export class OdhQLController {
-
+        public name:string;
+        public description:string;
         public query:string;
         public columns:string[];
         public rows:{};
@@ -24,6 +25,7 @@ module odh {
         public odhqlInputString = '';
         public selected;
         public manualEdit:boolean = false;
+        public count:number = 3;
         public joinOperations:{
             none: {}
             union: {}
@@ -37,7 +39,7 @@ module odh {
                     private UrlService:odh.utils.UrlService, private FileGroupService:main.FileGroupService,
                     private DocumentService:main.DocumentService,
                     private $log:ng.ILogService, private ngTableParams, public $filter:ng.IFilterService,
-                    private $auth:any) {
+                    private $auth:any, private TransformationService:main.TransformationService) {
 
             this.tableParams = new ngTableParams({
                 page: 1,            // show first page
@@ -104,13 +106,14 @@ module odh {
 
         }
 
-        public getFileGroup(document) {
-            this.FileGroupService.getAll(document.id, true).then(filegroups => {
+        public getFileGroup(document, count = 3) {
+            this.FileGroupService.getAll(document.id, true, count).then(filegroups => {
                 if (!document.$showRows) {
                     angular.forEach(filegroups, (fg) => {
+                        console.log(fg);
                         fg.cols = [];
                         angular.forEach(fg.preview[0].columns, (col) => {
-                            fg.cols.push({name: col, alias: col});
+                            fg.cols.push({name: col, alias: col, type: fg.preview[0].types[col]});
                         });
                     });
                     document.fileGroup = filegroups;
@@ -122,15 +125,13 @@ module odh {
         }
 
 
-        public odhqlInput(newInput:string = '') {
+        public transformation(newInput:string = '') {
             if (newInput) {
                 this.manualEdit = true;
                 this.odhqlInputString = newInput;
                 return newInput;
             }
             if (!this.manualEdit) {
-
-
                 var fields:string[] = [];
                 var master:string = '';
                 var joinStatements:string[];
@@ -212,11 +213,15 @@ module odh {
             this.alerts.splice(index, 1);
         }
 
+        public increaseTablePreview(group) {
+            this.FileGroupService.getPreview(group, group.preview.count += 3);
+        }
+
         public preview() {
             this.$http.get(this.UrlService.get('odhql'), {
                 params: {
-                    query: this.odhqlInput()
-                        .replace(/(\r\n|\n|\r|\t)/gm, '')
+                    query: this.transformation()
+                        .replace(/(\r\n|\n|\r|\t)/gm, ' ')
                 }
             }).then((data:any) => {
                 this.columns = data.data.columns;
@@ -242,6 +247,30 @@ module odh {
                 this.columns = data.data.columns;
                 this.rows = data.data.data;
             });
+        }
+
+        public isPrivate() {
+            return false;
+        }
+
+        public submit() {
+            this.submitted = true;
+            this.$scope.form.$setDirty();
+            if (this.$scope.form.$invalid) {
+                return;
+            }
+            var transformation:main.ITransformation;
+            transformation = {
+                name: this.name,
+                description: this.description,
+                transformation: this.odhqlInputString,
+                'private': this.isPrivate(),
+                file_groups: this.selected.items
+            };
+            console.log('posted', transformation);
+            this.TransformationService.post(transformation);
+
+
         }
 
         private createFieldNames(fields:IField[], group:string, doNotCheckAlias:boolean = false):string[] {

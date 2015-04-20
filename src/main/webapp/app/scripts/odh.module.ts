@@ -91,13 +91,30 @@ module openDataHub {
                     controller: 'OdhQLConsoleController as vm',
                     templateUrl: 'views/odhql-console.html'
                 })
-                .state('odhql', {
-                    url: '/odhql',
-                    templateUrl: 'views/odhql-new.html',
-                    controller: 'OdhQLController as vm'
+                .state('transformation', {
+                    abstract: true,
+                    url: '/transformation',
+                    templateUrl: 'views/transformation.html',
+                    controller: 'TransformationController'
 
                 })
+                .state('transformation.new', {
+                    url: '/create',
+                    templateUrl: 'views/transformation.new.html',
+                    controller: 'OdhQLController as vm'
+                })
+                .state('transformation.list', {
+                    url: '/list',
+                    templateUrl: 'views/transformation.list.html',
+                    controller: 'OdhQLListController as vm'
+                })
+                .state('transformation.detail', {
+                    url: '/detail/{id}',
+                    templateUrl: 'views/transformation.detail.html',
+                    controller: 'OdhQLDetailController as vm'
 
+                }
+            )
             ;
         })
         .run(($http:ng.IHttpService, $window:ng.IWindowService) => {
