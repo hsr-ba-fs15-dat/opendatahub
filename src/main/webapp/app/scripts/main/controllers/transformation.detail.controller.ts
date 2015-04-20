@@ -4,7 +4,7 @@
 module odh.main {
     'use strict';
 
-    class OdhQLDetailController implements main.ITransformation {
+    class TransformationDetailController implements main.ITransformation {
 
         public name;
         public description;
@@ -60,5 +60,5 @@ module odh.main {
 
 
     }
-    angular.module('openDataHub.main').controller('OdhQLDetailController', OdhQLDetailController);
+    angular.module('openDataHub.main').controller('TransformationDetailController', TransformationDetailController);
 }

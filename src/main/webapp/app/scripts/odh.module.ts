@@ -98,20 +98,20 @@ module openDataHub {
                     controller: 'TransformationController'
 
                 })
-                .state('transformation.new', {
+                .state('transformation.create', {
                     url: '/create',
-                    templateUrl: 'views/transformation.new.html',
-                    controller: 'OdhQLController as vm'
+                    templateUrl: 'views/transformation.create.html',
+                    controller: 'TransformationCreateController as vm'
                 })
                 .state('transformation.list', {
                     url: '/list',
                     templateUrl: 'views/transformation.list.html',
-                    controller: 'OdhQLListController as vm'
+                    controller: 'TransformationListController as vm'
                 })
                 .state('transformation.detail', {
                     url: '/detail/{id}',
                     templateUrl: 'views/transformation.detail.html',
-                    controller: 'OdhQLDetailController as vm'
+                    controller: 'TransformationDetailController as vm'
 
                 }
             )

@@ -1,5 +1,4 @@
-<div ng-controller="OdhQLController as vm">
-    <!-- todo: internal renaming of odhsql to odhql -->
+<div ng-controller="TransformationCreateController as vm">
 
     <div loading-container="tableParams.settings().$loading">
         <div class="row">
@@ -170,10 +169,10 @@
                 {{alert.msg}}
             </alert>
             <div class="form-group" ng-class="{'has-error': form.description.$invalid && vm.submitted}">
-                <label class="control-label" for="odhsqlinput">OdhQL Abfrage <i
+                <label class="control-label" for="odhqlinput">OdhQL Abfrage <i
                         class="fa fa-question-circle"></i></label>
 
-                <textarea class="form-control" id="odhsqlinput" name="description"
+                <textarea class="form-control" id="odhqlinput" name="description"
                           ng-model="vm.transformation" rows="10"
                           ng-model-options="{ getterSetter: true }"
                           placeholder="SELECT x FROM y WHERE z is 123;"

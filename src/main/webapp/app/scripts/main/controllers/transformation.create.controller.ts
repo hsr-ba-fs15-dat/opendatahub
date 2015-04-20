@@ -14,7 +14,7 @@ module odh {
         joinTable: any;
         operation: any;
     }
-    export class OdhQLController {
+    export class TransformationCreateController {
         public name:string;
         public description:string;
         public query:string;
@@ -284,6 +284,6 @@ module odh {
         }
 
     }
-    angular.module('openDataHub.main').controller('OdhQLController', OdhQLController);
+    angular.module('openDataHub.main').controller('TransformationCreateController', TransformationCreateController);
 
 }

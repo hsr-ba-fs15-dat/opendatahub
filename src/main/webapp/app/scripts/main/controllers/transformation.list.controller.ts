@@ -3,7 +3,7 @@
 
 module odh {
     'use strict';
-    export class OdhQLListController {
+    export class TransformationListController {
 
         public tableParams:any;
 
@@ -40,6 +40,6 @@ module odh {
         }
 
     }
-    angular.module('openDataHub.main').controller('OdhQLListController', OdhQLListController);
+    angular.module('openDataHub.main').controller('TransformationListController', TransformationListController);
 
 }
