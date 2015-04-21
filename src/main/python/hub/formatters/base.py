@@ -127,7 +127,7 @@ class NoopFormatter(Formatter):
 
 
 class OGRFormatter(Formatter):
-    targets = formats.GeoJSON, formats.GML, formats.KML, formats.Shapefile, formats.INTERLIS1,
+    targets = formats.GeoJSON, formats.GML, formats.KML, formats.Shapefile, formats.INTERLIS1, formats.GeoPackage
 
     # Note: Interlis 2 is not supported for export, because it would need a schema for that. Because it is the only
     # format with a schema requirement and adding that feature would mean investing a substantial amount of time we
@@ -138,7 +138,8 @@ class OGRFormatter(Formatter):
         formats.GML: ogr2ogr.GML,
         formats.KML: ogr2ogr.KML,
         formats.Shapefile: ogr2ogr.SHP,
-        formats.INTERLIS1: ogr2ogr.INTERLIS_1
+        formats.INTERLIS1: ogr2ogr.INTERLIS_1,
+        # formats.GeoPackage: ogr2ogr.GPKG
     }
 
     @classmethod

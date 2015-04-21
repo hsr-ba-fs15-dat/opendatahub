@@ -192,6 +192,17 @@ class WFS(Format):
         return False
 
 
+class GeoPackage(Format):
+    label = 'GeoPackage'
+    description = """
+    GeoPackage ist ein Datenformat zum Austausch von Geodaten.
+    """
+
+    @classmethod
+    def is_format(self, file, *args, **kwargs):
+        return file.extension == 'gpkg'
+
+
 class Other(Format):
     label = 'Original'
 

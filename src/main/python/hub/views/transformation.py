@@ -7,14 +7,8 @@ from django.db.models import Q
 from django.db import transaction
 
 from hub.serializers import FileGroupSerializer, TransformationSerializer
-
 from hub.models import FileGroupModel, TransformationModel
-import hub.formatters
 from authentication.permissions import IsOwnerOrPublic, IsOwnerOrReadOnly
-
-
-print('Loaded formatters:')
-print(hub.formatters.__all__)
 
 
 class TransformationViewSet(viewsets.ModelViewSet):

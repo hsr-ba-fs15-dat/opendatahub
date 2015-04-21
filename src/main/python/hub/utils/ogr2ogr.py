@@ -44,6 +44,7 @@ class OgrFormat(object):
 
 
 GML = OgrFormat('gml', 'GML', False)
+# GPKG = OgrFormat('gpkg', 'GPKG', False) # no driver?
 SHP = OgrFormat('shp', 'ESRI Shapefile', False)
 CSV = OgrFormat('csv', 'CSV', False)
 GEO_JSON = OgrFormat('json', 'GeoJSON', False)

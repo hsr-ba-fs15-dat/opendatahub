@@ -74,11 +74,21 @@ class ExcelParser(Parser):
 
 
 class OGRParser(Parser):
-    accepts = formats.GML, formats.GeoJSON, formats.KML, formats.Shapefile, formats.INTERLIS1, formats.WFS
+    accepts = (formats.GML, formats.GeoJSON, formats.KML, formats.Shapefile, formats.INTERLIS1,
+               formats.WFS,)
     # formats.INTERLIS2
 
     @classmethod
     def parse(cls, file, format, *args, **kwargs):
+
+        # This currently uses ESRI Shapefile as intermediate format. That kinda sucks
+        # (see http://giswiki.hsr.ch/Shapefile), but:
+        # GeoJSON: doesn't support multiple layers
+        # GeoPackage: ogr2ogr has no driver for that in our version
+        # Interlis1: needs a model which we don't have
+        # CSV: Yeah. Right.
+        # GML, KML: Not supported by fiona so geopandas can't read it
+
         if format in (formats.Shapefile, formats.GeoJSON):
             file_groups = [file.file_group]
         else:
