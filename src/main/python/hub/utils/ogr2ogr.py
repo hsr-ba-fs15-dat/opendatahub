@@ -99,7 +99,8 @@ def ogr2ogr(file_group, to_type):
                 if os.path.splitext(filename)[0] == 'out':
                     ext = to_type.extension[0] if filename == 'out' else os.path.splitext(filename)[1]
 
-                    files.append(os.path.join(temp_dir, '{}.{}'.format(main_file.basename if main_file else 'out', ext)))
+                    files.append(
+                        os.path.join(temp_dir, '{}.{}'.format(main_file.basename if main_file else 'out', ext)))
                     shutil.move(os.path.join(temp_dir, filename), files[-1])
 
         groups = collections.defaultdict(list)

@@ -4,7 +4,6 @@
 from cStringIO import StringIO
 import contextlib
 import tempfile
-from itertools import ifilter
 import shutil
 
 import codecs
@@ -177,6 +176,7 @@ class File(object):
 
             if self.df is None:
                 from hub import parsers
+
                 format = self.format or formats.identify(self)
                 if not format:
                     return None
