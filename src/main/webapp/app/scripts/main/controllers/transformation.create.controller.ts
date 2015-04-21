@@ -31,6 +31,7 @@ module odh {
             union: {}
             join: {}
         };
+        public editor:any;
         public tableParams:any;
         public alerts:Object[] = [];
 
@@ -197,8 +198,8 @@ module odh {
             }
         }
 
-        public aceLoaded(_editor) {
-            _editor.$blockScrolling = 'Infinity';
+        public aceLoaded(editor) {
+            editor.$blockScrolling = 'Infinity';
         }
 
         public aceChanged(_editor) {
@@ -239,12 +240,21 @@ module odh {
                 this.columns = data.data.columns;
                 this.rows = data.data.data;
             }).catch((data:any) => {
-                //var range = new Range(rowStart, columnStart, rowEnd, columnEnd);
-                //var marker = editor.getSession().addMarker(range, "ace_selected_word", "text");
-                data = data.data.split('\n');
+                console.log(data);
+                if (typeof data === 'object') {
+                    data = data.data;
+                    if (data.type === 'parse') {
+                        this.alerts.push({
+                            msg: 'Parse Fehler (' + data.lineno + ':' + data.col + ') Line: ' + data.line,
+                            type: 'danger',
+                            title: 'Fehler:'
+                        });
+
+                    }
+                }
+
                 this.ToastService.failure(
-                    'Es ist ein Fehler aufgetreten! (Fehlermeldung in der Konsole ersichtlich.) ' + data[1]);
-                this.alerts.push({msg: data.slice(0, 3).join('\n'), type: 'danger', title: 'Fehler:'});
+                    'Es ist ein Fehler aufgetreten!');
             });
         }
 
