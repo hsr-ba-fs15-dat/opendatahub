@@ -10,6 +10,7 @@ from shapely.geometry.base import BaseGeometry
 import sre_constants
 import re
 
+from hub.structures.frame import OdhType
 from opendatahub.utils.plugins import RegistrationMixin
 from ..exceptions import OdhQLExecutionException
 

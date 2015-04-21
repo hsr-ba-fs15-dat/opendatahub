@@ -265,6 +265,9 @@ class TestInterpreterPerformance(TestInterpreterBase):
     def test_union(self):
         self.assert_time('SELECT e.prename FROM employee AS e UNION SELECT c.prename FROM child AS c', 3)
 
+    def test_cast(self):
+        self.assert_time('SELECT CAST(c.age, \'TEXT\') AS text FROM child AS c', 3)
+
 
 if __name__ == '__main__':
     employees = File.from_file(TestBase.get_test_file_path('perf/employees.csv')).to_df()[0]

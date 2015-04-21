@@ -181,9 +181,15 @@ class File(object):
                 if not format:
                     return None
                 self.dfs = parsers.parse(self, format)
+
                 invalidate = True
 
         if invalidate and id_:
+            if len(self.dfs) == 1:
+                self.dfs[0].name = 'ODH' + str(id_)
+            else:
+                for df in self.dfs:
+                    df.name = 'ODH_' + self.basename
             cache.set(('FG', id_), self.dfs)
 
         return self.dfs

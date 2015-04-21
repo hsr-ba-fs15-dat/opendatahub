@@ -62,6 +62,7 @@ class DataFrameUtils(object):
     def to_json_dict(df, start, count):
         slice_ = DataFrameUtils.make_serializable(df.iloc[start:start + count].fillna('NULL'))
         return {
+            'name': df.name,
             'columns': slice_.columns.tolist(),
             'types': {c: s.odh_type.name for c, s in df.iteritems()},
             'data': slice_.to_dict(orient='records'),
