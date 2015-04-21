@@ -29,10 +29,14 @@ class OdhQLParser(object):
     FieldDeclarationList ::= "select" FieldDeclaration ( "," FieldDeclaration )*
     FieldDeclaration ::= FieldEquiv "as" Alias
 
-    FieldEquiv ::= Function | Value | Field
+    CaseExpression ::= "case" ( "when" Condition "then" Expression )+
+                              ( "else" Expression )?
+                       "end"
+
+    Expression ::= Function | Value | Field | CaseExpression
 
     Function ::= Identifier "(" ( FunctionArgumentList )? ")"
-    FunctionArgumentList ::= FieldEquiv ( ( "," FieldEquiv )* )?
+    FunctionArgumentList ::= Expression ( ( "," Expression )* )?
 
     DataSourceName ::= Identifier
     FieldName ::= Identifier
@@ -49,15 +53,19 @@ class OdhQLParser(object):
 
     FilterList ::= "where" FilterAlternative
     FilterAlternative ::= FilterCombination ( "or" FilterCombination )*
-    FilterCombination ::= FilterDefinition ( "and" FilterDefinition )*
-    FilterDefinition ::= BinaryCondition | InCondition | IsNullCondition | "(" FilterAlternative ")"
-    BinaryCondition ::= FieldEquiv BinaryOperator FieldEquiv
-    BinaryOperator ::= "=" | "!=" | "<=" | "<"| ">=" | ">" | "like"
-    InCondition ::= FieldEquiv ( "not" )? "in" "(" Value ( "," Value )* ")"
+    FilterCombination ::= Condition ( "and" Condition )*
+
+    Condition ::= BinaryCondition | InCondition | IsNullCondition | PredicateCondition | "(" FilterAlternative ")"
+
+    BinaryCondition ::= Expression BinaryOperator Expression
+    BinaryOperator ::= "=" | "!=" | "<=" | "<"| ">=" | ">" | ( "not" )? "like"
+    InCondition ::= Expression ( "not" )? "in" "(" Value ( "," Value )* ")"
     IsNullCondition ::= Field "is" ( "not" )? Null
+    PredicateCondition ::= ( "not" )? Function
+
     OrderByList ::= "order" "by" OrderByField ( "," OrderByField )*
     OrderByField ::= ( Field | Alias | Position) ( "asc" | "desc" )?
-    Integer ::= ( "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" )*
+    Integer ::= ( "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" )+
 
     Value ::= SingleQuotedString | Number | Boolean | Null
     Number ::= Integer | Float
@@ -147,8 +155,8 @@ class OdhQLParser(object):
                           CaselessKeyword('null'))
         null_condition.setParseAction(IsNullCondition.parse)
 
-        predicate_condition = function('predicate')
-        predicate_condition.addParseAction(PredicateCondition.parse)
+        predicate_condition = Optional(CaselessKeyword('not'))('invert') + function('predicate')
+        predicate_condition.setParseAction(PredicateCondition.parse)
 
         filter_combination = delimitedList(single_filter, delim=kw_and)
         filter_combination.setParseAction(FilterCombination.parse)
@@ -204,7 +212,8 @@ class OdhQLParser(object):
 
         return union_query
 
-    def _strip_line_comment(self, line):
+    @staticmethod
+    def _strip_line_comment(line):
         comment_chars = '--'
         comment_start = line.find(comment_chars)
         if comment_start >= 0:
@@ -216,11 +225,11 @@ class OdhQLParser(object):
             return line[0:comment_start]
         return line
 
-    def strip_comments(self, input):
-        return '\n'.join(map(self._strip_line_comment, input.splitlines()))
+    def strip_comments(self, query):
+        return '\n'.join(map(self._strip_line_comment, query.splitlines()))
 
-    def parse(self, input):
-        return self.grammar.parseString(self.strip_comments(input))[0]
+    def parse(self, query):
+        return self.grammar.parseString(self.strip_comments(query))[0]
 
 
 class ASTBase(object):
@@ -391,7 +400,7 @@ class LiteralExpression(Expression):
         return str(value).lower() == 'true'
 
     @classmethod
-    def parse_null(cls, tokens):
+    def parse_null(cls):
         return [None]
 
 
@@ -773,17 +782,19 @@ class IsNullCondition(ASTBase):
 
 
 class PredicateCondition(ASTBase):
-    def __init__(self, predicate):
+    def __init__(self, predicate, invert):
         self.predicate = predicate
+        self.invert = invert
 
     @classmethod
     def parse(cls, tokens):
         if 'predicate' not in tokens:
             raise TokenException('malformed PredicateCondition (no predicate)')
 
+        invert = 'invert' in tokens
         predicate = tokens.get('predicate')
 
-        return cls(predicate)
+        return cls(predicate, invert)
 
     def accept(self, visitor):
         visitor.visit(self)
@@ -884,9 +895,9 @@ class OrderBy(ASTBase):
             raise TokenException('malformed OrderByField (no field)')
 
         field = tokens.get('field')
-        dir = str(tokens.get('direction', 'asc')).lower()
+        direction = str(tokens.get('direction', 'asc')).lower()
 
-        if dir == 'desc':
+        if direction == 'desc':
             direction = OrderBy.Direction.descending
         else:
             direction = OrderBy.Direction.ascending
