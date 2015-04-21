@@ -23,11 +23,13 @@ module odh {
             {name: '1 Tag', value: 86400}
         ];
 
+        public formatChoices = [];
+
         private fieldsByType = {
             online: {
-                id: {url: 'url', refresh: 'url.refresh'},
+                id: {url: 'url', refresh: 'url.refresh', format: 'url.format'},
                 placeholder: {url: 'http://'},
-                label: {url: 'Adresse', refresh: 'Abfrage-Intervall'},
+                label: {url: 'Adresse', refresh: 'Abfrage-Intervall', format: 'Format'},
                 defaults: {refresh: 3600}
             },
             file: {id: 'file', label: 'Wählen oder ziehen Sie Ihre Dateien', type: 'file'}
@@ -35,8 +37,13 @@ module odh {
 
         constructor(private $http:ng.IHttpService, private $state:ng.ui.IStateService, private $scope:any,
                     private ToastService:odh.utils.ToastService, private $window:ng.IWindowService, private $upload,
-                    private UrlService:odh.utils.UrlService) {
+                    private UrlService:odh.utils.UrlService, private FormatService:odh.main.FormatService) {
             this.switchDataSource();
+
+            FormatService.getAvailableFormats().then(formatList => {
+                this.formatChoices = formatList.data;
+                this.formatChoices.sort((a, b) => a.label < b.label ? -1 : a.label === b.label ? 0 : 1);
+            });
         }
 
         public switchDataSource() {
@@ -83,7 +90,8 @@ module odh {
                     name: this.name,
                     description: this.description,
                     url: this.params.url,
-                    refresh: this.params.refresh
+                    refresh: this.params.refresh,
+                    format: this.params.format
                 });
             }
 

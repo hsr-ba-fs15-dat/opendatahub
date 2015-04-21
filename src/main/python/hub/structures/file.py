@@ -107,7 +107,7 @@ class File(object):
         self.name = name
         self._stream = stream
         self.file_group = file_group
-        self.format = format
+        self.format = formats.Format.from_string(format) if isinstance(format, basestring) else format
         self.dfs = None
 
     @classmethod
@@ -198,16 +198,10 @@ class File(object):
         return DataFrameUtils.make_serializable(self.to_df())
 
     def to_format(self, format):
-        from hub import formatters, formats
+        from hub import formatters
+        from hub.formats.base import Format
 
-        if isinstance(format, basestring):
-            format = str(format).lower()
-            try:
-                format = next((f for f in formats.Format.formats.itervalues() if format == f.__name__.lower()))
-            except StopIteration:
-                raise  # todo
-
-        return formatters.Formatter.format(self, format)
+        return formatters.Formatter.format(self, Format.from_string(format))
 
     def __contains__(self, string):
         return string in self.ustream.read()

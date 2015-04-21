@@ -26,6 +26,7 @@ class UrlHelper(object):
 
             if response.status_code == 200:
                 data = response.text.encode('utf-8')
+
                 cache_entry = UrlCacheEntry(url_model.id, path, data, int(time.time()))
                 cache.set(cache_key, cache_entry)
 

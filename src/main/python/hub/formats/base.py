@@ -46,6 +46,16 @@ class Format(RegistrationMixin):
         except StopIteration:
             return Format.DEFAULT_FORMAT
 
+    @staticmethod
+    def from_string(format):
+        if isinstance(format, basestring):
+            format = str(format).lower()
+            try:
+                format = next((f for f in Format.formats.itervalues() if format == f.__name__.lower()))
+            except StopIteration:
+                pass
+        return format
+
     @classmethod
     def is_format(self, file, *args, **kwargs):
         raise NotImplementedError

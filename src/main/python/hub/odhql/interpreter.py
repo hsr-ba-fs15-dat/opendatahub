@@ -259,7 +259,7 @@ class OdhQLInterpreter(object):
             except KeyError:
                 raise OdhQLExecutionException('Column "{}" does not exist'.format(name))
 
-        elif isinstance(field, parser.Expression):
+        elif isinstance(field, parser.LiteralExpression):
             value = field.value
 
             if not expand:

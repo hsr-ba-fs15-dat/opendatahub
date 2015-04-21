@@ -12,7 +12,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta(object):
         model = DocumentModel
-        fields = ('id', 'url', 'name', 'description', 'file_groups', 'private', 'owner')
+        fields = ('id', 'url', 'name', 'description', 'file_groups', 'private', 'owner', 'created_at')
 
 
 class TransformationSerializer(serializers.HyperlinkedModelSerializer):
