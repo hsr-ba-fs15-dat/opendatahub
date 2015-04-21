@@ -16,7 +16,7 @@
         </div>
 
 
-        <table class="table" ng-table="vm.tableParams">
+        <table class="table table-hover" ng-table="vm.tableParams">
             <tbody ng-repeat="document in $data">
             <tr>
                 <td data-title="'ID'" class="col-sm-1 col-md-1 col-lg-1">doc{{ document.id}}</td>
@@ -31,7 +31,7 @@
                         <small>(<i>{{document.owner.username}}</i>)</small>
                     </a>
                 </td>
-                <td data-title="'Beschreibung'" class="col-sm-7 col-md-7 col-lg-7">
+                <td data-title="'Beschreibung'" class="col-sm-7 col-md-7 col-lg-7" colspan="2">
                     {{document.description}}
                 </td>
 
@@ -44,13 +44,26 @@
                 </td>
                 <td>
                     {{fileGroup.files[0].file_name}}
-                    <small>(<i>{{fileGroup.cols.length}}</i> Spalten / {{ fileGroup.preview[0].count }} Zeilen)</small>
                 </td>
+                <td class="col-sm-1">
+                    {{ fileGroup.preview.length }} {{ fileGroup.preview.length > 1 ? 'Tabellen' : 'Tabelle'
+                    }}:
+
+                </td>
+
                 <td>
-                    <a ng-click="vm.selected.add(fileGroup)" ng-hide="vm.selected.items.indexOf(fileGroup) > -1">
-                        <i class="fa fa-plus-circle"></i> Diese Tabelle verwenden
-                    </a>
+                    <p ng-repeat="preview in fileGroup.preview">
+                        <a ng-click="vm.selected.addRemove(preview)">
+                            <i class="fa fa-plus-circle"
+                               ng-class="vm.selected.items.indexOf(preview) > -1?'fa-minus-circle':'fa-plus-circle'"></i>
+                            {{preview.name}}:
+                        </a>
+
+                        {{preview.cols.length}} (Spalten / {{preview.count}} Zeilen)
+                    </p>
+
                 </td>
+
 
             </tr>
             </tbody>

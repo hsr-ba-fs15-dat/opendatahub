@@ -68,24 +68,31 @@ module odh {
                     if (index > -1) {
                         this.selected.items.splice(index, 1);
                     }
-                    this.selected.fields[item.uniqueid] = [];
+                    delete this.selected.fields[item.uniqueid];
+                    delete this.selected.expression[item.uniqueid];
+                    console.log(this.selected.expression);
                 }
 
                 ,
                 add: (item) => {
-                    angular.forEach(item.preview, (item) => {
-                        if (this.selected.items.indexOf(item) === -1) {
-                            console.log(item);
-                            item.uniqueid = item.name;
-                            item.uniqueidAlias = item.name;
-                            this.selected.expression[item.uniqueid] = {};
-                            this.selected.items.push(item);
-                            this.selected.expression[item.uniqueid].operation = this.joinOperations.none;
-                        }
-                    });
-
+                    if (this.selected.items.indexOf(item) === -1) {
+                        item.uniqueid = item.name;
+                        item.uniqueidAlias = item.name;
+                        this.selected.expression[item.uniqueid] = {};
+                        this.selected.items.push(item);
+                        this.selected.expression[item.uniqueid].operation = this.joinOperations.none;
+                    }
                 }
                 ,
+                addRemove: (item) => {
+                    var index = this.selected.items.indexOf(item);
+                    if (this.selected.items.indexOf(item) === -1) {
+                        this.selected.add(item);
+                    } else {
+                        this.selected.remove(item);
+
+                    }
+                },
                 getItem: (item) => {
                     for (var i = 0; i < this.selected.items.length; i++) {
                         if (this.selected.items[i].uniqueid === item) {
@@ -148,6 +155,7 @@ module odh {
                 this.selected.joinTargets = [];
 
                 angular.forEach(this.selected.expression, (value:IExpression, key:string) => {
+
                     if (!value.operation.operation) {
                         if (!master) {
                             fields = this.createFieldNames(this.selected.fields[key], key).concat(fields);
