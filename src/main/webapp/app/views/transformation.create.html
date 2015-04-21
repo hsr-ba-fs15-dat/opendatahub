@@ -59,6 +59,7 @@
 
     <div class="well" ng-repeat="group in vm.selected.items">
         <h2>{{group.uniqueid}}</h2>
+        Alias: <input type="text" ng-model="group.uniqueidAlias"/><br/><br/>
         Wählen Sie die benötigten Felder aus (Klick) und wählen Sie die Spaltennamen:
         <div class="table-responsive">
             <table class="table table-striped">
@@ -68,18 +69,18 @@
                         ng-class="vm.selected.fields[group.uniqueid].indexOf(col) > -1 ? 'selected': ''"
                             >
                         <input type="text" ng-model="col.alias"/><br/>
-                        :{{ group.preview[0].types[col.name] }}
+                        :{{ group.types[col.name] }}
                     </th>
                 </tr>
                 </thead>
-                <tr ng-repeat="row in group.preview[0].data">
+                <tr ng-repeat="row in group.data">
                     <td ng-class="vm.selected.fields[group.uniqueid].indexOf(col) > -1 ? 'selected': ''"
                         ng-repeat="col in group.cols" ng-click="vm.addField(col, group)">
                         {{ row[col.name] | characters:25 :true }}
                     </td>
                 </tr>
-                <tr ng-show="group.preview[0].count > 3">
-                    <td colspan="{{group.preview[0].columns.length}}">
+                <tr ng-show="group.count > 3">
+                    <td colspan="{{group.columns.length}}">
                         <a ng-click="vm.increaseTablePreview(group)">
                             Mehr anzeigen
                         </a>

@@ -73,12 +73,17 @@ module odh {
 
                 ,
                 add: (item) => {
-                    if (this.selected.items.indexOf(item) === -1) {
-                        item.uniqueid = 'ODH' + item.id;
-                        this.selected.expression[item.uniqueid] = {};
-                        this.selected.items.push(item);
-                        this.selected.expression[item.uniqueid].operation = this.joinOperations.none;
-                    }
+                    angular.forEach(item.preview, (item) => {
+                        if (this.selected.items.indexOf(item) === -1) {
+                            console.log(item);
+                            item.uniqueid = item.name;
+                            item.uniqueidAlias = item.name;
+                            this.selected.expression[item.uniqueid] = {};
+                            this.selected.items.push(item);
+                            this.selected.expression[item.uniqueid].operation = this.joinOperations.none;
+                        }
+                    });
+
                 }
                 ,
                 getItem: (item) => {
@@ -111,9 +116,11 @@ module odh {
             this.FileGroupService.getAll(document.id, true, count).then(filegroups => {
                 if (!document.$showRows) {
                     angular.forEach(filegroups, (fg) => {
-                        fg['cols'] = [];
-                        angular.forEach(fg.preview[0].columns, (col) => {
-                            fg.cols.push({name: col, alias: col, type: fg.preview[0].types[col]});
+                        angular.forEach(fg.preview, (preview) => {
+                            preview['cols'] = [];
+                            angular.forEach(preview.columns, (col) => {
+                                preview.cols.push({name: col, alias: col, type: fg.preview[0].types[col]});
+                            });
                         });
                     });
                     document.fileGroup = filegroups;
@@ -154,7 +161,7 @@ module odh {
                         this.selected.joinTargets.push(this.selected.getItem(key));
                         var unionFields = this.createFieldNames(this.selected.fields[key], key);
                         unionStatements.push(' \nUNION \n SELECT '.concat(unionFields.join(',\n'),
-                            ' FROM ', key));
+                            ' FROM "', key + '"'));
                     }
                     if (value.operation.operation === 'join') {
                         this.selected.joinTargets.push(this.selected.getItem(key));
@@ -177,15 +184,16 @@ module odh {
                     }
 
                 });
-
-                this.odhqlInputString = 'SELECT '.concat(
-                    fields.join(',\n'),
-                    ' \nFROM ',
-                    master,
-                    ' \n',
-                    joinStatements.join(' \n '),
-                    unionStatements.join(' \n')
-                );
+                if (master && fields) {
+                    this.odhqlInputString = 'SELECT '.concat(
+                        fields.join(',\n'),
+                        ' \nFROM "',
+                        master,
+                        '" \n',
+                        joinStatements.join(' \n '),
+                        unionStatements.join(' \n')
+                    );
+                }
             }
             return this.odhqlInputString;
         }
