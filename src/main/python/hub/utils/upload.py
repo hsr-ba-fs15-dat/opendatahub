@@ -6,6 +6,7 @@ import os
 import defusedxml.ElementTree as etree
 
 from hub.models import UrlModel, DocumentModel, FileGroupModel, FileModel
+from hub import formats
 
 
 class UploadHandler(object):
@@ -63,11 +64,13 @@ class UrlHandler(object):
 
         is_wfs = self.check_wfs(url)
         type = 'wfs' if is_wfs else 'auto'
+        format = (request.data['format'] if 'format' in request.data
+                                            and request.data['format'] in formats.Format.formats else None)
 
         file_group = FileGroupModel(document=doc)
         file_group.save()
 
-        url_model = UrlModel(source_url=url, refresh_after=refresh, type=type, file_group=file_group)
+        url_model = UrlModel(source_url=url, refresh_after=refresh, type=type, file_group=file_group, format=format)
         url_model.save()
 
     def check_wfs(self, url):

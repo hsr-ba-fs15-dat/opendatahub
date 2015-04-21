@@ -31,6 +31,8 @@ class DocumentModel(models.Model):
 
     owner = models.ForeignKey(AUTH_USER_MODEL, null=True)
 
+    created_at = models.DateTimeField(auto_now_add=True)
+
     def __str__(self):
         return "[Document id={} description={}]".format(self.id, cap(self.description, 50))
 
@@ -73,8 +75,9 @@ class UrlModel(models.Model):
     refresh_after = models.IntegerField(default=24 * 60 * 60)  # seconds
     type = models.CharField(max_length=10)
 
+    format = models.CharField(max_length=50, null=True)
+
     def to_file(self, file_group=None):
-        from hub.formats.base import WFS
         from hub.structures.file import WfsUrl
 
         if self.type == 'wfs':
@@ -82,7 +85,7 @@ class UrlModel(models.Model):
         else:
             name, data = UrlHelper().fetch_url(self)
 
-            return File.from_string(name, data, file_group=file_group, format=WFS if type == 'wfs' else None)
+            return File.from_string(name, data, file_group=file_group, format=self.format)
 
 
 class TransformationModel(models.Model):
