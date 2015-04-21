@@ -136,14 +136,14 @@ class OdhFrame(pd.DataFrame):
         return OdhSeries
 
     def __getstate__(self):
-        d = super(OdhFrame, self).__getstate__()
+        d = dict(_data=super(OdhFrame, self).__getstate__())
         d.update({attr: getattr(self, attr, None) for attr in self._metadata})
         return d
 
     def __setstate__(self, state):
-        super(OdhFrame, self).__setstate__(state)
+        super(OdhFrame, self).__setstate__(state.pop('_data', None))
         for attr in self._metadata:
-            setattr(self, state.get(attr, None))
+            setattr(self, attr, state.get(attr, None))
 
 
 class OdhSeries(pd.Series):
@@ -179,7 +179,7 @@ class OdhSeries(pd.Series):
     def __setstate__(self, state):
         super(OdhSeries, self).__setstate__(state)
         for attr in self._metadata:
-            setattr(self, state.get(attr, None))
+            setattr(self, attr, state.get(attr, None))
 
     @classmethod
     def concat(cls, series, *args, **kwargs):
