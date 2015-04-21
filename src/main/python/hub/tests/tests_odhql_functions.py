@@ -169,10 +169,32 @@ class TestGeometryFunctions(TestInterpreterBase):
                      )
         # todo assert
 
+    def test_st_x(self):
+        df = self.execute('SELECT c.prename, ST_X(ST_GeomFromText(\'POINT(7.2234283 48.8183157)\')) AS hsrx '
+                          'FROM child AS c')
+        self.assertListEqual(len(df) * [7.2234283], df.hsrx.tolist())
+
+    def test_st_y(self):
+        df = self.execute('SELECT c.prename, ST_Y(ST_GeomFromText(\'POINT(7.2234283 48.8183157)\')) AS hsry '
+                          'FROM child AS c')
+        self.assertListEqual(len(df) * [48.8183157], df.hsry.tolist())
+
+    def test_st_area_point(self):
+        df = self.execute('SELECT c.prename, ST_Area(ST_GeomFromText(\'POINT(7.2234283 48.8183157)\')) AS area '
+                          'FROM child AS c')
+        self.assertListEqual(len(df) * [0], df['area'].tolist())
+
+    def test_st_area_poly(self):
+        # polygon & result from http://postgis.net/docs/ST_Area.html
+        df = self.execute('SELECT c.prename, ST_Area(ST_SetSRID(ST_GeomFromText(\'POLYGON((743238 2967416,743238 '
+                          '2967450,743265 2967450,743265.625 2967416,743238 2967416))\'), 2249)) AS area '
+                          'FROM child AS c')
+        self.assertListEqual(len(df) * [928.625], df['area'].tolist())
+
     def test_fails(self):
         statements = (
             ('SELECT c.prename, ST_SetSRID(ST_GeomFromText(\'POINT(7.2234283 48.8183157)\'), 99999) AS hsr '
-            'FROM child AS c', 'Unknown SRID'),
+             'FROM child AS c', 'Unknown SRID'),
 
             # todo different/no crs
         )

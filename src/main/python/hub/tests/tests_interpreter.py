@@ -212,13 +212,15 @@ class TestInterpreter(TestInterpreterBase):
         ids = OdhQLInterpreter.parse_sources('SELECT e.prename FROM ODH12 AS e UNION SELECT c.prename FROM ODH88 AS c')
         self.assertDictEqual(ids, {'ODH12': 12, 'ODH88': 88})
 
-    def test_temp(self):
-        pass
+    def test_dup_colnames(self):
+        df = self.execute('SELECT e.prename, e.prename, e.surname AS prename FROM employee AS e')
+        self.assertListEqual(df.columns.tolist(), ['prename', 'prename2', 'prename3'])
 
     def test_fails(self):
         statements = (
             ('SELECT e.prename FROM employee AS e ORDER BY nonexistent', 'Non-existent ORDER BY field'),
             ('SELECT e.prename FROM employee AS e ORDER BY e.nonexistent', 'Non-existent ORDER BY field'),
+            ('SELECT e.prename FROM employee AS e JOIN child AS c ON c.Parent = e.foobar', 'Non-existent JOIN field'),
             ('SELECT e.prename FROM employee AS e ORDER BY 99', 'Invalid ORDER BY position'),
             ('SELECT e.prename FROM employee AS e UNION SELECT c.age FROM child AS c', 'UNION type mismatch')
         )

@@ -65,6 +65,18 @@ class OdhQLInterpreter(object):
         return '{}.{}'.format(prefix.lower(), name.lower())
 
     @classmethod
+    def _ensure_unique_fields(cls, query):
+        """
+        Renames SELECT fields so that they are unique by adding a number (starting from 2) for duplicates
+        :param query: hub.odhql.parser.Query
+        :rtype: None
+        """
+        seen = collections.defaultdict(int)
+        for f in query.fields:
+            n = seen[f.alias] = seen[f.alias] + 1
+            f.alias = '{}{}'.format(f.alias, bool(n - 1) * str(n))
+
+    @classmethod
     def parse_sources(cls, query):
         """
         Parses the data sources (tables) used in the query
@@ -118,6 +130,8 @@ class OdhQLInterpreter(object):
             colnames = df.columns.tolist()
 
         else:
+            self._ensure_unique_fields(query)
+
             # prepare
             dfs = self.load(query)
 
@@ -260,7 +274,10 @@ class OdhQLInterpreter(object):
                     names_right.append(self._make_name(right.prefix, right.name))
 
                 df_right = dfs[right.prefix]
-                df = df.merge(df_right, left_on=names_left, right_on=names_right, suffixes=('', 'r'), copy=False)
+                try:
+                    df = df.merge(df_right, left_on=names_left, right_on=names_right, suffixes=('', 'r'), copy=False)
+                except KeyError as e:
+                    raise OdhQLExecutionException('JOIN: Column "{}" does not exist'.format(e.message))
                 aliases_left.append(right.prefix)
 
             elif isinstance(ds, parser.DataSource):
