@@ -274,6 +274,32 @@ class OdhQLInterpreter(object):
             args = [self._interpret_field(df, arg, expand=False) for arg in field.args]
             series = functions.execute(field.name, len(df), args)
 
+        elif isinstance(field, parser.AliasedExpression):
+            series = self._interpret_field(df, field.expression)
+
+        elif isinstance(field, parser.CaseExpression):
+            odh_type = None
+            series = None
+            affected = np.zeros(len(df), bool)
+            for i, rule in enumerate(field.rules):
+                mask = self._interpret_filter(df, rule.condition) if rule.condition else np.array([True], bool)
+                if not mask.any():
+                    continue
+                mask = ~affected & mask
+                if not mask.any():
+                    continue
+
+                affected |= mask
+                slice = self._interpret_field(df[mask], rule.expression)
+                if odh_type is None:
+                    odh_type = slice.odh_type
+                    series = np.full(len(df), np.nan, dtype=odh_type.dtypes[0])
+                elif odh_type is not slice.odh_type:
+                    raise OdhQLExecutionException('CASE: Type mismatch in CASE #{}'.format(i + 1))
+                series[mask] = slice
+            if series is None:
+                series = np.full(len(df), np.nan, dtype=object)
+            series = OdhSeries(series)
         else:
             assert False, 'Unknown field type "{}"'.format(type(field))
 
@@ -327,7 +353,12 @@ class OdhQLInterpreter(object):
         else:
             assert False, 'Unknown filter type "{}"'.format(type(filter_))
 
-        return ~mask if getattr(filter_, 'invert', False) else mask
+        if getattr(filter_, 'invert', False):
+            mask = ~mask
+        if isinstance(mask, pd.Series):
+            mask = mask.values
+
+        return mask
 
     def _interpret_order(self, df, orders, colnames):
         """
