@@ -31,6 +31,8 @@ class DocumentModel(models.Model):
 
     owner = models.ForeignKey(AUTH_USER_MODEL, null=True)
 
+    created_at = models.DateTimeField(auto_now_add=True)
+
     def __str__(self):
         return "[Document id={} description={}]".format(self.id, cap(self.description, 50))
 
