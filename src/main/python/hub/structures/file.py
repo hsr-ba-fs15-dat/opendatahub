@@ -108,7 +108,7 @@ class File(object):
         self._stream = stream
         self.file_group = file_group
         self.format = format
-        self.df = None
+        self.dfs = None
 
     @classmethod
     def from_file(cls, path, *args, **kwargs):
@@ -168,24 +168,25 @@ class File(object):
         id_ = self.file_group.id
         invalidate = False
 
-        if self.df is None:
+        if self.dfs is None:
             if not force and id_ is not None:
-                temp = cache.get(('FG', id_))
-                if temp is not None:
-                    self.df = [DataFrameUtils.from_unpickled(tup) for tup in temp]
+                cached = cache.get(('FG', id_))
+                if cached is not None:
+                    self.dfs = cached
 
-            if self.df is None:
+            if self.dfs is None:
                 from hub import parsers
 
                 format = self.format or formats.identify(self)
                 if not format:
                     return None
-                self.df = parsers.parse(self, format)
+                self.dfs = parsers.parse(self, format)
                 invalidate = True
 
         if invalidate and id_:
-            cache.set(('FG', id_), [DataFrameUtils.get_picklable(df) for df in self.df])
-        return self.df
+            cache.set(('FG', id_), self.dfs)
+
+        return self.dfs
 
     def to_serializable_df(self):
         return DataFrameUtils.make_serializable(self.to_df())

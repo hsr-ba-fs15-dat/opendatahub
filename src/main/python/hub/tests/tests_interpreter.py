@@ -267,10 +267,11 @@ class TestInterpreterPerformance(TestInterpreterBase):
 
 
 if __name__ == '__main__':
-    import cProfile
-
     employees = File.from_file(TestBase.get_test_file_path('perf/employees.csv')).to_df()[0]
     children = File.from_file(TestBase.get_test_file_path('perf/children.csv')).to_df()[0]
     i = OdhQLInterpreter({'employee': employees, 'child': children})
-    cProfile.run(
-        'i.execute("SELECT c.prename, e.prename AS parent FROM child AS c JOIN employee AS e ON c.parent = e.id")')
+    i.execute('SELECT c.prename, e.prename AS parent '
+              'FROM child AS c JOIN employee AS e ON c.parent = e.id ORDER BY e.id')
+    # import cProfile
+    # cProfile.run(
+    #     'i.execute("SELECT c.prename, e.prename AS parent FROM child AS c JOIN employee AS e ON c.parent = e.id")')

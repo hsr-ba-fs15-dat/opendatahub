@@ -27,4 +27,7 @@ class FormatsTests(TestBase):
         for files, format in self.TESTS.iteritems():
             fg = FileGroup.from_files(*[TestBase.get_test_file_path(f) for f in files])
             for r in fg[0].to_df():
-                self.assertIsInstance(r, format)
+                if format != GeoDataFrame:
+                    self.assertIsInstance(r, format)
+                else:
+                    self.assertIn('geometry', r)
