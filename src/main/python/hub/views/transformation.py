@@ -9,6 +9,7 @@ from django.db import transaction
 from hub.serializers import FileGroupSerializer, TransformationSerializer
 from hub.models import FileGroupModel, TransformationModel
 from authentication.permissions import IsOwnerOrPublic, IsOwnerOrReadOnly
+from hub.utils.common import str2bool
 
 
 class TransformationViewSet(viewsets.ModelViewSet):
@@ -34,7 +35,8 @@ class TransformationViewSet(viewsets.ModelViewSet):
                                           transformation=request.data.get('transformation'))
                 doc.save()
                 doc.file_groups.add(
-                    *[FileGroupModel.objects.get(id=fg['id']) for fg in request.data.get('file_groups')])
+                    *[FileGroupModel.objects.get(id=str(fg)) for fg in request.data.get('file_groups')]
+                )
                 doc.save()
 
             serializer = TransformationSerializer(TransformationModel.objects.get(id=doc.id),
@@ -58,7 +60,7 @@ class TransformationViewSet(viewsets.ModelViewSet):
         for k, v in params.iteritems():
             m = re.match(prog, k)
             if m:
-                out[m.group(1)][m.group(2)] = self.str2bool(v[0])
+                out[m.group(1)][m.group(2)] = str2bool(v[0])
         if out:
             params.update(out)
         documents = TransformationModel.objects.all()
