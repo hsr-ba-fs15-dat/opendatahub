@@ -45,7 +45,7 @@ class OdhType(object):
             else:
                 return cls.by_ptype[ptype][0]
         else:
-            assert False
+            return cls.TEXT
 
     def __repr__(self):
         return 'OdhType({})'.format(self.name)
@@ -112,6 +112,22 @@ class OdhFrame(pd.DataFrame):
         return self
 
     @property
+    def has_geoms(self):
+        return OdhType.GEOMETRY in [s.odh_type for c, s in self.iteritems()]
+
+    def to_gdf(self):
+        # if we have multiple geometry columns and none of them is called "geometry" we pick the first
+        # the formatters require a single geometry column as most file formats only support one
+        df = self.copy()
+        df.__class__ = gp.GeoDataFrame
+        geoseries = collections.OrderedDict([(c, s) for c, s in df.iteritems() if s.odh_type == OdhType.GEOMETRY])
+        geometry = geoseries.get('geometry', geoseries.values()[0]).copy()
+        geometry.name = 'geometry'
+        geometry.__class__ == gp.GeoSeries
+        df.crs = geometry.crs
+        return df
+
+    @property
     def _constructor(self):
         return OdhFrame
 
@@ -121,11 +137,13 @@ class OdhFrame(pd.DataFrame):
 
     def __getstate__(self):
         d = super(OdhFrame, self).__getstate__()
+        d.update({attr: getattr(self, attr, None) for attr in self._metadata})
         return d
 
     def __setstate__(self, state):
         super(OdhFrame, self).__setstate__(state)
-        self.name = state.get('name', None)
+        for attr in self._metadata:
+            setattr(self, state.get(attr, None))
 
 
 class OdhSeries(pd.Series):
@@ -155,10 +173,13 @@ class OdhSeries(pd.Series):
 
     def __getstate__(self):
         d = super(OdhSeries, self).__getstate__()
+        d.update({attr: getattr(self, attr, None) for attr in self._metadata})
         return d
 
     def __setstate__(self, state):
         super(OdhSeries, self).__setstate__(state)
+        for attr in self._metadata:
+            setattr(self, state.get(attr, None))
 
     @classmethod
     def concat(cls, series, *args, **kwargs):

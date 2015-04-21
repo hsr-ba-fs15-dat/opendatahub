@@ -5,16 +5,19 @@
 
 import logging
 import collections
+import traceback
 
 import pandas
+
 import geopandas
 import os
-import types
 
 from opendatahub.utils.plugins import RegistrationMixin
+
 from hub import formats
 from hub.utils import ogr2ogr
-import traceback
+import hub.utils.common as com
+from hub.structures.frame import OdhFrame
 
 
 class NoParserException(Exception):
@@ -39,8 +42,8 @@ class Parser(RegistrationMixin):
     def parse(cls, file, format, *args, **kwargs):
         for parser in cls.parsers_by_format[format]:
             try:
-                res = parser.parse(file, format=format, *args, **kwargs)
-                return res if isinstance(res, types.ListType) else [res]
+                dfs = com.ensure_tuple(parser.parse(file, format=format, *args, **kwargs))
+                return [OdhFrame.from_df(df, file.basename) for df in dfs]
             except:
                 logging.debug('%s was not able to parse data with format %s: %s', parser.__name__, format.__name__,
                               traceback.format_exc())

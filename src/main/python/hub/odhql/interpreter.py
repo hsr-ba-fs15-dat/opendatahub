@@ -84,7 +84,7 @@ class OdhQLInterpreter(object):
         Executes an OdhQL query
         :type query: str or parsed query object
         :return: Resulting DataFrame of the query
-        :rtype: :py:class: pandas.DataFrame or :py:class: geopandas.GeoDataFrame
+        :rtype: :py:class: OdhFrame
         """
         if isinstance(query, basestring):
             query = parser.OdhQLParser().parse(query)
@@ -95,7 +95,7 @@ class OdhQLInterpreter(object):
         High-level interpretation control-flow
         :param query: :py:class: hub.parser.Union or py:class: hub.parser.Query
         :return: Resulting DataFrame
-        :rtype: :py:class: pandas.DataFrame or :py:class: geopandas.GeoDataFrame
+        :rtype: :py:class: OdhFrame
         """
         is_union = isinstance(query, parser.Union)
 
@@ -126,18 +126,6 @@ class OdhQLInterpreter(object):
             # select requested fields from filtered dataframe
             if df.shape[0]:
                 cols = [self._interpret_field(df, f) for f in query.fields]
-
-                # if we have multiple geometry columns and none of them is aliased "geometry" we pick the first
-                # the formatters require a single geometry column as most file formats only support one
-                # todo move renaming to formatting process and not query
-                # geoseries = collections.OrderedDict(
-                # [(series.name, series) for series in cols if isinstance(series, gp.GeoSeries)])
-                # if geoseries:
-                #     cls = gp.GeoDataFrame
-                #     geometry = geoseries.get('geometry', geoseries.values()[0])
-                #     geometry.name = 'geometry'
-                #     kw['crs'] = geometry.crs
-
                 colnames = [c.name for c in cols]
                 addtl_colnames = set(df.columns.tolist()) - set(colnames)
                 # add non-selected cols to dataframe as well to allow ORDER BY later

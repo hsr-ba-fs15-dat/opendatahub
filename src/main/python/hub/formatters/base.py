@@ -8,8 +8,8 @@ import tempfile
 import shutil
 import logging
 from lxml import etree
+import traceback
 
-import geopandas
 import pandas
 import os
 
@@ -48,9 +48,8 @@ class Formatter(RegistrationMixin):
             try:
                 return formatter.format(file, format=format, *args, **kwargs)
             except:
-                logging.debug(
-                    '{} was not able to format {} with target format {}'.format(formatter.__name__, file.name,
-                                                                                format.__name__))
+                logging.debug('%s was not able to format %s with target format %s: %s', formatter.__name__, file.name,
+                              format.__name__, traceback.format_exc())
                 continue
 
         raise NoFormatterException('Unable to format {} as {}'.format(file.name, format.name))
@@ -147,7 +146,8 @@ class OGRFormatter(Formatter):
         results = []
 
         for df in dataframes:
-            if isinstance(df, geopandas.GeoDataFrame):
+            if df.has_geoms:
+                df = df.to_gdf()
                 temp_dir = tempfile.mkdtemp()
                 try:
                     df.to_file(os.path.join(temp_dir, file.basename + '.shp'))
