@@ -165,6 +165,16 @@ def django_reset_db(project, logger):
     django_createcachetable(project, logger)
 
 
+@task
+@depends('prepare')
+def django_init_db(project, logger):
+    django_reset_db(project, logger)
+    django_makemigrations(project, logger)
+    django_migrate(project, logger)
+    django_createcachetable(project, logger)
+    django_loadfixtures(project, logger)
+
+
 @init
 def init_pylint(project):
     project.build_depends_on('pylint')

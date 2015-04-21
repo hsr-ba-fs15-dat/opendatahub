@@ -18,7 +18,8 @@ from hub.odhql.exceptions import OdhQLExecutionException
 
 
 class OdhQLInterpreter(object):
-    FILE_GROUP_RE = re.compile('ODH([1-9]\d?)', re.IGNORECASE)
+
+    FILE_GROUP_RE = re.compile('ODH([1-9]\d?)(_"?.+?"?)?', re.IGNORECASE)
 
     def __init__(self, source_dfs):
         """
@@ -106,14 +107,14 @@ class OdhQLInterpreter(object):
                 setattr(query.queries[0], 'order', query.order)
                 query.order = None
 
-            df = self.interpret_union(query.queries)
+            df = self._interpret_union(query.queries)
             colnames = df.columns.tolist()
 
         else:
             self._ensure_unique_fields(query)
 
             # prepare
-            dfs = self.load(query)
+            dfs = self._load(query)
 
             # build one big/joined dataframe (FROM, JOIN)
             df = self._interpret_data_sources(dfs, query.data_sources)
@@ -143,7 +144,7 @@ class OdhQLInterpreter(object):
         # final column selection
         return df[colnames]
 
-    def load(self, query):
+    def _load(self, query):
         """
         Load dataframes and prepare them (prefix) for querying
         :type query: hub.odhql.parser.Query
@@ -156,7 +157,7 @@ class OdhQLInterpreter(object):
 
         return dfs
 
-    def interpret_union(self, queries):
+    def _interpret_union(self, queries):
         """
         Process a :py:class: hub.odhql.parser.Union object
         :type queries: list of :py:class: hub.odhql.parser.Query
@@ -258,7 +259,7 @@ class OdhQLInterpreter(object):
             except KeyError:
                 raise OdhQLExecutionException('Column "{}" does not exist'.format(name))
 
-        elif isinstance(field, parser.Expression):
+        elif isinstance(field, parser.LiteralExpression):
             value = field.value
 
             if not expand:
@@ -271,7 +272,7 @@ class OdhQLInterpreter(object):
 
         elif isinstance(field, parser.Function):
             args = [self._interpret_field(df, arg, expand=False) for arg in field.args]
-            series = functions.execute(field.name, df.shape[0], args)
+            series = functions.execute(field.name, len(df), args)
 
         else:
             assert False, 'Unknown field type "{}"'.format(type(field))

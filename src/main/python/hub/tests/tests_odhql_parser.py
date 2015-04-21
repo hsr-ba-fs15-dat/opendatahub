@@ -35,40 +35,47 @@ class TestParser(TestBase):
 
         field = next(fields)
         self.assertIsInstance(field, odhql.AliasedExpression)
-        self.assertEqual('te st', field.value)
+        self.assertIsInstance(field.expression, odhql.LiteralExpression)
+        self.assertEqual('te st', field.expression.value)
         self.assertEqual('bl ub', field.alias)
 
         field = next(fields)
         self.assertIsInstance(field, odhql.AliasedExpression)
-        self.assertIsInstance(field.value, int)
-        self.assertEqual(3, field.value)
+        self.assertIsInstance(field.expression, odhql.LiteralExpression)
+        self.assertIsInstance(field.expression.value, int)
+        self.assertEqual(3, field.expression.value)
         self.assertEqual('integer', field.alias)
 
         field = next(fields)
         self.assertIsInstance(field, odhql.AliasedExpression)
-        self.assertIsInstance(field.value, int)
-        self.assertEqual(-3, field.value)
+        self.assertIsInstance(field.expression, odhql.LiteralExpression)
+        self.assertIsInstance(field.expression.value, int)
+        self.assertEqual(-3, field.expression.value)
         self.assertEqual('negative', field.alias)
 
         field = next(fields)
         self.assertIsInstance(field, odhql.AliasedExpression)
-        self.assertIsInstance(field.value, float)
-        self.assertEqual(4.5, field.value)
+        self.assertIsInstance(field.expression, odhql.LiteralExpression)
+        self.assertIsInstance(field.expression.value, float)
+        self.assertEqual(4.5, field.expression.value)
         self.assertEqual('float', field.alias)
 
         field = next(fields)
         self.assertIsInstance(field, odhql.AliasedExpression)
-        self.assertIsNone(field.value)
+        self.assertIsInstance(field.expression, odhql.LiteralExpression)
+        self.assertIsNone(field.expression.value)
         self.assertEqual('null', field.alias)
 
         field = next(fields)
         self.assertIsInstance(field, odhql.AliasedExpression)
-        self.assertTrue(field.value)
+        self.assertIsInstance(field.expression, odhql.LiteralExpression)
+        self.assertTrue(field.expression.value)
         self.assertEqual('true', field.alias)
 
         field = next(fields)
         self.assertIsInstance(field, odhql.AliasedExpression)
-        self.assertFalse(field.value)
+        self.assertIsInstance(field.expression, odhql.LiteralExpression)
+        self.assertFalse(field.expression.value)
         self.assertEqual('false', field.alias)
 
         try:
@@ -98,7 +105,7 @@ class TestParser(TestBase):
         self.assertEqual('unary_str', field.name)
         self.assertEqual('second', field.alias)
         self.assertIsInstance(field.args, types.ListType)
-        self.assertIsInstance(field.args[0], odhql.Expression)
+        self.assertIsInstance(field.args[0], odhql.LiteralExpression)
         self.assertEqual('a', field.args[0].value)
 
         field = next(fields)
@@ -106,7 +113,7 @@ class TestParser(TestBase):
         self.assertEqual('unary_num', field.name)
         self.assertEqual('third', field.alias)
         self.assertIsInstance(field.args, types.ListType)
-        self.assertIsInstance(field.args[0], odhql.Expression)
+        self.assertIsInstance(field.args[0], odhql.LiteralExpression)
         self.assertEqual(3.14, field.args[0].value)
 
         field = next(fields)
@@ -114,9 +121,9 @@ class TestParser(TestBase):
         self.assertEqual('binary', field.name)
         self.assertEqual('fourth', field.alias)
         self.assertIsInstance(field.args, types.ListType)
-        self.assertIsInstance(field.args[0], odhql.Expression)
+        self.assertIsInstance(field.args[0], odhql.LiteralExpression)
         self.assertEqual('one', field.args[0].value)
-        self.assertIsInstance(field.args[1], odhql.Expression)
+        self.assertIsInstance(field.args[1], odhql.LiteralExpression)
         self.assertEqual(2, field.args[1].value)
 
         field = next(fields)
@@ -255,7 +262,7 @@ class TestParser(TestBase):
 
         self.assertEqual(odhql.BinaryCondition.Operator.equals, equal.operator)
 
-        self.assertIsInstance(equal.right, odhql.Expression)
+        self.assertIsInstance(equal.right, odhql.LiteralExpression)
         self.assertEqual(1, equal.right.value)
 
     def test_binary_condition_operators(self):
@@ -280,7 +287,7 @@ class TestParser(TestBase):
             self.assertIsInstance(cond, odhql.BinaryCondition)
 
             self.assertIsInstance(cond.left, odhql.Field)
-            self.assertIsInstance(cond.right, odhql.Expression)
+            self.assertIsInstance(cond.right, odhql.LiteralExpression)
 
             self.assertEqual(str(cond.operator), 'Operator.{}'.format(cond.left.name))
 
@@ -312,7 +319,7 @@ class TestParser(TestBase):
 
         equal = comb[0]
         self.assertIsInstance(equal, odhql.BinaryCondition)
-        self.assertIsInstance(equal.left, odhql.Expression)
+        self.assertIsInstance(equal.left, odhql.LiteralExpression)
         self.assertIsInstance(equal.right, odhql.Field)
 
         self.assertEqual(1, equal.left.value)
@@ -326,11 +333,70 @@ class TestParser(TestBase):
         equal = comb[0]
         self.assertIsInstance(equal, odhql.BinaryCondition)
         self.assertIsInstance(equal.left, odhql.Field)
-        self.assertIsInstance(equal.right, odhql.Expression)
+        self.assertIsInstance(equal.right, odhql.LiteralExpression)
 
         self.assertEqual('b', equal.left.name)
         self.assertEqual('t', equal.left.prefix)
         self.assertEqual('b', equal.right.value)
+
+    def test_predicate(self):
+        p = odhql.OdhQLParser()
+        result = p.parse('select t.a from t where is_valid(t.blub)')
+
+        self.assertIsInstance(result, odhql.Query)
+
+        alt = result.filter_definitions
+        comb = alt[0]
+
+        condition = comb[0]
+
+        self.assertIsInstance(condition, odhql.PredicateCondition)
+        self.assertIsInstance(condition.predicate, odhql.Function)
+
+        self.assertEqual(condition.predicate.name, 'is_valid')
+
+    def test_case_expression(self):
+        p = odhql.OdhQLParser()
+        result = p.parse('select t.a, '
+                         'case when t.a=1 then \'one\' when t.a=2 then \'two\' else \'other\' end as test '
+                         'from t')
+
+        self.assertIsInstance(result, odhql.Query)
+        self.assertEqual(2, len(result.fields))
+
+        fields = (f for f in result.fields)
+
+        field = next(fields)
+        self.assertIsInstance(field, odhql.Field)
+
+        field = next(fields)
+        self.assertIsInstance(field, odhql.AliasedExpression)
+
+        expr = field.expression
+
+        self.assertIsInstance(expr, odhql.CaseExpression)
+
+        self.assertEqual(3, len(expr.rules))
+
+        rules = (r for r in expr.rules)
+
+        rule = next(rules)
+        self.assertIsInstance(rule, odhql.CaseRule)
+        self.assertIsInstance(rule.condition, odhql.BinaryCondition)
+        self.assertIsInstance(rule.condition.left, odhql.Field)
+        self.assertEqual('a', rule.condition.left.name)
+
+        self.assertIsInstance(rule.expression, odhql.LiteralExpression)
+        self.assertEqual('one', rule.expression.value)
+
+        rule = next(rules)
+        self.assertIsInstance(rule, odhql.CaseRule)
+
+        rule = next(rules)
+        self.assertIsInstance(rule, odhql.CaseRule)
+        self.assertIsNone(rule.condition)
+        self.assertIsInstance(rule.expression, odhql.LiteralExpression)
+        self.assertEqual('other', rule.expression.value)
 
     def test_complex_filter(self):
         p = odhql.OdhQLParser()
@@ -425,10 +491,10 @@ class TestParser(TestBase):
 
         self.assertEqual(2, len(result.fields))
 
-        self.assertEqual(result.fields[0].value, '--')
+        self.assertEqual(result.fields[0].expression.value, '--')
         self.assertEqual(result.fields[0].alias, 'singlequote')
 
-        self.assertEqual(result.fields[1].value, 'test')
+        self.assertEqual(result.fields[1].expression.value, 'test')
         self.assertEqual(result.fields[1].alias, '--')
 
     def test_malformed_expressions(self):
@@ -447,7 +513,6 @@ class TestParser(TestBase):
             ('select 1 as a from test1, test2', 'multiple data sources need to be defined using joins'),
             ('select func( as f from test', 'malformed function call'),
             ('select outer(inner() as f from test', 'malformed nested function call'),
-            ('select 1 as b from test where func()', 'malformed where condition'),
             ('select 1 as a from test WHERE 7dcasxa33sx', 'trailing garbage'),
             ('select a.a from a order by a.a union select b.a from b order by b.b', 'order only at end of unions'),
             ('select a.a from a order by -1', 'negative order by position is invalid'),

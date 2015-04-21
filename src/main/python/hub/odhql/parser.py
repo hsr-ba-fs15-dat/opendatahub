@@ -2,7 +2,7 @@ from collections import Sequence
 
 from pyparsing import nums
 from pyparsing import Word, CaselessKeyword, QuotedString, Regex, Literal, Suppress, Combine
-from pyparsing import Optional, ZeroOrMore, Or, Group, NotAny, Forward, StringEnd
+from pyparsing import Optional, OneOrMore, ZeroOrMore, Or, Group, NotAny, Forward, StringEnd
 from pyparsing import delimitedList
 from enum import Enum
 
@@ -29,10 +29,14 @@ class OdhQLParser(object):
     FieldDeclarationList ::= "select" FieldDeclaration ( "," FieldDeclaration )*
     FieldDeclaration ::= FieldEquiv "as" Alias
 
-    FieldEquiv ::= Function | Value | Field
+    CaseExpression ::= "case" ( "when" Condition "then" Expression )+
+                              ( "else" Expression )?
+                       "end"
+
+    Expression ::= Function | Value | Field | CaseExpression
 
     Function ::= Identifier "(" ( FunctionArgumentList )? ")"
-    FunctionArgumentList ::= FieldEquiv ( ( "," FieldEquiv )* )?
+    FunctionArgumentList ::= Expression ( ( "," Expression )* )?
 
     DataSourceName ::= Identifier
     FieldName ::= Identifier
@@ -49,15 +53,19 @@ class OdhQLParser(object):
 
     FilterList ::= "where" FilterAlternative
     FilterAlternative ::= FilterCombination ( "or" FilterCombination )*
-    FilterCombination ::= FilterDefinition ( "and" FilterDefinition )*
-    FilterDefinition ::= BinaryCondition | InCondition | IsNullCondition | "(" FilterAlternative ")"
-    BinaryCondition ::= FieldEquiv BinaryOperator FieldEquiv
-    BinaryOperator ::= "=" | "!=" | "<=" | "<"| ">=" | ">" | "like"
-    InCondition ::= FieldEquiv ( "not" )? "in" "(" Value ( "," Value )* ")"
+    FilterCombination ::= Condition ( "and" Condition )*
+
+    Condition ::= BinaryCondition | InCondition | IsNullCondition | PredicateCondition | "(" FilterAlternative ")"
+
+    BinaryCondition ::= Expression BinaryOperator Expression
+    BinaryOperator ::= "=" | "!=" | "<=" | "<"| ">=" | ">" | ( "not" )? "like"
+    InCondition ::= Expression ( "not" )? "in" "(" Value ( "," Value )* ")"
     IsNullCondition ::= Field "is" ( "not" )? Null
+    PredicateCondition ::= ( "not" )? Function
+
     OrderByList ::= "order" "by" OrderByField ( "," OrderByField )*
     OrderByField ::= ( Field | Alias | Position) ( "asc" | "desc" )?
-    Integer ::= ( "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" )*
+    Integer ::= ( "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" )+
 
     Value ::= SingleQuotedString | Number | Boolean | Null
     Number ::= Integer | Float
@@ -91,23 +99,38 @@ class OdhQLParser(object):
 
         integer_value = Combine(Optional('-') + Word(nums))
         number_value = Group(integer_value + Optional('.' + Word(nums)))
-        number_value.setParseAction(Expression.parse_number)
+        number_value.setParseAction(LiteralExpression.parse_number)
 
         boolean_value = CaselessKeyword('true') | CaselessKeyword('false')
-        boolean_value.setParseAction(Expression.parse_boolean)
+        boolean_value.setParseAction(LiteralExpression.parse_boolean)
 
         string_value = QuotedString('\'', escChar=escape_char)
         null_value = CaselessKeyword('null')
-        null_value.setParseAction(Expression.parse_null)
+        null_value.setParseAction(LiteralExpression.parse_null)
 
-        value = (number_value | boolean_value | string_value | null_value)('value')
-        value.setParseAction(Expression.parse)
+        single_filter = Forward()
 
-        aliased_value = (value + alias)
+        expression = Forward()
+
+        when_expression = (CaselessKeyword('when') + single_filter('condition') +
+                           CaselessKeyword('then') + expression('expression'))
+        when_expression.setParseAction(CaseRule.parse_when)
+        else_expression = CaselessKeyword('else') + expression('expression')
+        else_expression.setParseAction(CaseRule.parse_else)
+        case_expression = (CaselessKeyword('case') + Group(OneOrMore(when_expression))('when') +
+                           Optional(else_expression)('else')) + CaselessKeyword('end')
+        case_expression.setParseAction(CaseExpression.parse)
+
+        literal_expression = (number_value | boolean_value | string_value | null_value)('value')
+        literal_expression.setParseAction(LiteralExpression.parse)
+
+        expression << (literal_expression | case_expression)
+
+        aliased_value = (expression('expression') + alias)
         aliased_value.setParseAction(AliasedExpression.parse)
 
         function = Forward()
-        function << (identifier('name') + '(' + Optional(delimitedList(field | value | function))('args') + ')')
+        function << (identifier('name') + '(' + Optional(delimitedList(field | expression | function))('args') + ')')
         function.setParseAction(Function.parse)
 
         aliased_function = function('function') + alias
@@ -115,7 +138,34 @@ class OdhQLParser(object):
 
         field_declaration = aliased_function | aliased_value | aliased_field
 
-        field_declaration_list = Suppress(CaselessKeyword('select')) + delimitedList(field_declaration)
+        condition_side = field | expression | function
+
+        operator = (Literal('=') | '!=' | '<=' | '<' | '>=' | '>' |
+                    Optional(CaselessKeyword('not'))('invert') + CaselessKeyword('like'))
+        operator.setParseAction(BinaryCondition.parse_operator)
+
+        binary_condition = condition_side.copy()('left') + operator('operator') + condition_side.copy()('right')
+        binary_condition.setParseAction(BinaryCondition.parse)
+
+        in_condition = (condition_side.copy()('left') + Optional(CaselessKeyword('not'))('invert') +
+                        CaselessKeyword('in') + '(' + Group(delimitedList(expression))('in_list') + ')')
+        in_condition.setParseAction(InCondition.parse)
+
+        null_condition = (field + CaselessKeyword('is') + Optional(CaselessKeyword('not'))('invert') +
+                          CaselessKeyword('null'))
+        null_condition.setParseAction(IsNullCondition.parse)
+
+        predicate_condition = Optional(CaselessKeyword('not'))('invert') + function('predicate')
+        predicate_condition.setParseAction(PredicateCondition.parse)
+
+        filter_combination = delimitedList(single_filter, delim=kw_and)
+        filter_combination.setParseAction(FilterCombination.parse)
+
+        filter_alternative = delimitedList(filter_combination, delim=kw_or)
+        filter_alternative.setParseAction(FilterAlternative.parse)
+
+        single_filter << (null_condition | binary_condition | in_condition | predicate_condition |
+                          Suppress('(') + filter_alternative + Suppress(')'))
 
         data_source = identifier('name') + Optional(alias)
         data_source.setParseAction(DataSource.parse)
@@ -132,38 +182,6 @@ class OdhQLParser(object):
                 CaselessKeyword('on') + join_condition_list.copy()('condition'))
         join.setParseAction(JoinedDataSource.parse)
 
-        data_source_declaration = Suppress(CaselessKeyword('from')) + data_source + ZeroOrMore(join)
-
-        condition_side = field | value | function
-
-        operator = (Literal('=') | '!=' | '<=' | '<' | '>=' | '>' |
-                    Optional(CaselessKeyword('not'))('invert') + CaselessKeyword('like'))
-        operator.setParseAction(BinaryCondition.parse_operator)
-
-        binary_condition = condition_side.copy()('left') + operator('operator') + condition_side.copy()('right')
-        binary_condition.setParseAction(BinaryCondition.parse)
-
-        in_condition = (condition_side.copy()('left') + Optional(CaselessKeyword('not'))('invert') +
-                        CaselessKeyword('in') + '(' + Group(delimitedList(value))('in_list') + ')')
-        in_condition.setParseAction(InCondition.parse)
-
-        null_condition = (field + CaselessKeyword('is') + Optional(CaselessKeyword('not'))('invert') +
-                          CaselessKeyword('null'))
-        null_condition.setParseAction(IsNullCondition.parse)
-
-        single_filter = Forward()
-
-        filter_combination = delimitedList(single_filter, delim=kw_and)
-        filter_combination.setParseAction(FilterCombination.parse)
-
-        filter_alternative = delimitedList(filter_combination, delim=kw_or)
-        filter_alternative.setParseAction(FilterAlternative.parse)
-
-        single_filter << (null_condition | binary_condition | in_condition |
-                          Suppress('(') + filter_alternative + Suppress(')'))
-
-        filter_declaration = Suppress(CaselessKeyword('where')) + filter_alternative.copy()('conditions')
-
         order_by_position = Word(nums)
         order_by_position.setParseAction(OrderByPosition.parse)
 
@@ -171,11 +189,13 @@ class OdhQLParser(object):
         order_by_alias.setParseAction(OrderByAlias.parse)
 
         order_by_field_equiv = field | order_by_alias | order_by_position
-
         order_by_field = (order_by_field_equiv('field') + Optional(Or([
             CaselessKeyword('asc'), CaselessKeyword('desc')]))('direction'))
         order_by_field.setParseAction(OrderBy.parse)
 
+        field_declaration_list = Suppress(CaselessKeyword('select')) + delimitedList(field_declaration)
+        data_source_declaration = Suppress(CaselessKeyword('from')) + data_source + ZeroOrMore(join)
+        filter_declaration = Suppress(CaselessKeyword('where')) + filter_alternative.copy()('conditions')
         order_by_declaration = (Suppress(CaselessKeyword('order') + CaselessKeyword('by')) +
                                 delimitedList(order_by_field, delim=',')('fields'))
         order_by_declaration.setParseAction(Query.parse_order_by)
@@ -192,23 +212,24 @@ class OdhQLParser(object):
 
         return union_query
 
-    def _strip_line_comment(self, line):
+    @staticmethod
+    def _strip_line_comment(line):
         comment_chars = '--'
         comment_start = line.find(comment_chars)
         if comment_start >= 0:
             # ignore comments inside strings
-            while (comment_start < len(line) and (line.count('\'', 0, comment_start) % 2 == 1 or
-                   line.count('"', 0, comment_start) % 2 == 1)):
+            while (comment_start < len(line)
+                   and (line.count('\'', 0, comment_start) % 2 == 1 or line.count('"', 0, comment_start) % 2 == 1)):
                 comment_start = line.find(comment_chars, comment_start + 1)
 
             return line[0:comment_start]
         return line
 
-    def strip_comments(self, input):
-        return '\n'.join(map(self._strip_line_comment, input.splitlines()))
+    def strip_comments(self, query):
+        return '\n'.join(map(self._strip_line_comment, query.splitlines()))
 
-    def parse(self, input):
-        return self.grammar.parseString(self.strip_comments(input))[0]
+    def parse(self, query):
+        return self.grammar.parseString(self.strip_comments(query))[0]
 
 
 class ASTBase(object):
@@ -337,11 +358,15 @@ class AliasedField(Field):
 
 
 class Expression(ASTBase):
+    pass
+
+
+class LiteralExpression(Expression):
     def __init__(self, value):
         self.value = value
 
     def __repr__(self):
-        return '<Expr value={}>'.format(self.value)
+        return '<LiteralExpression value={}>'.format(self.value)
 
     @classmethod
     def parse(cls, tokens):
@@ -375,37 +400,97 @@ class Expression(ASTBase):
         return str(value).lower() == 'true'
 
     @classmethod
-    def parse_null(cls, tokens):
+    def parse_null(cls):
         return [None]
 
 
-class AliasedExpression(Expression):
-    def __init__(self, value, alias):
-        self.alias = alias
+class CaseRule(ASTBase):
+    def __init__(self, condition, expression):
+        self.condition = condition
+        self.expression = expression
 
-        super(AliasedExpression, self).__init__(value)
+    @classmethod
+    def parse_when(cls, tokens):
+        if 'condition' not in tokens:
+            raise TokenException('malformed CaseExpression (expected condition)')
+        if 'expression' not in tokens:
+            raise TokenException('malformed CaseExpression (expected expression)')
+
+        condition = tokens.get('condition')
+        expression = tokens.get('expression')
+
+        return cls(condition, expression)
+
+    @classmethod
+    def parse_else(cls, tokens):
+        if 'expression' not in tokens:
+            raise TokenException('malformed CaseExpression (expected expression)')
+
+        expression = tokens.get('expression')
+
+        return cls(None, expression)
 
     def __repr__(self):
-        return '<Expr value={} alias=\'{}\'>'.format(self.value, self.alias)
+        return '<CaseRule condition={} expression={}>'.format(self.condition, self.expression)
+
+    def accept(self, visitor):
+        visitor.visit(self)
+
+        if self.condition:
+            self.condition.accept(visitor)
+        self.expression.accept(visitor)
+
+
+class CaseExpression(Expression):
+    def __init__(self, rules):
+        self.rules = rules
 
     @classmethod
     def parse(cls, tokens):
-        if 'value' not in tokens:
-            raise TokenException('malformed AliasedExpression (no value)')
+        if 'when' not in tokens:
+            raise TokenException('malformed CaseExpression (expected at least one condition)')
+
+        rules = tokens.get('when')[:]
+
+        if 'else' in tokens:
+            rules.append(tokens.get('else')[0])
+
+        return cls(rules)
+
+    def accept(self, visitor):
+        visitor.visit(self)
+
+        for r in self.rules:
+            r.accept(visitor)
+
+    def __repr__(self):
+        return '<CaseExpression rules={}>'.format(self.rules)
+
+
+class AliasedExpression(ASTBase):
+    def __init__(self, expression, alias):
+        self.expression = expression
+        self.alias = alias
+
+    def __repr__(self):
+        return '<AliasedExpression expression={} alias=\'{}\'>'.format(self.expression, self.alias)
+
+    @classmethod
+    def parse(cls, tokens):
+        if 'expression' not in tokens:
+            raise TokenException('malformed AliasedExpression (no expression)')
 
         if 'alias' not in tokens:
             raise TokenException('malformed AliasedExpression (no alias)')
 
-        value = tokens.get('value')
+        expression = tokens.get('expression')
 
-        if not isinstance(value, Expression):
-            raise TokenException('expected Expression, got {}'.format(type(value)))
-
-        value = value.value
+        if not isinstance(expression, Expression):
+            raise TokenException('expected Expression, got {}'.format(type(expression)))
 
         alias = tokens.get('alias')
 
-        return cls(value, alias)
+        return cls(expression, alias)
 
 
 class Function(ASTBase):
@@ -456,7 +541,7 @@ class AliasedFunction(Function):
         return cls(func.name, func.args, alias)
 
     def __repr__(self):
-        return '<Function name=\'{}\' args={} alias=\'{}\'>'.format(self.name, self.args or '', self.alias)
+        return '<AliasedFunction name=\'{}\' args={} alias=\'{}\'>'.format(self.name, self.args or '', self.alias)
 
 
 class DataSource(ASTBase):
@@ -696,6 +781,30 @@ class IsNullCondition(ASTBase):
         return '<IsNullCondition field={} invert={}>'.format(self.field, self.invert)
 
 
+class PredicateCondition(ASTBase):
+    def __init__(self, predicate, invert):
+        self.predicate = predicate
+        self.invert = invert
+
+    @classmethod
+    def parse(cls, tokens):
+        if 'predicate' not in tokens:
+            raise TokenException('malformed PredicateCondition (no predicate)')
+
+        invert = 'invert' in tokens
+        predicate = tokens.get('predicate')
+
+        return cls(predicate, invert)
+
+    def accept(self, visitor):
+        visitor.visit(self)
+
+        self.predicate.accept(visitor)
+
+    def __repr__(self):
+        return '<PredicateCondition predicate={}>'.format(self.predicate)
+
+
 class FilterListBase(ASTBase, Sequence):
     def __init__(self, conditions):
         self.conditions = conditions
@@ -786,9 +895,9 @@ class OrderBy(ASTBase):
             raise TokenException('malformed OrderByField (no field)')
 
         field = tokens.get('field')
-        dir = str(tokens.get('direction', 'asc')).lower()
+        direction = str(tokens.get('direction', 'asc')).lower()
 
-        if dir == 'desc':
+        if direction == 'desc':
             direction = OrderBy.Direction.descending
         else:
             direction = OrderBy.Direction.ascending
