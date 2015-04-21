@@ -76,7 +76,6 @@ module odh {
                 },
                 add: (item) => {
                     if (this.selected.items.indexOf(item) === -1) {
-                        console.log(item);
                         item.uniqueid = item.name;
                         item.uniqueidAlias = item.name;
                         this.selected.expression[item.uniqueid] = {};
@@ -84,11 +83,10 @@ module odh {
                         this.selected.expression[item.uniqueid].operation = this.joinOperations.none;
                         this.selected.fileGroups.push(item.parent);
                     }
-                }
-                ,
+                },
                 addRemove: (item) => {
                     var index = this.selected.items.indexOf(item);
-                    if (this.selected.items.indexOf(item) === -1) {
+                    if (index === -1) {
                         this.selected.add(item);
                     } else {
                         this.selected.remove(item);
@@ -126,8 +124,8 @@ module odh {
                 if (!document.$showRows) {
                     angular.forEach(filegroups, (fg) => {
                         angular.forEach(fg.preview, (preview) => {
-                            preview['cols'] = [];
-                            preview['parent'] = fg.id;
+                            preview.cols = [];
+                            preview.parent = fg.id;
                             angular.forEach(preview.columns, (col) => {
                                 preview.cols.push({name: col, alias: col, type: preview.types[col]});
                             });
@@ -220,10 +218,6 @@ module odh {
             editor.$blockScrolling = 'Infinity';
         }
 
-        public aceChanged(_editor) {
-
-        }
-
         public addField(col, group) {
             if (!this.manualEdit) {
                 this.selected.fields[group.uniqueid] = this.selected.fields[group.uniqueid] || [];
@@ -252,7 +246,6 @@ module odh {
             var defer = this.$http.get(this.UrlService.get('odhql'), {
                 params: {
                     query: this.transformation()
-                    //.replace(/(\r\n|\n|\r|\t)/gm, ' ')
                 }
             });
             if (noHandler) {
@@ -303,7 +296,6 @@ module odh {
             this.submitted = true;
             this.$scope.form.$setDirty();
             this.preview(true).catch(() => {
-                    //= true;
                     this.$scope.form.$setValidity('invalid', false);
                     this.$scope.form.odhqlinput.$setValidity('required', false);
 
