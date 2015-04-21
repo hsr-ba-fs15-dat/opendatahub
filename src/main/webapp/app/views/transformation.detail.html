@@ -1,3 +1,4 @@
+
 <div ng-controller="TransformationDetailController as vm">
     <form name="form" class="form" ng-submit="vm.submit()">
         <fieldset>
@@ -41,16 +42,13 @@
                 {{alert.msg}}
             </alert>
             <div class="form-group" ng-class="{'has-error': form.description.$invalid && vm.submitted}">
-                <label class="control-label" for="odhsqlinput">OdhQL Abfrage <i
-                        class="fa fa-question-circle"></i></label>
-
-                <textarea class="form-control" id="odhsqlinput" name="description"
-                          ng-model="vm.transformation" rows="10"
-                          ng-model-options="{ getterSetter: true }"
-                          placeholder="SELECT x FROM y WHERE z is 123;"
-                          required
-                        ></textarea>
-
+                <div ui-ace="{
+                useWrapMode : true,
+                showGutter: false,
+                theme:'twilight',
+                mode: 'sql',
+                firstLineNumber: 5
+                }" ng-model="vm.transformation"></div>
                 <div ng-messages="form.description.$error" ng-show="vm.submitted">
                     <span class="help-block">
                         <div ng-message="required">Bitte geben Sie die OdhQL Abfrage an.</div>

@@ -110,8 +110,7 @@ module odh {
             this.FileGroupService.getAll(document.id, true, count).then(filegroups => {
                 if (!document.$showRows) {
                     angular.forEach(filegroups, (fg) => {
-                        console.log(fg);
-                        fg.cols = [];
+                        fg['cols'] = [];
                         angular.forEach(fg.preview[0].columns, (col) => {
                             fg.cols.push({name: col, alias: col, type: fg.preview[0].types[col]});
                         });
@@ -126,8 +125,7 @@ module odh {
 
 
         public transformation(newInput:string = '') {
-            if (newInput) {
-                this.manualEdit = true;
+            if (newInput && this.manualEdit) {
                 this.odhqlInputString = newInput;
                 return newInput;
             }
@@ -138,8 +136,10 @@ module odh {
                 var unionStatements:string[];
                 unionStatements = [];
                 joinStatements = [];
+
                 this.selected.joinTargets = [];
-                angular.forEach(this.selected.expression, (value:IExpression, key) => {
+
+                angular.forEach(this.selected.expression, (value:IExpression, key:string) => {
                     if (!value.operation.operation) {
                         if (!master) {
                             fields = this.createFieldNames(this.selected.fields[key], key).concat(fields);
@@ -197,6 +197,14 @@ module odh {
             }
         }
 
+        public aceLoaded(_editor) {
+            _editor.$blockScrolling = 'Infinity';
+        }
+
+        public aceChanged(_editor) {
+
+        }
+
         public addField(col, group) {
             if (!this.manualEdit) {
                 this.selected.fields[group.uniqueid] = this.selected.fields[group.uniqueid] || [];
@@ -217,16 +225,22 @@ module odh {
             this.FileGroupService.getPreview(group, group.preview.count += 3);
         }
 
+        public toggleManualEdit() {
+            this.manualEdit = !this.manualEdit;
+        }
+
         public preview() {
             this.$http.get(this.UrlService.get('odhql'), {
                 params: {
                     query: this.transformation()
-                        .replace(/(\r\n|\n|\r|\t)/gm, ' ')
+                    //.replace(/(\r\n|\n|\r|\t)/gm, ' ')
                 }
             }).then((data:any) => {
                 this.columns = data.data.columns;
                 this.rows = data.data.data;
             }).catch((data:any) => {
+                //var range = new Range(rowStart, columnStart, rowEnd, columnEnd);
+                //var marker = editor.getSession().addMarker(range, "ace_selected_word", "text");
                 data = data.data.split('\n');
                 this.ToastService.failure(
                     'Es ist ein Fehler aufgetreten! (Fehlermeldung in der Konsole ersichtlich.) ' + data[1]);

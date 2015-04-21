@@ -1,6 +1,6 @@
 <div ng-controller="TransformationCreateController as vm">
 
-    <div loading-container="tableParams.settings().$loading">
+    <div loading-container="tableParams.settings().$loading" ng-hide="vm.manualEdit">
         <div class="row">
             <div class="col-md-6 inline-checkbox-fix">
                 <input id="name" name="name" type="text" placeholder="Suche"
@@ -125,7 +125,7 @@
                         ng-model="vm.selected.expression[vm.selected.items[$index].uniqueid].foreignKey">
                 </select>
             </label><br/>
-    </div>
+        </div>
     </div>
     <form name="form" class="form" ng-submit="vm.submit()">
         <fieldset>
@@ -168,21 +168,39 @@
                 <strong>{{alert.title}}</strong>
                 {{alert.msg}}
             </alert>
-            <div class="form-group" ng-class="{'has-error': form.description.$invalid && vm.submitted}">
-                <label class="control-label" for="odhqlinput">OdhQL Abfrage <i
-                        class="fa fa-question-circle"></i></label>
+            <div class="form-group container" ng-class="{'has-error': form.description.$invalid && vm.submitted}">
+                <div class="row">
+                    <label class="control-label col-sm-12" for="odhqlinput">OdhQL Abfrage
+                        <i class="fa fa-question-circle fa-1x"></i>
+                    <span class="fa-stack fa-md pull-right"
+                          ng-click="vm.toggleManualEdit()"
+                          popover="{{vm.manualEdit?'Achtung! Manuelle Änderungen werden zurückgesetzt!':''}}"
+                          popover-trigger="mouseenter"
+                          popover-placement="left">
+                         <i class="fa fa-pencil fa-stack-1x"></i>
+                         <i class="fa fa-ban fa-stack-2x fa-rotate-90 text-danger" ng-hide="vm.manualEdit"></i>
+                    </span>
+                    </label>
+                </div>
 
-                <textarea class="form-control" id="odhqlinput" name="description"
-                          ng-model="vm.transformation" rows="10"
-                          ng-model-options="{ getterSetter: true }"
-                          placeholder="SELECT x FROM y WHERE z is 123;"
-                          required
-                        ></textarea>
+                <div class="row">
+                    <div class="col-sm-12" id="odhqlinput" ui-ace="{
+                useWrapMode : true,
+                showGutter: false,
+                theme:'twilight',
+                mode: 'sql',
+                firstLineNumber: 5,
+                onLoad: vm.aceLoaded,
+                onChange: vm.aceChanged
+                }" ng-model="vm.transformation" ng-model-options="{ getterSetter: true }"></div>
+                </div>
+                <div class="row">
 
-                <div ng-messages="form.description.$error" ng-show="vm.submitted">
+                    <div class="col-md-12" ng-messages="form.description.$error" ng-show="vm.submitted">
                     <span class="help-block">
                         <div ng-message="required">Bitte geben Sie die OdhQL Abfrage an.</div>
                     </span>
+                    </div>
                 </div>
 
             </div>
@@ -227,6 +245,7 @@
                     </tr>
                     </tbody>
                 </table>
+                {{vm.rows}}
             </div>
         </div>
     </form>

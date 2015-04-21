@@ -49,6 +49,9 @@ module.exports = function(config) {
       'bower_components/angular-ui-grid/ui-grid.js',
       'bower_components/angular-truncate/src/truncate.js',
       'bower_components/ng-table/dist/ng-table.min.js',
+        'bower_components/ace-builds/src-noconflict/ace.js',
+        'bower_components/ace-builds/src-noconflict/mode-javascript.js',
+        'bower_components/angular-ui-ace/ui-ace.js',
       'bower_components/angular-mocks/angular-mocks.js',
       // endbower
       // injector:js
