@@ -1,5 +1,15 @@
 <div ng-controller="TransformationCreateController as vm">
-
+    <div id="well">
+        <h2>Informationen:</h2>
+        <ul>
+            <li>Die Tabellen müssen zuerst mit dem Assisstenten hinzugefügt werden, bevor diese im Snippet verwendet
+                werden können.
+            </li>
+            <li>Sobald der manuelle Bearbeitungsmodus aktiviert ist, <strong>können keine Tabellen mehr hinzugefügt
+                werden</strong> ohne dass die Änderungen verloren gehen.
+            </li>
+        </ul>
+    </div>
     <div loading-container="tableParams.settings().$loading" ng-hide="vm.manualEdit">
         <div class="row">
             <div class="col-md-6 inline-checkbox-fix">
@@ -143,15 +153,16 @@
     </div>
     <form name="form" class="form" ng-submit="vm.submit()">
         <fieldset>
-            <div class="form-group" ng-class="{'has-error': form.name.$invalid && vm.submitted}">
-                <label for="name">Name/Titel</label>
+            <div class="form-group" ng-class="{'has-error': form.TransformationName.$invalid && vm.submitted}">
+                <label for="TransformationName">Name/Titel</label>
 
-                <input id="name" name="name" type="text" placeholder="Name der Transformation"
+                <input id="TransformationName" name="TransformationName" type="text"
+                       placeholder="Name der Transformation"
                        class="form-control"
                        ng-model="vm.name"
                        required>
 
-                <div ng-messages="form.name.$error" ng-show="form.name.submitted">
+                <div ng-messages="form.TransformationName.$error" ng-show="vm.submitted">
                     <span class="help-block">
                         <div ng-message="required">Bitte geben Sie einen Namen an</div>
                     </span>
@@ -182,10 +193,11 @@
                 <strong>{{alert.title}}</strong>
                 {{alert.msg}}
             </alert>
-            <div class="form-group container" ng-class="{'has-error': form.description.$invalid && vm.submitted}">
+            <div class="form-group container" ng-class="{'has-error': form.odhqlinput.$invalid && vm.submitted}">
                 <div class="row">
                     <label class="control-label col-sm-12" for="odhqlinput">OdhQL Abfrage
                         <i class="fa fa-question-circle fa-1x"></i>
+
                     <span class="fa-stack fa-md pull-right"
                           ng-click="vm.toggleManualEdit()"
                           popover="{{vm.manualEdit?'Achtung! Manuelle Änderungen werden zurückgesetzt!':''}}"
@@ -195,10 +207,14 @@
                          <i class="fa fa-ban fa-stack-2x fa-rotate-90 text-danger" ng-hide="vm.manualEdit"></i>
                     </span>
                     </label>
+                    <label class="control-label" for="useQuotes">
+                        <input id=useQuotes" type="checkbox" ng-model="vm.useQuotes"/>
+                        Hochkommas verwenden.
+                    </label>
                 </div>
 
                 <div class="row">
-                    <div class="col-sm-12" id="odhqlinput" ui-ace="{
+                    <div id="odhqlinput" class="col-sm-12" ui-ace="{
                 useWrapMode : true,
                 showGutter: false,
                 theme:'twilight',
@@ -208,11 +224,17 @@
                 onChange: vm.aceChanged
                 }" ng-model="vm.transformation" ng-model-options="{ getterSetter: true }"></div>
                 </div>
+                <textarea ng-model="vm.transformation" ng-model-options="{ getterSetter: true }"
+                          class="form-control" id="description" name="odhqlinput">
+
+                </textarea>
+
                 <div class="row">
 
-                    <div class="col-md-12" ng-messages="form.description.$error" ng-show="vm.submitted">
+                    <div class="col-md-12" ng-messages="form.odhqlinput.$error" ng-show="vm.submitted">
                     <span class="help-block">
-                        <div ng-message="required">Bitte geben Sie die OdhQL Abfrage an.</div>
+                        <div ng-message="required">Bitte geben Sie eine gültige OdhQL Abfrage vor dem Speichern an.
+                        </div>
                     </span>
                     </div>
                 </div>
@@ -259,7 +281,6 @@
                     </tr>
                     </tbody>
                 </table>
-                {{vm.rows}}
             </div>
         </div>
     </form>

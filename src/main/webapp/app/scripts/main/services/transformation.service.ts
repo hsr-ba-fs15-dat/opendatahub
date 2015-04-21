@@ -25,7 +25,7 @@ module odh.main {
         }
 
         public post(transformation:ITransformation) {
-            this.transformations.post(transformation);
+            return this.transformations.post(transformation);
         }
 
         public get(transformationId:number) {

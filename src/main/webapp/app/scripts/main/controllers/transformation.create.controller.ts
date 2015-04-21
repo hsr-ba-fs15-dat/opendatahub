@@ -26,6 +26,7 @@ module odh {
         public selected;
         public manualEdit:boolean = false;
         public count:number = 3;
+        public useQuotes:boolean = true;
         public joinOperations:{
             none: {}
             union: {}
@@ -58,6 +59,7 @@ module odh {
             });
 
             this.selected = {
+                fileGroups: [],
                 items: [],
                 fields: {},
                 expression: {},
@@ -70,10 +72,8 @@ module odh {
                     }
                     delete this.selected.fields[item.uniqueid];
                     delete this.selected.expression[item.uniqueid];
-                    console.log(this.selected.expression);
-                }
-
-                ,
+                    this.selected.fileGroups.splice(this.selected.fileGroups.indexOf(item.parent), 1);
+                },
                 add: (item) => {
                     if (this.selected.items.indexOf(item) === -1) {
                         item.uniqueid = item.name;
@@ -81,12 +81,12 @@ module odh {
                         this.selected.expression[item.uniqueid] = {};
                         this.selected.items.push(item);
                         this.selected.expression[item.uniqueid].operation = this.joinOperations.none;
+                        this.selected.fileGroups.push(item.parent);
                     }
-                }
-                ,
+                },
                 addRemove: (item) => {
                     var index = this.selected.items.indexOf(item);
-                    if (this.selected.items.indexOf(item) === -1) {
+                    if (index === -1) {
                         this.selected.add(item);
                     } else {
                         this.selected.remove(item);
@@ -124,9 +124,10 @@ module odh {
                 if (!document.$showRows) {
                     angular.forEach(filegroups, (fg) => {
                         angular.forEach(fg.preview, (preview) => {
-                            preview['cols'] = [];
+                            preview.cols = [];
+                            preview.parent = fg.id;
                             angular.forEach(preview.columns, (col) => {
-                                preview.cols.push({name: col, alias: col, type: fg.preview[0].types[col]});
+                                preview.cols.push({name: col, alias: col, type: preview.types[col]});
                             });
                         });
                     });
@@ -175,11 +176,10 @@ module odh {
                         this.selected.joinTargets.push(this.selected.getItem(key));
 
                         if (value.foreignKey) {
-                            fields = this.createFieldNames(this.selected.fields[key], key)
-                                .concat(fields);
+                            fields = this.createFieldNames(this.selected.fields[key], key).concat(fields);
                             joinStatements.push(
                                 ' JOIN '.concat(
-                                    key,
+                                    this.quote(key),
                                     ' on ',
                                     this.createFieldNames([value.foreignKey], value.joinTable.uniqueid, true)[0],
                                     ' = ',
@@ -195,9 +195,9 @@ module odh {
                 if (master && fields) {
                     this.odhqlInputString = 'SELECT '.concat(
                         fields.join(',\n'),
-                        ' \nFROM "',
-                        master,
-                        '" \n',
+                        ' \nFROM ',
+                        this.quote(master),
+                        ' \n',
                         joinStatements.join(' \n '),
                         unionStatements.join(' \n')
                     );
@@ -216,10 +216,6 @@ module odh {
 
         public aceLoaded(editor) {
             editor.$blockScrolling = 'Infinity';
-        }
-
-        public aceChanged(_editor) {
-
         }
 
         public addField(col, group) {
@@ -246,13 +242,16 @@ module odh {
             this.manualEdit = !this.manualEdit;
         }
 
-        public preview() {
-            this.$http.get(this.UrlService.get('odhql'), {
+        public preview(noHandler:boolean = false) {
+            var defer = this.$http.get(this.UrlService.get('odhql'), {
                 params: {
                     query: this.transformation()
-                    //.replace(/(\r\n|\n|\r|\t)/gm, ' ')
                 }
-            }).then((data:any) => {
+            });
+            if (noHandler) {
+                return defer;
+            }
+            defer.then((data:any) => {
                 this.columns = data.data.columns;
                 this.rows = data.data.data;
             }).catch((data:any) => {
@@ -296,6 +295,12 @@ module odh {
         public submit() {
             this.submitted = true;
             this.$scope.form.$setDirty();
+            this.preview(true).catch(() => {
+                    this.$scope.form.$setValidity('invalid', false);
+                    this.$scope.form.odhqlinput.$setValidity('required', false);
+
+                }
+            );
             if (this.$scope.form.$invalid) {
                 return;
             }
@@ -305,22 +310,31 @@ module odh {
                 description: this.description,
                 transformation: this.odhqlInputString,
                 'private': this.isPrivate(),
-                file_groups: this.selected.items
+                file_groups: this.selected.fileGroups
             };
             console.log('posted', transformation);
-            this.TransformationService.post(transformation);
-
+            var value = this.TransformationService.post(transformation);
+            console.log(value);
 
         }
 
         private createFieldNames(fields:IField[], group:string, doNotCheckAlias:boolean = false):string[] {
             var newFields = [];
             angular.forEach(fields, (field) => {
-                newFields.push([group, (field.name === field.alias || doNotCheckAlias)
-                    ? field.name : [field.name, field.alias].join(' AS ')]
-                    .join('.'));
+                newFields.push(
+                    [this.quote(group), (field.name === field.alias || doNotCheckAlias)
+                        ? this.quote(field.name) : [this.quote(field.name), this.quote(field.alias)].join(' AS ')]
+                        .join('.'));
             });
             return newFields;
+        }
+
+        private quote(field:string) {
+            if (this.useQuotes) {
+
+                return '"' + field + '"';
+            }
+            return field;
         }
 
     }
