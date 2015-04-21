@@ -1,5 +1,3 @@
-import collections
-
 import re
 from rest_framework import viewsets
 from rest_framework.decorators import detail_route
@@ -7,14 +5,11 @@ from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from django.db.models import Q
 from django.db import transaction
-import os
 
 from hub.serializers import DocumentSerializer, FileGroupSerializer
+
 from hub.models import DocumentModel, FileGroupModel
-
-from hub.structures.file import File
 from authentication.permissions import IsOwnerOrPublic, IsOwnerOrReadOnly
-
 from hub.utils.upload import UploadHandler
 
 
@@ -35,14 +30,13 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
         try:
             with transaction.atomic():
-                doc = UploadHandler().handleUpload(request)
+                doc = UploadHandler().handle_upload(request)
 
             serializer = DocumentSerializer(DocumentModel.objects.get(id=doc.id), context={'request': request})
 
             return Response(serializer.data)
         except:
             raise  # ValidationError(detail='error handling input')
-
 
     def str2bool(self, v):
         if v.lower() in ('true', 'false'):

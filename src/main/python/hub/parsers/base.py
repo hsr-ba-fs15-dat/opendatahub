@@ -5,6 +5,7 @@
 
 import logging
 import collections
+import traceback
 
 import pandas
 import geopandas
@@ -14,7 +15,6 @@ import types
 from opendatahub.utils.plugins import RegistrationMixin
 from hub import formats
 from hub.utils import ogr2ogr
-import traceback
 
 
 class NoParserException(Exception):
@@ -74,7 +74,8 @@ class ExcelParser(Parser):
 
 
 class OGRParser(Parser):
-    accepts = formats.GML, formats.GeoJSON, formats.KML, formats.Shapefile, formats.INTERLIS1,  # formats.INTERLIS2
+    accepts = formats.GML, formats.GeoJSON, formats.KML, formats.Shapefile, formats.INTERLIS1, formats.WFS
+    # formats.INTERLIS2
 
     @classmethod
     def parse(cls, file, format, *args, **kwargs):

@@ -8,6 +8,7 @@ from hub.views.document import DocumentViewSet
 from hub.views.file_group import FileGroupViewSet
 from hub.views.file import FileViewSet
 from hub.views.format import FormatView
+from hub.views.url import UrlViewSet
 from opendatahub.views import ConfigView
 from hub.views.odhql import AdHocOdhQLView
 
@@ -16,6 +17,7 @@ router = routers.DefaultRouter(trailing_slash=True)
 router.register(r'document', DocumentViewSet)
 router.register(r'fileGroup', FileGroupViewSet)
 router.register(r'file', FileViewSet)
+router.register(r'url', UrlViewSet)
 router.register(r'format', FormatView, 'format')
 router.register(r'config', ConfigView, 'config')
 

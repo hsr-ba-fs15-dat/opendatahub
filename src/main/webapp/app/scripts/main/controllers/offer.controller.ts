@@ -13,15 +13,24 @@ module odh {
         public params:any = {};
         public progress = 0;
         public submitted:boolean = false;
-        public fields:{}[];
+        public field:any;
+
+        public refreshChoices = [
+            {name: '5 Minuten', value: 300},
+            {name: '30 Minuten', value: 1800},
+            {name: '1 Stunde', value: 3600},
+            {name: '6 Stunden', value: 21600},
+            {name: '1 Tag', value: 86400}
+        ];
 
         private fieldsByType = {
-            online: [
-                {id: 'url', placeholder: 'http://', label: 'Adresse'}
-            ],
-            file: [
-                {id: 'file', label: 'Wählen oder ziehen Sie Ihre Dateien', type: 'file'}
-            ]
+            online: {
+                id: {url: 'url', refresh: 'url.refresh'},
+                placeholder: {url: 'http://'},
+                label: {url: 'Adresse', refresh: 'Abfrage-Intervall'},
+                defaults: {refresh: 3600}
+            },
+            file: {id: 'file', label: 'Wählen oder ziehen Sie Ihre Dateien', type: 'file'}
         };
 
         constructor(private $http:ng.IHttpService, private $state:ng.ui.IStateService, private $scope:any,
@@ -31,7 +40,13 @@ module odh {
         }
 
         public switchDataSource() {
-            this.fields = this.fieldsByType[this.dataSource];
+            this.field = this.fieldsByType[this.dataSource];
+
+            for (var prop in this.field.defaults) {
+                if (this.field.defaults.hasOwnProperty(prop)) {
+                    this.params[prop] = this.field.defaults[prop];
+                }
+            }
         }
 
         public cancel() {
@@ -41,9 +56,10 @@ module odh {
         public submit() {
             // todo restangular or ngresource
             // todo move to service
-            // todo redirect to newly created doc "detail view"
+
             this.submitted = true;
             this.$scope.form.$setDirty();
+
             if (this.$scope.form.$invalid) {
                 return;
             }
@@ -66,7 +82,8 @@ module odh {
                 promise = this.$http.post(url, {
                     name: this.name,
                     description: this.description,
-                    url: this.params.url
+                    url: this.params.url,
+                    refresh: this.params.refresh
                 });
             }
 

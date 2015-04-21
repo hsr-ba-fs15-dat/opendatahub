@@ -37,7 +37,7 @@ class FileGroup(object):
 
     def get_by_name(self, name):
         try:
-            return next((f for f in self.files if f.name == name))
+            return next(f for f in self.files if f.name == name)
         except StopIteration:
             return None
 
@@ -45,7 +45,10 @@ class FileGroup(object):
         return [f for f in self.files if f.extension == extension]
 
     def get_main_file(self):
-        return next(ifilter(lambda f: not issubclass(f.get_format(), formats.Other), self.files))
+        try:
+            return next(f for f in self.files if not issubclass(f.get_format(), formats.Other))
+        except StopIteration:
+            return None
 
     @property
     def names(self):
@@ -61,8 +64,7 @@ class FileGroup(object):
         try:
             temp_dir = tempfile.mkdtemp()
             for f in self.files:
-                with open(os.path.join(temp_dir, f.name), 'wb') as temp_f:
-                    temp_f.write(f.stream.getvalue())
+                f.write_to(temp_dir)
             yield temp_dir
         finally:
             if temp_dir:
@@ -151,6 +153,10 @@ class File(object):
     def ustream(self):
         return codecs.StreamReaderWriter(self.stream, self.CODEC.streamreader, self.CODEC.streamwriter)
 
+    def write_to(self, dir):
+        with open(os.path.join(dir, self.name), 'wb') as temp_f:
+            temp_f.write(self.stream.getvalue())
+
     def get_format(self):
         if not self.format:
             self.format = formats.identify(self)
@@ -171,7 +177,7 @@ class File(object):
 
             if self.df is None:
                 from hub import parsers
-                format = formats.identify(self)
+                format = self.format or formats.identify(self)
                 if not format:
                     return None
                 self.df = parsers.parse(self, format)
@@ -201,3 +207,13 @@ class File(object):
 
     def __repr__(self):
         return 'File({})'.format(self.name)
+
+
+class WfsUrl(File):
+    def __init__(self, name, url, *args, **kwargs):
+        super(WfsUrl, self).__init__(name, None, format=formats.WFS, *args, **kwargs)
+
+        self.url = url
+
+    def write_to(self, dir):
+        pass

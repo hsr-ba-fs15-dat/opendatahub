@@ -69,14 +69,17 @@ class UrlModel(models.Model):
     """
     file_group = models.ForeignKey(FileGroupModel, related_name='urls')
 
-    name = models.CharField(max_length=255)
-    description = models.TextField()
-
     source_url = models.URLField()
-    refresh_after = models.IntegerField(default=24*60*60) # seconds
+    refresh_after = models.IntegerField(default=24 * 60 * 60)  # seconds
     type = models.CharField(max_length=10)
 
     def to_file(self, file_group=None):
-        data = UrlHelper().fetchUrl(self)
+        from hub.formats.base import WFS
+        from hub.structures.file import WfsUrl
 
-        return File.from_string(self.name, data, file_group=file_group)
+        if self.type == 'wfs':
+            return WfsUrl('url%d' % self.id, self.source_url, file_group=file_group)
+        else:
+            name, data = UrlHelper().fetch_url(self)
+
+            return File.from_string(name, data, file_group=file_group, format=WFS if type == 'wfs' else None)

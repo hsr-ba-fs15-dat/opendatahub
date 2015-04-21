@@ -42,10 +42,10 @@ class FileGroupViewSet(viewsets.ModelViewSet):
         try:
             result_list = group.to_format(format_name)
 
-            assert isinstance(result_list, types.ListType)
-
             if not result_list:
                 return HttpResponseServerError(reason='Transformation failed: no result')
+
+            assert isinstance(result_list, types.ListType)
 
             if request.is_ajax():
                 return JsonResponse({})  # just signal that it can be downloaded (200)
@@ -67,9 +67,9 @@ class FileGroupViewSet(viewsets.ModelViewSet):
             response.flush()
 
             return response
-        except:
-            raise
-            return HttpResponseServerError(reason='Transformation failed: no result')
+        except Exception as e:
+            logging.warn(traceback.format_exc())
+            return JsonResponse({'error': e.message, 'error_location': 'data'})
 
     @detail_route()
     def preview(self, request, pk):
@@ -80,6 +80,10 @@ class FileGroupViewSet(viewsets.ModelViewSet):
         try:
             model = FileGroupModel.objects.get(id=pk)
             dfs = model.to_file_group().to_df()
+
+            if not dfs:
+                return HttpResponseServerError(reason='Preview failed: Failed to parse data')
+
             data = [DataFrameUtils.to_json_dict(df, start, limit) for df in dfs]
             return HttpResponse(content=json.dumps(data), content_type='application/json')
         except Exception as e:

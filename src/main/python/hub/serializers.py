@@ -1,8 +1,8 @@
 from rest_framework import serializers
 from rest_framework.pagination import PaginationSerializer
-from authentication.serializers import UserSerializer
 
-from hub.models import DocumentModel, FileGroupModel, FileModel
+from authentication.serializers import UserSerializer
+from hub.models import DocumentModel, FileGroupModel, FileModel, UrlModel
 
 
 class DocumentSerializer(serializers.HyperlinkedModelSerializer):
@@ -20,9 +20,18 @@ class FileSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('id', 'url', 'file_name', 'file_group')
 
 
+class UrlSerializer(serializers.HyperlinkedModelSerializer):
+    source_url = serializers.URLField()
+
+    class Meta(object):
+        model = UrlModel
+        fields = ('id', 'url', 'source_url', 'refresh_after', 'type', 'file_group')
+
+
 class FileGroupSerializer(serializers.HyperlinkedModelSerializer):
     file_format = serializers.CharField(source='format')
     files = FileSerializer(many=True, read_only=True)
+    urls = UrlSerializer(many=True, read_only=True)
 
     document = DocumentSerializer(read_only=True)
 
@@ -32,7 +41,7 @@ class FileGroupSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta(object):
         model = FileGroupModel
-        fields = ('id', 'url', 'file_format', 'document', 'files', 'data', 'preview')
+        fields = ('id', 'url', 'file_format', 'document', 'files', 'urls', 'data', 'preview')
         depth = 1
 
 

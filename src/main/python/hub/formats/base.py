@@ -181,6 +181,17 @@ class GeoJSON(Format):
             file.extension == 'json' and '"geometry"' in file)  # todo figure out a better way
 
 
+class WFS(Format):
+    label = 'WFS'
+    description = """
+    Web Feature Service ist ein Web Service-Protokoll fúr Geo-Daten.
+    """
+
+    @classmethod
+    def is_format(self, file, *args, **kwargs):
+        return False
+
+
 class Other(Format):
     label = 'Original'
 

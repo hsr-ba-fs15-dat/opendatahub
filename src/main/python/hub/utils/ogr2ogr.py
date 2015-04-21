@@ -3,7 +3,6 @@ ogr2ogr (GDAL) command line interface wrapper
 Requires ogr2ogr to be installed (e.g. sudo apt-get install gdal-bin)
 """
 from functools import partial
-
 import subprocess
 import collections
 import shutil
@@ -12,7 +11,7 @@ import logging
 import os
 import types
 
-from hub.structures.file import FileGroup
+from hub.structures.file import FileGroup, WfsUrl
 
 
 class Ogr2OgrException(Exception):
@@ -31,6 +30,9 @@ class OgrFormat(object):
 
     @classmethod
     def get_format(cls, file_group):
+        if len(file_group.files) == 1 and isinstance(file_group[0], WfsUrl):
+            return WFS
+
         for format in cls.formats:
             if any([len(file_group.get_by_extension(ext)) > 0 for ext in format.extension]):
                 return format
@@ -46,6 +48,8 @@ SHP = OgrFormat('shp', 'ESRI Shapefile', False)
 CSV = OgrFormat('csv', 'CSV', False)
 GEO_JSON = OgrFormat('json', 'GeoJSON', False)
 KML = OgrFormat('kml', 'KML', False)
+
+WFS = OgrFormat('wfs', 'WFS', False)
 
 INTERLIS_1 = OgrFormat(['itf', 'ili', 'imd'], 'Interlis 1', True)
 
@@ -63,10 +67,6 @@ def ogr2ogr(file_group, to_type):
     assert (isinstance(file_group, FileGroup))
 
     from_format = OgrFormat.get_format(file_group)
-    files_by_extension = (file for ext in from_format.extension
-                          for file in file_group.get_by_extension(ext))
-
-    main_file = next(files_by_extension)
 
     if from_format == to_type:
         return [file_group]
@@ -74,14 +74,22 @@ def ogr2ogr(file_group, to_type):
     with file_group.on_filesystem() as temp_dir:
         path = os.path.join(temp_dir, 'out')
 
-        if from_format and from_format.list_all:
-
-            files = sorted([os.path.join(temp_dir, f.name) for f in file_group],
-                           partial(sort_by_extension_index, from_format))
-
-            _ogr2ogr_cli(['-f', to_type.identifier, path, ','.join(files)])
+        if from_format is WFS:
+            _ogr2ogr_cli(['-f', to_type.identifier, path, 'WFS:{}'.format(file_group[0].url)])
         else:
-            _ogr2ogr_cli(['-f', to_type.identifier, path, os.path.join(temp_dir, main_file.name)])
+            files_by_extension = (file for ext in from_format.extension
+                                  for file in file_group.get_by_extension(ext))
+
+            main_file = next(files_by_extension)
+
+            if from_format and from_format.list_all:
+
+                files = sorted([os.path.join(temp_dir, f.name) for f in file_group],
+                               partial(sort_by_extension_index, from_format))
+
+                _ogr2ogr_cli(['-f', to_type.identifier, path, ','.join(files)])
+            else:
+                _ogr2ogr_cli(['-f', to_type.identifier, path, os.path.join(temp_dir, main_file.name)])
 
         files = []
         if os.path.isdir(path):
@@ -91,7 +99,7 @@ def ogr2ogr(file_group, to_type):
                 if os.path.splitext(filename)[0] == 'out':
                     ext = to_type.extension[0] if filename == 'out' else os.path.splitext(filename)[1]
 
-                    files.append(os.path.join(temp_dir, '{}.{}'.format(main_file.basename, ext)))
+                    files.append(os.path.join(temp_dir, '{}.{}'.format(main_file.basename if main_file else 'out', ext)))
                     shutil.move(os.path.join(temp_dir, filename), files[-1])
 
         groups = collections.defaultdict(list)
