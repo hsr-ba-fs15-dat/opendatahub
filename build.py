@@ -119,7 +119,7 @@ def grunt(project, logger):
 @task
 @depends('prepare')
 def django_test(project, logger):
-    django_exec(project, logger, ['test'] + project.get_property('django_apps'), fail_stderr=False)
+    django_exec(project, logger, ['test', '--noinput', '--failfast'] + project.get_property('django_apps'), fail_stderr=False)
 
 
 @task
