@@ -12,18 +12,21 @@ class TestParser(TestBase):
         fields = (f for f in result.fields)
 
         field = next(fields)
-        self.assertIsInstance(field, odhql.AliasedField)
-        self.assertEqual('a', field.name)
+        self.assertIsInstance(field, odhql.AliasedExpression)
+        self.assertIsInstance(field.expression, odhql.Field)
+        self.assertEqual('a', field.expression.name)
         self.assertEqual('a', field.alias)
 
         field = next(fields)
-        self.assertIsInstance(field, odhql.AliasedField)
-        self.assertEqual('b', field.name)
+        self.assertIsInstance(field, odhql.AliasedExpression)
+        self.assertIsInstance(field.expression, odhql.Field)
+        self.assertEqual('b', field.expression.name)
         self.assertEqual('b', field.alias)
 
         field = next(fields)
-        self.assertIsInstance(field, odhql.AliasedField)
-        self.assertEqual('c', field.name)
+        self.assertIsInstance(field, odhql.AliasedExpression)
+        self.assertIsInstance(field.expression, odhql.Field)
+        self.assertEqual('c', field.expression.name)
         self.assertEqual('d', field.alias)
 
     def test_expressions(self):
@@ -94,59 +97,69 @@ class TestParser(TestBase):
         fields = (f for f in result.fields)
 
         field = next(fields)
-        self.assertIsInstance(field, odhql.AliasedFunction)
-        self.assertEqual('nullary', field.name)
+        self.assertIsInstance(field, odhql.AliasedExpression)
+        self.assertIsInstance(field.expression, odhql.Function)
+        func = field.expression
+        self.assertEqual('nullary', func.name)
         self.assertEqual('first', field.alias)
-        self.assertIsInstance(field.args, types.ListType)
-        self.assertEqual(0, len(field.args))
+        self.assertIsInstance(func.args, types.ListType)
+        self.assertEqual(0, len(func.args))
 
         field = next(fields)
-        self.assertIsInstance(field, odhql.AliasedFunction)
-        self.assertEqual('unary_str', field.name)
+        self.assertIsInstance(field, odhql.AliasedExpression)
+        self.assertIsInstance(field.expression, odhql.Function)
+        func = field.expression
+        self.assertEqual('unary_str', func.name)
         self.assertEqual('second', field.alias)
-        self.assertIsInstance(field.args, types.ListType)
-        self.assertIsInstance(field.args[0], odhql.LiteralExpression)
-        self.assertEqual('a', field.args[0].value)
+        self.assertIsInstance(func.args, types.ListType)
+        self.assertIsInstance(func.args[0], odhql.LiteralExpression)
+        self.assertEqual('a', func.args[0].value)
 
         field = next(fields)
-        self.assertIsInstance(field, odhql.AliasedFunction)
-        self.assertEqual('unary_num', field.name)
+        self.assertIsInstance(field, odhql.AliasedExpression)
+        self.assertIsInstance(field.expression, odhql.Function)
+        func = field.expression
+        self.assertEqual('unary_num', func.name)
         self.assertEqual('third', field.alias)
-        self.assertIsInstance(field.args, types.ListType)
-        self.assertIsInstance(field.args[0], odhql.LiteralExpression)
-        self.assertEqual(3.14, field.args[0].value)
+        self.assertIsInstance(func.args, types.ListType)
+        self.assertIsInstance(func.args[0], odhql.LiteralExpression)
+        self.assertEqual(3.14, func.args[0].value)
 
         field = next(fields)
-        self.assertIsInstance(field, odhql.AliasedFunction)
-        self.assertEqual('binary', field.name)
+        self.assertIsInstance(field, odhql.AliasedExpression)
+        self.assertIsInstance(field.expression, odhql.Function)
+        func = field.expression
+        self.assertEqual('binary', func.name)
         self.assertEqual('fourth', field.alias)
-        self.assertIsInstance(field.args, types.ListType)
-        self.assertIsInstance(field.args[0], odhql.LiteralExpression)
-        self.assertEqual('one', field.args[0].value)
-        self.assertIsInstance(field.args[1], odhql.LiteralExpression)
-        self.assertEqual(2, field.args[1].value)
+        self.assertIsInstance(func.args, types.ListType)
+        self.assertIsInstance(func.args[0], odhql.LiteralExpression)
+        self.assertEqual('one', func.args[0].value)
+        self.assertIsInstance(func.args[1], odhql.LiteralExpression)
+        self.assertEqual(2, func.args[1].value)
 
         field = next(fields)
-        self.assertIsInstance(field, odhql.AliasedFunction)
-        self.assertEqual('unary_field', field.name)
+        self.assertIsInstance(field, odhql.AliasedExpression)
+        self.assertIsInstance(field.expression, odhql.Function)
+        func = field.expression
+        self.assertEqual('unary_field', func.name)
         self.assertEqual('fifth', field.alias)
-        self.assertIsInstance(field.args, types.ListType)
-        self.assertIsInstance(field.args[0], odhql.Field)
-        self.assertEqual('one', field.args[0].name)
-        self.assertEqual('test', field.args[0].prefix)
+        self.assertIsInstance(func.args, types.ListType)
+        self.assertIsInstance(func.args[0], odhql.Field)
+        self.assertEqual('one', func.args[0].name)
+        self.assertEqual('test', func.args[0].prefix)
 
     def test_nested_function_call(self):
         p = odhql.OdhQLParser()
         result = p.parse('select outer(inner(t.some_field)) as func from test as t')
 
         outer = result.fields[0]
-        self.assertIsInstance(outer, odhql.AliasedFunction)
-        self.assertEqual('outer', outer.name)
+        self.assertIsInstance(outer, odhql.AliasedExpression)
+        self.assertEqual('outer', outer.expression.name)
         self.assertEqual('func', outer.alias)
 
-        self.assertEqual(1, len(outer.args))
+        self.assertEqual(1, len(outer.expression.args))
 
-        inner = outer.args[0]
+        inner = outer.expression.args[0]
         self.assertIsInstance(inner, odhql.Function)
         self.assertEqual('inner', inner.name)
 
@@ -367,7 +380,8 @@ class TestParser(TestBase):
         fields = (f for f in result.fields)
 
         field = next(fields)
-        self.assertIsInstance(field, odhql.Field)
+        self.assertIsInstance(field, odhql.AliasedExpression)
+        self.assertIsInstance(field.expression, odhql.Field)
 
         field = next(fields)
         self.assertIsInstance(field, odhql.AliasedExpression)
