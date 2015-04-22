@@ -3,6 +3,7 @@ Misc. functions/utils
 """
 
 import pandas as pd
+from hub.odhql.exceptions import OdhQLExecutionException
 
 from hub.structures.frame import OdhType
 
@@ -34,3 +35,17 @@ class Cast(VectorizedFunction):
         self.assert_in('type', type_.upper(), OdhType.by_name.keys())
         odh_type = OdhType.by_name[type_]
         return values.astype(odh_type.ptypes[0])
+
+
+class ToDate(VectorizedFunction):
+    name = 'TO_DATE'
+
+    def apply(self, values, **kwargs):
+        try:
+            if values.odh_type is OdhType.INTEGER or values.odh_type is OdhType.BIGINT:
+                return pd.to_datetime(values, unit='s')
+
+            format = kwargs.get('format', None)
+            return pd.to_datetime(values, format=format)
+        except:
+            raise OdhQLExecutionException('date conversion failed')
