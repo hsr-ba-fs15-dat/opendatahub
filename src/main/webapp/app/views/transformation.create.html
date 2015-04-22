@@ -197,7 +197,8 @@
                 <div class="row">
                     <label class="control-label col-sm-12" for="odhqlinput">OdhQL Abfrage
                         <i class="fa fa-question-circle fa-1x"></i>
-
+                        <i class="fa fa-eye fa-1x" ng-show="vm.isPrivate()"
+                           popover="Diese Transformation wird Privat"></i>
                     <span class="fa-stack fa-md pull-right"
                           ng-click="vm.toggleManualEdit()"
                           popover="{{vm.manualEdit?'Achtung! Manuelle Änderungen werden zurückgesetzt!':''}}"
@@ -214,7 +215,7 @@
                 </div>
 
                 <div class="row">
-                    <div id="odhqlinput" class="col-sm-12" ui-ace="{
+                    <div id="odhqlinput" name="odhqlinput" class="col-sm-12" ui-ace="{
                 useWrapMode : true,
                 showGutter: false,
                 theme:'twilight',
@@ -224,8 +225,8 @@
                 onChange: vm.aceChanged
                 }" ng-model="vm.transformation" ng-model-options="{ getterSetter: true }"></div>
                 </div>
-                <textarea ng-model="vm.transformation" ng-model-options="{ getterSetter: true }"
-                          class="form-control" id="description" name="odhqlinput">
+                <textarea disabled ng-model="vm.transformation" ng-model-options="{ getterSetter: true }"
+                          class="form-control" id="odhqlinputText" name="odhqlinput">
 
                 </textarea>
 

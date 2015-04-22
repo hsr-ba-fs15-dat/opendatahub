@@ -126,6 +126,7 @@ module odh {
                         angular.forEach(fg.preview, (preview) => {
                             preview.cols = [];
                             preview.parent = fg.id;
+                            preview.private = document.private;
                             angular.forEach(preview.columns, (col) => {
                                 preview.cols.push({name: col, alias: col, type: preview.types[col]});
                             });
@@ -242,15 +243,8 @@ module odh {
             this.manualEdit = !this.manualEdit;
         }
 
-        public preview(noHandler:boolean = false) {
-            var defer = this.$http.get(this.UrlService.get('odhql'), {
-                params: {
-                    query: this.transformation()
-                }
-            });
-            if (noHandler) {
-                return defer;
-            }
+        public preview() {
+            var defer = this.TransformationService.preview(this.transformation());
             defer.then((data:any) => {
                 this.columns = data.data.columns;
                 this.rows = data.data.data;
@@ -288,34 +282,49 @@ module odh {
             });
         }
 
-        public isPrivate() {
-            return false;
+        public isPrivate():boolean {
+            var isPrivate:boolean = false;
+            angular.forEach(this.selected.items, (item) => {
+                if (!isPrivate) {
+                    if (item.private) {
+                        isPrivate = true;
+                    }
+                }
+            });
+            return isPrivate;
         }
 
         public submit() {
             this.submitted = true;
             this.$scope.form.$setDirty();
-            this.preview(true).catch(() => {
-                    this.$scope.form.$setValidity('invalid', false);
-                    this.$scope.form.odhqlinput.$setValidity('required', false);
-
+            this.TransformationService.preview(this.transformation()).then(() => {
+                if (this.$scope.form.$invalid) {
+                    return;
                 }
-            );
-            if (this.$scope.form.$invalid) {
-                return;
-            }
-            var transformation:main.ITransformation;
-            transformation = {
-                name: this.name,
-                description: this.description,
-                transformation: this.odhqlInputString,
-                'private': this.isPrivate(),
-                file_groups: this.selected.fileGroups
-            };
-            console.log('posted', transformation);
-            var value = this.TransformationService.post(transformation);
-            console.log(value);
+                var transformation:main.ITransformation;
+                transformation = {
+                    name: this.name,
+                    description: this.description,
+                    transformation: this.odhqlInputString,
+                    'private': this.isPrivate(),
+                    file_groups: this.selected.fileGroups
+                };
+                var promise = this.TransformationService.post(transformation);
+                promise.then(data => this.createSuccess(data))
+                    .catch(data => this.createFailure(data));
+            }).catch(() => {
+                this.$scope.form.odhqlinput.$setValidity('required', false);
+            });
+        }
 
+        private createSuccess(data) {
+            this.$state.go('transformation.detail', {id: data.id});
+            this.ToastService.success('Ihre Daten wurden gespeichert ');
+        }
+
+        private createFailure(data) {
+            this.ToastService.failure('Es ist ein Fehler aufgetreten!')
+            this.$log.error(data);
         }
 
         private createFieldNames(fields:IField[], group:string, doNotCheckAlias:boolean = false):string[] {

@@ -15,7 +15,8 @@ module odh.main {
         private transformations:restangular.IElement;
 
 
-        constructor(private $log:ng.ILogService, private Restangular:restangular.IService) {
+        constructor(private $log:ng.ILogService, private Restangular:restangular.IService, private $http:ng.IHttpService,
+                    private UrlService:odh.utils.UrlService) {
 
             this.transformations = this.Restangular.all('transformation');
         }
@@ -52,6 +53,16 @@ module odh.main {
 
         public getList(params:any) {
             return this.Restangular.oneUrl('transformation', '').get(params);
+        }
+
+        public preview(transformation:string) {
+            return this.$http.get(this.UrlService.get('odhql'), {
+                params: {
+                    query: transformation
+                }
+            });
+
+
         }
 
     }
