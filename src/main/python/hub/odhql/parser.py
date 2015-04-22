@@ -29,11 +29,9 @@ class OdhQLParser(object):
     FieldDeclarationList ::= "select" FieldDeclaration ( "," FieldDeclaration )*
     FieldDeclaration ::= FieldEquiv "as" Alias
 
-    CaseExpression ::= "case" ( "when" Condition "then" Expression )+
-                              ( "else" Expression )?
-                       "end"
+    CaseExpression ::= "case" ( "when" Condition "then" Expression )+  ( "else" Expression )? "end"
 
-    Expression ::= Function | Value | Field | CaseExpression
+    Expression ::= Function | LiteralExpression | Field | CaseExpression
 
     Function ::= Identifier "(" ( FunctionArgumentList )? ")"
     FunctionArgumentList ::= Expression ( ( "," Expression )* )?
@@ -59,7 +57,7 @@ class OdhQLParser(object):
 
     BinaryCondition ::= Expression BinaryOperator Expression
     BinaryOperator ::= "=" | "!=" | "<=" | "<"| ">=" | ">" | ( "not" )? "like"
-    InCondition ::= Expression ( "not" )? "in" "(" Value ( "," Value )* ")"
+    InCondition ::= Expression ( "not" )? "in" "(" Expression ( "," Expression )* ")"
     IsNullCondition ::= Field "is" ( "not" )? Null
     PredicateCondition ::= ( "not" )? Function
 
@@ -67,7 +65,7 @@ class OdhQLParser(object):
     OrderByField ::= ( Field | Alias | Position) ( "asc" | "desc" )?
     Integer ::= ( "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" )+
 
-    Value ::= SingleQuotedString | Number | Boolean | Null
+    LiteralExpression ::= SingleQuotedString | Number | Boolean | Null
     Number ::= Integer | Float
     Float ::= Integer "." Integer
     Boolean ::= "true" | "false"
