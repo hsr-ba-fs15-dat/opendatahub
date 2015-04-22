@@ -3,10 +3,8 @@ Misc. functions/utils
 """
 
 import pandas as pd
-from hub.odhql.exceptions import OdhQLExecutionException
 
 from hub.structures.frame import OdhType
-
 from hub.odhql.exceptions import OdhQLExecutionException
 from hub.odhql.functions.core import VectorizedFunction
 
