@@ -112,9 +112,9 @@ class TestInterpreter(TestInterpreterBase):
         self.assertFalse(df.pos.any())
 
     def test_select_case_field(self):
-        return
-        # todo
-        self.execute('SELECT CASE WHEN e.id = 1 THEN \'The Boss\' ELSE e.Prename END AS name FROM employee AS e')
+        df = self.execute('SELECT CASE WHEN e.id = 0 THEN \'The Boss\' ELSE e.Prename END AS name FROM employee AS e')
+        self.assertEqual(df['name'][0], 'The Boss')
+        self.assertListEqual(df['name'][1:].tolist(), self.employees.Prename[1:].tolist())
 
     def test_alias(self):
         df = self.execute('SELECT e.id, E.surname FROM employee AS e')
