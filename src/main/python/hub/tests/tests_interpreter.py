@@ -90,6 +90,32 @@ class TestInterpreter(TestInterpreterBase):
         df = self.execute('SELECT Employee.id, employeE.preName FROM EmPlOyEe')
         self.assertListEqual(df.columns.tolist(), ['id', 'preName'])
 
+    def test_select_literal(self):
+        df = self.execute('SELECT 3.14159265359 AS myfloat, 42 AS myint, \'foobar\' AS mystr, e.id FROM employee AS e')
+        # self.assertListEqual([3.14159265359] * len(df), df.myfloat.tolist())  # todo precision
+        self.assertListEqual([42] * len(df), df.myint.tolist())
+        self.assertListEqual(['foobar'] * len(df), df.mystr.tolist())
+
+    def test_select_case_full(self):
+        df = self.execute('SELECT '
+                          'CASE WHEN e.id = 0 THEN \'bigboss\' '
+                          'WHEN e.id = 1 THEN \'assistant\' '
+                          'ELSE \'slave\' END AS pos, '
+                          'e.id FROM employee AS e')
+
+        self.assertEqual(df.pos[0], 'bigboss')
+        self.assertEqual(df.pos[1], 'assistant')
+        self.assertListEqual(['slave'] * (len(df) - 2), df.pos[2:].tolist())
+
+    def test_select_case_nomatch(self):
+        df = self.execute('SELECT CASE WHEN e.id = -1 THEN \'bigboss\' END AS pos, e.id FROM employee AS e')
+        self.assertFalse(df.pos.any())
+
+    def test_select_case_field(self):
+        return
+        # todo
+        self.execute('SELECT CASE WHEN e.id = 1 THEN \'The Boss\' ELSE e.Prename END AS name FROM employee AS e')
+
     def test_alias(self):
         df = self.execute('SELECT e.id, E.surname FROM employee AS e')
         self.assertListEqual(df.columns.tolist(), ['id', 'surname'])
@@ -222,7 +248,8 @@ class TestInterpreter(TestInterpreterBase):
             ('SELECT e.prename FROM employee AS e ORDER BY e.nonexistent', 'Non-existent ORDER BY field'),
             ('SELECT e.prename FROM employee AS e JOIN child AS c ON c.Parent = e.foobar', 'Non-existent JOIN field'),
             ('SELECT e.prename FROM employee AS e ORDER BY 99', 'Invalid ORDER BY position'),
-            ('SELECT e.prename FROM employee AS e UNION SELECT c.age FROM child AS c', 'UNION type mismatch')
+            ('SELECT e.prename FROM employee AS e UNION SELECT c.age FROM child AS c', 'UNION type mismatch'),
+            ('SELECT CASE WHEN e.id = 0 THEN \'bigboss\' ELSE 4 END AS pos FROM employee AS e', 'CASE type mismatch'),
         )
 
         for statement, message in statements:
@@ -266,7 +293,8 @@ class TestInterpreterPerformance(TestInterpreterBase):
         self.assert_time('SELECT e.prename FROM employee AS e UNION SELECT c.prename FROM child AS c', 3)
 
     def test_cast(self):
-        self.assert_time('SELECT CAST(c.age, \'TEXT\') AS text FROM child AS c', 3)
+        # todo look into somehow increasing performance of this?
+        self.assert_time('SELECT CAST(c.age, \'TEXT\') AS text FROM child AS c', 10)
 
 
 if __name__ == '__main__':

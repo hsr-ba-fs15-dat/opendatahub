@@ -94,9 +94,6 @@ class OdhQLParser(object):
         field = (identifier('prefix') + '.' + identifier('name') + NotAny('('))('field')
         field.setParseAction(Field.parse)
 
-        aliased_field = field + Optional(alias)  # defaults to using name as alias
-        aliased_field.setParseAction(AliasedField.parse)
-
         integer_value = Combine(Optional('-') + Word(nums))
         number_value = Group(integer_value + Optional('.' + Word(nums)))
         number_value.setParseAction(LiteralExpression.parse_number)
@@ -124,30 +121,24 @@ class OdhQLParser(object):
         literal_expression = (number_value | boolean_value | string_value | null_value)('value')
         literal_expression.setParseAction(LiteralExpression.parse)
 
-        expression << (literal_expression | case_expression)
-
-        aliased_value = (expression('expression') + alias)
-        aliased_value.setParseAction(AliasedExpression.parse)
-
         function = Forward()
+
+        expression << (literal_expression | case_expression | field | function)
+
+        aliased_expression = (field('field') + Optional(alias)) | (expression('expression') + alias)
+        aliased_expression.setParseAction(AliasedExpression.parse)
+
         function << (identifier('name') + '(' + Optional(delimitedList(field | expression | function))('args') + ')')
         function.setParseAction(Function.parse)
-
-        aliased_function = function('function') + alias
-        aliased_function.setParseAction(AliasedFunction.parse)
-
-        field_declaration = aliased_function | aliased_value | aliased_field
-
-        condition_side = field | expression | function
 
         operator = (Literal('=') | '!=' | '<=' | '<' | '>=' | '>' |
                     Optional(CaselessKeyword('not'))('invert') + CaselessKeyword('like'))
         operator.setParseAction(BinaryCondition.parse_operator)
 
-        binary_condition = condition_side.copy()('left') + operator('operator') + condition_side.copy()('right')
+        binary_condition = expression.copy()('left') + operator('operator') + expression.copy()('right')
         binary_condition.setParseAction(BinaryCondition.parse)
 
-        in_condition = (condition_side.copy()('left') + Optional(CaselessKeyword('not'))('invert') +
+        in_condition = (expression.copy()('left') + Optional(CaselessKeyword('not'))('invert') +
                         CaselessKeyword('in') + '(' + Group(delimitedList(expression))('in_list') + ')')
         in_condition.setParseAction(InCondition.parse)
 
@@ -193,7 +184,7 @@ class OdhQLParser(object):
             CaselessKeyword('asc'), CaselessKeyword('desc')]))('direction'))
         order_by_field.setParseAction(OrderBy.parse)
 
-        field_declaration_list = Suppress(CaselessKeyword('select')) + delimitedList(field_declaration)
+        field_declaration_list = Suppress(CaselessKeyword('select')) + delimitedList(aliased_expression)
         data_source_declaration = Suppress(CaselessKeyword('from')) + data_source + ZeroOrMore(join)
         filter_declaration = Suppress(CaselessKeyword('where')) + filter_alternative.copy()('conditions')
         order_by_declaration = (Suppress(CaselessKeyword('order') + CaselessKeyword('by')) +
@@ -313,7 +304,11 @@ class Query(ASTBase):
                 f.accept(visitor)
 
 
-class Field(ASTBase):
+class Expression(ASTBase):
+    pass
+
+
+class Field(Expression):
     def __init__(self, name, prefix=None):
         self.prefix = prefix
         self.name = name
@@ -332,33 +327,6 @@ class Field(ASTBase):
         prefix = tokens.get('prefix')
 
         return cls(name, prefix)
-
-
-class AliasedField(Field):
-    def __init__(self, name, prefix=None, alias=None):
-        super(AliasedField, self).__init__(name, prefix)
-        self.alias = alias or name
-
-    def __repr__(self):
-        return '<Field name=\'{}\' prefix=\'{}\' alias=\'{}\'>'.format(self.name, self.prefix, self.alias)
-
-    @classmethod
-    def parse(cls, tokens):
-        if 'field' not in tokens:
-            raise TokenException('malformed AliasedField (field not found)')
-
-        field = tokens.get('field')
-
-        if not isinstance(field, Field):
-            raise TokenException("expected field, got {}".format(type(field)))
-
-        alias = tokens.get('alias', None)
-
-        return cls(field.name, field.prefix, alias)
-
-
-class Expression(ASTBase):
-    pass
 
 
 class LiteralExpression(Expression):
@@ -477,23 +445,30 @@ class AliasedExpression(ASTBase):
 
     @classmethod
     def parse(cls, tokens):
-        if 'expression' not in tokens:
-            raise TokenException('malformed AliasedExpression (no expression)')
+        if 'expression' not in tokens and 'field' not in tokens:
+            raise TokenException('malformed AliasedExpression (no expression or field)')
 
-        if 'alias' not in tokens:
+        if 'alias' not in tokens and 'field' not in tokens:  # fields don't need an alias
             raise TokenException('malformed AliasedExpression (no alias)')
 
-        expression = tokens.get('expression')
+        if 'field' in tokens:
+            expression = tokens.get('field')
 
-        if not isinstance(expression, Expression):
-            raise TokenException('expected Expression, got {}'.format(type(expression)))
+            assert isinstance(expression, Field)
 
-        alias = tokens.get('alias')
+            alias = tokens.get('alias', expression.name)
+        else:
+            expression = tokens.get('expression')
+
+            if not isinstance(expression, Expression):
+                raise TokenException('expected Expression, got {}'.format(type(expression)))
+
+            alias = tokens.get('alias')
 
         return cls(expression, alias)
 
 
-class Function(ASTBase):
+class Function(Expression):
     def __init__(self, name, args):
         self.name = name
         self.args = args
@@ -518,30 +493,6 @@ class Function(ASTBase):
 
         for arg in self.args:
             arg.accept(visitor)
-
-
-class AliasedFunction(Function):
-    def __init__(self, name, args, alias):
-        super(AliasedFunction, self).__init__(name, args)
-        self.alias = alias
-
-    @classmethod
-    def parse(cls, tokens):
-        if 'function' not in tokens:
-            raise TokenException('malformed AliasedFunction (no name)')
-        if 'alias' not in tokens:
-            raise TokenException('malformed AliasedFunction (no alias)')
-
-        func = tokens.get('function')
-        alias = tokens.get('alias')
-
-        if not isinstance(func, Function):
-            raise TokenException('expected Function, got {}'.format(type(func)))
-
-        return cls(func.name, func.args, alias)
-
-    def __repr__(self):
-        return '<AliasedFunction name=\'{}\' args={} alias=\'{}\'>'.format(self.name, self.args or '', self.alias)
 
 
 class DataSource(ASTBase):
