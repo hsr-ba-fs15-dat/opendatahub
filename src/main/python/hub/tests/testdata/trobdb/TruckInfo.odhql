@@ -1,0 +1,21 @@
+SELECT null as userid,
+       substring(nvl(extract(t.text, '\|([^|\.]+)'), 'no value'), 0, 100) as title,
+       extract(t.text, '\|([^|]+)') as description,
+       to_date(cast(t."df", 'bigint')) as trob_start,
+       to_date(cast(t."dd", 'bigint')) as trob_end,
+       null as trob_interval,
+       'both' as direction,
+       null as diversion_advice,
+       case when t.p = 'Switzerland' then 'CH'
+            when t.p = 'France' then 'FR'
+            when t.p = 'Austria' then 'AT'
+       end as country,
+       t.text as reason,
+       extract(t.text, '\|([^|,]+)') as object_name,
+       'street' as object_type,
+       case when contains(t.text, 'closed') then 'closed'
+            when (contains(t.text, 'maintenance') or contains(t.text, 'maintenance')) then 'obstructed'
+            else 'other'
+       end as trob_type,
+       ST_SetSRID(ST_GeomFromText(concat('POINT(', t.x, ' ', t.y, ')')), 3395) as geometry
+  from ODH11 as t
