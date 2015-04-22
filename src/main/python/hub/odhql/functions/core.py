@@ -11,6 +11,7 @@ import sre_constants
 import re
 
 from opendatahub.utils.plugins import RegistrationMixin
+from hub.structures.frame import OdhType
 from ..exceptions import OdhQLExecutionException
 
 
@@ -69,18 +70,18 @@ class OdhQLFunction(RegistrationMixin):
             raise OdhQLExecutionException('{}: Expected parameter "{}" to be one of following: {}. Got "{}" instead.'
                                           .format(self.name, name, ', '.join(possible_values), value))
 
-    def assert_type(self, name, value, type_name):
-        type_ = self._type_assertions[type_name]
-        if not isinstance(value, type_):
+    def assert_type(self, name, value, odh_type):
+        actual_type = OdhType.identify_value(value)
+        if actual_type is not odh_type:
             raise OdhQLExecutionException('{}: Expected parameter "{}" to be of type "{}". '
                                           'Got value "{}" of type "{}" instead.'
-                                          .format(self.name, name, type_name, value, type(value).__name__))
+                                          .format(self.name, name, str(odh_type), value, str(actual_type)))
 
     def assert_int(self, name, value):
-        self.assert_type(name, self._get_single_value(value), 'integer')
+        self.assert_type(name, self._get_single_value(value), OdhType.INTEGER)
 
     def assert_float(self, name, value):
-        self.assert_type(name, self._get_single_value(value), 'float')
+        self.assert_type(name, self._get_single_value(value), OdhType.FLOAT)
 
     def assert_value(self, name, value):
         if not isinstance(value, pd.Series):
@@ -88,10 +89,10 @@ class OdhQLFunction(RegistrationMixin):
                                           .format(self.name, name))
 
     def assert_str(self, name, value):
-        self.assert_type(name, self._get_single_value(value), 'string')
+        self.assert_type(name, self._get_single_value(value), OdhType.TEXT)
 
     def assert_bool(self, name, value):
-        self.assert_type(name, self._get_single_value(value), 'boolean')
+        self.assert_type(name, self._get_single_value(value), OdhType.BOOLEAN)
 
     def assert_regex(self, name, value):
         value = self._get_single_value(value)
@@ -103,7 +104,7 @@ class OdhQLFunction(RegistrationMixin):
                                           .format(self.name, name, e.message, (not e.message.endswith('.')) * '.'))
 
     def assert_geometry(self, name, value):
-        self.assert_type(name, self._get_single_value(value), 'geometry')
+        self.assert_type(name, self._get_single_value(value), OdhType.GEOMETRY)
 
 
 class VectorizedFunction(OdhQLFunction):

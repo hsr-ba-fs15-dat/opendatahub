@@ -8,28 +8,44 @@ import collections
 import pandas as pd
 import geopandas as gp
 import numpy as np
-from shapely.geometry.base import BaseGeometry
+import shapely.geometry
+from opendatahub.utils.plugins import RegistrationMixin
 
-import hub.utils.common as com
 
+class OdhType(RegistrationMixin):
+    dtypes = ()
+    ptypes = ()
+    name = ''
 
-class OdhType(object):
     by_name = {}
     by_dtype = collections.defaultdict(list)
     by_ptype = collections.defaultdict(list)
 
-    def __init__(self, name, dtypes, ptypes):
-        self.name = name
-        self.dtypes = com.ensure_tuple(dtypes)
-        self.ptypes = com.ensure_tuple(ptypes)
+    _is_abstract = True
 
-        self.by_name[name] = self
+    @classmethod
+    def register_child(cls, name, bases, own_dict):
+        if not own_dict.get('_is_abstract'):
+            instance = cls()
+            instance.name = cls.name or name.upper()
+            setattr(OdhType, instance.name, instance)
+            instance.by_name[instance.name] = instance
+            for dtype in instance.dtypes:
+                OdhType.by_dtype[dtype].append(instance)
 
-        for dtype in self.dtypes:
-            self.by_dtype[dtype].append(self)
+            for ptype in instance.ptypes:
+                OdhType.by_ptype[ptype].append(instance)
 
-        for ptype in self.ptypes:
-            self.by_ptype[ptype].append(self)
+    @classmethod
+    def identify_value(cls, value):
+        type_ = type(value)
+        if issubclass(type_, np.generic):
+            return cls.by_dtype[type_]
+        else:
+            try:
+                return cls.by_ptype[type_][0]
+            except:
+                pass
 
     @classmethod
     def identify_series(cls, s):
@@ -39,13 +55,13 @@ class OdhType(object):
 
         first = s.first_valid_index()
         if first is not None:
-            ptype = type(s.iat[first])
-            if issubclass(ptype, BaseGeometry):
-                return cls.GEOMETRY
-            else:
-                return cls.by_ptype[ptype][0]
+            value = s.iat[first]
+            return cls.identify_value(value)
         else:
             return cls.TEXT
+
+    def convert(self, series):
+        return series._constructor(series.values.astype(self.dtypes[0])).__finalize__(series)
 
     def __repr__(self):
         return 'OdhType({})'.format(self.name)
@@ -65,18 +81,73 @@ class OdhType(object):
         return hash(self.name)
 
 
-for name, dtype, ptype in (
-        ('INTEGER', np.int32, int),
-        ('BIGINT', np.int64, int),
-        ('SMALLINT', np.int16, int),
-        ('FLOAT', np.float64, float),
-        ('DATETIME', np.datetime64, dt.datetime),
-        ('INTERVAL', np.timedelta64, dt.time),
-        ('BOOLEAN', np.bool_, bool),
-        ('TEXT', np.object_, [unicode, str]),
-        ('GEOMETRY', np.object_, BaseGeometry),
-):
-    setattr(OdhType, name, OdhType(name, dtype, ptype))
+class IntegerType(OdhType):
+
+    name = 'INTEGER'
+    dtypes = np.int32,
+    ptypes = int,
+
+    def convert(self, series):
+        return series._constructor(series.values.astype(np.float_).astype(self.dtypes[0])).__finalize__(series)
+
+
+class BigIntType(IntegerType):
+
+    name = 'BIGINT'
+    dtypes = np.int64,
+    ptypes = int,
+
+
+class SmallIntType(IntegerType):
+
+    name = 'SMALLINT'
+    dtypes = np.int16,
+    ptypes = int,
+
+
+class FloatType(OdhType):
+
+    name = 'FLOAT'
+    dtypes = np.float64,
+    ptypes = float,
+
+
+class DateTimeType(OdhType):
+
+    name = 'DATETIME'
+    dtypes = np.datetime64,
+    ptypes = dt.datetime,
+
+
+class IntervalType(OdhType):
+
+    name = 'INTERVAL'
+    dtypes = np.timedelta64,
+    ptypes = dt.timedelta,
+
+
+class BooleanType(OdhType):
+
+    name = 'BOOLEAN'
+    dtypes = np.bool_,
+    ptypes = bool,
+
+
+class TextType(OdhType):
+
+    name = 'TEXT'
+    dtypes = np.object,
+    ptypes = unicode, str
+
+    def convert(self, series):
+        return series._constructor(series.values.astype(unicode).astype(object)).__finalize__(series)
+
+
+class GeometryType(OdhType):
+
+    name = 'GEOMETRY'
+    dtypes = np.object,
+    ptypes = shapely.geometry.Point, shapely.geometry.LineString, shapely.geometry.Polygon, shapely.geometry.LinearRing
 
 
 class OdhFrame(pd.DataFrame):
