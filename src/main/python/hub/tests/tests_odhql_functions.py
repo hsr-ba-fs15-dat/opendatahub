@@ -138,13 +138,22 @@ class TestMiscFunctions(TestInterpreterBase):
         df = self.execute('SELECT CAST(\'3.141\', \'INTEGER\') AS age FROM child AS c')
         self.assertListEqual([3] * len(df), df.age.tolist())
 
+    def test_parse_datetime(self):
+        df = self.execute('SELECT PARSE_DATETIME(\'1990-10-13\') AS bday FROM child AS c')
+        bday = df.bday[0]
+        self.assertListEqual([bday.day, bday.month, bday.year], [13, 10, 1990])  # yes, my bday!
+
+    def test_cast_int_to_datetime(self):
+        df = self.execute('SELECT CAST(655776000, \'DATETIME\') AS bday FROM child AS c')
+        self.assertEqual(str(df.bday[0]), '1990-10-13 00:00:00')  # yes, my bday!
+
     def test_nvl(self):
         self.execute('SELECT NVL(c.age, c.id) AS with_col, NVL(c.age, \'no age\') AS with_literal FROM child AS c')
 
     def test_fails(self):
         statements = (
             'SELECT CAST(e.surname, \'foobar\') AS test FROM employee AS e',
-
+            'SELECT CAST(\'1990-10-13\', \'DATETIME\') AS age FROM child AS c',
         )
 
         for statement in statements:

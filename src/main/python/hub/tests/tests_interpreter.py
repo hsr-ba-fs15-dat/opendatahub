@@ -166,6 +166,10 @@ class TestInterpreter(TestInterpreterBase):
         df = self.execute('SELECT c.age FROM child AS c WHERE c.age IS NULL')
         self.assertTrue(pd.isnull(df.age).all())
 
+    def test_where_predicate(self):
+        df = self.execute('SELECT c.prename FROM child AS c WHERE STARTSWITH(c.prename, \'K\')')
+        self.assertListEqual([n for n in self.children.Prename.tolist() if n.startswith('K')], df.prename.tolist())
+
     def test_where_not_null(self):
         df = self.execute('SELECT c.age FROM child AS c WHERE c.age IS NOT NULL')
         self.assertFalse(pd.isnull(df.age).any())

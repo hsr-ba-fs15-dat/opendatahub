@@ -11,7 +11,6 @@ import os
 from django.utils.encoding import force_bytes
 
 from hub import formats
-from hub.utils.pandasutils import DataFrameUtils
 
 
 class FileGroup(object):
@@ -195,7 +194,7 @@ class File(object):
         return self.dfs
 
     def to_serializable_df(self):
-        return DataFrameUtils.make_serializable(self.to_df())
+        return [df.as_safe_serializable() for df in self.to_df()]
 
     def to_format(self, format):
         from hub import formatters

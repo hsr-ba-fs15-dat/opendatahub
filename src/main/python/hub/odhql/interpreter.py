@@ -19,7 +19,7 @@ from hub.odhql.exceptions import OdhQLExecutionException
 
 
 class OdhQLInterpreter(object):
-    FILE_GROUP_RE = re.compile('ODH([1-9]\d?)(_"?.+?"?)?', re.IGNORECASE)
+    FILE_GROUP_RE = re.compile('ODH([1-9]\d*)(_"?.+?"?)?', re.IGNORECASE)
 
     def __init__(self, source_dfs):
         """
@@ -135,7 +135,7 @@ class OdhQLInterpreter(object):
                 df = OdhSeries.concat(all_cols, axis=1, copy=False).__finalize__(df)
 
             else:
-                colnames = [getattr(f, 'alias', f.name) for f in query.fields]
+                colnames = [getattr(f, 'alias', None) or f.name for f in query.fields]
                 df = OdhFrame(columns=colnames)
 
         if getattr(query, 'order', None):
@@ -350,6 +350,9 @@ class OdhQLInterpreter(object):
             left = self._interpret_field(df, filter_.field)
             mask = pd.isnull(left)
 
+        elif isinstance(filter_, parser.PredicateCondition):
+            mask = self._interpret_field(df, filter_.predicate)
+            mask = mask.astype(np.bool_) & ~pd.isnull(mask)
         else:
             assert False, 'Unknown filter type "{}"'.format(type(filter_))
 

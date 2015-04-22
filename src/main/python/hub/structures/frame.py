@@ -9,6 +9,9 @@ import pandas as pd
 import geopandas as gp
 import numpy as np
 import shapely.geometry
+
+from hub.odhql.exceptions import OdhQLExecutionException
+
 from opendatahub.utils.plugins import RegistrationMixin
 
 
@@ -27,7 +30,11 @@ class OdhType(RegistrationMixin):
     def register_child(cls, name, bases, own_dict):
         if not own_dict.get('_is_abstract'):
             instance = cls()
+
+            instance.ptype = cls.ptypes[0]
+            instance.dtype = cls.dtypes[0]
             instance.name = cls.name or name.upper()
+
             setattr(OdhType, instance.name, instance)
             instance.by_name[instance.name] = instance
             for dtype in instance.dtypes:
@@ -61,7 +68,7 @@ class OdhType(RegistrationMixin):
             return cls.TEXT
 
     def convert(self, series):
-        return series._constructor(series.values.astype(self.dtypes[0])).__finalize__(series)
+        return series._constructor(series.values.astype(self.dtypes[0]), index=series.index).__finalize__(series)
 
     def __repr__(self):
         return 'OdhType({})'.format(self.name)
@@ -82,69 +89,67 @@ class OdhType(RegistrationMixin):
 
 
 class IntegerType(OdhType):
-
     name = 'INTEGER'
     dtypes = np.int32,
     ptypes = int,
 
     def convert(self, series):
-        return series._constructor(series.values.astype(np.float_).astype(self.dtypes[0])).__finalize__(series)
+        return series._constructor(series.values.astype(np.float_).astype(self.dtypes[0]),
+                                   index=series.index).__finalize__(series)
 
 
 class BigIntType(IntegerType):
-
     name = 'BIGINT'
     dtypes = np.int64,
     ptypes = int,
 
 
 class SmallIntType(IntegerType):
-
     name = 'SMALLINT'
     dtypes = np.int16,
     ptypes = int,
 
 
 class FloatType(OdhType):
-
     name = 'FLOAT'
     dtypes = np.float64,
     ptypes = float,
 
 
 class DateTimeType(OdhType):
-
     name = 'DATETIME'
     dtypes = np.datetime64,
-    ptypes = dt.datetime,
+    ptypes = pd.Timestamp,
+
+    def convert(self, series):
+        if series.odh_type.ptype not in (int, float):
+            raise OdhQLExecutionException('Unable to convert from {} to {}'.format(str(series.odh_type), str(self)))
+        return series._constructor(pd.to_datetime(series, unit='s'), index=series.index).__finalize__(series)
 
 
 class IntervalType(OdhType):
-
     name = 'INTERVAL'
-    dtypes = np.timedelta64,
+    dtypes = pd.Timedelta,
     ptypes = dt.timedelta,
 
 
 class BooleanType(OdhType):
-
     name = 'BOOLEAN'
     dtypes = np.bool_,
     ptypes = bool,
 
 
 class TextType(OdhType):
-
     name = 'TEXT'
     dtypes = np.object,
     ptypes = unicode, str
 
     def convert(self, series):
-        return series._constructor(series.values.astype(unicode).astype(object)).__finalize__(series)
+        return series._constructor(series.values.astype(unicode).astype(object), index=series.index).__finalize__(
+            series)
 
 
 class GeometryType(OdhType):
-
     name = 'GEOMETRY'
     dtypes = np.object,
     ptypes = shapely.geometry.Point, shapely.geometry.LineString, shapely.geometry.Polygon, shapely.geometry.LinearRing
@@ -216,6 +221,16 @@ class OdhFrame(pd.DataFrame):
         for attr in self._metadata:
             setattr(self, attr, state.get(attr, None))
 
+    def as_safe_serializable(self):
+        """
+        :return: DataFrame which contains only exportable data (no objects)
+        """
+        df = self.copy()
+        for col in df.columns:
+            df[col] = df[col].as_safe_serializable()
+
+        return df
+
 
 class OdhSeries(pd.Series):
     _metadata = ['name', '_odh_type', 'crs']
@@ -261,4 +276,11 @@ class OdhSeries(pd.Series):
 
     def to_crs(self, crs):
         assert self.odh_type == OdhType.GEOMETRY, 'Cannot convert CRS of non-geometry column'
-        return self._constructor(gp.GeoSeries.to_crs.__func__(self, crs)).__finalize__(self)
+        return self._constructor(gp.GeoSeries.to_crs.__func__(self, crs), index=self.index).__finalize__(self)
+
+    def as_safe_serializable(self):
+        s = self
+        if s.odh_type is not OdhType.TEXT:
+            s = OdhType.TEXT.convert(s)
+
+        return s
