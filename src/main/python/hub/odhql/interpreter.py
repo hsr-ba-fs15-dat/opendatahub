@@ -15,10 +15,10 @@ from hub.structures.frame import OdhType, OdhSeries, OdhFrame
 import hub.odhql.parser as parser
 import hub.odhql.functions as functions
 from hub.odhql.exceptions import OdhQLExecutionException
+# import profilehooks
 
 
 class OdhQLInterpreter(object):
-
     FILE_GROUP_RE = re.compile('ODH([1-9]\d?)(_"?.+?"?)?', re.IGNORECASE)
 
     def __init__(self, source_dfs):
@@ -266,7 +266,7 @@ class OdhQLInterpreter(object):
                 return value
 
             if not isinstance(value, pd.Series):
-                value = np.full(df.shape[0], value, dtype=object if isinstance(value, basestring) else type(value))
+                value = np.full(len(df), value, dtype=object if isinstance(value, basestring) else type(value))
 
             series = OdhSeries(value, name=alias)
 

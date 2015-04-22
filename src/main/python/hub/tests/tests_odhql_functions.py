@@ -130,6 +130,14 @@ class TestMiscFunctions(TestInterpreterBase):
         df = self.execute('SELECT CAST(c.age, \'TEXT\') AS age FROM child AS c')
         self.assertIsInstance(df.age[0], basestring)
 
+    def test_cast_str_to_float(self):
+        df = self.execute('SELECT CAST(\'3.141\', \'FLOAT\') AS age FROM child AS c')
+        self.assertListEqual([3.141] * len(df), df.age.tolist())
+
+    def test_cast_str_to_int(self):
+        df = self.execute('SELECT CAST(\'3.141\', \'INTEGER\') AS age FROM child AS c')
+        self.assertListEqual([3] * len(df), df.age.tolist())
+
     def test_nvl(self):
         self.execute('SELECT NVL(c.age, c.id) AS with_col, NVL(c.age, \'no age\') AS with_literal FROM child AS c')
 

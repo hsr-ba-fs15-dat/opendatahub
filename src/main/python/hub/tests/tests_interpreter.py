@@ -293,7 +293,6 @@ class TestInterpreterPerformance(TestInterpreterBase):
         self.assert_time('SELECT e.prename FROM employee AS e UNION SELECT c.prename FROM child AS c', 3)
 
     def test_cast(self):
-        # todo look into somehow increasing performance of this?
         self.assert_time('SELECT CAST(c.age, \'TEXT\') AS text FROM child AS c', 10)
 
 
