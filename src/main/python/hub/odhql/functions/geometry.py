@@ -58,7 +58,10 @@ class SRID(VectorizedGeometryFunction):
         self.assert_geometry('geometry', geoms)
         srid = np.nan
         if geoms.crs:
-            srid = int(geoms.crs['init'].split(':')[-1])
+            try:
+                srid = int(geoms.crs['init'].split(':')[-1])
+            except KeyError:
+                srid = pyproj.Proj(geoms.crs).srs
         return self.expand(srid)
 
 

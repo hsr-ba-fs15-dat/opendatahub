@@ -46,6 +46,7 @@ Id,Parent,Prename,Surname,Age
 class TestInterpreterBase(TestBase):
     @classmethod
     def setUpClass(cls):
+        OdhQLParser.build_grammar()  # do not influence interpreter profiling
         cls.read_data()
 
     @classmethod

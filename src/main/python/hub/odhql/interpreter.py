@@ -19,7 +19,10 @@ from hub.odhql.exceptions import OdhQLExecutionException
 
 
 class OdhQLInterpreter(object):
+
     FILE_GROUP_RE = re.compile('ODH([1-9]\d*)(_"?.+?"?)?', re.IGNORECASE)
+
+    parser = parser.OdhQLParser()
 
     def __init__(self, source_dfs):
         """
@@ -65,7 +68,7 @@ class OdhQLInterpreter(object):
         :rtype: dict[name] -> id
         """
         if isinstance(query, basestring):
-            query = parser.OdhQLParser().parse(query)
+            query = cls.parser.parse(query)
 
         data_sources = itertools.chain(*[q.data_sources for q in query.queries]) if isinstance(query, parser.Union) \
             else query.data_sources
@@ -88,7 +91,7 @@ class OdhQLInterpreter(object):
         :rtype: :py:class: OdhFrame
         """
         if isinstance(query, basestring):
-            query = parser.OdhQLParser().parse(query)
+            query = self.parser.parse(query)
         return self._interpret(query)
 
     def _interpret(self, query):

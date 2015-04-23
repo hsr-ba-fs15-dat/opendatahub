@@ -160,10 +160,9 @@ class OdhFrame(pd.DataFrame):
 
     @classmethod
     def from_df(cls, df, name):
-        df.__class__ = cls
-        df._metadata = cls._metadata
-        df.name = name
-        return df
+        odf = cls(df, index=df.index).__finalize__(df)
+        odf.name = name
+        return odf
 
     def rename(self, *args, **kwargs):
         old = self.copy() if kwargs.get('inplace', False) else self
@@ -214,12 +213,19 @@ class OdhFrame(pd.DataFrame):
     def __getstate__(self):
         d = dict(_data=super(OdhFrame, self).__getstate__())
         d.update({attr: getattr(self, attr, None) for attr in self._metadata})
+        d['series_metadata'] = {c: s._get_metadata() for c, s in self.iteritems()}
         return d
 
     def __setstate__(self, state):
         super(OdhFrame, self).__setstate__(state.pop('_data', None))
         for attr in self._metadata:
             setattr(self, attr, state.get(attr, None))
+
+        series_metadata = state.pop('series_metadata', None)
+        for c, s in self.iteritems():
+            meta = series_metadata.get(c, {})
+            for attr in self._constructor_sliced._metadata:
+                setattr(s, attr, meta.get(attr, None))
 
     def as_safe_serializable(self):
         """
@@ -257,9 +263,12 @@ class OdhSeries(pd.Series):
     def _constructor(self):
         return OdhSeries
 
+    def _get_metadata(self):
+        return {attr: getattr(self, attr, None) for attr in self._metadata}
+
     def __getstate__(self):
         d = super(OdhSeries, self).__getstate__()
-        d.update({attr: getattr(self, attr, None) for attr in self._metadata})
+        d.update(self._get_metadata())
         return d
 
     def __setstate__(self, state):
