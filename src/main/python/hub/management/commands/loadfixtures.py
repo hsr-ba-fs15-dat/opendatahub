@@ -1,3 +1,4 @@
+# coding=utf-8
 """
 
 """
@@ -39,7 +40,8 @@ class Command(BaseCommand):
     }
 
     URLS = {
-        ('http://maps.zh.ch/wfs/HaltestellenZHWFS', formats.WFS)
+        ('http://maps.zh.ch/wfs/HaltestellenZHWFS', 'Haltestellen öffentlicher Verkehr ZH', formats.WFS),
+        ('http://maps.zh.ch/wfs/TbaBaustellenZHWFS', 'Baustellen Kantonsstrassen ZH', formats.WFS)
     }
 
     def add_document(self, desc, format, name):
@@ -66,7 +68,7 @@ class Command(BaseCommand):
         db.reset_queries()
 
     def add_url(self, url, format, name=None, desc=None):
-        doc = self.add_document(desc, format, 'Test {}'.format(url))
+        doc = self.add_document(desc, format, name or 'Test {}'.format(url))
 
         file_group = FileGroupModel(document=doc, format=None)
         file_group.save()
@@ -82,8 +84,8 @@ class Command(BaseCommand):
             fg = FileGroup.from_files(*[TestBase.get_test_file_path(f) for f in files])
             self.add_fg(fg, format)
 
-        for url, format in self.URLS:
-            self.add_url(url, format)
+        for (url, name, format) in self.URLS:
+            self.add_url(url, format, name=name)
 
         self.add_multiple(FileGroup.from_files(TestBase.get_test_file_path('perf/employees.csv')), formats.CSV, 10)
         self.add_multiple(FileGroup.from_files(TestBase.get_test_file_path('mockaroo.com.json')), formats.JSON, 500)

@@ -1,0 +1,15 @@
+select b.ansprechpe as userid,
+       substring(concat(b.strassenna, ' ', b.gemeindena), 0, 100) as title,
+       b.beschreibu as description,
+       parse_datetime(b.datum_baub) as trob_start,
+       parse_datetime(b.datum_baue) as trob_end,
+       null as trob_interval,
+       'both' as direction,
+       b.verkehrsfu as diversion_advice,
+       'CH' as country,
+       b.beschreibu as reason,
+       b.strassenna as object_name,
+       'street' as object_type,
+       'closed' as trob_type,
+       b.geometry as trobdb_point
+  from odh17 as b

@@ -112,9 +112,9 @@ class TestInterpreter(TestInterpreterBase):
         self.assertFalse(df.pos.any())
 
     def test_select_case_field(self):
-        return
-        # todo
-        self.execute('SELECT CASE WHEN e.id = 1 THEN \'The Boss\' ELSE e.Prename END AS name FROM employee AS e')
+        df = self.execute('SELECT CASE WHEN e.id = 0 THEN \'The Boss\' ELSE e.Prename END AS name FROM employee AS e')
+        self.assertEqual(df['name'][0], 'The Boss')
+        self.assertListEqual(df['name'][1:].tolist(), self.employees.Prename[1:].tolist())
 
     def test_alias(self):
         df = self.execute('SELECT e.id, E.surname FROM employee AS e')
@@ -165,6 +165,10 @@ class TestInterpreter(TestInterpreterBase):
     def test_where_null(self):
         df = self.execute('SELECT c.age FROM child AS c WHERE c.age IS NULL')
         self.assertTrue(pd.isnull(df.age).all())
+
+    def test_where_predicate(self):
+        df = self.execute('SELECT c.prename FROM child AS c WHERE STARTSWITH(c.prename, \'K\')')
+        self.assertListEqual([n for n in self.children.Prename.tolist() if n.startswith('K')], df.prename.tolist())
 
     def test_where_not_null(self):
         df = self.execute('SELECT c.age FROM child AS c WHERE c.age IS NOT NULL')
@@ -293,7 +297,6 @@ class TestInterpreterPerformance(TestInterpreterBase):
         self.assert_time('SELECT e.prename FROM employee AS e UNION SELECT c.prename FROM child AS c', 3)
 
     def test_cast(self):
-        # todo look into somehow increasing performance of this?
         self.assert_time('SELECT CAST(c.age, \'TEXT\') AS text FROM child AS c', 10)
 
 

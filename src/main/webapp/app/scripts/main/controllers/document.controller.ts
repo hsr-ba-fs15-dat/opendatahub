@@ -6,12 +6,6 @@ module odh {
 
     class DocumentListController {
 
-        public searchTerms:string;
-        public documents;
-        public totalItems:number;
-        public currentPage:number = 1;
-
-        public mineOnly = false;
         public tableParams:any;
 
         constructor(private $log:ng.ILogService, private DocumentService:odh.main.DocumentService,
@@ -37,21 +31,6 @@ module odh {
 
         public isAuthenticated() {
             return this.$auth.isAuthenticated();
-        }
-
-        public pageChanged() {
-            this.retrieveDataAsync();
-        }
-
-        public retrieveDataAsync() {
-            this.$log.debug('Fetching data');
-            this.DocumentService.search(this.searchTerms, this.mineOnly, this.currentPage)
-                .then(data => {
-                    this.documents = data;
-                    this.totalItems = data.meta.count;
-                    this.$log.debug('Data: ', data);
-                })
-                .catch(error => this.onError(error));
         }
 
         private onError(error) {

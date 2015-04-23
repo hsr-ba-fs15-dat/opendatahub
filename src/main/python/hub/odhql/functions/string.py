@@ -105,7 +105,7 @@ class Get(VectorizedFunction):
 class Contains(VectorizedFunction):
     name = 'CONTAINS'
 
-    def apply(self, strings, pattern, match_case):
+    def apply(self, strings, pattern, match_case=True):
         self.assert_str('string', strings)
         self.assert_regex('pattern', pattern)
         self.assert_bool('match_case', match_case)
@@ -115,7 +115,7 @@ class Contains(VectorizedFunction):
 class Replace(VectorizedFunction):
     name = 'REPLACE'
 
-    def apply(self, strings, pattern, replace, match_case):
+    def apply(self, strings, pattern, replace, match_case=True):
         self.assert_str('string', strings)
         self.assert_regex('pattern', pattern)
         self.assert_str('replace', replace)

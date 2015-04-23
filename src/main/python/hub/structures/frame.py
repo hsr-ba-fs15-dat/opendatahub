@@ -8,28 +8,51 @@ import collections
 import pandas as pd
 import geopandas as gp
 import numpy as np
-from shapely.geometry.base import BaseGeometry
+import shapely.geometry
 
-import hub.utils.common as com
+from hub.odhql.exceptions import OdhQLExecutionException
+
+from opendatahub.utils.plugins import RegistrationMixin
 
 
-class OdhType(object):
+class OdhType(RegistrationMixin):
+    dtypes = ()
+    ptypes = ()
+    name = ''
+
     by_name = {}
     by_dtype = collections.defaultdict(list)
     by_ptype = collections.defaultdict(list)
 
-    def __init__(self, name, dtypes, ptypes):
-        self.name = name
-        self.dtypes = com.ensure_tuple(dtypes)
-        self.ptypes = com.ensure_tuple(ptypes)
+    _is_abstract = True
 
-        self.by_name[name] = self
+    @classmethod
+    def register_child(cls, name, bases, own_dict):
+        if not own_dict.get('_is_abstract'):
+            instance = cls()
 
-        for dtype in self.dtypes:
-            self.by_dtype[dtype].append(self)
+            instance.ptype = cls.ptypes[0]
+            instance.dtype = cls.dtypes[0]
+            instance.name = cls.name or name.upper()
 
-        for ptype in self.ptypes:
-            self.by_ptype[ptype].append(self)
+            setattr(OdhType, instance.name, instance)
+            instance.by_name[instance.name] = instance
+            for dtype in instance.dtypes:
+                OdhType.by_dtype[dtype].append(instance)
+
+            for ptype in instance.ptypes:
+                OdhType.by_ptype[ptype].append(instance)
+
+    @classmethod
+    def identify_value(cls, value):
+        type_ = type(value)
+        if issubclass(type_, np.generic):
+            return cls.by_dtype[type_]
+        else:
+            try:
+                return cls.by_ptype[type_][0]
+            except:
+                pass
 
     @classmethod
     def identify_series(cls, s):
@@ -39,13 +62,13 @@ class OdhType(object):
 
         first = s.first_valid_index()
         if first is not None:
-            ptype = type(s.iat[first])
-            if issubclass(ptype, BaseGeometry):
-                return cls.GEOMETRY
-            else:
-                return cls.by_ptype[ptype][0]
+            value = s.iat[first]
+            return cls.identify_value(value)
         else:
             return cls.TEXT
+
+    def convert(self, series):
+        return series._constructor(series.values.astype(self.dtypes[0]), index=series.index).__finalize__(series)
 
     def __repr__(self):
         return 'OdhType({})'.format(self.name)
@@ -65,18 +88,71 @@ class OdhType(object):
         return hash(self.name)
 
 
-for name, dtype, ptype in (
-        ('INTEGER', np.int32, int),
-        ('BIGINT', np.int64, int),
-        ('SMALLINT', np.int16, int),
-        ('FLOAT', np.float64, float),
-        ('DATETIME', np.datetime64, dt.datetime),
-        ('INTERVAL', np.timedelta64, dt.time),
-        ('BOOLEAN', np.bool_, bool),
-        ('TEXT', np.object_, [unicode, str]),
-        ('GEOMETRY', np.object_, BaseGeometry),
-):
-    setattr(OdhType, name, OdhType(name, dtype, ptype))
+class IntegerType(OdhType):
+    name = 'INTEGER'
+    dtypes = np.int32,
+    ptypes = int,
+
+    def convert(self, series):
+        return series._constructor(series.values.astype(np.float_).astype(self.dtypes[0]),
+                                   index=series.index).__finalize__(series)
+
+
+class BigIntType(IntegerType):
+    name = 'BIGINT'
+    dtypes = np.int64,
+    ptypes = int,
+
+
+class SmallIntType(IntegerType):
+    name = 'SMALLINT'
+    dtypes = np.int16,
+    ptypes = int,
+
+
+class FloatType(OdhType):
+    name = 'FLOAT'
+    dtypes = np.float64,
+    ptypes = float,
+
+
+class DateTimeType(OdhType):
+    name = 'DATETIME'
+    dtypes = np.datetime64,
+    ptypes = pd.Timestamp,
+
+    def convert(self, series):
+        if series.odh_type.ptype not in (int, float):
+            raise OdhQLExecutionException('Unable to convert from {} to {}'.format(str(series.odh_type), str(self)))
+        return series._constructor(pd.to_datetime(series, unit='s'), index=series.index).__finalize__(series)
+
+
+class IntervalType(OdhType):
+    name = 'INTERVAL'
+    dtypes = pd.Timedelta,
+    ptypes = dt.timedelta,
+
+
+class BooleanType(OdhType):
+    name = 'BOOLEAN'
+    dtypes = np.bool_,
+    ptypes = bool,
+
+
+class TextType(OdhType):
+    name = 'TEXT'
+    dtypes = np.object,
+    ptypes = unicode, str
+
+    def convert(self, series):
+        return series._constructor(series.values.astype(unicode).astype(object), index=series.index).__finalize__(
+            series)
+
+
+class GeometryType(OdhType):
+    name = 'GEOMETRY'
+    dtypes = np.object,
+    ptypes = shapely.geometry.Point, shapely.geometry.LineString, shapely.geometry.Polygon, shapely.geometry.LinearRing
 
 
 class OdhFrame(pd.DataFrame):
@@ -145,6 +221,16 @@ class OdhFrame(pd.DataFrame):
         for attr in self._metadata:
             setattr(self, attr, state.get(attr, None))
 
+    def as_safe_serializable(self):
+        """
+        :return: DataFrame which contains only exportable data (no objects)
+        """
+        df = self.copy()
+        for col in df.columns:
+            df[col] = df[col].as_safe_serializable()
+
+        return df
+
 
 class OdhSeries(pd.Series):
     _metadata = ['name', '_odh_type', 'crs']
@@ -190,4 +276,11 @@ class OdhSeries(pd.Series):
 
     def to_crs(self, crs):
         assert self.odh_type == OdhType.GEOMETRY, 'Cannot convert CRS of non-geometry column'
-        return self._constructor(gp.GeoSeries.to_crs.__func__(self, crs)).__finalize__(self)
+        return self._constructor(gp.GeoSeries.to_crs.__func__(self, crs), index=self.index).__finalize__(self)
+
+    def as_safe_serializable(self):
+        s = self
+        if s.odh_type is not OdhType.TEXT:
+            s = OdhType.TEXT.convert(s)
+
+        return s

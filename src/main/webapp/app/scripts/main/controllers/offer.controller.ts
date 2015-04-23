@@ -16,11 +16,11 @@ module odh {
         public field:any;
 
         public refreshChoices = [
-            {name: '5 Minuten', value: 300},
-            {name: '30 Minuten', value: 1800},
+            {name: '10 Minuten', value: 600},
             {name: '1 Stunde', value: 3600},
             {name: '6 Stunden', value: 21600},
-            {name: '1 Tag', value: 86400}
+            {name: '1 Tag', value: 86400},
+            {name: '1 Woche', value: 604800},
         ];
 
         public formatChoices = [];
