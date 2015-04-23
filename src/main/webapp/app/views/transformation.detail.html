@@ -1,4 +1,3 @@
-
 <div ng-controller="TransformationDetailController as vm">
     <form name="form" class="form" ng-submit="vm.submit()">
         <fieldset>
@@ -47,7 +46,9 @@
                 showGutter: false,
                 theme:'twilight',
                 mode: 'sql',
-                firstLineNumber: 5
+                firstLineNumber: 5,
+                onLoad: vm.aceLoaded,
+
                 }" ng-model="vm.transformation"></div>
                 <div ng-messages="form.description.$error" ng-show="vm.submitted">
                     <span class="help-block">

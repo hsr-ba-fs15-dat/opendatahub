@@ -41,13 +41,15 @@ module odh.main {
             );
         }
 
+        public aceLoaded(editor) {
+            editor.$blockScrolling = 'Infinity';
+            editor.setOptions({
+                maxLines: Infinity
+            });
+        }
+
         public preview() {
-            this.$http.get(this.UrlService.get('odhql'), {
-                params: {
-                    query: this.transformation
-                        .replace(/(\r\n|\n|\r|\t)/gm, ' ')
-                }
-            }).then((data:any) => {
+            this.TransformationService.preview(this.transformation).then((data:any) => {
                 this.columns = data.data.columns;
                 this.rows = data.data.data;
             }).catch((data:any) => {

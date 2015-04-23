@@ -3,31 +3,24 @@ Core/Infrastructure for OdhQL function implementations
 """
 
 import inspect
+import contextlib
+import traceback
+import logging
 
 import pandas as pd
 import numpy as np
-from shapely.geometry.base import BaseGeometry
 import sre_constants
 import re
 
 from opendatahub.utils.plugins import RegistrationMixin
-from hub.structures.frame import OdhType
+from hub.structures.frame import OdhType, OdhSeries
 from ..exceptions import OdhQLExecutionException
 
 
 class OdhQLFunction(RegistrationMixin):
     _is_abstract = True
     functions = {}
-
     name = ''
-
-    _type_assertions = {
-        'integer': int,
-        'string': basestring,
-        'float': float,
-        'boolean': bool,
-        'geometry': BaseGeometry,
-    }
 
     def __init__(self, num_rows=1, raw_args=None):
         self.num_rows = num_rows
@@ -36,11 +29,10 @@ class OdhQLFunction(RegistrationMixin):
 
     def check_args(self):
         argspec = inspect.getargspec(self.apply)
-        expected_args = len(argspec.args) - 1
+        expected_args = len(argspec.args) - (len(argspec.defaults) if argspec.defaults else 0) - 1
         given_args = len(self.raw_args)
-        if not (argspec.keywords or argspec.varargs) and given_args != expected_args:
-            raise OdhQLExecutionException('{} takes exactly {} arguments, {} given.'
-                                          .format(self.name, expected_args, given_args))
+        if given_args < expected_args:
+            self.raise_error('Function takes at least {} arguments, {} given.', expected_args, given_args)
 
     @classmethod
     def register_child(cls, name, bases, own_dict):
@@ -52,6 +44,19 @@ class OdhQLFunction(RegistrationMixin):
     def execute(name, num_rows, args):
         fn = OdhQLFunction.create(name, num_rows, args)
         return fn.execute()
+
+    def raise_error(self, msg, *args, **kwargs):
+        msg = ('{}: ' + msg).format(self.name, *args, **kwargs)
+        raise OdhQLExecutionException(msg)
+
+    @contextlib.contextmanager
+    def errorhandler(self, msg=None):
+        try:
+            yield
+        except Exception as e:
+            msg = msg.format(exception=e.message) if msg else e.message
+            logging.debug(traceback.format_exc())
+            raise OdhQLExecutionException('{}: {}'.format(self.name, msg))
 
     @staticmethod
     def create(name, num_rows, args):
@@ -67,15 +72,14 @@ class OdhQLFunction(RegistrationMixin):
 
     def assert_in(self, name, value, possible_values):
         if value not in possible_values:
-            raise OdhQLExecutionException('{}: Expected parameter "{}" to be one of following: {}. Got "{}" instead.'
-                                          .format(self.name, name, ', '.join(possible_values), value))
+            self.raise_error('Expected parameter "{}" to be one of following: {}. Got "{}" instead.', name,
+                             ', '.join(possible_values), value)
 
     def assert_type(self, name, value, odh_type):
         actual_type = OdhType.identify_value(value)
         if actual_type is not odh_type:
-            raise OdhQLExecutionException('{}: Expected parameter "{}" to be of type "{}". '
-                                          'Got value "{}" of type "{}" instead.'
-                                          .format(self.name, name, str(odh_type), value, str(actual_type)))
+            self.raise_error('Expected parameter "{}" to be of type "{}". Got value "{}" of type "{}" instead.', name,
+                             str(odh_type), value, str(actual_type))
 
     def assert_int(self, name, value):
         self.assert_type(name, self._get_single_value(value), OdhType.INTEGER)
@@ -85,8 +89,7 @@ class OdhQLFunction(RegistrationMixin):
 
     def assert_value(self, name, value):
         if not isinstance(value, pd.Series):
-            raise OdhQLExecutionException('{}: Expected "{}" to be a single value. Got column instead.'
-                                          .format(self.name, name))
+            self.raise_error('Expected "{}" to be a single value. Got column instead.', name)
 
     def assert_str(self, name, value):
         self.assert_type(name, self._get_single_value(value), OdhType.TEXT)
@@ -100,8 +103,8 @@ class OdhQLFunction(RegistrationMixin):
         try:
             re.compile(value)
         except sre_constants.error as e:
-            raise OdhQLExecutionException('{}: Invalid regular expression for parameter "{}": "{}"{}'
-                                          .format(self.name, name, e.message, (not e.message.endswith('.')) * '.'))
+            self.raise_error('Invalid regular expression for parameter "{}": "{}"{}', name, e.message,
+                             (not e.message.endswith('.')) * '.')
 
     def assert_geometry(self, name, value):
         self.assert_type(name, self._get_single_value(value), OdhType.GEOMETRY)
@@ -118,7 +121,7 @@ class VectorizedFunction(OdhQLFunction):
 
     def expand(self, arg):
         if not isinstance(arg, pd.Series):
-            arg = pd.Series(np.full(self.num_rows, arg, dtype=object if isinstance(arg, basestring) else type(arg)))
+            arg = OdhSeries(np.full(self.num_rows, arg, dtype=object if isinstance(arg, basestring) else type(arg)))
 
         return arg
 
@@ -128,10 +131,10 @@ class VectorizedFunction(OdhQLFunction):
 # _is_abstract = True
 #
 # def execute(self):
-#         df = pd.DataFrame({str(i): series for i, series in enumerate(self.raw_args)})
-#         return df.apply(lambda s: self.apply(*s), axis=1)
+# df = pd.DataFrame({str(i): series for i, series in enumerate(self.raw_args)})
+# return df.apply(lambda s: self.apply(*s), axis=1)
 #
-#     def apply(self, *args):
+# def apply(self, *args):
 #         raise NotImplementedError
 #
 #

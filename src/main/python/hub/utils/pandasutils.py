@@ -4,9 +4,7 @@
 
 import datetime as dt
 
-import pandas as pd
 import numpy as np
-import types
 
 
 TYPE_MAP = {
@@ -36,31 +34,10 @@ TYPE_MAP = {
 
 
 class DataFrameUtils(object):
-    @staticmethod
-    def make_serializable(df):
-        """
-        :return: DataFrame which contains only exportable data (no objects)
-        """
-
-        # todo: this check probably shouldn't be made here
-        if isinstance(df, types.ListType):
-            return map(DataFrameUtils.make_serializable, df)
-
-        df = df.copy()
-        df.__class__ = pd.DataFrame
-        for col in df.columns:
-            temp = df[col].dropna()
-            if len(temp) and temp.dtype == object and not isinstance(temp.iat[0], unicode):
-                try:
-                    df[col] = df[col].astype(unicode)
-                except:
-                    pass
-
-        return df
 
     @staticmethod
     def to_json_dict(df, start, count):
-        slice_ = DataFrameUtils.make_serializable(df.iloc[start:start + count].fillna('NULL'))
+        slice_ = df.iloc[start:start + count].as_safe_serializable().fillna('NULL')
         return {
             'name': df.name,
             'columns': slice_.columns.tolist(),

@@ -63,9 +63,9 @@
 
                 <td>
                     <p ng-repeat="preview in fileGroup.preview">
-                        <a ng-click="vm.selected.addRemove(preview)">
+                        <a ng-click="vm.addRemoveTable(preview)">
                             <i class="fa fa-plus-circle"
-                               ng-class="vm.selected.items.indexOf(preview) > -1?'fa-minus-circle':'fa-plus-circle'"></i>
+                               ng-class="vm.checkTableSelected(preview)?'fa-minus-circle':'fa-plus-circle'"></i>
                             {{preview.name}}:
                         </a>
 
@@ -79,31 +79,30 @@
             </tbody>
         </table>
     </div>
-
-    <div class="well" ng-repeat="group in vm.selected.items">
-        <h2>{{group.uniqueid}}</h2>
-        Alias: <input type="text" ng-model="group.uniqueidAlias"/><br/><br/>
+    <div class="well" ng-repeat="table in vm.allTables()">
+        <h2>{{table.uniqueId}}</h2>
+        Alias: <input type="text" ng-model="table.uniqueIdAlias"/><br/><br/>
         Wählen Sie die benötigten Felder aus (Klick) und wählen Sie die Spaltennamen:
         <div class="table-responsive">
             <table class="table table-striped">
                 <thead>
                 <tr>
-                    <th ng-repeat="col in group.cols"
-                        ng-class="vm.selected.fields[group.uniqueid].indexOf(col) > -1 ? 'selected': ''"
+                    <th ng-repeat="col in table.cols"
+                        ng-class="vm.getFields(table.uniqueId).indexOf(col) > -1 ? 'selected': ''"
                             >
                         <input type="text" ng-model="col.alias"/><br/>
-                        :{{ group.types[col.name] }}
+                        :{{ table.types[col.name] }}
                     </th>
                 </tr>
                 </thead>
-                <tr ng-repeat="row in group.data">
-                    <td ng-class="vm.selected.fields[group.uniqueid].indexOf(col) > -1 ? 'selected': ''"
-                        ng-repeat="col in group.cols" ng-click="vm.addField(col, group)">
+                <tr ng-repeat="row in table.data">
+                    <td ng-class="vm.getFields(table.uniqueId).indexOf(col) > -1 ? 'selected': ''"
+                        ng-repeat="col in table.cols" ng-click="vm.addRemoveField(col, table)">
                         {{ row[col.name] | characters:25 :true }}
                     </td>
                 </tr>
-                <tr ng-show="group.count > 3">
-                    <td colspan="{{group.columns.length}}">
+                <tr ng-show="table.count > 3">
+                    <td colspan="{{table.cols.length}}">
                         <a ng-click="vm.increaseTablePreview(group)">
                             Mehr anzeigen
                         </a>
@@ -113,40 +112,40 @@
 
         </div>
 
-        <a ng-click="vm.selected.remove(group)">Tabelle entfernen</a><br/>
+        <a ng-click="vm.addRemoveTable(table)">Tabelle entfernen</a><br/>
 
 
         <div ng-show="$index > 0">
             <label>Möchten Sie diese Tabelle mit einer anderen Verbinden?
                 <select
-                        ng-options="opt as opt.label for opt in vm.joinOperations"
-                        ng-model="vm.selected.expression[group.uniqueid].operation">
+                        ng-options="opt as opt.label for opt in vm.getJoinOperations()"
+                        ng-model="vm.selection.expression[table.uniqueId].operation"
+                        >
                 </select>
             </label><br/>
-
-            <label ng-show="vm.selected.expression[group.uniqueid].operation == vm.joinOperations.join">
+            <label ng-show="vm.joinOperation(table) === vm.getJoinOperations().join">
                 Welches Lokale Feld soll verwendet werden?
                 <select
                         ng-options="opt as (opt.alias == opt.name?opt.alias+'['+opt.type+']':(opt.alias + ' [' + opt.name + ']'))
-                         for opt in vm.selected.fields[vm.selected.items[$index].uniqueid]"
-                        ng-model="vm.selected.expression[vm.selected.items[$index].uniqueid].joinField">
+                         for opt in vm.getSelectedFields(table)"
+                        ng-model="vm.selection.expression[table.uniqueId].joinField">
                 </select>
             </label><br/>
-            <label ng-show="vm.selected.expression[group.uniqueid].operation == vm.joinOperations.join &&
-             vm.selected.expression[vm.selected.items[$index].uniqueid].joinField">
+            <label ng-show="vm.joinOperation(table) === vm.getJoinOperations().join &&
+             vm.selection.expression[table.uniqueId].joinField">
                 Auf welche Tabelle soll gejoined werden?
                 <select
-                        ng-options="opt as opt.uniqueid for opt in vm.selected.joinTargets | filter:{uniqueid:'!'+group.uniqueid, }"
-                        ng-model="vm.selected.expression[vm.selected.items[$index].uniqueid].joinTable">
+                        ng-options="opt as opt.uniqueId for opt in vm.selection.joinTargets | filter:{uniqueId:'!'+table.uniqueId, }"
+                        ng-model="vm.selection.expression[table.uniqueId].joinTable">
                 </select>
             </label>
-            <label ng-show="vm.selected.expression[group.uniqueid].operation == vm.joinOperations.join &&
-            vm.selected.expression[vm.selected.items[$index].uniqueid].joinTable">
+            <label ng-show="vm.joinOperation(table) == vm.getJoinOperations().join &&
+            vm.selection.expression[table.uniqueId].joinTable">
                 <select
                         ng-options="opt as (opt.alias == opt.name?opt.alias+'['+opt.type+']':(opt.alias + ' [' + opt.name + ']'))
-                         for opt in vm.selected.fields[vm.selected.expression[vm.selected.items[$index].uniqueid].joinTable.uniqueid]
-                         | filter:{type:vm.selected.expression[vm.selected.items[$index].uniqueid].joinField.type, }"
-                        ng-model="vm.selected.expression[vm.selected.items[$index].uniqueid].foreignKey">
+                         for opt in vm.getSelectedFields(vm.selection.expression[table.uniqueId].joinTable)
+                         | filter:{type:vm.selection.expression[table.uniqueId].joinField.type, }"
+                        ng-model="vm.selection.expression[table.uniqueId].foreignKey">
                 </select>
             </label><br/>
         </div>
@@ -197,7 +196,8 @@
                 <div class="row">
                     <label class="control-label col-sm-12" for="odhqlinput">OdhQL Abfrage
                         <i class="fa fa-question-circle fa-1x"></i>
-
+                        <i class="fa fa-eye fa-1x" ng-show="vm.isPrivate()"
+                           popover="Diese Transformation wird Privat"></i>
                     <span class="fa-stack fa-md pull-right"
                           ng-click="vm.toggleManualEdit()"
                           popover="{{vm.manualEdit?'Achtung! Manuelle Änderungen werden zurückgesetzt!':''}}"
@@ -208,13 +208,13 @@
                     </span>
                     </label>
                     <label class="control-label" for="useQuotes">
-                        <input id=useQuotes" type="checkbox" ng-model="vm.useQuotes"/>
+                        <input id=useQuotes" type="checkbox" ng-model="vm.quotes" ng-change="vm.useQuotes()"/>
                         Hochkommas verwenden.
                     </label>
                 </div>
 
                 <div class="row">
-                    <div id="odhqlinput" class="col-sm-12" ui-ace="{
+                    <div id="odhqlinput" name="odhqlinput" class="col-sm-12" ui-ace="{
                 useWrapMode : true,
                 showGutter: false,
                 theme:'twilight',
@@ -224,8 +224,8 @@
                 onChange: vm.aceChanged
                 }" ng-model="vm.transformation" ng-model-options="{ getterSetter: true }"></div>
                 </div>
-                <textarea ng-model="vm.transformation" ng-model-options="{ getterSetter: true }"
-                          class="form-control" id="description" name="odhqlinput">
+                <textarea disabled ng-model="vm.transformation" ng-model-options="{ getterSetter: true }"
+                          class="form-control" id="odhqlinputText" name="odhqlinput">
 
                 </textarea>
 
