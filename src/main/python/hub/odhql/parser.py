@@ -77,11 +77,13 @@ class OdhQLParser(object):
     ---------------------------------------------------------------------------
     """
 
-    def __init__(self):
-        self.grammar = self.build_grammar()
+    grammar = None
 
     @classmethod
     def build_grammar(cls):
+        if cls.grammar:
+            return cls.grammar
+
         escape_char = '\\'
         identifier = Regex(r'[a-zA-Z_][a-zA-Z0-9_]*') | QuotedString('"', escChar=escape_char)
         kw_and = CaselessKeyword('and')
@@ -197,7 +199,9 @@ class OdhQLParser(object):
                        Optional(order_by_declaration)('sort') + StringEnd())
         union_query.setParseAction(Union.parse)
 
-        return union_query
+        cls.grammar = union_query
+
+        return cls.grammar
 
     @staticmethod
     def _strip_line_comment(line):
@@ -216,7 +220,7 @@ class OdhQLParser(object):
         return '\n'.join(map(self._strip_line_comment, query.splitlines()))
 
     def parse(self, query):
-        return self.grammar.parseString(self.strip_comments(query))[0]
+        return self.build_grammar().parseString(self.strip_comments(query))[0]
 
 
 class ASTBase(object):
