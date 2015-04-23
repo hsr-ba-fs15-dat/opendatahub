@@ -26,22 +26,25 @@ module odh {
         public selected;
         public manualEdit:boolean = false;
         public count:number = 3;
-        public useQuotes:boolean = true;
         public joinOperations:{
             none: {}
             union: {}
             join: {}
         };
+        public joinOperationValue;
         public editor:any;
         public tableParams:any;
         public alerts:Object[] = [];
+        public selection:main.ITransformationSelection;
+        public quotes = true;
 
         constructor(private $http:ng.IHttpService, private $state:ng.ui.IStateService, private $scope:any,
                     private ToastService:odh.utils.ToastService, private $window:ng.IWindowService, private $upload,
                     private UrlService:odh.utils.UrlService, private FileGroupService:main.FileGroupService,
                     private DocumentService:main.DocumentService,
                     private $log:ng.ILogService, private ngTableParams, public $filter:ng.IFilterService,
-                    private $auth:any, private TransformationService:main.TransformationService) {
+                    private $auth:any, private TransformationService:main.TransformationService,
+                    private TransformationSelection:main.TransformationSelection, private JOIN_OPERATIONS) {
 
             this.tableParams = new ngTableParams({
                 page: 1,            // show first page
@@ -58,64 +61,7 @@ module odh {
                 }
             });
 
-            this.selected = {
-                fileGroups: [],
-                items: [],
-                fields: {},
-                expression: {},
-                unionTargets: [],
-                joinTargets: [],
-                remove: (item) => {
-                    var index = this.selected.items.indexOf(item);
-                    if (index > -1) {
-                        this.selected.items.splice(index, 1);
-                    }
-                    delete this.selected.fields[item.uniqueid];
-                    delete this.selected.expression[item.uniqueid];
-                    this.selected.fileGroups.splice(this.selected.fileGroups.indexOf(item.parent), 1);
-                },
-                add: (item) => {
-                    if (this.selected.items.indexOf(item) === -1) {
-                        item.uniqueid = item.name;
-                        item.uniqueidAlias = item.name;
-                        this.selected.expression[item.uniqueid] = {};
-                        this.selected.items.push(item);
-                        this.selected.expression[item.uniqueid].operation = this.joinOperations.none;
-                        this.selected.fileGroups.push(item.parent);
-                    }
-                },
-                addRemove: (item) => {
-                    var index = this.selected.items.indexOf(item);
-                    if (index === -1) {
-                        this.selected.add(item);
-                    } else {
-                        this.selected.remove(item);
-
-                    }
-                },
-                getItem: (item) => {
-                    for (var i = 0; i < this.selected.items.length; i++) {
-                        if (this.selected.items[i].uniqueid === item) {
-                            return this.selected.items[i];
-                        }
-                    }
-                }
-            };
-            this.joinOperations = {
-
-                none: {
-                    label: 'Nein',
-                    operation: null
-                },
-                union: {
-                    label: 'per UNION',
-                    operation: 'union'
-                },
-                join: {
-                    label: 'per JOIN',
-                    operation: 'join'
-                }
-            };
+            this.selection = angular.copy(TransformationSelection);
 
         }
 
@@ -140,95 +86,51 @@ module odh {
             }).catch(error => this.ToastService.failure('Es ist ein Fehler aufgetreten.'));
         }
 
-
         public transformation(newInput:string = '') {
             if (newInput && this.manualEdit) {
                 this.odhqlInputString = newInput;
                 return newInput;
             }
             if (!this.manualEdit) {
-                var fields:string[] = [];
-                var master:string = '';
-                var joinStatements:string[];
-                var unionStatements:string[];
-                unionStatements = [];
-                joinStatements = [];
-
-                this.selected.joinTargets = [];
-
-                angular.forEach(this.selected.expression, (value:IExpression, key:string) => {
-
-                    if (!value.operation.operation) {
-                        if (!master) {
-                            fields = this.createFieldNames(this.selected.fields[key], key).concat(fields);
-                            master = key;
-                            this.selected.joinTargets.push(this.selected.getItem(key));
-
-                        }
-
-                    }
-                    if (value.operation.operation === 'union') {
-                        this.selected.joinTargets.push(this.selected.getItem(key));
-                        var unionFields = this.createFieldNames(this.selected.fields[key], key);
-                        unionStatements.push(' \nUNION \n SELECT '.concat(unionFields.join(',\n'),
-                            ' FROM "', key + '"'));
-                    }
-                    if (value.operation.operation === 'join') {
-                        this.selected.joinTargets.push(this.selected.getItem(key));
-
-                        if (value.foreignKey) {
-                            fields = this.createFieldNames(this.selected.fields[key], key).concat(fields);
-                            joinStatements.push(
-                                ' JOIN '.concat(
-                                    this.quote(key),
-                                    ' on ',
-                                    this.createFieldNames([value.foreignKey], value.joinTable.uniqueid, true)[0],
-                                    ' = ',
-                                    this.createFieldNames([value.joinField], key, true)[0]
-                                )
-                            );
-                        }
-
-
-                    }
-
-                });
-                if (master && fields) {
-                    this.odhqlInputString = 'SELECT '.concat(
-                        fields.join(',\n'),
-                        ' \nFROM ',
-                        this.quote(master),
-                        ' \n',
-                        joinStatements.join(' \n '),
-                        unionStatements.join(' \n')
-                    );
-                }
+                this.odhqlInputString = this.selection.generateTransformation();
             }
             return this.odhqlInputString;
         }
 
-        public addFields(group) {
-            if (!this.manualEdit) {
-                angular.forEach(group.cols, (col) => {
-                    this.selected.fields[group.uniqueid].push(col);
-                });
-            }
-        }
-
         public aceLoaded(editor) {
             editor.$blockScrolling = 'Infinity';
+            editor.setOptions({
+                maxLines: Infinity
+            });
         }
 
-        public addField(col, group) {
+        public getJoinOperations() {
+            return this.JOIN_OPERATIONS;
+        }
+
+        public addRemoveField(col, table:main.ITable) {
             if (!this.manualEdit) {
-                this.selected.fields[group.uniqueid] = this.selected.fields[group.uniqueid] || [];
-                var index = this.selected.fields[group.uniqueid].indexOf(col);
-                if (index > -1) {
-                    this.selected.fields[group.uniqueid].splice(index, 1);
-                } else {
-                    this.selected.fields[group.uniqueid].push(col);
-                }
+                this.selection.addRemoveField(col, table);
             }
+        }
+
+        public getTableByName(tableName:string) {
+            return this.selection.getTableByName(tableName);
+        }
+
+        public getFields(tableName:string) {
+            return this.selection.getFields(tableName);
+        }
+
+        public getSelectedFields(table:main.ITable) {
+            if (table) {
+
+                return this.selection.getSelectedFields(table);
+            }
+        }
+
+        public allTables() {
+            return this.selection.allTables();
         }
 
         public closeAlert(index) {
@@ -241,6 +143,19 @@ module odh {
 
         public toggleManualEdit() {
             this.manualEdit = !this.manualEdit;
+        }
+
+        public addRemoveTable(table) {
+            this.selection.addRemoveTable(table);
+        }
+
+        public checkTableSelected(table) {
+            return this.selection.tableSelected(table);
+        }
+
+        public useQuotes(checkbox) {
+            console.log(checkbox);
+            this.selection.toggleQuotes();
         }
 
         public preview() {
@@ -283,15 +198,11 @@ module odh {
         }
 
         public isPrivate():boolean {
-            var isPrivate:boolean = false;
-            angular.forEach(this.selected.items, (item) => {
-                if (!isPrivate) {
-                    if (item.private) {
-                        isPrivate = true;
-                    }
-                }
-            });
-            return isPrivate;
+            return false;
+        }
+
+        public joinOperation(table) {
+            return this.selection.getJoinOperation(table);
         }
 
         public submit() {
@@ -307,7 +218,7 @@ module odh {
                     description: this.description,
                     transformation: this.odhqlInputString,
                     'private': this.isPrivate(),
-                    file_groups: this.selected.fileGroups
+                    file_groups: null // todo
                 };
                 var promise = this.TransformationService.post(transformation);
                 promise.then(data => this.createSuccess(data))
@@ -323,27 +234,8 @@ module odh {
         }
 
         private createFailure(data) {
-            this.ToastService.failure('Es ist ein Fehler aufgetreten!')
+            this.ToastService.failure('Es ist ein Fehler aufgetreten!');
             this.$log.error(data);
-        }
-
-        private createFieldNames(fields:IField[], group:string, doNotCheckAlias:boolean = false):string[] {
-            var newFields = [];
-            angular.forEach(fields, (field) => {
-                newFields.push(
-                    [this.quote(group), (field.name === field.alias || doNotCheckAlias)
-                        ? this.quote(field.name) : [this.quote(field.name), this.quote(field.alias)].join(' AS ')]
-                        .join('.'));
-            });
-            return newFields;
-        }
-
-        private quote(field:string) {
-            if (this.useQuotes) {
-
-                return '"' + field + '"';
-            }
-            return field;
         }
 
     }

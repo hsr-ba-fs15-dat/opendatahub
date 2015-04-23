@@ -22,6 +22,7 @@
 /// <reference path='main/main.module.ts' />
 /// <reference path='main/services/document.service.ts' />
 /// <reference path='main/services/format.service.ts' />
+/// <reference path='main/services/transformation.selection.service.ts' />
 /// <reference path='main/services/transformation.service.ts' />
 /// <reference path='odh.module.ts' />
 /// <reference path='services/appconfig.service.ts' />

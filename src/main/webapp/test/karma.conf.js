@@ -71,10 +71,11 @@ module.exports = function(config) {
         'app/scripts/main/controllers/transformation.create.controller.js',
       'app/scripts/auth/services/user.service.js',
       'app/scripts/main/controllers/transformation.list.controller.js',
+        'app/scripts/main/directives/focus.js',
       'app/scripts/main/controllers/about.controller.js',
-      'app/scripts/auth/controllers/userprofile.controller.js',
       'app/scripts/main/services/document.service.js',
       'app/scripts/main/services/format.service.js',
+        'app/scripts/main/services/transformation.selection.service.js',
       'app/scripts/main/services/transformation.service.js',
       'app/scripts/auth/controllers/login.controller.js',
         'app/scripts/main/controllers/transformation.detail.controller.js',
@@ -82,7 +83,7 @@ module.exports = function(config) {
       'app/scripts/main/controllers/main.controller.js',
       'app/scripts/main/controllers/navbar.controller.js',
       'app/scripts/main/controllers/odhql-console.js',
-      'app/scripts/main/directives/focus.js',
+        'app/scripts/auth/controllers/userprofile.controller.js',
       // endinjector
       'test/mock/**/*.js',
       'test/spec/**/*.js'

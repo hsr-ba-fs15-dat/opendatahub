@@ -41,6 +41,13 @@ module odh.main {
             );
         }
 
+        public aceLoaded(editor) {
+            editor.$blockScrolling = 'Infinity';
+            editor.setOptions({
+                maxLines: Infinity
+            });
+        }
+
         public preview() {
             this.TransformationService.preview(this.transformation).then((data:any) => {
                 this.columns = data.data.columns;
