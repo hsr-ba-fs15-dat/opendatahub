@@ -5,6 +5,15 @@ import hub.odhql.parser as odhql
 
 
 class TestParser(TestBase):
+    def test_validate_grammar(self):
+
+        grammar = odhql.OdhQLParser.build_grammar()
+
+        import pyparsing
+
+        self.assertIsInstance(grammar, pyparsing.ParserElement)
+        grammar.validate()
+
     def test_simple_field_mapping(self):
         p = odhql.OdhQLParser()
         result = p.parse('select b.a, b."b", b.c as d from b')

@@ -193,8 +193,6 @@ class OdhQLParser(object):
                  Optional(filter_declaration('filter')))
         query.setParseAction(Query.parse)
 
-        query.validate()
-
         union_query = (delimitedList(query, delim=CaselessKeyword('union'))('queries') +
                        Optional(order_by_declaration)('sort') + StringEnd())
         union_query.setParseAction(Union.parse)
