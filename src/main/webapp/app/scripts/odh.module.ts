@@ -20,8 +20,7 @@ module openDataHub {
             'ui.ace',
             'restangular',
             'truncate',
-            'angular-loading-bar',
-            'cfp.loadingBar',
+            'angularMoment',
             'openDataHub.auth',
             'openDataHub.utils',
             'openDataHub.main'
@@ -118,8 +117,11 @@ module openDataHub {
             )
             ;
         })
-        .run(($http:ng.IHttpService, $window:ng.IWindowService) => {
+        .run(($http:ng.IHttpService, $window:ng.IWindowService, amMoment) => {
             $http.defaults.xsrfHeaderName = 'X-CSRFToken';
             $http.defaults.xsrfCookieName = 'csrftoken';
+
+
+            amMoment.changeLocale('de');
         });
 }

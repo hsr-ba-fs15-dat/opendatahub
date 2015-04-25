@@ -7,6 +7,7 @@ module odh {
     class DocumentListController {
 
         public tableParams:any;
+        public loading = true;
 
         constructor(private $log:ng.ILogService, private DocumentService:odh.main.DocumentService,
                     private ToastService:odh.utils.ToastService,
@@ -21,9 +22,9 @@ module odh {
                     total: 0,
                     getData: ($defer, params) => {
                         this.DocumentService.getList(params.url()).then(result => {
-                            console.log(params);
                             params.total(result.count);
                             $defer.resolve(result.results);
+                            this.loading = false;
                         }).catch(error => this.onError(error));
                     }
                 });
@@ -45,6 +46,7 @@ module odh {
 
         public document;
         public fileGroups;
+        public loading = true;
 
         public availableFormats:odh.main.IFormat[];
 
@@ -85,6 +87,7 @@ module odh {
                     .then(data => {
                         this.$log.debug('File Groups for document ' + this.documentId, data);
                         this.fileGroups = data;
+                        this.loading = false;
                     })
                     .catch(error => {
                         this.ToastService.failure('Keine Daten gefunden für dieses Dokument');

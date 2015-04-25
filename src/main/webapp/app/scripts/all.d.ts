@@ -28,6 +28,7 @@
 /// <reference path='services/appconfig.service.ts' />
 /// <reference path='utils/apploader.service.ts' />
 /// <reference path='utils/block.directive.ts' />
+/// <reference path='utils/spinner.directive.ts' />
 /// <reference path='utils/toast.service.ts' />
 /// <reference path='utils/url.service.ts' />
 /// <reference path='utils/utils.module.ts' />

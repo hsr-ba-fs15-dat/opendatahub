@@ -1,12 +1,14 @@
 <div id="login_view" ng-controller="LoginController as lc">
 
-    <button ng-click="lc.authenticate('facebook')" class="btn btn-facebook"><i class="fa fa-facebook"></i> | Mit
-        Facebook anmelden
-    </button>
-    <br/>
-    <!-- todo or remove <button ng-click="lc.login('twitter')">Mit Twitter anmelden</button>-->
-    <button ng-click="lc.authenticate('github')" class="btn btn-github"><i class="fa fa-github"></i> | Mit GitHub
-        anmelden
-    </button>
+    <odh-spinner show-while="lc.authenticating">
+        <button ng-click="lc.authenticate('facebook')" class="btn btn-facebook"><i class="fa fa-facebook"></i> | Mit
+            Facebook anmelden
+        </button>
+        <br/>
+        <!-- todo or remove <button ng-click="lc.login('twitter')">Mit Twitter anmelden</button>-->
+        <button ng-click="lc.authenticate('github')" class="btn btn-github"><i class="fa fa-github"></i> | Mit GitHub
+            anmelden
+        </button>
+    </odh-spinner>
     <!-- todo <button ng-click="lc.login('Suisse ID')">Mit SuisseID anmelden</button>-->
 </div>

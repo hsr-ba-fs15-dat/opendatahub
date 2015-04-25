@@ -9,7 +9,6 @@ module odh.utils {
         public isLoaded:boolean = false;
         private pending:number = 0;
 
-
         public acquire():void {
             this.pending++;
             this.isLoaded = this.pending <= 0;

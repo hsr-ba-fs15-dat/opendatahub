@@ -126,7 +126,7 @@
 
                     <div class="col-md-6">
                         <ui-select ng-model="offer.params.format">
-                            <ui-select-match placeholder="Auto" allow-clear="true">{{ $select.selected.name }}</ui-select-match>
+                            <ui-select-match placeholder="Automatische Erkennung">{{ $select.selected.name }}</ui-select-match>
                             <ui-select-choices repeat="item.label as item in offer.formatChoices">
                                 {{ item.label }} <br/><small>{{ item.description }}</small>
                             </ui-select-choices>
