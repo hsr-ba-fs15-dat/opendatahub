@@ -78,12 +78,9 @@ module openDataHub {
                     templateUrl: 'views/document.list.html'
                 })
                 .state('document', {
-                    url: '/document/{id}',
+                    url: '/document/{id:int}',
                     controller: 'DocumentDetailController as doc',
-                    templateUrl: 'views/document.detail.html',
-                    params: {
-                        'id': 0
-                    }
+                    templateUrl: 'views/document.detail.html'
                 })
                 .state('console', {
                     url: '/console',
@@ -108,7 +105,7 @@ module openDataHub {
                     controller: 'TransformationListController as vm'
                 })
                 .state('transformation.detail', {
-                    url: '/detail/{id}',
+                    url: '/detail/{id:int}',
                     templateUrl: 'views/transformation.detail.html',
                     controller: 'TransformationDetailController as vm'
 
