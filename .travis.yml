@@ -18,6 +18,7 @@ env:
   global:
     - PATH: "$HOME/interlis:$PATH"
     - CI=true
+    - DJANGO_DEBUG=true
     - secure: "RC8P0y4q2g8ErB7MnTz4w5q1PK79rYeLN7YHfqaLZ4QeL+FF5cIVw9YP4iCI3I4mq7zm++jSQFoZj75G3iX8VZgJSqJjsriZKi6jXBqkF2q9CUWTJI935sNrRfaTC+Dxgcve5xK7ddIGuCmusN2foYSaon5Zlrq1xSTCcnMjV/M="
 
 install:
@@ -43,12 +44,14 @@ script:
  - pip install -r requirements.txt --download-cache $HOME/.pip-cache
  - pip install -r requirements_dev.txt --download-cache $HOME/.pip-cache
  - pyb -v
+ - unset DJANGO_DEBUG
+ - pyb -v django_collectstatic
 
 before_deploy:
  - heroku pg:reset DATABASE --confirm opendatahub-hsr-dev
  - git config --global user.email 'build@travis-ci.com'
  - git config --global user.name 'Tavis CI'
- - git add -f $TRAVIS_BUILD_DIR/src/main/webapp/dist $TRAVIS_BUILD_DIR/src/main/python/staticfiles
+ - git add -f $TRAVIS_BUILD_DIR/src/main/webapp/dist $TRAVIS_BUILD_DIR/src/main/staticfiles
  - git commit -q -m 'deploy to heroku'
  - cd $TRAVIS_BUILD_DIR
 

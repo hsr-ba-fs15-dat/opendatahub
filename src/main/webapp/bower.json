@@ -29,7 +29,6 @@
     "bootstrap-social-buttons": "~1.0.0",
     "satellizer": "https://github.com/hsr-ba-fs15-dat/satellizer.git#0.9.4.2",
     "blockui": "*",
-    "angular-ui-grid": "~3.0.0-rc.20",
     "angular-truncate": "*",
     "ng-table": "~0.5.4",
     "angular-ui-ace": "bower",

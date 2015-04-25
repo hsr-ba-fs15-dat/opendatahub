@@ -45,7 +45,6 @@ module.exports = function(config) {
       'bower_components/restangular/dist/restangular.js',
       'bower_components/satellizer/satellizer.js',
       'bower_components/blockui/jquery.blockUI.js',
-      'bower_components/angular-ui-grid/ui-grid.js',
       'bower_components/angular-truncate/src/truncate.js',
       'bower_components/ng-table/dist/ng-table.min.js',
       'bower_components/ace-builds/src-noconflict/ace.js',

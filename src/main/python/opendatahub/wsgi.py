@@ -9,8 +9,17 @@ https://docs.djangoproject.com/en/1.7/howto/deployment/wsgi/
 
 import os
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "opendatahub.settings")
-from django.core.wsgi import get_wsgi_application
-from dj_static import Cling
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'opendatahub.settings')
 
-application = Cling(get_wsgi_application())
+from django.core.wsgi import get_wsgi_application
+from opendatahub.settings import STATIC_ROOT
+from whitenoise.django import DjangoWhiteNoise
+
+application = get_wsgi_application()
+application = DjangoWhiteNoise(application)
+application.add_files(os.path.join(STATIC_ROOT, 'bower_components'), prefix='bower_components/')
+application.add_files(os.path.join(STATIC_ROOT, 'scripts'), prefix='scripts/')
+application.add_files(os.path.join(STATIC_ROOT, 'styles'), prefix='styles/')
+application.add_files(os.path.join(STATIC_ROOT, 'views'), prefix='views/')
+application.add_files(os.path.join(STATIC_ROOT, 'fonts'), prefix='fonts/')
+application.files['/'] = application.get_static_file(os.path.join(STATIC_ROOT, 'index.html'), '/')

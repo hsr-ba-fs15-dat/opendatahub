@@ -26,7 +26,7 @@ use_plugin('python.install_dependencies')
 # use_plugin('pypi:pybuilder_django_enhanced_plugin')
 
 default_task = ['clean', 'install_dependencies', 'django_makemigrations', 'django_migrate', 'django_createcachetable',
-                'django_test', 'django_collectstatic', 'grunt', 'analyze', 'publish']
+                'django_test', 'grunt', 'analyze', 'publish']
 
 
 @init

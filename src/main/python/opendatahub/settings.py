@@ -11,29 +11,29 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import logging
 import datetime
+import sys
 
 import os
-import sys
 import dj_database_url
 
 
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-
-
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-PRODUCTION = os.getenv('CONFIGURATION') == 'PRODUCTION'
-
-# Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
+DEBUG = bool(os.environ.get('DJANGO_DEBUG', False))
+TEMPLATE_DEBUG = DEBUG
+PRODUCTION = os.getenv('DJANGO_CONFIG') == 'PRODUCTION'
+
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+WEBAPP_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'webapp')
+WEBAPP_DIR = os.path.join(WEBAPP_ROOT, 'dist' if PRODUCTION else 'app')
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'r)gg!i^!6=62c8p416@n^x0@nc3#h)dj3ge10l*977u@np6=--'
 
 
+# logging
 if DEBUG:
     logging.basicConfig(level=logging.DEBUG)
-
 
 LOGGING = {
     'version': 1,
@@ -47,11 +47,10 @@ LOGGING = {
     },
 }
 
-logging.getLogger('Fiona').setLevel(logging.WARN)  # default verbosity slows down everything way too much
+# default verbosity slows down everything way too much
+logging.getLogger('Fiona').setLevel(logging.WARN)
 
-TEMPLATE_DEBUG = True
-
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost']
 
 # correct protocol (http vs. https) when behind reverse proxy like heroku
 USE_X_FORWARDED_HOST = True
@@ -65,9 +64,9 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.sites',
-    'django.contrib.staticfiles',
     'rest_framework',
     'hub',
+    'django.contrib.staticfiles',
     'rest_framework_jwt',
     'authentication',
     'rest_framework.authtoken',
@@ -144,26 +143,34 @@ CACHES = {
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'de-ch'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Zurich'
 
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
 
 # ACCOUNT_ADAPTER = 'authentication.adapters.MessageFreeAdapter'
 AUTH_USER_MODEL = 'authentication.UserProfile'
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.7/howto/static-files/
+
 SITE_ID = 1
 JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': datetime.timedelta(days=14)
 }
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/1.7/howto/static-files/
+STATICFILES_DIRS = (WEBAPP_DIR,)
+if DEBUG:
+    STATICFILES_DIRS += (WEBAPP_ROOT,)
+
+# Simplified static file serving.
+# https://warehouse.python.org/project/whitenoise/
+STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'staticfiles')
 STATIC_URL = '/static/'
+
 AUTHENTICATION_BACKENDS = (
     # Needed to login by username in Django admin, regardless of `allauth`
     "django.contrib.auth.backends.ModelBackend",
@@ -195,11 +202,23 @@ SOCIAL_AUTH_PIPELINE = (
     'social.pipeline.user.user_details',
     'authentication.pipelines.save_profile_picture'
 )
+
 JWT_ALLOW_REFRESH = True
 JWT_AUTH_HEADER_PREFIX = "Bearer"
 SOCIAL_AUTH_GITHUB_EXTRA_DATA = [('login', 'login')]
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+EMAIL_HOST_PASSWORD = os.environ.get('DJANGO_EMAIL_HOST_PASSWORD')
+if EMAIL_HOST_PASSWORD:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = 'mail.gandi.net'
+    EMAIL_HOST_USER = 'noreply@opendatahub.ch'
+    EMAIL_PORT = 465
+    EMAIL_USE_SSL = True
+    SERVER_EMAIL = 'noreply@opendatahub.ch'
+    DEFAULT_FROM_EMAIL = 'noreply@opendatahub.ch'
+    ADMINS = (('Developers', 'devs@opendatahub.ch'),)
 
 if not PRODUCTION:
     SSLIFY_DISABLE = True

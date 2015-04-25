@@ -16,7 +16,6 @@ module openDataHub {
             'ui.utils',
             'ui.select',
             'ui.bootstrap',
-            'ui.grid',
             'ui.ace',
             'restangular',
             'truncate',
