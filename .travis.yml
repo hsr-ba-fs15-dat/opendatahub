@@ -45,6 +45,7 @@ script:
  - pip install -r requirements_dev.txt --download-cache $HOME/.pip-cache
  - pyb -v
  - unset DJANGO_DEBUG
+ - export DJANGO_CONFIG=PRODUCTION
  - pyb -v django_collectstatic
 
 before_deploy:

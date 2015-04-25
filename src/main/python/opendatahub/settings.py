@@ -50,7 +50,7 @@ LOGGING = {
 # default verbosity slows down everything way too much
 logging.getLogger('Fiona').setLevel(logging.WARN)
 
-ALLOWED_HOSTS = ['localhost']
+ALLOWED_HOSTS = [host.strip() for host in os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost').split(',')]
 
 # correct protocol (http vs. https) when behind reverse proxy like heroku
 USE_X_FORWARDED_HOST = True
