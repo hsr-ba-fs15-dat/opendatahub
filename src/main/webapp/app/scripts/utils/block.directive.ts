@@ -11,7 +11,6 @@ module odh.utils {
                 var expr = attrs.odhBlock;
                 var centerX = attrs.odhBlockCenterX ? scope.$eval(attrs.odhBlockCenterX) : true;
                 var centerY = attrs.odhBlockCenterY ? scope.$eval(attrs.odhBlockCenterY) : true;
-                console.log(3333, attrs, centerX, centerY);
                 var backdrop = attrs.odhBlockBackdrop ? scope.$eval(attrs.odhBlockBackdrop) : true;
                 var text = attrs.odhBlockText ? '&nbsp;<span style="font-size: 2.5em;">' + attrs.odhBlockText +
                 '</span>' : '';
