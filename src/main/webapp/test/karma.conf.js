@@ -52,6 +52,7 @@ module.exports = function(config) {
       'bower_components/angular-ui-ace/ui-ace.js',
       'bower_components/moment/moment.js',
       'bower_components/angular-moment/angular-moment.js',
+      'bower_components/stacktrace-js/stacktrace.js',
       'bower_components/angular-mocks/angular-mocks.js',
       // endbower
       // injector:js

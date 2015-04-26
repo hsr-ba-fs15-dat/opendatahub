@@ -9,7 +9,7 @@ from hub.views.file_group import FileGroupViewSet
 from hub.views.file import FileViewSet
 from hub.views.format import FormatView
 from hub.views.url import UrlViewSet
-from opendatahub.views import ConfigView
+from opendatahub.views import ConfigView, AngularErrorHandler
 from hub.views.odhql import AdHocOdhQLView
 
 
@@ -27,6 +27,7 @@ urlpatterns = (
     url(r'^admin/', include(admin.site.urls)),
     url(r'api/v1/auth/', include('authentication.urls')),
     url(r'api/v1/odhql', AdHocOdhQLView.as_view()),
+    url(r'api/v1/error_handler', AngularErrorHandler.as_view()),
 )
 
 if DEBUG:

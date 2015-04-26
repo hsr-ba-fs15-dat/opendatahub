@@ -27,7 +27,29 @@ module openDataHub {
 
         .config(($stateProvider:ng.ui.IStateProvider, $urlRouterProvider:ng.ui.IUrlRouterProvider,
                  UrlServiceProvider:odh.utils.UrlService, paginationConfig:ng.ui.bootstrap.IPaginationConfig,
-                 RestangularProvider:restangular.IProvider, $httpProvider:ng.IHttpProvider) => {
+                 RestangularProvider:restangular.IProvider, $httpProvider:ng.IHttpProvider, $provide) => {
+
+            var API_PREFIX = '/api/v1/';
+
+            $provide.decorator('$exceptionHandler', ['$delegate', '$injector', function ($delegate, $injector) {
+                return function (exception, cause) {
+                    var $http:ng.IHttpService = $injector.get('$http');
+                    var UrlService:odh.utils.UrlService = $injector.get('UrlService');
+                    var stacktrace = (<any>window).printStackTrace({e: exception});
+                    var message = exception.message;
+                    var url = (<any>window).location.href;
+
+                    $http.post(UrlService.get('error_handler'), {
+                        stracktrace: stacktrace.join('\n'),
+                        message: message,
+                        url: url,
+                        cause: cause.toString() || ''
+                    });
+
+                    $delegate(exception, cause);
+                };
+            }]);
+
 
             (<any>$).material.init();
 
@@ -39,7 +61,7 @@ module openDataHub {
             // django request.is_ajax() compatibility
             $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
-            RestangularProvider.setBaseUrl('/api/v1/');
+            RestangularProvider.setBaseUrl(API_PREFIX);
             RestangularProvider.setRequestSuffix('/');
             RestangularProvider.addResponseInterceptor(function (data, operation/*, what, url, response, deferred*/) {
                 var extractedData;
@@ -54,7 +76,7 @@ module openDataHub {
                 return extractedData;
             });
 
-            UrlServiceProvider.setApiPrefix('/api/v1/');
+            UrlServiceProvider.setApiPrefix(API_PREFIX);
 
             $urlRouterProvider.otherwise('/');
 
