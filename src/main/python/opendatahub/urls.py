@@ -3,7 +3,7 @@ from django.contrib import admin
 from rest_framework import routers
 
 from hub.views.transformation import TransformationViewSet
-from opendatahub.settings import PRODUCTION, WEBAPP_DIR
+from opendatahub.settings import DEBUG, WEBAPP_DIR
 from hub.views.document import DocumentViewSet
 from hub.views.file_group import FileGroupViewSet
 from hub.views.file import FileViewSet
@@ -29,7 +29,12 @@ urlpatterns = (
     url(r'api/v1/odhql', AdHocOdhQLView.as_view()),
 )
 
-if not PRODUCTION:
-    urlpatterns += (url(r'^$', 'django.views.static.serve', {'path': 'index.html', 'document_root': WEBAPP_DIR}),)
+if DEBUG:
+    urlpatterns += (
+        url(r'^$', 'django.views.static.serve', {'path': 'index.html', 'document_root': WEBAPP_DIR}),
+        url(r'^bower_components/(?P<path>.*)$', 'django.views.static.serve',
+            {'document_root': '../webapp/bower_components'}),
+        url(r'^(?P<path>.*)$', 'django.views.static.serve', {'document_root': WEBAPP_DIR}),
+    )
 
 urlpatterns = patterns('', *urlpatterns)
