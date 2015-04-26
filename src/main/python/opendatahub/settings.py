@@ -38,17 +38,38 @@ if DEBUG:
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'handlers': {
+        'null': {
+            'level': 'DEBUG',
+            'class': 'logging.NullHandler',
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+        }
+    },
     'loggers': {
+        '': {
+            'handlers': ['console', 'mail_admins'],
+            'propagate': True,
+            'level': 'INFO',
+        },
         'django.db.backends': {
             # otherwise prints the base64 encoded files which is simply too much for the console to handle
             'level': 'WARN',
             'propagate': True,
         },
+        'Fiona': {
+            # default verbosity slows down everything way too much
+            'level': 'WARN',
+            'propagate': True,
+        },
     },
 }
-
-# default verbosity slows down everything way too much
-logging.getLogger('Fiona').setLevel(logging.WARN)
 
 ALLOWED_HOSTS = [host.strip() for host in os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost').split(',')]
 
