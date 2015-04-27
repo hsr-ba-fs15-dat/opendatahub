@@ -9,12 +9,16 @@ import collections
 import pandas
 import geopandas
 import os
+import pygeoif.geometry
+import fastkml.geometry
+from shapely.geometry.proxy import CachingGeometryProxy
 
 from opendatahub.utils.plugins import RegistrationMixin
 from hub import formats
 from hub.utils import ogr2ogr
 import hub.utils.common as com
-from hub.structures.frame import OdhFrame
+from hub.structures.frame import OdhSeries, OdhType, OdhFrame
+from fiona.crs import from_epsg
 
 
 logger = logging.getLogger(__name__)
@@ -83,8 +87,69 @@ class ExcelParser(Parser):
         return pandas.read_excel(file.stream, encoding='UTF-8')
 
 
+class KMLParser(Parser):
+    accepts = formats.KML,
+
+    @classmethod
+    def proxy_to_obj(cls, proxy):
+        res = proxy
+        if isinstance(proxy, CachingGeometryProxy):
+            res = proxy.__class__.__bases__[1](proxy)
+        return res
+
+    @classmethod
+    def _get_geoms(cls, geometry):
+        if isinstance(geometry, pygeoif.GeometryCollection):
+            result = {}
+            for i, g in enumerate(geometry.geoms):
+                col = 'geometry' + bool(i) * str((i + 1))
+                result[col] = cls._get_geoms(g)['geometry']
+            return result
+        elif isinstance(geometry, pygeoif.geometry._Feature):
+            return {'geometry': cls.proxy_to_obj(fastkml.geometry.Geometry(geometry=geometry).geometry)}
+
+        return {'geometry': cls.proxy_to_obj(geometry)}
+
+    @classmethod
+    def parse(cls, file, format, *args, **kwargs):
+
+        kml = fastkml.KML()
+        kml.from_string(file.stream.read())
+        doc = next(kml.features())
+        folder = next(doc.features())
+        placemarks = list(folder.features())
+
+        constructor = lambda: len(placemarks) * [None]
+        data = collections.defaultdict(constructor)
+
+        for i, placemark in enumerate(placemarks):
+            data['id'][i] = placemark.id
+            data['name'][i] = placemark.name
+            data['description'][i] = placemark.description
+            data['address'][i] = placemark.address
+            data['author'][i] = placemark.author
+            data['begin'][i] = placemark.begin
+            data['end'][i] = placemark.end
+            if placemark.extended_data:
+                for v in placemark.extended_data.elements[0].data:
+                    data[v['name']][i] = v['value']
+
+            if placemark.geometry:
+                for col, geom in cls._get_geoms(placemark.geometry).iteritems():
+                    data[col][i] = geom
+
+        df = OdhSeries.concat(
+            [OdhSeries(vals, name=name).convert_objects(convert_numeric=True) for name, vals in data.iteritems()],
+            axis=1)
+        for c, s in df.iteritems():
+            if s.odh_type == OdhType.GEOMETRY:
+                s.crs = from_epsg(4326)
+
+        return df
+
+
 class OGRParser(Parser):
-    accepts = (formats.GML, formats.GeoJSON, formats.KML, formats.Shapefile, formats.INTERLIS1,
+    accepts = (formats.GML, formats.GeoJSON, formats.Shapefile, formats.INTERLIS1,
                formats.WFS,)
     # formats.INTERLIS2
 

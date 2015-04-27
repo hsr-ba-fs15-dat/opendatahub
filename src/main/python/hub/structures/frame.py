@@ -145,8 +145,11 @@ class TextType(OdhType):
     ptypes = unicode, str
 
     def convert(self, series):
-        return series._constructor(series.values.astype(unicode).astype(object), index=series.index).__finalize__(
-            series)
+        try:
+            return series._constructor(series.values.astype(unicode).astype(object), index=series.index).__finalize__(
+                series)
+        except:  # fallback, slower
+            series._constructor(series.astype(unicode).astype(object), index=series.index).__finalize__(series)
 
 
 class GeometryType(OdhType):

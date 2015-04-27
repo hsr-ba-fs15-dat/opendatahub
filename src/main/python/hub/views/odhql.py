@@ -1,19 +1,19 @@
 import logging
 import json
+import itertools
 
 from django.utils.datastructures import MultiValueDictKeyError
+
 from django.views.generic import View
 from django.http.response import JsonResponse, HttpResponseBadRequest
-
 from pyparsing import ParseException
 
 from hub.models import FileGroupModel
+
 from hub.odhql import parser
 from hub.odhql.exceptions import OdhQLExecutionException
 from hub.odhql.interpreter import OdhQLInterpreter
-from hub.odhql.parser import TokenException
 from hub.utils.pandasutils import DataFrameUtils
-import itertools
 
 
 logger = logging.getLogger(__name__)
@@ -35,7 +35,7 @@ class ParseView(View):
                                 )
         except MultiValueDictKeyError:
             return JsonResponse({'error': 'Es wurde keine ODHQL Abfrage angegeben.',
-                                 'type': 'execution', # todo what exactly are we executing here?
+                                 'type': 'execution',  # todo what exactly are we executing here?
                                  },
                                 status=HttpResponseBadRequest.status_code
                                 )
