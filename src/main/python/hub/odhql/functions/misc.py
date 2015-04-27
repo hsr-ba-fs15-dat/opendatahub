@@ -32,7 +32,7 @@ class Cast(VectorizedFunction):
         type_ = type_.upper()
         self.assert_in('type', type_.upper(), OdhType.by_name.keys())
         odh_type = OdhType.by_name[type_]
-        with self.errorhandler('Unable to cast (({exception})'):
+        with self.errorhandler('Unable to cast ({exception})'):
             return odh_type.convert(self.expand(values))
 
 
