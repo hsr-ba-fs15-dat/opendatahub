@@ -5,7 +5,6 @@
 
 import logging
 import collections
-import traceback
 
 import pandas
 import geopandas
@@ -22,6 +21,10 @@ logger = logging.getLogger(__name__)
 
 
 class NoParserException(Exception):
+    pass
+
+
+class ParsingException(Exception):
     pass
 
 
@@ -44,10 +47,13 @@ class Parser(RegistrationMixin):
         for parser in cls.parsers_by_format[format]:
             try:
                 dfs = com.ensure_tuple(parser.parse(file, format=format, *args, **kwargs))
-                return [OdhFrame.from_df(df, file.basename) for df in dfs]
+                dfs = [OdhFrame.from_df(df, file.basename) for df in dfs]
+                if not dfs:
+                    raise ParsingException('Parser did not return DataFrames')
+                return dfs
             except:
-                logging.debug('%s was not able to parse data with format %s: %s', parser.__name__, format.__name__,
-                              traceback.format_exc())
+                logging.debug('%s was not able to parse data with format %s', parser.__name__, format.__name__,
+                              exc_info=True)
                 continue
 
         raise NoParserException('Unable to parse data')
@@ -104,10 +110,7 @@ class OGRParser(Parser):
             with group.on_filesystem() as temp_dir:
                 main_file = group.get_main_file()
                 if main_file:
-                    try:
-                        dataframes.append(geopandas.read_file(os.path.join(temp_dir, main_file.name)))
-                    except AttributeError:
-                        pass
+                    dataframes.append(geopandas.read_file(os.path.join(temp_dir, main_file.name)))
 
         return dataframes
 

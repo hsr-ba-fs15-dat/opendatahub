@@ -1,5 +1,4 @@
 import zipfile
-import json
 import traceback
 import logging
 
@@ -89,19 +88,8 @@ class FileGroupViewSet(viewsets.ModelViewSet):
         page = int(request.GET.get('page', 1))
         start = limit * (page - 1)
 
-        try:
-            model = FileGroupModel.objects.get(id=pk)
-            dfs = model.to_file_group().to_df()
+        model = FileGroupModel.objects.get(id=pk)
+        dfs = model.to_file_group().to_df()
 
-            if not dfs:
-                return JsonResponse({'type': 'parser',
-                                     'error': 'Failed to parse data'},
-                                    status=HttpResponseServerError.status_code)
-
-            data = [DataFrameUtils.to_json_dict(df, start, limit) for df in dfs]
-            return HttpResponse(content=json.dumps(data), content_type='application/json')
-        except Exception as e:
-            logger.error(traceback.format_exc())
-            return JsonResponse({'error': e.message,
-                                 'error_location': 'preview'},
-                                status=HttpResponseServerError.status_code)
+        data = [DataFrameUtils.to_json_dict(df, start, limit) for df in dfs]
+        return JsonResponse(data)

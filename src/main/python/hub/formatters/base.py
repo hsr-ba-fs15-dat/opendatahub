@@ -8,7 +8,6 @@ import tempfile
 import shutil
 import logging
 from lxml import etree
-import traceback
 
 import pandas
 import os
@@ -49,10 +48,13 @@ class Formatter(RegistrationMixin):
     def format(cls, file, format, *args, **kwargs):
         for formatter in cls.formatters_by_target[format]:
             try:
-                return formatter.format(file, format=format, *args, **kwargs)
+                result = formatter.format(file, format=format, *args, **kwargs)
+                if not result:
+                    raise FormattingException('Formatter did not return any result')
+                return result
             except:
-                logger.debug('%s was not able to format %s with target format %s: %s', formatter.__name__, file.name,
-                             format.__name__, traceback.format_exc())
+                logger.debug('%s was not able to format %s with target format %s', formatter.__name__, file.name,
+                             format.__name__, exc_info=True)
                 continue
 
         raise NoFormatterException('Unable to format {} as {}'.format(file.name, format.name))
