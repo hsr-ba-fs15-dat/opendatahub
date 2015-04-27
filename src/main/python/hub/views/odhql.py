@@ -1,20 +1,55 @@
 import traceback
 import logging
+import json
 
+from django.utils.datastructures import MultiValueDictKeyError
 from django.views.generic import View
-
 from django.http.response import JsonResponse, HttpResponseServerError, HttpResponseBadRequest
+
 from pyparsing import ParseException
 
 from hub.models import FileGroupModel
-
+from hub.odhql import parser
 from hub.odhql.exceptions import OdhQLExecutionException
+
 from hub.odhql.interpreter import OdhQLInterpreter
 from hub.odhql.parser import TokenException
 from hub.utils.pandasutils import DataFrameUtils
 
 
 logger = logging.getLogger(__name__)
+
+
+class ParseView(View):
+    def get(self, request):
+        try:
+            statement = request.GET['query']
+            print statement
+            odh_parser = parser.OdhQLParser()
+            odh_parser.parse(statement)
+
+        except ParseException as e:
+            logging.error(traceback.format_exc())
+            return JsonResponse({'error': e.message,
+                                 'type': 'parse',
+                                 'line': e.line,
+                                 'lineno': e.lineno,
+                                 'col': e.col},
+                                status=HttpResponseBadRequest.status_code
+                                )
+        except MultiValueDictKeyError:
+            logging.error(traceback.format_exc())
+            return JsonResponse({'error': 'Es muss ein Query angegeben werden!',
+                                 'type': 'execution',
+                                 },
+                                status=HttpResponseBadRequest.status_code
+                                )
+
+        except Exception:
+            logging.error(traceback.format_exc())
+            return JsonResponse({'error': True}, status=HttpResponseServerError.status_code)
+
+        return JsonResponse({'success': True})
 
 
 class AdHocOdhQLView(View):
@@ -46,9 +81,6 @@ class AdHocOdhQLView(View):
                                  'col': e.col},
                                 status=HttpResponseBadRequest.status_code
                                 )
-        except Exception as e:
-            logger.error(traceback.format_exc())
-            return JsonResponse({'error': True}, status=HttpResponseServerError.status_code)
 
         data = DataFrameUtils.to_json_dict(df, start, limit)
-        return JsonResponse(data)
+        return JsonResponse(data, encoder=json.JSONEncoder)

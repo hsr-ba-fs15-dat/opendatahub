@@ -15,7 +15,7 @@ module odh.main {
         public columns;
         public rows;
         public alerts;
-
+        public fileGroupTable;
         constructor(private $log:ng.ILogService, private $stateParams:any,
                     private TransformationService:main.TransformationService, private $http:ng.IHttpService,
                     private $state:ng.ui.IStateService, private $scope:any,
@@ -26,20 +26,15 @@ module odh.main {
                     private $auth:any) {
             // controller init
             this.transformationId = $stateParams.id;
-            this.requestData();
+            this.TransformationService.get(this.transformationId).then(data => {
+                this.name = data.name;
+                this.description = data.description;
+                this.transformation = data.transformation;
+                this.private = data.private;
+
+            });
         }
 
-        public requestData() {
-            this.TransformationService.get(this.transformationId).then(data => {
-                    console.log(data);
-                    this.name = data.name;
-                    this.description = data.description;
-                    this.transformation = data.transformation;
-                    this.file_groups = data.file_groups;
-                    this.private = data.private;
-                }
-            );
-        }
 
         public aceLoaded(editor) {
             editor.$blockScrolling = 'Infinity';

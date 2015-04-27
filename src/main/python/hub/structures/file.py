@@ -69,16 +69,12 @@ class FileGroup(object):
                 shutil.rmtree(temp_dir)
 
     def to_df(self, force=False):
-        file = self.get_main_file()
-        if file:
-            return file.to_df(force)
-        return None
+        file = self.get_main_file() or self.files[0]
+        return file.to_df(force)
 
     def to_format(self, format):
-        file = self.get_main_file()
-        if file:
-            return file.to_format(format)
-        return None
+        file = self.get_main_file() or self.files[0]
+        return file.to_format(format)
 
     def __iter__(self):
         return iter(self.files)

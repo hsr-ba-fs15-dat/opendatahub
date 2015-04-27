@@ -27,24 +27,20 @@ class TransformationViewSet(viewsets.ModelViewSet):
         if not ('name' in request.data and 'description' in request.data):
             raise ValidationError('Insufficient information')
 
-        try:
-            with transaction.atomic():
+        with transaction.atomic():
+            doc = TransformationModel(name=request.data['name'], description=request.data['description'],
+                                      private=request.data.get('private', False), owner=request.user,
+                                      transformation=request.data.get('transformation'))
+            doc.save()
+            doc.file_groups.add(
+                *[FileGroupModel.objects.get(id=str(fg)) for fg in request.data.get('file_groups')]
+            )
+            doc.save()
 
-                doc = TransformationModel(name=request.data['name'], description=request.data['description'],
-                                          private=request.data.get('private', False), owner=request.user,
-                                          transformation=request.data.get('transformation'))
-                doc.save()
-                doc.file_groups.add(
-                    *[FileGroupModel.objects.get(id=str(fg)) for fg in request.data.get('file_groups')]
-                )
-                doc.save()
+        serializer = TransformationSerializer(TransformationModel.objects.get(id=doc.id),
+                                              context={'request': request})
 
-            serializer = TransformationSerializer(TransformationModel.objects.get(id=doc.id),
-                                                  context={'request': request})
-
-            return Response(serializer.data)
-        except:
-            raise  # ValidationError(detail='error handling input')
+        return Response(serializer.data)
 
     def list(self, request, *args, **kwargs):
         """
