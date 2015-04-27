@@ -64,6 +64,7 @@ module odh.main {
         getJoinOperation(table:main.ITable);
         getSelectedFields(table:main.ITable):main.IField[];
         isPrivate():boolean;
+        getFileGroups():main.IFileGroup[];
     }
     export class TransformationService {
 
@@ -119,6 +120,14 @@ module odh.main {
             });
 
 
+        }
+
+        public parse(transformation:string) {
+            return this.$http.get(this.UrlService.get('parse'), {
+                params: {
+                    query: transformation
+                }
+            });
         }
 
     }

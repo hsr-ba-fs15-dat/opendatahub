@@ -16,6 +16,7 @@ module odh.main {
         public joinOperations:any;
         private useQuotes:boolean = true;
         private privateCount:number = 0;
+
         constructor(private JOIN_OPERATIONS:main.IOperations) {
             this.items = [];
             this.expression = {};
@@ -80,7 +81,7 @@ module odh.main {
         }
 
         public isPrivate() {
-            return !(this.privateCount == 0);
+            return !(this.privateCount === 0);
         }
 
         public getSelectedFields(table:main.ITable) {
@@ -168,6 +169,9 @@ module odh.main {
             }
         }
 
+        public getFileGroups() {
+            return this.fileGroups;
+        }
 
         public getJoinOperation(table:main.ITable) {
             return this.expression[table.uniqueId].operation;

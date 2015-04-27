@@ -2,16 +2,37 @@ import traceback
 import logging
 
 from django.views.generic import View
-
 from django.http.response import JsonResponse, HttpResponseServerError, HttpResponseBadRequest
 from pyparsing import ParseException
 
 from hub.models import FileGroupModel
-
 from hub.odhql.exceptions import OdhQLExecutionException
 from hub.odhql.interpreter import OdhQLInterpreter
 from hub.odhql.parser import TokenException
 from hub.utils.pandasutils import DataFrameUtils
+
+
+class ParseView(View):
+    def get(self, request):
+        try:
+            statement = request.GET['query']
+
+
+        except ParseException as e:
+            logging.error(traceback.format_exc())
+            return JsonResponse({'error': e.message,
+                                 'type': 'parse',
+                                 'line': e.line,
+                                 'lineno': e.lineno,
+                                 'col': e.col},
+                                status=HttpResponseBadRequest.status_code
+                                )
+
+        except Exception:
+            logging.error(traceback.format_exc())
+            return JsonResponse({'error': True}, status=HttpResponseServerError.status_code)
+
+        return JsonResponse({'success': True})
 
 
 class AdHocOdhQLView(View):
