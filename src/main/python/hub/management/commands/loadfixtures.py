@@ -86,7 +86,8 @@ class Command(BaseCommand):
 
     def add_transformation(self, file, name, group, desc=None):
         with open(file, 'r') as f:
-            transformation = TransformationModel(name=name, description=desc or name, transformation=f.read())
+            transformation = TransformationModel(name=name, description=desc or name, transformation=f.read(),
+                                                 owner=self.user)
             transformation.save()
 
             transformation.file_groups = FileGroupModel.objects.filter(id=group)
