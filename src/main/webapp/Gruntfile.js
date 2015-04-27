@@ -197,8 +197,7 @@ module.exports = function (grunt) {
                 src: ['<%= yeoman.app %>/index.html'],
                 ignorePath: /\.\.\//,
                 exclude: [
-                    'bower_components/bootstrap-material-design/dist/css/material.css',
-                    'bower_components/ace-builds/src-noconflict/mode-javascript.js'
+                    'bower_components/bootstrap-material-design/dist/css/material.css'
                 ]
             },
             test: {
