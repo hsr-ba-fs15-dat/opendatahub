@@ -101,13 +101,6 @@
                         {{ row[col.name] | characters:25 :true }}
                     </td>
                 </tr>
-                <tr ng-show="table.count > 3">
-                    <td colspan="{{table.cols.length}}">
-                        <a ng-click="vm.increaseTablePreview(group)">
-                            Mehr anzeigen
-                        </a>
-                    </td>
-                </tr>
             </table>
 
         </div>
@@ -209,7 +202,11 @@
                     </label>
                     <label class="control-label" for="useQuotes">
                         <input id=useQuotes" type="checkbox" ng-model="vm.quotes" ng-change="vm.useQuotes()"/>
-                        Hochkommas verwenden.
+                        Anführungszeichen verwenden.
+                    </label>
+                    <label class="control-label" for="isTemplate">
+                        <input id=useQuotes" type="checkbox" ng-model="vm.useAsTemplate"/>
+                        Als Template verwenden.
                     </label>
                 </div>
 
@@ -263,6 +260,19 @@
             </div>
 
         </fieldset>
+        <h1>Benutzte Packages</h1>
+
+        <div class="row">
+            <div class="col-md-12 table-responsive">
+                <table class="table table-striped table-hover" ng-table="vm.fileGroupTable">
+                    <tr ng-repeat="fileGroup in $data">
+                        <td data-title="'ID'" class="col-sm-1">{{fileGroup.id}}</td>
+                        <td data-title="'Name'">{{ fileGroup.document.name }}</td>
+                    </tr>
+
+                </table>
+            </div>
+        </div>
         <h1 ng-show="vm.columns">Resultat: </h1>
 
         <div class="row">

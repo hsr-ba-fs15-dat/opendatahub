@@ -23,20 +23,14 @@ module odh {
         public submitted:boolean = false;
         public documents:Object[];
         public odhqlInputString = '';
-        public selected;
         public manualEdit:boolean = false;
         public count:number = 3;
-        public joinOperations:{
-            none: {}
-            union: {}
-            join: {}
-        };
-        public joinOperationValue;
         public editor:any;
         public tableParams:any;
         public alerts:Object[] = [];
         public selection:main.ITransformationSelection;
         public quotes = true;
+        public useAsTemplate:boolean = false;
 
         constructor(private $http:ng.IHttpService, private $state:ng.ui.IStateService, private $scope:any,
                     private ToastService:odh.utils.ToastService, private $window:ng.IWindowService, private $upload,
@@ -159,7 +153,12 @@ module odh {
         }
 
         public preview() {
-            var defer = this.TransformationService.preview(this.transformation());
+            var defer;
+            if (this.useAsTemplate) {
+                defer = this.TransformationService.parse(this.transformation());
+            } else {
+                defer = this.TransformationService.preview(this.transformation());
+            }
             defer.then((data:any) => {
                 this.columns = data.data.columns;
                 this.rows = data.data.data;
@@ -174,6 +173,14 @@ module odh {
                             title: 'Fehler:'
                         });
 
+                    }
+
+                    if (data.type === 'execution') {
+                        this.alerts.push({
+                            msg: 'Ausführungs Fehler: ' + data.error,
+                            type: 'danger',
+                            title: 'Fehler:'
+                        });
                     }
                 }
 
@@ -198,7 +205,7 @@ module odh {
         }
 
         public isPrivate():boolean {
-            return false;
+            return this.selection.isPrivate();
         }
 
         public joinOperation(table) {
@@ -218,7 +225,7 @@ module odh {
                     description: this.description,
                     transformation: this.odhqlInputString,
                     'private': this.isPrivate(),
-                    file_groups: null // todo
+                    file_groups: this.selection.getFileGroups()
                 };
                 var promise = this.TransformationService.post(transformation);
                 promise.then(data => this.createSuccess(data))

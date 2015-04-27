@@ -1,3 +1,4 @@
+# encoding: utf-8
 from collections import Sequence
 
 from pyparsing import nums
@@ -75,6 +76,10 @@ class OdhQLParser(object):
 
     Identifier ::= ( "a..z" | "A..Z" | "_" ) ( "a..z" | "A..Z" | "_" | Integer )* | DoubleQuotedString
     ---------------------------------------------------------------------------
+    """
+
+    UI_HELP = """
+    ODHQL ist eine an SQL angelehnte Abfrage- und Transformations-Sprache für OpenDataHub.
     """
 
     grammar = None
