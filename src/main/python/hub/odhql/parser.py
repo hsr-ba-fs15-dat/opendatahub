@@ -79,7 +79,135 @@ class OdhQLParser(object):
     """
 
     UI_HELP = """
+    Hilfe zu ODHQL
+    ==============
+
     ODHQL ist eine an SQL angelehnte Abfrage- und Transformations-Sprache für OpenDataHub.
+
+    Bestandteile einer Abfrage
+    --------------------------
+
+    Eine Abfrage besteht aus folgenden Teilen:
+    - Eine Liste von Feldern oder Ausdrücken, welche im Resultat erscheinen sollen
+    - Eine Liste von Datenquellen
+    - Optional eine Liste von Filter-Ausdrücken
+    - Optional eine Sortier-Klausel
+
+    Gross- und Kleinschreibung wird nicht beachtet.
+
+    Mehrere Abfragen können kombiniert werden mithilfe von Union. In diesem Fall ist nur eine Sortier-Klausel am Ende
+    der kombinierten Abfrage erlaubt.
+
+    Beispiel::
+    .. code-block:: sql
+        select null as userid,                                                               -- Null-Ausdruck
+               substring(nvl(extract(t.text, '\|([^|\.]+)'), 'no value'), 0, 100) as title,  -- Funktions-Aufruf
+               extract(t.text, '\|([^|]+)') as description,
+               cast(cast(t."df", 'bigint'), 'datetime') as trob_start,
+               cast(cast(t."dd", 'bigint'), 'datetime') as trob_end,
+               null as trob_interval,
+               'both' as direction,                                                          -- String-Ausdruck
+               null as diversion_advice,
+               case when t.p = 'Switzerland' then 'CH'                                       -- Case-Ausdruck
+                    when t.p = 'France' then 'FR'
+                    when t.p = 'Austria' then 'AT'
+               end as country,
+               t.text as reason,                                                             -- Feld
+               extract(t.text, '\|([^|,]+)') as object_name,
+               'street' as object_type,
+               case when contains(t.text, 'closed', false) then 'closed'
+                    when (contains(t.text, 'maintenance', false) or contains(t.text, 'maintenance', false))
+                        then 'obstructed'
+                    else 'other'
+               end as trob_type,
+               st_setsrid(st_geomfromtext(concat('POINT(', t.x, ' ', t.y, ')')), 3395) as trobdb_point
+          from ODH11 as t                                                                    -- Datenquelle
+         order by 4
+
+    Felder und Ausdrücke
+    --------------------
+
+    In der Feld-Liste sind folgende Ausdrücke erlaubt:
+        Feld
+            Bezieht sich direkt auf ein Feld einer Datenquelle. Der Name des Feldes muss mit dem Namen oder Alias
+            der Datenquelle prefixed werden. Optional kann ein Alias angegeben werden.
+            Beispiel:
+            .. code-block:: sql
+                prefix.feld as alias
+        Wert
+            Ganzzahl (Integer), Fliesskommazahl (Float, Trennzeichen ist ein Punkt), Zeichenkette (String, in einfachen
+            Anführungszeichen), Boolean (true, false) oder Null. Es muss ein Alias angegeben werden.
+        Funktion
+            Besteht aus einem Namen und einer Liste von Argumenten. Es muss zwingend ein Alias angegeben werden.
+            Beispiel::
+            .. code-block:: sql
+                substring(nvl(extract(t.text, '\|([^|\.]+)'), 'no value'), 0, 100) as title
+        Fallunterscheidung (Case-Ausdruck)
+            Kann verwendet werden, um Werte zu übersetzen. Es muss mindestens eine Bedingung angegeben werden.
+            Das Format ist 'when <Bedingung> then <Ausdruck>', wobei alle unten beschriebenen Bedingungs-Arten sowie
+            hier beschriebenen Ausdrücke erlaubt sind.
+            Beispiel::
+            .. code-block:: sql
+                case when contains(t.text, 'closed', false) then 'closed'
+                     when (contains(t.text, 'maintenance', false) or contains(t.text, 'maintenance', false))
+                        then 'obstructed'
+                     else 'other'
+                end as trob_type
+
+    Datenquellen
+    ------------
+
+    Es muss mindestens eine Datenquelle angegeben werden. Falls mehrere Datenquellen verwendet werden sollen, muss eine
+    Verknüpfungsbedingung angegeben werden.
+
+    Beispiel::
+    .. code-block:: sql
+        from ODH12 as employees
+        join ODH13 as employers on employees.employer_id = employers.id
+
+    Filter
+    ------
+
+    Folgende Filter-Ausdrücke sind möglich:
+        is null, is not null
+            Prüft ob ein Feld (nicht) null ist
+        in, not in
+            Prüft ob ein Ausdruck (nicht) in einer Liste enthalten ist.
+            Beispiel::
+            .. code-block:: sql
+                country in ('CH', 'DE', 'AT')
+        <, >, <=, >=, =, !=
+            Vergleicht zwei Ausdrücke miteinander.
+        like, not like
+            Prüft ob ein Ausdruck einem Muster entspricht. Verwendet wird dazu ein Regulärer Ausdruck mit
+            `Python Syntax <https://docs.python.org/2/library/re.html#regular-expression-syntax>`_.
+        Prädikat
+            Eine Funktion, welche ein boolsches Resultat liefert kann direkt als Bedingung verwendet werden.
+
+    Mehrere Bedingungen können mit 'and' und 'or' verknüpft und mit runden Klammern gruppiert werden.
+
+    Beispiel::
+    .. code-block:: sql
+        where t.a is not null
+          and (t.b in (1, 2, 3) or t.b > 20)
+
+    Sortier-Klausel
+    ---------------
+
+    Es kann sortiert werden nach Feld-Name, Alias oder Position in der Feld-Liste.
+
+    Beispiel::
+    .. code-block:: sql
+        order by 1, 2 desc
+
+    Union
+    -----
+
+    Die Resultate mehrerer Abfragen können mithilfe von Union kombiniert werden. Zu beachten sind folgende Punkte:
+    - Union verhält sich wie UNION ALL in SQL, d.h. es wird keine Deduplizierung der Einträge vorgenommen
+    - Die einzelnen Abfragen müssen kompatible Feldlisten liefern, d.h. gleiche Feld-Zahl und Feld-Typen.
+
+    Als Feld-Namen werden im Resultat die Feld-Namen der ersten Abfrage verwendet.
     """
 
     grammar = None
@@ -169,7 +297,8 @@ class OdhQLParser(object):
         join_single_condition = field('left') + '=' + field('right')
         join_single_condition.setParseAction(JoinCondition.parse)
 
-        join_multi_condition = Literal('(') + delimitedList(join_single_condition, delim=kw_and)('conditions') + ')'
+        join_multi_condition = (Optional(Literal('(')) +
+                                delimitedList(join_single_condition, delim=kw_and)('conditions') + Optional(')'))
         join_multi_condition.setParseAction(JoinConditionList.parse)
 
         join_condition_list = join_single_condition | join_multi_condition
