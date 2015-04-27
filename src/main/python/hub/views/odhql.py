@@ -67,9 +67,6 @@ class AdHocOdhQLView(View):
                                  'col': e.col},
                                 status=HttpResponseBadRequest.status_code
                                 )
-        except Exception as e:
-            logger.error(traceback.format_exc())
-            return JsonResponse({'error': True}, status=HttpResponseServerError.status_code)
 
         data = DataFrameUtils.to_json_dict(df, start, limit)
         return JsonResponse(data)
