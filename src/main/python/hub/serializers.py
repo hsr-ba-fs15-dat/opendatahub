@@ -2,7 +2,6 @@ from rest_framework import serializers
 from rest_framework.pagination import PaginationSerializer
 
 from authentication.serializers import UserSerializer
-
 from hub.models import DocumentModel, FileGroupModel, FileModel, TransformationModel, UrlModel
 
 
@@ -15,13 +14,6 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('id', 'url', 'name', 'description', 'file_groups', 'private', 'owner', 'created_at')
 
 
-class TransformationSerializer(serializers.HyperlinkedModelSerializer):
-    file_groups = serializers.HyperlinkedIdentityField('transformationmodel-filegroup')
-    owner = UserSerializer(read_only=True)
-
-    class Meta(object):
-        model = TransformationModel
-        fields = ('id', 'url', 'name', 'description', 'transformation', 'private', 'owner', 'file_groups')
 
 
 class FileSerializer(serializers.HyperlinkedModelSerializer):
@@ -65,3 +57,12 @@ class FormatSerializer(serializers.Serializer):
     label = serializers.CharField(read_only=True)
     description = serializers.CharField(read_only=True)
     example = serializers.CharField(read_only=True)
+
+
+class TransformationSerializer(serializers.HyperlinkedModelSerializer):
+    file_groups = FileGroupSerializer(many=True)
+    owner = UserSerializer(read_only=True)
+
+    class Meta(object):
+        model = TransformationModel
+        fields = ('id', 'url', 'name', 'description', 'transformation', 'private', 'owner', 'file_groups')

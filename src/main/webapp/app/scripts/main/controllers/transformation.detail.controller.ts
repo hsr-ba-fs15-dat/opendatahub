@@ -16,6 +16,7 @@ module odh.main {
         public rows;
         public alerts;
         public fileGroupTable;
+
         constructor(private $log:ng.ILogService, private $stateParams:any,
                     private TransformationService:main.TransformationService, private $http:ng.IHttpService,
                     private $state:ng.ui.IStateService, private $scope:any,
@@ -33,6 +34,23 @@ module odh.main {
                 this.private = data.private;
 
             });
+            this.fileGroupTable = new ngTableParams({
+                    page: 1,
+                    count: 10
+                }, {
+                    counts: [10, 25, 50, 100],
+                    total: 0,
+                    getData: ($defer, params) => {
+                        this.TransformationService.get(this.transformationId).then(result => {
+                            console.log(result)
+                            params.total(result.file_groups.length);
+                            $defer.resolve(result.file_groups);
+                        });
+
+                    }
+                }
+            )
+
         }
 
 

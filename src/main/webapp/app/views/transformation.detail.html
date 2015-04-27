@@ -83,13 +83,17 @@
             </div>
 
         </fieldset>
-        <h1>Benutzte Packages (noch leer)</h1>
+        <h1>Benutzte Packages</h1>
 
         <div class="row">
             <div class="col-md-12 table-responsive">
                 <table class="table table-striped table-hover" ng-table="vm.fileGroupTable">
                     <tr ng-repeat="fileGroup in $data">
-                        <td data-title="'ID'" class="col-sm-1">{{fileGroup}}</td>
+                        <td data-title="'ID'" class="col-sm-1">{{fileGroup.id}}</td>
+                        <td data-title="'Name'">{{ fileGroup.document.name }}</td>
+                        <td data-title="'Privat'"><i class="fa"
+                                                     ng-class="fileGroup.document.private?'fa-lock':'fa-unlock'"></i>
+                        </td>
                     </tr>
 
                 </table>
