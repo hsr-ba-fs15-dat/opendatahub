@@ -601,6 +601,11 @@ class AliasedExpression(ASTBase):
 
         return cls(expression, alias)
 
+    def accept(self, visitor):
+        visitor.visit(self)
+
+        self.expression.accept(visitor)
+
 
 class Function(Expression):
     def __init__(self, name, args):

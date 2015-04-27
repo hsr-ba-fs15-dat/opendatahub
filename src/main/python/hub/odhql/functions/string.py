@@ -3,6 +3,7 @@ OdhQL string functions
 """
 
 from hub.odhql.functions.core import VectorizedFunction, OdhQLExecutionException
+from hub.structures.frame import OdhType
 
 
 class Concat(VectorizedFunction):
@@ -159,3 +160,16 @@ class Substring(VectorizedFunction):
         self.assert_int('start', start)
         self.assert_int('end', end)
         return strings.str.slice(start, end)
+
+class ToChar(VectorizedFunction):
+    name = 'TO_CHAR'
+
+    def apply(self, values, format=None):
+        type = OdhType.identify_series(values)
+
+        with self.errorhandler('Unable to convert to string (({exception})'):
+            if type == OdhType.DATETIME:
+
+                return values.apply(lambda d: d.strftime(format))
+            else:
+                return OdhType.TEXT.convert(self.expand(values))
