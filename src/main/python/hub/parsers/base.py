@@ -8,16 +8,17 @@ import collections
 import traceback
 
 import pandas
-
 import geopandas
 import os
 
 from opendatahub.utils.plugins import RegistrationMixin
-
 from hub import formats
 from hub.utils import ogr2ogr
 import hub.utils.common as com
 from hub.structures.frame import OdhFrame
+
+
+logger = logging.getLogger(__name__)
 
 
 class NoParserException(Exception):

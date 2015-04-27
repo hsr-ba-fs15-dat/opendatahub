@@ -17,6 +17,9 @@ from hub.structures.frame import OdhType, OdhSeries
 from ..exceptions import OdhQLExecutionException
 
 
+logger = logging.getLogger(__name__)
+
+
 class OdhQLFunction(RegistrationMixin):
     _is_abstract = True
     functions = {}
@@ -55,7 +58,7 @@ class OdhQLFunction(RegistrationMixin):
             yield
         except Exception as e:
             msg = msg.format(exception=e.message) if msg else e.message
-            logging.debug(traceback.format_exc())
+            logger.error(traceback.format_exc())
             raise OdhQLExecutionException('{}: {}'.format(self.name, msg))
 
     @staticmethod
@@ -135,11 +138,11 @@ class VectorizedFunction(OdhQLFunction):
 # return df.apply(lambda s: self.apply(*s), axis=1)
 #
 # def apply(self, *args):
-#         raise NotImplementedError
+# raise NotImplementedError
 #
 #
 # class SampleElementFunction(ElementFunction):
-#     name = 'TEST'
+# name = 'TEST'
 #
 #     def apply(self, a, b):
 #         return a + b

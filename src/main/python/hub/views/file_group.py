@@ -8,13 +8,16 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route
 from django.http.response import HttpResponse, HttpResponseNotFound, HttpResponseServerError, JsonResponse
+from django.utils.text import slugify
 
 from hub.models import FileGroupModel, FileModel
 from hub.serializers import FileGroupSerializer, FileSerializer
 from authentication.permissions import IsOwnerOrPublic
 from hub.utils.pandasutils import DataFrameUtils
 from opendatahub.utils.cache import cache
-from django.utils.text import slugify
+
+
+logger = logging.getLogger(__name__)
 
 
 class FileGroupViewSet(viewsets.ModelViewSet):
@@ -75,7 +78,7 @@ class FileGroupViewSet(viewsets.ModelViewSet):
 
             return response
         except Exception as e:
-            logging.warn(traceback.format_exc())
+            logger.error(traceback.format_exc())
             return JsonResponse({'error': e.message,
                                  'error_location': 'data'},
                                 status=HttpResponseServerError.status_code)
@@ -98,7 +101,7 @@ class FileGroupViewSet(viewsets.ModelViewSet):
             data = [DataFrameUtils.to_json_dict(df, start, limit) for df in dfs]
             return HttpResponse(content=json.dumps(data), content_type='application/json')
         except Exception as e:
-            logging.warn(traceback.format_exc())
+            logger.error(traceback.format_exc())
             return JsonResponse({'error': e.message,
                                  'error_location': 'preview'},
                                 status=HttpResponseServerError.status_code)

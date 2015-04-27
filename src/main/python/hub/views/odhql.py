@@ -11,6 +11,7 @@ from hub.odhql.interpreter import OdhQLInterpreter
 from hub.odhql.parser import TokenException
 from hub.utils.pandasutils import DataFrameUtils
 
+logger = logging.getLogger(__name__)
 
 class ParseView(View):
     def get(self, request):
@@ -65,7 +66,7 @@ class AdHocOdhQLView(View):
                                 status=HttpResponseBadRequest.status_code
                                 )
         except Exception as e:
-            logging.error(traceback.format_exc())
+            logger.error(traceback.format_exc())
             return JsonResponse({'error': True}, status=HttpResponseServerError.status_code)
 
         data = DataFrameUtils.to_json_dict(df, start, limit)

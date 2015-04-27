@@ -10,6 +10,8 @@ from hub.tests.testutils import TestBase
 from hub.utils.ogr2ogr import ogr2ogr, OgrFormat, _ogr2ogr_cli, Ogr2OgrException, INTERLIS_1, WFS
 from hub.structures.file import FileGroup
 
+logger = logging.getLogger(__name__)
+
 
 class Ogr2OgrUtilsTests(TestBase):
     def test_ogr_cli(self):
@@ -31,5 +33,5 @@ class Ogr2OgrUtilsTests(TestBase):
             file_group_from = FileGroup.from_files(*(os.path.join(data_dir, f) for f in os.listdir(data_dir)))
 
             for ogr_format_to in formats:
-                logging.info('Converting from %s to %s', ogr_format_from.identifier, ogr_format_to.identifier)
+                logger.info('Converting from %s to %s', ogr_format_from.identifier, ogr_format_to.identifier)
                 ogr2ogr(file_group_from, ogr_format_to)

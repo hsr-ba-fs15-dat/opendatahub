@@ -14,6 +14,9 @@ import types
 from hub.structures.file import FileGroup, WfsUrl
 
 
+logger = logging.getLogger(__name__)
+
+
 class Ogr2OgrException(Exception):
     pass
 
@@ -57,11 +60,13 @@ INTERLIS_1 = OgrFormat(['itf', 'ili', 'imd'], 'Interlis 1', True)
 
 def _ogr2ogr_cli(arguments, *args, **kwargs):
     cmd = ['ogr2ogr'] + arguments
-    logging.debug('Running ogr2ogr: %s', ' '.join(cmd))
-    process = subprocess.Popen(cmd)
-    exit_code = process.wait()
-    if exit_code:
-        raise Ogr2OgrException(exit_code)
+    logger.debug('Running ogr2ogr: %s', ' '.join(cmd))
+    try:
+        output = subprocess.check_output(cmd)
+        logger.debug(output)
+    except subprocess.CalledProcessError as e:
+        logger.error('%s: %s\n%s', e.returncode, e.cmd, e.output)
+        raise Ogr2OgrException(e.returncode)
 
 
 def ogr2ogr(file_group, to_type):
