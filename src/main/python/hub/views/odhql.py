@@ -2,12 +2,16 @@ import traceback
 import logging
 import json
 
+from django.utils.datastructures import MultiValueDictKeyError
 from django.views.generic import View
 from django.http.response import JsonResponse, HttpResponseServerError, HttpResponseBadRequest
+
 from pyparsing import ParseException
 
 from hub.models import FileGroupModel
+from hub.odhql import parser
 from hub.odhql.exceptions import OdhQLExecutionException
+
 from hub.odhql.interpreter import OdhQLInterpreter
 from hub.odhql.parser import TokenException
 from hub.utils.pandasutils import DataFrameUtils
@@ -21,7 +25,8 @@ class ParseView(View):
         try:
             statement = request.GET['query']
             print statement
-            # todo here i should parse the input
+            odh_parser = parser.OdhQLParser()
+            odh_parser.parse(statement)
 
         except ParseException as e:
             logging.error(traceback.format_exc())
@@ -30,6 +35,13 @@ class ParseView(View):
                                  'line': e.line,
                                  'lineno': e.lineno,
                                  'col': e.col},
+                                status=HttpResponseBadRequest.status_code
+                                )
+        except MultiValueDictKeyError:
+            logging.error(traceback.format_exc())
+            return JsonResponse({'error': 'Es muss ein Query angegeben werden!',
+                                 'type': 'execution',
+                                 },
                                 status=HttpResponseBadRequest.status_code
                                 )
 

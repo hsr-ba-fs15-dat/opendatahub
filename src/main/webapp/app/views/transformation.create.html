@@ -248,7 +248,7 @@
                         Speichern
                     </button>
                     <button ng-click="vm.preview()" type='button' class="btn btn-info pull-right">
-                        Vorschau
+                        {{ vm.useAsTemplate ? 'Überprüfen' : 'Vorschau' }}
                     </button>
                 </div>
             </div>

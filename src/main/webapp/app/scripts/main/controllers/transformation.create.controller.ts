@@ -160,8 +160,12 @@ module odh {
                 defer = this.TransformationService.preview(this.transformation());
             }
             defer.then((data:any) => {
-                this.columns = data.data.columns;
-                this.rows = data.data.data;
+                if (this.useAsTemplate) {
+                    this.ToastService.success('Query ist in Ordnung');
+                } else {
+                    this.columns = data.data.columns;
+                    this.rows = data.data.data;
+                }
             }).catch((data:any) => {
                 console.log(data);
                 if (typeof data === 'object') {
