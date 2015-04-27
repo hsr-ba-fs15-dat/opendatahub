@@ -13,6 +13,7 @@ from hub.serializers import FileGroupSerializer, FileSerializer
 from authentication.permissions import IsOwnerOrPublic
 from hub.utils.pandasutils import DataFrameUtils
 from opendatahub.utils.cache import cache
+import json
 
 
 logger = logging.getLogger(__name__)
@@ -85,4 +86,4 @@ class FileGroupViewSet(viewsets.ModelViewSet):
         dfs = model.to_file_group().to_df()
 
         data = [DataFrameUtils.to_json_dict(df, start, limit) for df in dfs]
-        return JsonResponse(data)
+        return JsonResponse(data, encoder=json.JSONEncoder, safe=False)

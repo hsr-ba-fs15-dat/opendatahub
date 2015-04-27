@@ -1,5 +1,6 @@
 import traceback
 import logging
+import json
 
 from django.views.generic import View
 from django.http.response import JsonResponse, HttpResponseServerError, HttpResponseBadRequest
@@ -10,6 +11,7 @@ from hub.odhql.exceptions import OdhQLExecutionException
 from hub.odhql.interpreter import OdhQLInterpreter
 from hub.odhql.parser import TokenException
 from hub.utils.pandasutils import DataFrameUtils
+
 
 logger = logging.getLogger(__name__)
 
@@ -69,4 +71,4 @@ class AdHocOdhQLView(View):
                                 )
 
         data = DataFrameUtils.to_json_dict(df, start, limit)
-        return JsonResponse(data)
+        return JsonResponse(data, encoder=json.JSONEncoder)
