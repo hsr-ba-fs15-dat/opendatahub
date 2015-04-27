@@ -28,15 +28,12 @@ class DocumentViewSet(viewsets.ModelViewSet):
         if not ('name' in request.data and 'description' in request.data):
             raise ValidationError('Insufficient information')
 
-        try:
-            with transaction.atomic():
-                doc = UploadHandler().handle_upload(request)
+        with transaction.atomic():
+            doc = UploadHandler().handle_upload(request)
 
-            serializer = DocumentSerializer(DocumentModel.objects.get(id=doc.id), context={'request': request})
+        serializer = DocumentSerializer(DocumentModel.objects.get(id=doc.id), context={'request': request})
 
-            return Response(serializer.data)
-        except:
-            raise  # ValidationError(detail='error handling input')
+        return Response(serializer.data)
 
     def str2bool(self, v):
         if v.lower() in ('true', 'false'):
