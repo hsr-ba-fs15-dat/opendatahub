@@ -1,10 +1,9 @@
-import traceback
 import logging
 import json
 
 from django.utils.datastructures import MultiValueDictKeyError
 from django.views.generic import View
-from django.http.response import JsonResponse, HttpResponseServerError, HttpResponseBadRequest
+from django.http.response import JsonResponse, HttpResponseBadRequest
 from pyparsing import ParseException
 
 from hub.models import FileGroupModel
@@ -22,7 +21,7 @@ class ParseView(View):
     def get(self, request):
         try:
             statement = request.GET['query']
-            print statement
+            logger.debug('Validating ODHQL query "%s"', statement)
             query = OdhQLParser().parse(statement)
             query = [q.data_sources[0] for q in query.queries] if \
                 isinstance(query, parser.Union) else query.data_sources
@@ -31,7 +30,6 @@ class ParseView(View):
             data_sources = {'tables': [{'name': table.name, 'alias': table.alias} for table in query]}
             print data_sources
         except ParseException as e:
-            logging.error(traceback.format_exc())
             return JsonResponse({'error': e.message,
                                  'type': 'parse',
                                  'line': e.line,
@@ -40,16 +38,13 @@ class ParseView(View):
                                 status=HttpResponseBadRequest.status_code
                                 )
         except MultiValueDictKeyError:
-            logging.error(traceback.format_exc())
-            return JsonResponse({'error': 'Es muss ein Query angegeben werden!',
-                                 'type': 'execution',
+            return JsonResponse({'error': 'Es wurde keine ODHQL Abfrage angegeben.',
+                                 'type': 'execution', # todo what exactly are we executing here?
                                  },
                                 status=HttpResponseBadRequest.status_code
                                 )
 
-        except Exception:
-            logging.error(traceback.format_exc())
-            return JsonResponse({'error': True}, status=HttpResponseServerError.status_code)
+        
 
         return JsonResponse(data_sources)
 

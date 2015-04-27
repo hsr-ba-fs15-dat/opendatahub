@@ -1,0 +1,15 @@
+SELECT null as userid,
+       substring(t.Projektbeschrieb, 0, 100) as title,
+       concat(t.Projektbeschrieb, ' (', cast(t.Baunummer, 'text'), ')') as description,
+       to_char(to_date(t.Baubeginn, '%Y%m%d'), '%Y-%m-%d') as trob_start,
+       to_char(to_date(t.Bauende, '%Y%m%d'), '%Y-%m-%d') as trob_end,
+       null as trob_interval,
+       'both' as direction,
+       null as diversion_advice,
+       'CH' as country,
+       t.Projektbeschrieb as reason,
+       t.Name as object_name,
+       'street' as object_type,
+       'closed' as trob_type,
+       ST_Centroid(t.geometry) as trobdb_point
+  from ODH5 as t

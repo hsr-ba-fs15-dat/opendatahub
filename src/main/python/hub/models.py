@@ -28,7 +28,7 @@ class DocumentModel(models.Model):
 
     private = models.BooleanField(default=False)
 
-    owner = models.ForeignKey(AUTH_USER_MODEL, null=True)
+    owner = models.ForeignKey(AUTH_USER_MODEL)
 
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -94,7 +94,7 @@ class TransformationModel(models.Model):
     transformation = models.TextField()
     description = models.TextField()
     private = models.BooleanField(default=False)
-    owner = models.ForeignKey(AUTH_USER_MODEL, null=True)
+    owner = models.ForeignKey(AUTH_USER_MODEL)
     file_groups = models.ManyToManyField(FileGroupModel)
 
     def __str__(self):
