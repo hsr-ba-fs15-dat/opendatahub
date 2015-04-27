@@ -51,6 +51,9 @@ class TestStringFunctions(TestInterpreterBase):
         df = self.execute('SELECT EXTRACT(e.prename, \'(Ann)\') as extracted FROM employee AS e')
         self.assertSetEqual({'Ann'}, set(df.extracted[~pd.isnull(df.extracted)].tolist()))
 
+        df = self.execute('SELECT EXTRACT(e.prename, \'(Ann)(ett)\', 2) as extracted FROM employee AS e')
+        self.assertSetEqual({'ett'}, set(df.extracted[~pd.isnull(df.extracted)].tolist()))
+
     def test_startswith(self):
         df = self.execute('SELECT STARTSWITH(e.prename, \'Ann\') as starts_ann FROM employee AS e')
         self.assertListEqual(df.starts_ann.tolist(), [n.startswith('Ann') for n in self.employees.Prename.tolist()])
