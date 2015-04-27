@@ -13,6 +13,7 @@ from hub.odhql.exceptions import OdhQLExecutionException
 from hub.odhql.interpreter import OdhQLInterpreter
 from hub.odhql.parser import TokenException
 from hub.utils.pandasutils import DataFrameUtils
+import itertools
 
 
 logger = logging.getLogger(__name__)
@@ -51,14 +52,14 @@ class AdHocOdhQLView(View):
             start = limit * (page - 1)
 
             ids = OdhQLInterpreter.parse_sources(statement)
-            by_id = dict(zip(ids.values(), ids.keys()))
 
             fgs = FileGroupModel.objects.filter(id__in=ids.values())
-            sources = {by_id[fg.id]: fg.to_file_group().to_df()[0] for fg in fgs}
+            sources = {df.name: df for df in itertools.chain(*[fg.to_file_group().to_df() for fg in fgs])}
+            sources = {name: sources[name] for name in ids.keys()}
 
             df = OdhQLInterpreter(sources).execute(statement)
 
-        except (OdhQLExecutionException, TokenException) as e:
+        except OdhQLExecutionException as e:
             return JsonResponse({'error': e.message,
                                  'type': 'execution'},
                                 status=HttpResponseBadRequest.status_code
