@@ -5,15 +5,13 @@ import json
 from django.utils.datastructures import MultiValueDictKeyError
 from django.views.generic import View
 from django.http.response import JsonResponse, HttpResponseServerError, HttpResponseBadRequest
-
 from pyparsing import ParseException
 
 from hub.models import FileGroupModel
 from hub.odhql import parser
 from hub.odhql.exceptions import OdhQLExecutionException
-
 from hub.odhql.interpreter import OdhQLInterpreter
-from hub.odhql.parser import TokenException
+from hub.odhql.parser import TokenException, OdhQLParser
 from hub.utils.pandasutils import DataFrameUtils
 
 
@@ -25,9 +23,13 @@ class ParseView(View):
         try:
             statement = request.GET['query']
             print statement
-            odh_parser = parser.OdhQLParser()
-            odh_parser.parse(statement)
-
+            query = OdhQLParser().parse(statement)
+            query = [q.data_sources[0] for q in query.queries] if \
+                isinstance(query, parser.Union) else query.data_sources
+            print type(query)
+            print query
+            data_sources = {'tables': [{'name': table.name, 'alias': table.alias} for table in query]}
+            print data_sources
         except ParseException as e:
             logging.error(traceback.format_exc())
             return JsonResponse({'error': e.message,
@@ -49,7 +51,7 @@ class ParseView(View):
             logging.error(traceback.format_exc())
             return JsonResponse({'error': True}, status=HttpResponseServerError.status_code)
 
-        return JsonResponse({'success': True})
+        return JsonResponse(data_sources)
 
 
 class AdHocOdhQLView(View):
@@ -81,6 +83,12 @@ class AdHocOdhQLView(View):
                                  'col': e.col},
                                 status=HttpResponseBadRequest.status_code
                                 )
-
+        except KeyError as e:
+            logging.error(traceback.format_exc())
+            return JsonResponse({'error': e.message,
+                                 'type': 'execution',
+                                 },
+                                status=HttpResponseBadRequest.status_code
+                                )
         data = DataFrameUtils.to_json_dict(df, start, limit)
         return JsonResponse(data, encoder=json.JSONEncoder)
