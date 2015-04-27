@@ -14,8 +14,6 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('id', 'url', 'name', 'description', 'file_groups', 'private', 'owner', 'created_at')
 
 
-
-
 class FileSerializer(serializers.HyperlinkedModelSerializer):
     class Meta(object):
         model = FileModel

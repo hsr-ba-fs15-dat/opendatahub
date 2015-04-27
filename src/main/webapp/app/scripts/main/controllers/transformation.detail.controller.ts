@@ -34,7 +34,7 @@ module odh.main {
                 this.description = data.description;
                 this.transformation = data.transformation;
                 this.private = data.private;
-                this.preview()
+                this.preview();
 
             });
             this.fileGroupTable = new ngTableParams({
@@ -45,14 +45,13 @@ module odh.main {
                     total: 0,
                     getData: ($defer, params) => {
                         this.TransformationService.get(this.transformationId).then(result => {
-                            console.log(result)
                             params.total(result.file_groups.length);
                             $defer.resolve(result.file_groups);
                         });
 
                     }
                 }
-            )
+            );
 
         }
 
