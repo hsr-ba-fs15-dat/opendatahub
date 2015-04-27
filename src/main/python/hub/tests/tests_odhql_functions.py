@@ -51,6 +51,9 @@ class TestStringFunctions(TestInterpreterBase):
         df = self.execute('SELECT EXTRACT(e.prename, \'(Ann)\') as extracted FROM employee AS e')
         self.assertSetEqual({'Ann'}, set(df.extracted[~pd.isnull(df.extracted)].tolist()))
 
+        df = self.execute('SELECT EXTRACT(e.prename, \'(Ann)(ett)\', 2) as extracted FROM employee AS e')
+        self.assertSetEqual({'ett'}, set(df.extracted[~pd.isnull(df.extracted)].tolist()))
+
     def test_startswith(self):
         df = self.execute('SELECT STARTSWITH(e.prename, \'Ann\') as starts_ann FROM employee AS e')
         self.assertListEqual(df.starts_ann.tolist(), [n.startswith('Ann') for n in self.employees.Prename.tolist()])
@@ -89,6 +92,10 @@ class TestStringFunctions(TestInterpreterBase):
     def test_substring(self):
         df = self.execute('SELECT SUBSTRING(e.prename, 0, 2) as subs FROM employee AS e')
         self.assertListEqual(df.subs.tolist(), [n[0:2] for n in self.employees.Prename.tolist()])
+
+    def test_to_char(self):
+        df = self.execute('SELECT TO_CHAR(TO_DATE(\'2015-01-01\', \'%Y-%m-%d\'), \'%d-%d-%Y\') as date from employee')
+        self.assertTrue(all(d == '01-01-2015' for d in df.date.tolist()))
 
     def test_fails(self):
         statements = (
@@ -141,8 +148,8 @@ class TestMiscFunctions(TestInterpreterBase):
         df = self.execute('SELECT CAST(\'3.141\', \'INTEGER\') AS age FROM child AS c')
         self.assertListEqual([3] * len(df), df.age.tolist())
 
-    def test_parse_datetime(self):
-        df = self.execute('SELECT PARSE_DATETIME(\'1990-10-13\') AS bday FROM child AS c')
+    def test_to_date(self):
+        df = self.execute('SELECT TO_DATE(\'1990-10-13\') AS bday FROM child AS c')
         bday = df.bday[0]
         self.assertListEqual([bday.day, bday.month, bday.year], [13, 10, 1990])  # yes, my bday!
 

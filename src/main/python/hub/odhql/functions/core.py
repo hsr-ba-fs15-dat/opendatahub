@@ -91,7 +91,7 @@ class OdhQLFunction(RegistrationMixin):
         self.assert_type(name, self._get_single_value(value), OdhType.FLOAT)
 
     def assert_value(self, name, value):
-        if not isinstance(value, pd.Series):
+        if isinstance(value, pd.Series):
             self.raise_error('Expected "{}" to be a single value. Got column instead.', name)
 
     def assert_str(self, name, value):
