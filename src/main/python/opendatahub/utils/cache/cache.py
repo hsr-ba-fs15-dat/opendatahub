@@ -2,6 +2,9 @@ from threading import Thread
 
 from django.core.cache import cache as default_cache, caches
 from django.db import connections, router
+
+from django.core.cache.backends.base import DEFAULT_TIMEOUT
+
 import types
 
 
@@ -19,9 +22,9 @@ class CacheWrapper(object):
             key = hash(key)
         return key
 
-    def set(self, key, value, version=None):
+    def set(self, key, value, version=None, timeout=DEFAULT_TIMEOUT):
         key = self.make_key(key)
-        self._cache.set(key, value, version=version)
+        self._cache.set(key, value, version=version, timeout=timeout)
 
     def get(self, key, version=None):
         return self._cache.get(self.make_key(key), version=version)
@@ -43,7 +46,7 @@ class LocalCacheWrapper(CacheWrapper):
 
 class DatabaseCacheWrapper(CacheWrapper):
 
-    def set(self, key, value, version=None):
+    def set(self, key, value, version=None, timeout=DEFAULT_TIMEOUT):
         key = self.make_key(key)
         Thread(target=super(DatabaseCacheWrapper, self).set, args=(key, value), kwargs={'version': version}).start()
 
@@ -63,9 +66,9 @@ L2 = LocalCacheWrapper(default_cache)
 L3 = DatabaseCacheWrapper(caches['L3'])
 
 
-def set(key, value, l1=False, l2=True, l3=True, version=None):
+def set(key, value, l1=False, l2=True, l3=True, version=None, timeout=DEFAULT_TIMEOUT):
     for cache in [c for c, do in ((L1, l1), (L2, l2), (L3, l3)) if do]:
-        cache.set(key, value, version=version)
+        cache.set(key, value, version=version, timeout=timeout)
 
 
 def get(key, l1=False, l2=True, l3=True, version=None):

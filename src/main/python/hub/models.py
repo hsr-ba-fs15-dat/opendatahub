@@ -6,7 +6,6 @@ from django.db import models
 
 from opendatahub import settings
 from hub.structures.file import File, FileGroup
-from hub.utils.urlhandler import UrlHelper
 
 
 AUTH_USER_MODEL = getattr(settings, 'AUTH_USER_MODEL', 'auth.User')
@@ -78,14 +77,13 @@ class UrlModel(models.Model):
     format = models.CharField(max_length=50, null=True)
 
     def to_file(self, file_group=None):
-        from hub.structures.file import WfsUrl
+        from hub.structures.file import WfsUrl, Url
 
         if self.type == 'wfs':
-            return WfsUrl('url%d' % self.id, self.source_url, file_group=file_group)
+            return WfsUrl('url%d' % self.id, self.source_url, cache_timeout=self.refresh_after, file_group=file_group)
         else:
-            name, data = UrlHelper().fetch_url(self)
-
-            return File.from_string(name, data, file_group=file_group, format=self.format)
+            return Url('url%d' % self.id, self.source_url, format=self.format, cache_timeout=self.refresh_after,
+                       file_group=file_group)
 
 
 class TransformationModel(models.Model):
