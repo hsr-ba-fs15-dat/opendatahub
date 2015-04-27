@@ -167,9 +167,9 @@ module odh {
                     this.rows = data.data.data;
                 }
             }).catch((data:any) => {
-                console.log(data);
                 if (typeof data === 'object') {
                     data = data.data;
+                    this.alerts.pop();
                     if (data.type === 'parse') {
                         this.alerts.push({
                             msg: 'Parse Fehler (' + data.lineno + ':' + data.col + ') Line: ' + data.line,
