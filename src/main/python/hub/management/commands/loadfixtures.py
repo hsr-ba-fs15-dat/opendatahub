@@ -32,7 +32,7 @@ class Command(BaseCommand):
         ('trobdb/TbaBaustellenZHWFS.gml', 'trobdb/TbaBaustellenZHWFS.xsd'): formats.GML,
         ('trobdb/tiefbaustelle.json',): formats.GeoJSON,
         ('trobdb/truckinfo.xml',): formats.XML,
-        ('trobdb/Baustellen.kml',): formats.XML,
+        ('trobdb/Baustellen.kml',): formats.KML,
         ('perf/employees.csv',): formats.CSV,
         ('perf/children.csv',): formats.CSV,
         ('interlis1/Bahnhoefe.ili', 'interlis1/Bahnhoefe.itf'): formats.INTERLIS1,
