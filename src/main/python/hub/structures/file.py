@@ -99,7 +99,7 @@ class File(object):
 
     CODEC = codecs.lookup('UTF-8')
 
-    def __init__(self, name, stream, file_group=None, format=None):
+    def __init__(self, name, stream, file_group=None, format=None, cache_timeout=None):
         if not file_group:
             file_group = FileGroup([self])
 
@@ -108,6 +108,7 @@ class File(object):
         self.file_group = file_group
         self.format = formats.Format.from_string(format) if isinstance(format, basestring) else format
         self.dfs = None
+        self.cache_timeout = cache_timeout
 
     @classmethod
     def from_file(cls, path, *args, **kwargs):
@@ -189,7 +190,12 @@ class File(object):
             else:
                 for df in self.dfs:
                     df.name = 'ODH_' + self.basename
-            cache.set(('FG', id_), self.dfs)
+
+            params = {}
+            if self.cache_timeout:
+                params['timeout'] = self.cache_timeout
+
+            cache.set(('FG', id_), self.dfs, **params)
 
         return self.dfs
 
@@ -217,3 +223,18 @@ class WfsUrl(File):
 
     def write_to(self, dir):
         pass
+
+
+class Url(File):
+    def __init__(self, name, url, *args, **kwargs):
+        super(Url, self).__init__(name, None, *args, **kwargs)
+
+        self.url = url
+
+    @property
+    def stream(self):
+        from hub.utils.urlhandler import UrlHelper
+
+        data = UrlHelper().fetch_url(self.url, self.cache_timeout)
+
+        return StringIO(data)
