@@ -1,10 +1,10 @@
 SELECT t."Federführende_Stelle" as userid,
        substring(t.Bauarbeiten, 0, 100) as title,
        t.Bauarbeiten as description,
-       to_char(parse_datetime(concat(extract(t.Dauer, '^((?:\\d\\d?\\.){2})'),
+       to_char(to_date(concat(extract(t.Dauer, '^((?:\\d\\d?\\.){2})'),
                                      nvl(extract(t.Dauer, '(\\d{4}) -'), extract(t.Dauer, '(\\d{4})$'))),
                               '%d.%m.%Y'), '%Y-%m-%d') as trob_start, -- add year from end date if not present
-       to_char(parse_datetime(extract(t.Dauer, '- ([\\d\\.]+)'), '%d.%m.%Y'), '%Y-%m-%d') as trob_end,
+       to_char(to_date(extract(t.Dauer, '- ([\\d\\.]+)'), '%d.%m.%Y'), '%Y-%m-%d') as trob_end,
        null as trob_interval,
        'both' as direction,
        null as diversion_advice,
