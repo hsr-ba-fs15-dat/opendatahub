@@ -9,7 +9,7 @@ from django.core.management.base import BaseCommand
 from django import db
 
 from hub.tests.testutils import TestBase
-from hub.models import DocumentModel, FileGroupModel, FileModel, UrlModel
+from hub.models import DocumentModel, FileGroupModel, FileModel, UrlModel, TransformationModel
 from hub import formats
 from hub.structures.file import FileGroup
 
@@ -42,6 +42,13 @@ class Command(BaseCommand):
     URLS = {
         ('http://maps.zh.ch/wfs/HaltestellenZHWFS', 'Haltestellen öffentlicher Verkehr ZH', formats.WFS),
         ('http://maps.zh.ch/wfs/TbaBaustellenZHWFS', 'Baustellen Kantonsstrassen ZH', formats.WFS)
+    }
+
+    TRANSFORMATIONS = {
+        ('trobdb/BaustellenExcel.odhql', 'TROBDB: Baustellen Februar 2015', 2),
+        ('trobdb/tiefbaustelle-zh.odhql', 'TROBDB: Tiefbaustellen ZH (aus GeoJSON)', 5),
+        ('trobdb/TruckInfo.odhql', 'TROBDB: TruckInfo', 11),
+        ('trobdb/WFS-Baustellen-ZH.odhql', 'TROBDB: Baustellen Zürich (WFS)', 17)
     }
 
     def add_document(self, desc, format, name):
@@ -77,6 +84,14 @@ class Command(BaseCommand):
                              refresh_after=3600)
         url_model.save()
 
+    def add_transformation(self, file, name, group, desc=None):
+        with open(file, 'r') as f:
+            transformation = TransformationModel(name=name, description=desc or name, transformation=f.read())
+            transformation.save()
+
+            transformation.file_groups = FileGroupModel.objects.filter(id=group)
+            transformation.save()
+
     def handle(self, *args, **options):
         self.user = TestBase.get_test_user()
 
@@ -86,6 +101,9 @@ class Command(BaseCommand):
 
         for (url, name, format) in self.URLS:
             self.add_url(url, format, name=name)
+
+        for (file, name, group) in self.TRANSFORMATIONS:
+            self.add_transformation(TestBase.get_test_file_path(file), name, group)
 
         self.add_multiple(FileGroup.from_files(TestBase.get_test_file_path('perf/employees.csv')), formats.CSV, 10)
         self.add_multiple(FileGroup.from_files(TestBase.get_test_file_path('mockaroo.com.json')), formats.JSON, 500)
