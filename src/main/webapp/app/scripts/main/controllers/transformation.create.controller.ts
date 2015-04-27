@@ -175,9 +175,9 @@ module odh {
 
                     }
 
-                    if (data.type == 'execution') {
+                    if (data.type === 'execution') {
                         this.alerts.push({
-                            msg: 'Ausführungs Fehler (' + data.lineno + ':' + data.col + ') Line: ' + data.line,
+                            msg: 'Ausführungs Fehler: ' + data.error,
                             type: 'danger',
                             title: 'Fehler:'
                         });

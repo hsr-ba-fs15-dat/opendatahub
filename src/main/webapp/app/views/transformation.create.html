@@ -101,13 +101,6 @@
                         {{ row[col.name] | characters:25 :true }}
                     </td>
                 </tr>
-                <tr ng-show="table.count > 3">
-                    <td colspan="{{table.cols.length}}">
-                        <a ng-click="vm.increaseTablePreview(group)">
-                            Mehr anzeigen
-                        </a>
-                    </td>
-                </tr>
             </table>
 
         </div>

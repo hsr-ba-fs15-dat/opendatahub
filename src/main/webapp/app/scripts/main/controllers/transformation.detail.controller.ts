@@ -27,28 +27,14 @@ module odh.main {
             // controller init
             this.transformationId = $stateParams.id;
             this.TransformationService.get(this.transformationId).then(data => {
-                    this.name = data.name;
-                    this.description = data.description;
-                    this.transformation = data.transformation;
-                    this.private = data.private;
-                }
-            );
-            this.fileGroupTable = new ngTableParams({
-                    page: 1,
-                    count: 10
-                }, {
-                    counts: [10, 25, 50, 100],
-                    total: 0,
-                    getData: ($defer, params) => {
-                        this.TransformationService.get(this.transformationId).then(result => {
-                            params.total(result.file_groups.length);
-                            $defer.resolve(result.file_groups);
-                        });
+                this.name = data.name;
+                this.description = data.description;
+                this.transformation = data.transformation;
+                this.private = data.private;
 
-                    }
-                }
-            )
+            });
         }
+
 
         public aceLoaded(editor) {
             editor.$blockScrolling = 'Infinity';

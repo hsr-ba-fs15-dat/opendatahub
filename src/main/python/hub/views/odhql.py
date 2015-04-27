@@ -13,11 +13,13 @@ from hub.utils.pandasutils import DataFrameUtils
 
 logger = logging.getLogger(__name__)
 
+
 class ParseView(View):
     def get(self, request):
         try:
             statement = request.GET['query']
-
+            print statement
+            # todo here i should parse the input
 
         except ParseException as e:
             logging.error(traceback.format_exc())
