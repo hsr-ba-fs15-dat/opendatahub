@@ -9,7 +9,6 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 """
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-import logging
 import datetime
 import sys
 
@@ -31,10 +30,7 @@ WEBAPP_DIR = os.path.join(WEBAPP_ROOT, 'dist' if PRODUCTION else 'app')
 SECRET_KEY = 'r)gg!i^!6=62c8p416@n^x0@nc3#h)dj3ge10l*977u@np6=--'
 
 
-# logging
-if DEBUG:
-    logging.basicConfig(level=logging.DEBUG)
-
+# Logging
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -56,7 +52,7 @@ LOGGING = {
         '': {
             'handlers': ['console', 'mail_admins'],
             'propagate': True,
-            'level': 'INFO',
+            'level': 'INFO' if not DEBUG else 'DEBUG',
         },
         'django.db.backends': {
             # otherwise prints the base64 encoded files which is simply too much for the console to handle

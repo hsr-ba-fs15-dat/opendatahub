@@ -14,6 +14,9 @@ from hub.odhql.parser import TokenException
 from hub.utils.pandasutils import DataFrameUtils
 
 
+logger = logging.getLogger(__name__)
+
+
 class AdHocOdhQLView(View):
     def get(self, request):
         try:
@@ -44,7 +47,7 @@ class AdHocOdhQLView(View):
                                 status=HttpResponseBadRequest.status_code
                                 )
         except Exception as e:
-            logging.error(traceback.format_exc())
+            logger.error(traceback.format_exc())
             return JsonResponse({'error': True}, status=HttpResponseServerError.status_code)
 
         data = DataFrameUtils.to_json_dict(df, start, limit)

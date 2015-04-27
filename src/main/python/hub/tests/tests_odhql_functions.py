@@ -14,6 +14,9 @@ from hub.tests.tests_interpreter import TestInterpreterBase
 from hub.odhql.exceptions import OdhQLExecutionException
 
 
+logger = logging.getLogger(__name__)
+
+
 class TestStringFunctions(TestInterpreterBase):
     def test_concat(self):
         df = self.execute('SELECT e.prename, e.surname, CONCAT(e.prename, \' \', e.surname) AS fullname '
@@ -220,5 +223,5 @@ class TestGeometryFunctions(TestInterpreterBase):
             try:
                 self.assertRaises(OdhQLExecutionException, lambda: self.execute(statement))
             except:
-                logging.info(traceback.format_exc())
+                logger.info(traceback.format_exc())
                 self.fail(message)

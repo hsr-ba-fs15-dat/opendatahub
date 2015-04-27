@@ -14,6 +14,9 @@ from hub.odhql.parser import OdhQLParser
 from hub.odhql.interpreter import OdhQLInterpreter
 
 
+logger = logging.getLogger(__name__)
+
+
 EMPLOYEES_CSV = """
 Id,Prename,Surname,Boss
 0,Dieter ,Holzmann,
@@ -73,12 +76,12 @@ class TestInterpreterBase(TestBase):
         self.interpreter = OdhQLInterpreter(self.get_source_dfs())
 
     def execute(self, query):
-        logging.info('Executing query "%s"', query)
+        logger.info('Executing query "%s"', query)
         t0 = time.time()
         df = self.interpreter.execute(query)
         self.time = round(time.time() - t0, 2)
-        logging.info('Query result: %s', df)
-        logging.info('"{}" took {}s.'.format(query, self.time))
+        logger.info('Query result: %s', df)
+        logger.info('"{}" took {}s.'.format(query, self.time))
         return df
 
 
@@ -261,7 +264,7 @@ class TestInterpreter(TestInterpreterBase):
             try:
                 self.assertRaises(OdhQLExecutionException, lambda: self.execute(statement))
             except:
-                logging.info(traceback.format_exc())
+                logger.info(traceback.format_exc())
                 self.fail(message)
 
 

@@ -19,6 +19,9 @@ from hub.structures.file import File, FileGroup
 from hub.utils import ogr2ogr
 
 
+logger = logging.getLogger(__name__)
+
+
 class NoFormatterException(Exception):
     pass
 
@@ -48,8 +51,8 @@ class Formatter(RegistrationMixin):
             try:
                 return formatter.format(file, format=format, *args, **kwargs)
             except:
-                logging.debug('%s was not able to format %s with target format %s: %s', formatter.__name__, file.name,
-                              format.__name__, traceback.format_exc())
+                logger.debug('%s was not able to format %s with target format %s: %s', formatter.__name__, file.name,
+                             format.__name__, traceback.format_exc())
                 continue
 
         raise NoFormatterException('Unable to format {} as {}'.format(file.name, format.name))
