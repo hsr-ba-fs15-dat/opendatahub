@@ -1,17 +1,15 @@
-import traceback
 import logging
 import json
 
 from django.utils.datastructures import MultiValueDictKeyError
 from django.views.generic import View
-from django.http.response import JsonResponse, HttpResponseServerError, HttpResponseBadRequest
+from django.http.response import JsonResponse, HttpResponseBadRequest
 
 from pyparsing import ParseException
 
 from hub.models import FileGroupModel
 from hub.odhql import parser
 from hub.odhql.exceptions import OdhQLExecutionException
-
 from hub.odhql.interpreter import OdhQLInterpreter
 from hub.odhql.parser import TokenException
 from hub.utils.pandasutils import DataFrameUtils
@@ -24,12 +22,9 @@ class ParseView(View):
     def get(self, request):
         try:
             statement = request.GET['query']
-            print statement
-            odh_parser = parser.OdhQLParser()
-            odh_parser.parse(statement)
-
+            logger.debug('Validating ODHQL query "%s"', statement)
+            parser.OdhQLParser().parse(statement)
         except ParseException as e:
-            logging.error(traceback.format_exc())
             return JsonResponse({'error': e.message,
                                  'type': 'parse',
                                  'line': e.line,
@@ -38,16 +33,11 @@ class ParseView(View):
                                 status=HttpResponseBadRequest.status_code
                                 )
         except MultiValueDictKeyError:
-            logging.error(traceback.format_exc())
-            return JsonResponse({'error': 'Es muss ein Query angegeben werden!',
-                                 'type': 'execution',
+            return JsonResponse({'error': 'Es wurde keine ODHQL Abfrage angegeben.',
+                                 'type': 'execution', # todo what exactly are we executing here?
                                  },
                                 status=HttpResponseBadRequest.status_code
                                 )
-
-        except Exception:
-            logging.error(traceback.format_exc())
-            return JsonResponse({'error': True}, status=HttpResponseServerError.status_code)
 
         return JsonResponse({'success': True})
 
