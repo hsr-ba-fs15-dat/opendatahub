@@ -137,6 +137,9 @@ class OdhQLParser(object):
         Wert
             Ganzzahl (Integer), Fliesskommazahl (Float, Trennzeichen ist ein Punkt), Zeichenkette (String, in einfachen
             Anführungszeichen), Boolean (true, false) oder Null. Es muss ein Alias angegeben werden.
+
+            Einfache Anführungszeichen können innerhalb eines Strings mit "\\'" erzeugt werden, Backslashes ("\\") mit
+            "\\\\".
         Funktion
             Besteht aus einem Namen und einer Liste von Argumenten. Es muss zwingend ein Alias angegeben werden.
             Beispiel::

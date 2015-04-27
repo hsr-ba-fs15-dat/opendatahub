@@ -36,8 +36,8 @@ class Cast(VectorizedFunction):
             return odh_type.convert(self.expand(values))
 
 
-class ParseDateTime(VectorizedFunction):
-    name = 'PARSE_DATETIME'
+class ToDate(VectorizedFunction):
+    name = 'TO_DATE'
 
     def apply(self, values, format=None):
         values = self.expand(values)
