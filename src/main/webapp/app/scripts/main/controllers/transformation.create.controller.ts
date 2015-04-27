@@ -198,7 +198,7 @@ module odh {
         }
 
         public isPrivate():boolean {
-            return false;
+            return this.selection.isPrivate();
         }
 
         public joinOperation(table) {

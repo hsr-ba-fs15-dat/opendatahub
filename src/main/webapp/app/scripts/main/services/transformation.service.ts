@@ -63,6 +63,7 @@ module odh.main {
         getFields(tableName:string):main.IField[];
         getJoinOperation(table:main.ITable);
         getSelectedFields(table:main.ITable):main.IField[];
+        isPrivate():boolean;
     }
     export class TransformationService {
 

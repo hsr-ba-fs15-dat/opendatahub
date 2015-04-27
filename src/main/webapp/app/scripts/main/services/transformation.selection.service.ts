@@ -15,7 +15,7 @@ module odh.main {
         public master:string;
         public joinOperations:any;
         private useQuotes:boolean = true;
-
+        private privateCount:number = 0;
         constructor(private JOIN_OPERATIONS:main.IOperations) {
             this.items = [];
             this.expression = {};
@@ -35,6 +35,9 @@ module odh.main {
                 this.expression[item.uniqueId] = {operation: this.JOIN_OPERATIONS.none};
                 this.items.push(item);
                 this.fileGroups.push(item.parent);
+                if (item.private) {
+                    this.privateCount += 1;
+                }
             }
         }
 
@@ -45,6 +48,9 @@ module odh.main {
             }
             delete this.fields[item.uniqueId];
             delete this.expression[item.uniqueId];
+            if (item.private) {
+                this.privateCount -= 1;
+            }
             this.fileGroups.splice(this.fileGroups.indexOf(item.parent), 1);
         }
 
@@ -71,6 +77,10 @@ module odh.main {
                     return this.items[i];
                 }
             }
+        }
+
+        public isPrivate() {
+            return !(this.privateCount == 0);
         }
 
         public getSelectedFields(table:main.ITable) {
@@ -157,6 +167,7 @@ module odh.main {
                 this.fields[table.uniqueId].push(col);
             }
         }
+
 
         public getJoinOperation(table:main.ITable) {
             return this.expression[table.uniqueId].operation;
