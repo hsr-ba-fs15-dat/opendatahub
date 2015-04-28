@@ -141,7 +141,7 @@ class BooleanType(OdhType):
 
 class TextType(OdhType):
     name = 'TEXT'
-    dtypes = np.object,
+    dtypes = np.object_,
     ptypes = unicode, str
 
     def convert(self, series):
@@ -154,8 +154,11 @@ class TextType(OdhType):
 
 class GeometryType(OdhType):
     name = 'GEOMETRY'
-    dtypes = np.object,
-    ptypes = shapely.geometry.Point, shapely.geometry.LineString, shapely.geometry.Polygon, shapely.geometry.LinearRing
+    dtypes = np.object_,
+    ptypes = (
+        shapely.geometry.Point, shapely.geometry.LineString, shapely.geometry.Polygon, shapely.geometry.LinearRing,
+        shapely.geometry.MultiLineString, shapely.geometry.MultiPoint, shapely.geometry.MultiPolygon
+    )
 
 
 class OdhFrame(pd.DataFrame):

@@ -81,6 +81,7 @@ def ogr2ogr(file_group, to_type, addtl_args=()):
 
         if from_format is WFS:
             _ogr2ogr_cli(['-f', to_type.identifier, path, 'WFS:{}'.format(file_group[0].url)])
+            main_file = None
         else:
             files_by_extension = (file for ext in from_format.extension
                                   for file in file_group.get_by_extension(ext))
