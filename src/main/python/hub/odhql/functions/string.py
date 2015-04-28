@@ -7,6 +7,7 @@ import pandas as pd
 from hub.odhql.functions.core import VectorizedFunction, OdhQLExecutionException
 from hub.structures.frame import OdhType
 
+
 import lxml.html
 import types
 
@@ -219,7 +220,7 @@ class XPath(VectorizedFunction):
     def apply(self, values, path):
         self.assert_str('values', values)
         self.assert_str('path', path)
-        self.assert_value('pathp', path)
+        self.assert_value('path', path)
         return values.apply(self._extract(path))
 
     def _extract(self, path):
@@ -229,7 +230,10 @@ class XPath(VectorizedFunction):
             if isinstance(res, types.ListType):
                 if len(res) > 1:
                     raise OdhQLExecutionException('Error in xpath expression: Result must be a scalar')
-                return res[0]
+                res = res[0]
+
+            if isinstance(res, basestring):
+                return unicode(res)
 
             return res
 
