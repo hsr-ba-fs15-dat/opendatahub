@@ -227,7 +227,7 @@ SOCIAL_AUTH_GITHUB_EXTRA_DATA = [('login', 'login')]
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-EMAIL_HOST_PASSWORD = os.environ.get('DJANGO_EMAIL_HOST_PASSWORD', 'viecuSuveiv0eexei6OoKo1Ro')
+EMAIL_HOST_PASSWORD = os.environ.get('DJANGO_EMAIL_HOST_PASSWORD')
 if EMAIL_HOST_PASSWORD:
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
     EMAIL_HOST = 'mail.gandi.net'
@@ -236,7 +236,7 @@ if EMAIL_HOST_PASSWORD:
     EMAIL_USE_SSL = True
     SERVER_EMAIL = 'noreply@opendatahub.ch'
     DEFAULT_FROM_EMAIL = 'noreply@opendatahub.ch'
-    ADMINS = (('Developers', 'fabio.scala@gmail.com'),)
+    ADMINS = (('Developers', 'devs@opendatahub.ch'),)
 
 if not PRODUCTION:
     SSLIFY_DISABLE = True

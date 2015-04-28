@@ -11,14 +11,15 @@ import geopandas as gp
 import os
 import pygeoif.geometry
 import fastkml.geometry
+import shapely.geometry
 from shapely.geometry.proxy import CachingGeometryProxy
+from fiona.crs import from_epsg
 
 from opendatahub.utils.plugins import RegistrationMixin
 from hub import formats
 from hub.utils import ogr2ogr
 import hub.utils.common as com
 from hub.structures.frame import OdhSeries, OdhType, OdhFrame
-from fiona.crs import from_epsg
 
 
 logger = logging.getLogger(__name__)
@@ -94,7 +95,7 @@ class KMLParser(Parser):
     def proxy_to_obj(cls, proxy):
         res = proxy
         if isinstance(proxy, CachingGeometryProxy):
-            res = proxy.__class__.__bases__[1](proxy)
+            res = getattr(shapely.geometry, proxy.geom_type)(proxy)
         return res
 
     @classmethod
@@ -143,7 +144,7 @@ class KMLParser(Parser):
             axis=1)
         for c, s in df.iteritems():
             if s.odh_type == OdhType.GEOMETRY:
-                s.crs = from_epsg(4326)
+                s.crs = from_epsg(4326)  # KML uses SRID 4326 by definition
 
         return df
 
