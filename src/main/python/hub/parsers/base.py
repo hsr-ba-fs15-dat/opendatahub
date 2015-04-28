@@ -7,7 +7,7 @@ import logging
 import collections
 
 import pandas
-import geopandas
+import geopandas as gp
 import os
 import pygeoif.geometry
 import fastkml.geometry
@@ -148,10 +148,35 @@ class KMLParser(Parser):
         return df
 
 
+class GeoJSONParser(Parser):
+    accepts = formats.GeoJSON,
+
+    @classmethod
+    def parse(cls, file, format, *args, **kwargs):
+        with file.file_group.on_filesystem() as temp_dir:
+            return gp.read_file(os.path.join(temp_dir, file.name), driver='GeoJSON')
+
+
+class GeoPackageParser(Parser):
+    accepts = formats.GeoPackage,
+
+    @classmethod
+    def parse(cls, file, format, *args, **kwargs):
+        with file.file_group.on_filesystem() as temp_dir:
+            return gp.read_file(os.path.join(temp_dir, file.name), driver='GPKG')
+
+
+class ShapefileParser(Parser):
+    accepts = formats.Shapefile,
+
+    @classmethod
+    def parse(cls, file, format, *args, **kwargs):
+        with file.file_group.on_filesystem() as temp_dir:
+            return gp.read_file(os.path.join(temp_dir, file.name), driver='ESRI Shapefile')
+
+
 class OGRParser(Parser):
-    accepts = (formats.GML, formats.GeoJSON, formats.Shapefile, formats.INTERLIS1,
-               formats.WFS,)
-    # formats.INTERLIS2
+    accepts = formats.GML, formats.INTERLIS1, formats.WFS
 
     @classmethod
     def parse(cls, file, format, *args, **kwargs):
@@ -164,10 +189,7 @@ class OGRParser(Parser):
         # CSV: Yeah. Right.
         # GML, KML: Not supported by fiona so geopandas can't read it
 
-        if format in (formats.Shapefile, formats.GeoJSON):
-            file_groups = [file.file_group]
-        else:
-            file_groups = ogr2ogr.ogr2ogr(file.file_group, ogr2ogr.SHP)
+        file_groups = ogr2ogr.ogr2ogr(file.file_group, ogr2ogr.SHP)
 
         dataframes = []
 
@@ -175,7 +197,7 @@ class OGRParser(Parser):
             with group.on_filesystem() as temp_dir:
                 main_file = group.get_main_file()
                 if main_file:
-                    dataframes.append(geopandas.read_file(os.path.join(temp_dir, main_file.name)))
+                    dataframes.append(gp.read_file(os.path.join(temp_dir, main_file.name)))
 
         return dataframes
 

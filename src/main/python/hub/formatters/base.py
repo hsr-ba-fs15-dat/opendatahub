@@ -9,7 +9,6 @@ import shutil
 import logging
 from lxml import etree
 
-import pandas
 import os
 
 from opendatahub.utils.plugins import RegistrationMixin
@@ -130,15 +129,48 @@ class NoopFormatter(Formatter):
         return [file.file_group]
 
 
-class OGRFormatter(Formatter):
-    targets = formats.GeoJSON, formats.GML, formats.KML, formats.Shapefile, formats.INTERLIS1,
+class GeoFormatterBase(Formatter):
+    _is_abstract = True
+
+    @classmethod
+    def format(cls, file, format, driver, extension, *args, **kwargs):
+        dfs = file.to_df()
+        formatted = []
+
+        for df in dfs:
+            if df.has_geoms:
+                gdf = df.to_gdf()
+                temp_dir = tempfile.mkdtemp()
+                try:
+                    gdf.to_file(os.path.join(temp_dir, file.basename + '.{}'.format(extension)), driver=driver)
+                    file_group = FileGroup.from_files(*[os.path.join(temp_dir, f) for f in os.listdir(temp_dir)])
+                finally:
+                    shutil.rmtree(temp_dir)
+            else:
+                formatted = CSVFormatter.format(file, formats.CSV)
+                file_group = ogr2ogr.ogr2ogr(formatted[0], ogr2ogr.CSV)[0]
+
+            formatted.append(file_group)
+
+        return formatted
+
+
+class GeoJSONFormatter(GeoFormatterBase):
+    _is_abstract = True
+
+    @classmethod
+    def format(cls, file, format, *args, **kwargs):
+        super(GeoJSONFormatter, cls).format(file, format, 'GeoJSON', 'json', *args, **kwargs)
+
+
+class OGRFormatter(GeoFormatterBase):
+    targets = formats.GML, formats.KML, formats.Shapefile, formats.INTERLIS1,
 
     # Note: Interlis 2 is not supported for export, because it would need a schema for that. Because it is the only
     # format with a schema requirement and adding that feature would mean investing a substantial amount of time we
     # don't currently have, we decided to not support exporting to Interlis 2 at this time.
 
     FORMAT_TO_OGR = {
-        formats.GeoJSON: ogr2ogr.GEO_JSON,
         formats.GML: ogr2ogr.GML,
         formats.KML: ogr2ogr.KML,
         formats.Shapefile: ogr2ogr.SHP,
@@ -148,25 +180,9 @@ class OGRFormatter(Formatter):
 
     @classmethod
     def format(cls, file, format, *args, **kwargs):
-        dataframes = file.to_df()
-        results = []
+        formatted = []
 
-        for df in dataframes:
-            if df.has_geoms:
-                df = df.to_gdf()
-                temp_dir = tempfile.mkdtemp()
-                try:
-                    df.to_file(os.path.join(temp_dir, file.basename + '.shp'))
-                    file_group = FileGroup.from_files(*[os.path.join(temp_dir, f) for f in os.listdir(temp_dir)])
-                finally:
-                    shutil.rmtree(temp_dir)
-            elif isinstance(df, pandas.DataFrame):
-                formatted = CSVFormatter.format(file, formats.CSV)
-                assert len(formatted) == 1, "formatting a single data frame as csv should only result in 1 file"
-                file_group = ogr2ogr.ogr2ogr(formatted[0], ogr2ogr.CSV)[0]
-            else:
-                raise FormattingException('Could not format {}'.format(df))
+        for fg in super(OGRFormatter, cls).format(file, format, 'ESRI Shapefile', 'shp', *args, **kwargs):
+            formatted.extend(ogr2ogr.ogr2ogr(fg, cls.FORMAT_TO_OGR[format]))
 
-            results.extend(ogr2ogr.ogr2ogr(file_group, cls.FORMAT_TO_OGR[format]))
-
-        return results
+        return formatted
