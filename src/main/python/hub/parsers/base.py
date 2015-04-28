@@ -117,36 +117,41 @@ class KMLParser(Parser):
         kml = fastkml.KML()
         kml.from_string(file.stream.read())
         doc = next(kml.features())
-        folder = next(doc.features())
-        placemarks = list(folder.features())
+        dfs = []
 
-        constructor = lambda: len(placemarks) * [None]
-        data = collections.defaultdict(constructor)
+        for folder in doc.features():
+            placemarks = list(folder.features())
 
-        for i, placemark in enumerate(placemarks):
-            data['id'][i] = placemark.id
-            data['name'][i] = placemark.name
-            data['description'][i] = placemark.description
-            data['address'][i] = placemark.address
-            data['author'][i] = placemark.author
-            data['begin'][i] = placemark.begin
-            data['end'][i] = placemark.end
-            if placemark.extended_data:
-                for v in placemark.extended_data.elements[0].data:
-                    data[v['name']][i] = v['value']
+            constructor = lambda: len(placemarks) * [None]
+            data = collections.defaultdict(constructor)
 
-            if placemark.geometry:
-                for col, geom in cls._get_geoms(placemark.geometry).iteritems():
-                    data[col][i] = geom
+            for i, placemark in enumerate(placemarks):
+                data['id'][i] = placemark.id
+                data['name'][i] = placemark.name
+                data['description'][i] = placemark.description
+                data['address'][i] = placemark.address
+                data['author'][i] = placemark.author
+                data['begin'][i] = placemark.begin
+                data['end'][i] = placemark.end
+                if placemark.extended_data:
+                    for v in placemark.extended_data.elements[0].data:
+                        data[v['name']][i] = v['value']
 
-        df = OdhSeries.concat(
-            [OdhSeries(vals, name=name).convert_objects(convert_numeric=True) for name, vals in data.iteritems()],
-            axis=1)
-        for c, s in df.iteritems():
-            if s.odh_type == OdhType.GEOMETRY:
-                s.crs = from_epsg(4326)  # KML uses SRID 4326 by definition
+                if placemark.geometry:
+                    for col, geom in cls._get_geoms(placemark.geometry).iteritems():
+                        data[col][i] = geom
 
-        return df
+            df = OdhSeries.concat(
+                [OdhSeries(vals, name=name).convert_objects(convert_numeric=True) for name, vals in data.iteritems()],
+                axis=1)
+            for c, s in df.iteritems():
+                if s.odh_type == OdhType.GEOMETRY:
+                    s.crs = from_epsg(4326)  # KML uses SRID 4326 by definition
+
+            df.name = folder.name or file.basename
+            dfs.append(df)
+
+        return dfs
 
 
 class GeoJSONParser(Parser):

@@ -10,11 +10,15 @@ import logging
 from lxml import etree
 
 import os
+import pygeoif
+from lxml.etree import CDATA
+import fastkml
 
 from opendatahub.utils.plugins import RegistrationMixin
 from hub import formats
 from hub.structures.file import File, FileGroup
 from hub.utils import ogr2ogr
+from hub.structures.frame import OdhType
 
 
 logger = logging.getLogger(__name__)
@@ -163,8 +167,61 @@ class GeoJSONFormatter(GeoFormatterBase):
         super(GeoJSONFormatter, cls).format(file, format, 'GeoJSON', 'json', *args, **kwargs)
 
 
+class KMLFormatter(Formatter):
+    targets = formats.KML,
+
+    @classmethod
+    def format(cls, file, format, *args, **kwargs):
+        dfs = file.to_df()
+
+        kml = fastkml.KML()
+        ns = '{http://www.opengis.net/kml/2.2}'
+        schema_url = '#' + file.basename
+        doc = fastkml.Document(ns, str(file.file_group.id), kwargs.get('name'), kwargs.get('description'))
+        kml.append(doc)
+
+        for i, df in enumerate(dfs):
+            df_attrs = df[[c for c in df if df[c].odh_type != OdhType.GEOMETRY]]
+            df_geoms = df[[c for c in df if df[c].odh_type == OdhType.GEOMETRY]]
+
+            folder = fastkml.Folder(ns, str(i), df.name)
+            doc.append(folder)
+
+            for i, row in df_attrs.iterrows():
+                placemark = fastkml.Placemark(ns)
+                folder.append(placemark)
+                row = row.to_dict()
+
+                id_ = str(row.pop('id', i))
+                placemark.id = id_
+
+                for key in ('name', 'description', 'address', 'author', 'begin', 'end'):
+                    value = row.pop(key, None)
+                    if value:
+                        setattr(placemark, key, CDATA(unicode(value)))
+
+                if row:
+                    properties = [{'name': unicode(k), 'value': CDATA(unicode(v))} for k, v in row.iteritems()]
+                    schema_data = fastkml.SchemaData(ns, schema_url, properties)
+                    extended_data = fastkml.ExtendedData(ns, [schema_data])
+
+                    placemark.extended_data = extended_data
+
+                geoms = [g for g in df_geoms.ix[i].values if g]
+                geometry = None
+                if len(geoms) == 1:
+                    geometry = geoms[0]
+                elif len(geoms) > 1:
+                    geometry = pygeoif.GeometryCollection(geoms)
+
+                if geometry:
+                    placemark.geometry = geometry
+
+        return [File.from_string(file.basename + '.kml', kml.to_string()).file_group]
+
+
 class OGRFormatter(GeoFormatterBase):
-    targets = formats.GML, formats.KML, formats.Shapefile, formats.INTERLIS1,
+    targets = formats.GML, formats.Shapefile, formats.INTERLIS1,
 
     # Note: Interlis 2 is not supported for export, because it would need a schema for that. Because it is the only
     # format with a schema requirement and adding that feature would mean investing a substantial amount of time we
