@@ -24,11 +24,11 @@ class Ogr2OgrException(Exception):
 class OgrFormat(object):
     formats = []
 
-    def __init__(self, extension, identifier, list_all):
+    def __init__(self, extension, identifier, list_all, addtl_args=()):
         self.extension = extension if isinstance(extension, types.ListType) else [extension]
         self.identifier = identifier
         self.list_all = list_all
-
+        self.addtl_args = addtl_args
         self.formats.append(self)
 
     @classmethod
@@ -52,7 +52,6 @@ SHP = OgrFormat('shp', 'ESRI Shapefile', False)
 CSV = OgrFormat('csv', 'CSV', False)
 GEO_JSON = OgrFormat('json', 'GeoJSON', False)
 KML = OgrFormat('kml', 'KML', False)
-
 WFS = OgrFormat('wfs', 'WFS', False)
 
 INTERLIS_1 = OgrFormat(['itf', 'ili', 'imd'], 'Interlis 1', True)
@@ -69,7 +68,7 @@ def _ogr2ogr_cli(arguments, *args, **kwargs):
         raise Ogr2OgrException(e.returncode)
 
 
-def ogr2ogr(file_group, to_type):
+def ogr2ogr(file_group, to_type, addtl_args=()):
     assert (isinstance(file_group, FileGroup))
 
     from_format = OgrFormat.get_format(file_group)
@@ -88,14 +87,15 @@ def ogr2ogr(file_group, to_type):
 
             main_file = next(files_by_extension)
 
+            ogr2ogr_args = list(addtl_args) + list(to_type.addtl_args) + ['-f', to_type.identifier, path]
             if from_format and from_format.list_all:
 
                 files = sorted([os.path.join(temp_dir, f.name) for f in file_group],
                                partial(sort_by_extension_index, from_format))
 
-                _ogr2ogr_cli(['-f', to_type.identifier, path, ','.join(files)])
+                _ogr2ogr_cli(ogr2ogr_args + [','.join(files)])
             else:
-                _ogr2ogr_cli(['-f', to_type.identifier, path, os.path.join(temp_dir, main_file.name)])
+                _ogr2ogr_cli(ogr2ogr_args + [os.path.join(temp_dir, main_file.name)])
 
         files = []
         if os.path.isdir(path):

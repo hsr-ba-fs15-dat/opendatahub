@@ -52,9 +52,12 @@ class Parser(RegistrationMixin):
         for parser in cls.parsers_by_format[format]:
             try:
                 dfs = com.ensure_tuple(parser.parse(file, format=format, *args, **kwargs))
-                dfs = [OdhFrame.from_df(df, file.basename) for df in dfs]
+                dfs = [OdhFrame.from_df(df, getattr(df, 'name', file.basename)) for df in dfs]
                 if not dfs:
                     raise ParsingException('Parser did not return DataFrames')
+
+                assert all([df.name for df in dfs]), 'DataFrame must have a name'
+                assert len(set([df.name for df in dfs])) == len(dfs), 'Duplicate DataFrame names'
                 return dfs
             except:
                 logging.debug('%s was not able to parse data with format %s', parser.__name__, format.__name__,
@@ -112,7 +115,7 @@ class KMLParser(Parser):
         return {'geometry': cls.proxy_to_obj(geometry)}
 
     @classmethod
-    def parse(cls, file, format, *args, **kwargs):
+    def parse(cls, file, format, enforce_kml_attrs=True, *args, **kwargs):
 
         kml = fastkml.KML()
         kml.from_string(file.stream.read())
@@ -122,34 +125,35 @@ class KMLParser(Parser):
         for folder in doc.features():
             placemarks = list(folder.features())
 
-            constructor = lambda: len(placemarks) * [None]
-            data = collections.defaultdict(constructor)
+            if placemarks:
+                constructor = lambda: len(placemarks) * [None]
+                data = collections.defaultdict(constructor)
 
-            for i, placemark in enumerate(placemarks):
-                data['id'][i] = placemark.id
-                data['name'][i] = placemark.name
-                data['description'][i] = placemark.description
-                data['address'][i] = placemark.address
-                data['author'][i] = placemark.author
-                data['begin'][i] = placemark.begin
-                data['end'][i] = placemark.end
-                if placemark.extended_data:
-                    for v in placemark.extended_data.elements[0].data:
-                        data[v['name']][i] = v['value']
+                for i, placemark in enumerate(placemarks):
+                    for key in ('id', 'name', 'description', 'address', 'author', 'begin', 'end'):
+                        value = getattr(placemark, key, None)
+                        if enforce_kml_attrs or value:
+                            data[key][i] = value
 
-                if placemark.geometry:
-                    for col, geom in cls._get_geoms(placemark.geometry).iteritems():
-                        data[col][i] = geom
+                    if placemark.extended_data:
+                        for v in placemark.extended_data.elements[0].data:
+                            data[v['name']][i] = v['value']
 
-            df = OdhSeries.concat(
-                [OdhSeries(vals, name=name).convert_objects(convert_numeric=True) for name, vals in data.iteritems()],
-                axis=1)
-            for c, s in df.iteritems():
-                if s.odh_type == OdhType.GEOMETRY:
-                    s.crs = from_epsg(4326)  # KML uses SRID 4326 by definition
+                    if placemark._geometry:
+                        for col, geom in cls._get_geoms(placemark.geometry).iteritems():
+                            data[col][i] = geom
 
-            df.name = folder.name or file.basename
-            dfs.append(df)
+                df = OdhSeries.concat(
+                    [OdhSeries(vals, name=name).convert_objects(convert_numeric=True) for name, vals in
+                     data.iteritems()],
+                    axis=1)
+
+                for c, s in df.iteritems():
+                    if s.odh_type == OdhType.GEOMETRY:
+                        s.crs = from_epsg(4326)  # KML uses SRID 4326 by definition
+
+                df.name = folder.name or file.basename
+                dfs.append(df)
 
         return dfs
 
@@ -181,7 +185,7 @@ class ShapefileParser(Parser):
             return gp.read_file(os.path.join(temp_dir, file.name), driver='ESRI Shapefile')
 
 
-class OGRParser(Parser):
+class GenericOGRParser(Parser):
     accepts = formats.GML, formats.INTERLIS1, formats.WFS
 
     @classmethod
@@ -195,17 +199,19 @@ class OGRParser(Parser):
         # CSV: Yeah. Right.
         # GML, KML: Not supported by fiona so geopandas can't read it
 
-        file_groups = ogr2ogr.ogr2ogr(file.file_group, ogr2ogr.SHP)
+        try:
+            file_groups = ogr2ogr.ogr2ogr(file.file_group, ogr2ogr.KML, addtl_args=['-t_srs', 'EPSG:4326'])
+        except ogr2ogr.Ogr2OgrException:
+            file_groups = ogr2ogr.ogr2ogr(file.file_group, ogr2ogr.KML)
 
-        dataframes = []
+        dfs = []
 
-        for group in file_groups:
-            with group.on_filesystem() as temp_dir:
-                main_file = group.get_main_file()
-                if main_file:
-                    dataframes.append(gp.read_file(os.path.join(temp_dir, main_file.name)))
+        for fg in file_groups:
+            main_file = fg.get_main_file()
+            if main_file:
+                dfs.extend(Parser.parse(main_file, formats.KML, enforce_kml_attrs=False))
 
-        return dataframes
+        return dfs
 
 
 class GenericXMLParser(Parser):

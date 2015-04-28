@@ -13,12 +13,14 @@ import os
 import pygeoif
 from lxml.etree import CDATA
 import fastkml
+import fastkml.config
 
 from opendatahub.utils.plugins import RegistrationMixin
 from hub import formats
 from hub.structures.file import File, FileGroup
 from hub.utils import ogr2ogr
 from hub.structures.frame import OdhType
+import hub.utils.common as com
 
 
 logger = logging.getLogger(__name__)
@@ -51,7 +53,7 @@ class Formatter(RegistrationMixin):
     def format(cls, file, format, *args, **kwargs):
         for formatter in cls.formatters_by_target[format]:
             try:
-                result = formatter.format(file, format=format, *args, **kwargs)
+                result = com.ensure_tuple(formatter.format(file, format=format, *args, **kwargs))
                 if not result:
                     raise FormattingException('Formatter did not return any result')
                 return result
@@ -151,7 +153,7 @@ class GeoFormatterBase(Formatter):
                 finally:
                     shutil.rmtree(temp_dir)
             else:
-                formatted = CSVFormatter.format(file, formats.CSV)
+                formatted = Formatter.format(file, formats.CSV, *args, **kwargs)
                 file_group = ogr2ogr.ogr2ogr(formatted[0], ogr2ogr.CSV)[0]
 
             formatted.append(file_group)
@@ -160,23 +162,52 @@ class GeoFormatterBase(Formatter):
 
 
 class GeoJSONFormatter(GeoFormatterBase):
-    _is_abstract = True
-
     @classmethod
     def format(cls, file, format, *args, **kwargs):
         super(GeoJSONFormatter, cls).format(file, format, 'GeoJSON', 'json', *args, **kwargs)
 
 
+class ShapefileFormatter(GeoFormatterBase):
+    @classmethod
+    def format(cls, file, format, *args, **kwargs):
+        super(ShapefileFormatter, cls).format(file, format, 'ESRI Shapefile', 'shp', *args, **kwargs)
+
+
 class KMLFormatter(Formatter):
     targets = formats.KML,
 
-    @classmethod
-    def format(cls, file, format, *args, **kwargs):
-        dfs = file.to_df()
+    KML_ATTRS = ('name', 'description', 'address', 'author', 'begin', 'end')
 
+    TYPE_MAP = {
+        OdhType.INTEGER: 'int',
+        OdhType.SMALLINT: 'short',
+        OdhType.BIGINT: 'int',
+        OdhType.DATETIME: 'string',
+        OdhType.INTERVAL: 'string',
+        OdhType.TEXT: 'string',
+        OdhType.BOOLEAN: 'bool',
+        OdhType.FLOAT: 'float',
+    }
+
+    @classmethod
+    def _create_schema(cls, df, skip_kml_attrs):
+        schema = fastkml.Schema(fastkml.config.NS, df.name, df.name)
+        for c, s in df.iteritems():
+            if c not in cls.KML_ATTRS or skip_kml_attrs:
+                try:
+                    type_ = cls.TYPE_MAP[s.odh_type]
+                except KeyError:
+                    logger.warn('Unknown type %s for KML schema generation, using string.', c.odh_type)
+                    type_ = 'string'
+
+                schema.append(type_, c)
+        return schema
+
+    @classmethod
+    def format(cls, file, format, skip_kml_attrs=True, *args, **kwargs):
+        dfs = file.to_df()
         kml = fastkml.KML()
-        ns = '{http://www.opengis.net/kml/2.2}'
-        schema_url = '#' + file.basename
+        ns = fastkml.config.NS
         doc = fastkml.Document(ns, str(file.file_group.id), kwargs.get('name'), kwargs.get('description'))
         kml.append(doc)
 
@@ -186,22 +217,26 @@ class KMLFormatter(Formatter):
 
             folder = fastkml.Folder(ns, str(i), df.name)
             doc.append(folder)
+            doc.append_schema(cls._create_schema(df_attrs, skip_kml_attrs=skip_kml_attrs))
+            schema_url = '#' + df.name
 
             for i, row in df_attrs.iterrows():
                 placemark = fastkml.Placemark(ns)
                 folder.append(placemark)
                 row = row.to_dict()
 
-                id_ = str(row.pop('id', i))
-                placemark.id = id_
+                if not skip_kml_attrs:
+                    id_ = str(row.pop('id', i))
+                    placemark.id = id_
 
-                for key in ('name', 'description', 'address', 'author', 'begin', 'end'):
-                    value = row.pop(key, None)
-                    if value:
-                        setattr(placemark, key, CDATA(unicode(value)))
+                    for key in cls.KML_ATTRS:
+                        value = row.pop(key, None)
+                        if value:
+                            setattr(placemark, key, CDATA(unicode(value)))
 
                 if row:
-                    properties = [{'name': unicode(k), 'value': CDATA(unicode(v))} for k, v in row.iteritems()]
+                    properties = [{'name': unicode(k), 'value': v if v is None else CDATA(unicode(v))} for k, v in
+                                  row.iteritems()]
                     schema_data = fastkml.SchemaData(ns, schema_url, properties)
                     extended_data = fastkml.ExtendedData(ns, [schema_data])
 
@@ -220,8 +255,8 @@ class KMLFormatter(Formatter):
         return [File.from_string(file.basename + '.kml', kml.to_string()).file_group]
 
 
-class OGRFormatter(GeoFormatterBase):
-    targets = formats.GML, formats.Shapefile, formats.INTERLIS1,
+class GenericOGRFormatter(Formatter):
+    targets = formats.GML, formats.INTERLIS1,
 
     # Note: Interlis 2 is not supported for export, because it would need a schema for that. Because it is the only
     # format with a schema requirement and adding that feature would mean investing a substantial amount of time we
@@ -239,7 +274,7 @@ class OGRFormatter(GeoFormatterBase):
     def format(cls, file, format, *args, **kwargs):
         formatted = []
 
-        for fg in super(OGRFormatter, cls).format(file, format, 'ESRI Shapefile', 'shp', *args, **kwargs):
+        for fg in Formatter.format(file, formats.KML, skip_kml_attrs=True, *args, **kwargs):
             formatted.extend(ogr2ogr.ogr2ogr(fg, cls.FORMAT_TO_OGR[format]))
 
         return formatted

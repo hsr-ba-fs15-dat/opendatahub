@@ -1,6 +1,6 @@
 """
 """
 
-from .base import Parser, CSVParser, ExcelParser, JSONParser, OGRParser  # noqa
+from .base import Parser, CSVParser, ExcelParser, JSONParser, GenericOGRParser  # noqa
 
 parse = Parser.parse

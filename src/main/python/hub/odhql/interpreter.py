@@ -20,7 +20,7 @@ from hub.odhql.exceptions import OdhQLExecutionException
 
 class OdhQLInterpreter(object):
 
-    FILE_GROUP_RE = re.compile('ODH([1-9]\d*)(_"?.+?"?)?', re.IGNORECASE)
+    FILE_GROUP_RE = re.compile('ODH([1-9]\d*)(_.+)?', re.IGNORECASE)
 
     parser = parser.OdhQLParser()
 

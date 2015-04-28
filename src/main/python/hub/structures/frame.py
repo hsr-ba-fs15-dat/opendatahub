@@ -162,9 +162,9 @@ class OdhFrame(pd.DataFrame):
     _metadata = ['name']
 
     @classmethod
-    def from_df(cls, df, name):
+    def from_df(cls, df, name=None):
         odf = cls(df, index=df.index).__finalize__(df)
-        odf.name = name
+        odf.name = name or getattr(df, 'name', None)
         return odf
 
     def rename(self, *args, **kwargs):
