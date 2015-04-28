@@ -2,7 +2,7 @@
 from collections import Sequence
 
 from pyparsing import nums
-from pyparsing import Word, CaselessKeyword, QuotedString, Regex, Literal, Suppress, Combine
+from pyparsing import Word, CaselessKeyword as CK, QuotedString, Regex, Literal, Suppress, Combine
 from pyparsing import Optional, OneOrMore, ZeroOrMore, Or, Group, NotAny, Forward, StringEnd
 from pyparsing import delimitedList
 from enum import Enum
@@ -222,10 +222,10 @@ class OdhQLParser(object):
 
         escape_char = '\\'
         identifier = Regex(r'[a-zA-Z_][a-zA-Z0-9_]*') | QuotedString('"', escChar=escape_char)
-        kw_and = CaselessKeyword('and')
-        kw_or = CaselessKeyword('or')
+        kw_and = CK('and')
+        kw_or = CK('or')
 
-        alias = CaselessKeyword('as') + identifier('alias')
+        alias = CK('as') + identifier('alias')
 
         field = (identifier('prefix') + '.' + identifier('name') + NotAny('('))('field')
         field.setParseAction(Field.parse)
@@ -234,24 +234,23 @@ class OdhQLParser(object):
         number_value = Group(integer_value + Optional('.' + Word(nums)))
         number_value.setParseAction(LiteralExpression.parse_number)
 
-        boolean_value = CaselessKeyword('true') | CaselessKeyword('false')
+        boolean_value = CK('true') | CK('false')
         boolean_value.setParseAction(LiteralExpression.parse_boolean)
 
         string_value = QuotedString('\'', escChar=escape_char)
-        null_value = CaselessKeyword('null')
+        null_value = CK('null')
         null_value.setParseAction(LiteralExpression.parse_null)
 
         single_filter = Forward()
 
         expression = Forward()
 
-        when_expression = (CaselessKeyword('when') + single_filter('condition') +
-                           CaselessKeyword('then') + expression('expression'))
+        when_expression = (CK('when') + single_filter('condition') + CK('then') + expression('expression'))
         when_expression.setParseAction(CaseRule.parse_when)
-        else_expression = CaselessKeyword('else') + expression('expression')
+        else_expression = CK('else') + expression('expression')
         else_expression.setParseAction(CaseRule.parse_else)
-        case_expression = (CaselessKeyword('case') + Group(OneOrMore(when_expression))('when') +
-                           Optional(else_expression)('else')) + CaselessKeyword('end')
+        case_expression = ((CK('case') + Group(OneOrMore(when_expression))('when') + Optional(else_expression)('else'))
+                           + CK('end'))
         case_expression.setParseAction(CaseExpression.parse)
 
         literal_expression = (number_value | boolean_value | string_value | null_value)('value')
@@ -267,22 +266,20 @@ class OdhQLParser(object):
         function << (identifier('name') + '(' + Optional(delimitedList(field | expression | function))('args') + ')')
         function.setParseAction(Function.parse)
 
-        operator = (Literal('=') | '!=' | '<=' | '<' | '>=' | '>' |
-                    Optional(CaselessKeyword('not'))('invert') + CaselessKeyword('like'))
+        operator = (Literal('=') | '!=' | '<=' | '<' | '>=' | '>' | Optional(CK('not'))('invert') + CK('like'))
         operator.setParseAction(BinaryCondition.parse_operator)
 
         binary_condition = expression.copy()('left') + operator('operator') + expression.copy()('right')
         binary_condition.setParseAction(BinaryCondition.parse)
 
-        in_condition = (expression.copy()('left') + Optional(CaselessKeyword('not'))('invert') +
-                        CaselessKeyword('in') + '(' + Group(delimitedList(expression))('in_list') + ')')
+        in_condition = (expression.copy()('left') + Optional(CK('not'))('invert') + CK('in') + '(' +
+                        Group(delimitedList(expression))('in_list') + ')')
         in_condition.setParseAction(InCondition.parse)
 
-        null_condition = (field + CaselessKeyword('is') + Optional(CaselessKeyword('not'))('invert') +
-                          CaselessKeyword('null'))
+        null_condition = (field + CK('is') + Optional(CK('not'))('invert') + CK('null'))
         null_condition.setParseAction(IsNullCondition.parse)
 
-        predicate_condition = Optional(CaselessKeyword('not'))('invert') + function('predicate')
+        predicate_condition = Optional(CK('not'))('invert') + function('predicate')
         predicate_condition.setParseAction(PredicateCondition.parse)
 
         filter_combination = delimitedList(single_filter, delim=kw_and)
@@ -294,7 +291,10 @@ class OdhQLParser(object):
         single_filter << (null_condition | binary_condition | in_condition | predicate_condition |
                           Suppress('(') + filter_alternative + Suppress(')'))
 
-        data_source = identifier('name') + Optional(alias)
+        # 'as' is optional here in sql - let's do that too
+        data_source = (identifier('name') +
+                       Optional(NotAny(CK('join') | CK('on') | CK('where') | CK('union') | CK('order')) +
+                                Optional(CK('as')) + identifier('alias')))
         data_source.setParseAction(DataSource.parse)
 
         join_single_condition = field('left') + '=' + field('right')
@@ -306,8 +306,8 @@ class OdhQLParser(object):
 
         join_condition_list = join_single_condition | join_multi_condition
 
-        join = (CaselessKeyword('join') + data_source.copy()('datasource') +
-                CaselessKeyword('on') + join_condition_list.copy()('condition'))
+        join = (CK('join') + data_source.copy()('datasource') +
+                CK('on') + join_condition_list.copy()('condition'))
         join.setParseAction(JoinedDataSource.parse)
 
         order_by_position = Word(nums)
@@ -317,23 +317,21 @@ class OdhQLParser(object):
         order_by_alias.setParseAction(OrderByAlias.parse)
 
         order_by_field_equiv = field | order_by_alias | order_by_position
-        order_by_field = (order_by_field_equiv('field') + Optional(Or([
-            CaselessKeyword('asc'), CaselessKeyword('desc')]))('direction'))
+        order_by_field = (order_by_field_equiv('field') + Optional(Or([CK('asc'), CK('desc')]))('direction'))
         order_by_field.setParseAction(OrderBy.parse)
 
-        field_declaration_list = Suppress(CaselessKeyword('select')) + delimitedList(aliased_expression)
-        data_source_declaration = Suppress(CaselessKeyword('from')) + data_source + ZeroOrMore(join)
-        filter_declaration = Suppress(CaselessKeyword('where')) + filter_alternative.copy()('conditions')
-        order_by_declaration = (Suppress(CaselessKeyword('order') + CaselessKeyword('by')) +
-                                delimitedList(order_by_field, delim=',')('fields'))
+        field_declaration_list = Suppress(CK('select')) + delimitedList(aliased_expression)
+        data_source_declaration = Suppress(CK('from')) + data_source + ZeroOrMore(join)
+        filter_declaration = Suppress(CK('where')) + filter_alternative.copy()('conditions')
+        order_by_declaration = (Suppress(CK('order') + CK('by')) + delimitedList(order_by_field, delim=',')('fields'))
         order_by_declaration.setParseAction(Query.parse_order_by)
 
         query = (field_declaration_list('fields') + data_source_declaration('datasources') +
                  Optional(filter_declaration('filter')))
         query.setParseAction(Query.parse)
 
-        union_query = (delimitedList(query, delim=CaselessKeyword('union'))('queries') +
-                       Optional(order_by_declaration)('sort') + StringEnd())
+        union_query = (delimitedList(query, delim=CK('union'))('queries') + Optional(order_by_declaration)('sort') +
+                       StringEnd())
         union_query.setParseAction(Union.parse)
 
         cls.grammar = union_query
