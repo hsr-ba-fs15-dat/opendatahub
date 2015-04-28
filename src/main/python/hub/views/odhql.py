@@ -65,7 +65,7 @@ class AdHocOdhQLView(View):
             sources = {'ODH{}_{}'.format(id, df.name): df for id, df in pairs}
             # allows for lookup without name -> ODH5 (takes the first table)
             sources.update({'ODH{}'.format(id): df for id, df in reversed(pairs)})
-            sources = {name: sources[name] for name in ids.keys()}
+            sources = {name: sources[name] for name in ids.keys() if sources.has_key(name)}
 
             df = OdhQLInterpreter(sources).execute(statement)
 
