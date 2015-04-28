@@ -7,6 +7,9 @@ import pandas as pd
 from hub.odhql.functions.core import VectorizedFunction, OdhQLExecutionException
 from hub.structures.frame import OdhType
 
+import lxml.html
+import types
+
 
 class Concat(VectorizedFunction):
     name = 'CONCAT'
@@ -208,3 +211,26 @@ class ToChar(VectorizedFunction):
                 return values.apply(lambda d: d.strftime(format))
             else:
                 return OdhType.TEXT.convert(self.expand(values))
+
+
+class XPath(VectorizedFunction):
+    name = 'XPATH'
+
+    def apply(self, values, path):
+        self.assert_str('values', values)
+        self.assert_str('path', path)
+        self.assert_value('pathp', path)
+        return values.apply(self._extract(path))
+
+    def _extract(self, path):
+        def extractor(v):
+            res = lxml.html.fromstring(v).xpath(path)
+
+            if isinstance(res, types.ListType):
+                if len(res) > 1:
+                    raise OdhQLExecutionException('Error in xpath expression: Result must be a scalar')
+                return res[0]
+
+            return res
+
+        return extractor
