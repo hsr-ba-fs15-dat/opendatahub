@@ -22,14 +22,13 @@ module odh.main {
 
         public allowDelete:boolean;
 
-        constructor(private $log:ng.ILogService, private $stateParams:any,
-                    private TransformationService:main.TransformationService, private $http:ng.IHttpService,
-                    private $state:ng.ui.IStateService, private $scope:any,
-                    private ToastService:odh.utils.ToastService, private $window:ng.IWindowService, private $upload,
-                    private UrlService:odh.utils.UrlService, private FileGroupService:main.FileGroupService,
-                    private DocumentService:main.DocumentService,
-                    private ngTableParams, public $filter:ng.IFilterService,
-                    private $auth:any) {
+        constructor(private $stateParams:any,
+                    private TransformationService:main.TransformationService,
+                    private $state:ng.ui.IStateService,
+                    private ToastService:odh.utils.ToastService,
+                    private ngTableParams,
+                    private $auth:any,
+                    private $modal:ng.ui.bootstrap.IModalService) {
             // controller init
             this.transformationId = $stateParams.id;
             this.TransformationService.get(this.transformationId).then(data => {
@@ -86,12 +85,35 @@ module odh.main {
         }
 
         public remove() {
-            this.TransformationService.remove({id: this.transformationId}).then(() =>
-                    this.$state.go('transformation.list')
-            ).catch((err) => this.ToastService.failure('Beim Löschen der Transformation ist ein Fehler aufgetreten.'));
+            var instance = this.$modal.open({
+                templateUrl: 'views/transformation.deleteconfirmation.html',
+                controller: 'DeleteTransformationController as vm'
+            });
+            instance.result.then(() => {
+                    this.TransformationService.remove({id: this.transformationId}).then(() =>
+                            this.$state.go('transformation.list')
+                    ).catch((err) =>
+                            this.ToastService.failure('Beim Löschen der Transformation ist ein Fehler aufgetreten.')
+                    );
+                }
+            );
+        }
+    }
+
+    class DeleteTransformationController {
+        constructor(private $modalInstance: ng.ui.bootstrap.IModalServiceInstance) {
         }
 
+        public ok() {
+            this.$modalInstance.close();
+        }
 
+        public cancel() {
+            this.$modalInstance.dismiss('cancel');
+        }
     }
-    angular.module('openDataHub.main').controller('TransformationDetailController', TransformationDetailController);
+
+    angular.module('openDataHub.main')
+        .controller('TransformationDetailController', TransformationDetailController)
+        .controller('DeleteTransformationController', DeleteTransformationController);
 }
