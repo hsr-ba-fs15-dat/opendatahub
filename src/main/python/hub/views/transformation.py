@@ -84,3 +84,10 @@ class TransformationViewSet(viewsets.ModelViewSet):
         queryset = FileGroupModel.objects.filter(document__id=pk)
         serializer = FileGroupSerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data)
+
+    @detail_route()
+    def delete(self, request, pk):
+        transformation = TransformationModel.objects.get(id=pk)
+        transformation.delete()
+
+        return Response()

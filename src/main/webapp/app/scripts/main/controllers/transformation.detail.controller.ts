@@ -19,6 +19,9 @@ module odh.main {
         public usedTables:{};
         public previewError;
         public transformationType:transType = transType.Template;
+
+        public allowDelete:boolean;
+
         constructor(private $log:ng.ILogService, private $stateParams:any,
                     private TransformationService:main.TransformationService, private $http:ng.IHttpService,
                     private $state:ng.ui.IStateService, private $scope:any,
@@ -34,6 +37,9 @@ module odh.main {
                 this.description = data.description;
                 this.transformation = data.transformation;
                 this.private = data.private;
+
+                this.allowDelete = data.owner.id === $auth.getPayload().user_id;
+
                 this.preview();
 
             });
@@ -77,6 +83,12 @@ module odh.main {
                 this.ToastService.failure('Diese Transformation enthält keine gültigen Daten');
                 this.alerts.push({msg: data.error, type: 'danger', title: 'Fehler:'});
             });
+        }
+
+        public remove() {
+            this.TransformationService.remove({id: this.transformationId}).then(() =>
+                    this.$state.go('transformation.list')
+            ).catch((err) => this.ToastService.failure('Beim Löschen der Transformation ist ein Fehler aufgetreten.'));
         }
 
 

@@ -8,7 +8,6 @@ class IsOwnerOrReadOnly(BasePermission):
         if request.method in SAFE_METHODS:
             return True
 
-        print 'Owner requesting more privileges: ', obj.owner == request.user
         return obj.owner == request.user
 
 
@@ -16,7 +15,6 @@ class IsOwnerOrPublic(BasePermission):
 
     def has_object_permission(self, request, view, obj):
         if request.method in SAFE_METHODS:
-            print "Request is SAFE!"
             if isinstance(obj, DocumentModel):
                 return self._check_document_permission(obj, request.user)
             elif isinstance(obj, FileGroupModel):
@@ -28,8 +26,6 @@ class IsOwnerOrPublic(BasePermission):
             else:
                 return False
         else:
-            print 'Owner requesting more privileges: ', obj.owner == request.user
-            print obj.owner, request.user
             if obj.owner == request.user:
                 return True
 

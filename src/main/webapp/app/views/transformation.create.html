@@ -29,7 +29,6 @@
         <table class="table table-hover" ng-table="vm.tableParams">
             <tbody ng-repeat="document in $data">
             <tr>
-                <td data-title="'ID'" class="col-sm-1 col-md-1 col-lg-1">doc{{ document.id}}</td>
                 <td data-title="'Name'" sortable="name" filter="{ 'name': 'text' }" class="col-sm-4 col-md-4 col-lg-4">
                     <a ng-click="vm.getFileGroup(document)">
                             <span class="glyphicon"
@@ -49,9 +48,6 @@
 
 
             <tr ng-repeat="fileGroup in document.fileGroup">
-                <td>
-                    fg{{ fileGroup.id }}
-                </td>
                 <td>
                     {{fileGroup.files[0].file_name}}
                 </td>

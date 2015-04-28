@@ -30,15 +30,6 @@ module odh {
             });
 
         }
-
-        public remove(transformation) {
-            this.TransformationService.remove(transformation).then(() => {
-                this.tableParams.reload();
-            });
-
-
-        }
-
     }
     angular.module('openDataHub.main').controller('TransformationListController', TransformationListController);
 
