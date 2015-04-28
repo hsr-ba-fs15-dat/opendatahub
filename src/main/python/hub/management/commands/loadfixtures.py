@@ -48,7 +48,8 @@ class Command(BaseCommand):
         ('trobdb/BaustellenExcel.odhql', 'TROBDB: Baustellen Februar 2015', 2),
         ('trobdb/tiefbaustelle-zh.odhql', 'TROBDB: Tiefbaustellen ZH (aus GeoJSON)', 5),
         ('trobdb/TruckInfo.odhql', 'TROBDB: TruckInfo', 11),
-        ('trobdb/WFS-Baustellen-ZH.odhql', 'TROBDB: Baustellen Zürich (WFS)', 17)
+        ('trobdb/WFS-Baustellen-ZH.odhql', 'TROBDB: Baustellen Zürich (WFS)', 17),
+        ('trobdb/Sanitize-Baustellen-kml.odhql', 'Sanitize Baustellen.kml', 13)
     }
 
     def add_document(self, desc, format, name):
