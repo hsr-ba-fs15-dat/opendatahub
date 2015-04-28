@@ -97,6 +97,11 @@ class TestStringFunctions(TestInterpreterBase):
         df = self.execute('SELECT TO_CHAR(TO_DATE(\'2015-01-01\', \'%Y-%m-%d\'), \'%d-%d-%Y\') as date from employee')
         self.assertTrue(all(d == '01-01-2015' for d in df.date.tolist()))
 
+    def test_xpath(self):
+        df = self.execute('select e.surname, xpath(concat(\'<name>\', e.surname, \'</name>\'), \'/name/text()\') '
+                          'as xpath from employee as e')
+        self.assertListEqual(df['surname'].tolist(), df['xpath'].tolist())
+
     def test_fails(self):
         statements = (
             'SELECT CONCAT(1, 2) AS test FROM employee AS e',
