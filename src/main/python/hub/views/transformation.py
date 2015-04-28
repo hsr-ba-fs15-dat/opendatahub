@@ -84,4 +84,3 @@ class TransformationViewSet(viewsets.ModelViewSet):
         queryset = FileGroupModel.objects.filter(document__id=pk)
         serializer = FileGroupSerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data)
-
