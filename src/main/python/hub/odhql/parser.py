@@ -45,8 +45,8 @@ class OdhQLParser(object):
 
     DataSourceNameOrAlias ::= DataSourceName | Alias
 
-    DataSourceSelection ::= "from" DataSourceName ( "as" Alias )? ( JoinDefinition )*
-    JoinDefinition ::= "join" DataSourceName ( "as" Alias )? "on" JoinCondition
+    DataSourceSelection ::= "from" DataSourceName ( "as"? Alias )? ( JoinDefinition )*
+    JoinDefinition ::= "join" DataSourceName ( "as"? Alias )? "on" JoinCondition
     JoinCondition ::= SingleJoinCondition | "(" SingleJoinCondition ( "and" SingleJoinCondition )* ")"
     SingleJoinCondition ::= Field "=" Field
 
