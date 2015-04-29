@@ -79,6 +79,8 @@ class OdhQLParser(object):
     """
 
     UI_HELP = """
+    .. class:: language
+
     Hilfe zu ODHQL
     ==============
 
@@ -98,8 +100,10 @@ class OdhQLParser(object):
     Mehrere Abfragen können kombiniert werden mithilfe von Union. In diesem Fall ist nur eine Sortier-Klausel am Ende
     der kombinierten Abfrage erlaubt.
 
-    Beispiel::
-    .. code-block:: sql
+    Beispiel:
+
+    .. code:: sql
+
         select null as userid,                                                               -- Null-Ausdruck
                substring(nvl(extract(t.text, '\|([^|\.]+)'), 'no value'), 0, 100) as title,  -- Funktions-Aufruf
                extract(t.text, '\|([^|]+)') as description,
@@ -132,7 +136,9 @@ class OdhQLParser(object):
             Bezieht sich direkt auf ein Feld einer Datenquelle. Der Name des Feldes muss mit dem Namen oder Alias
             der Datenquelle prefixed werden. Optional kann ein Alias angegeben werden.
             Beispiel:
-            .. code-block:: sql
+
+            .. code:: sql
+
                 prefix.feld as alias
         Wert
             Ganzzahl (Integer), Fliesskommazahl (Float, Trennzeichen ist ein Punkt), Zeichenkette (String, in einfachen
@@ -142,15 +148,20 @@ class OdhQLParser(object):
             "\\\\".
         Funktion
             Besteht aus einem Namen und einer Liste von Argumenten. Es muss zwingend ein Alias angegeben werden.
-            Beispiel::
-            .. code-block:: sql
+            Beispiel:
+
+            .. code:: sql
+
                 substring(nvl(extract(t.text, '\|([^|\.]+)'), 'no value'), 0, 100) as title
+
         Fallunterscheidung (Case-Ausdruck)
             Kann verwendet werden, um Werte zu übersetzen. Es muss mindestens eine Bedingung angegeben werden.
             Das Format ist 'when <Bedingung> then <Ausdruck>', wobei alle unten beschriebenen Bedingungs-Arten sowie
             hier beschriebenen Ausdrücke erlaubt sind.
-            Beispiel::
-            .. code-block:: sql
+            Beispiel:
+
+            .. code:: sql
+
                 case when contains(t.text, 'closed', false) then 'closed'
                      when (contains(t.text, 'maintenance', false) or contains(t.text, 'maintenance', false))
                         then 'obstructed'
@@ -163,8 +174,10 @@ class OdhQLParser(object):
     Es muss mindestens eine Datenquelle angegeben werden. Falls mehrere Datenquellen verwendet werden sollen, muss eine
     Verknüpfungsbedingung angegeben werden.
 
-    Beispiel::
-    .. code-block:: sql
+    Beispiel:
+
+    .. code:: sql
+
         from ODH12 as employees
         join ODH13 as employers on employees.employer_id = employers.id
 
@@ -176,9 +189,12 @@ class OdhQLParser(object):
             Prüft ob ein Feld (nicht) null ist
         in, not in
             Prüft ob ein Ausdruck (nicht) in einer Liste enthalten ist.
-            Beispiel::
-            .. code-block:: sql
+            Beispiel:
+
+            .. code:: sql
+
                 country in ('CH', 'DE', 'AT')
+
         <, >, <=, >=, =, !=
             Vergleicht zwei Ausdrücke miteinander.
         like, not like
@@ -189,8 +205,10 @@ class OdhQLParser(object):
 
     Mehrere Bedingungen können mit 'and' und 'or' verknüpft und mit runden Klammern gruppiert werden.
 
-    Beispiel::
-    .. code-block:: sql
+    Beispiel:
+
+    .. code:: sql
+
         where t.a is not null
           and (t.b in (1, 2, 3) or t.b > 20)
 
@@ -199,8 +217,10 @@ class OdhQLParser(object):
 
     Es kann sortiert werden nach Feld-Name, Alias oder Position in der Feld-Liste.
 
-    Beispiel::
-    .. code-block:: sql
+    Beispiel:
+
+    .. code:: sql
+
         order by 1, 2 desc
 
     Union
