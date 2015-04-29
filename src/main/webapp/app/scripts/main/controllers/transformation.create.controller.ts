@@ -111,13 +111,10 @@ module odh {
             _renderer.setOptions({
                 maxLines: Infinity,
                 theme: 'twilight'
-
             });
             editor.setOptions({
-
                 showGutter: true,
                 firstLineNumber: 1
-
             });
 
         }
@@ -136,13 +133,17 @@ module odh {
             return this.selection.getTableByName(tableName);
         }
 
-        public getFields(tableName:string) {
-            return this.selection.getFields(tableName);
+        public getFields(tableName:any) {
+            if (typeof tableName === 'string') {
+                return this.selection.getFields(tableName);
+            }
+            if (typeof tableName === 'object') {
+                return this.selection.getFields(tableName.uniqueId);
+            }
         }
 
         public getSelectedFields(table:main.ITable) {
             if (table) {
-
                 return this.selection.getSelectedFields(table);
             }
         }

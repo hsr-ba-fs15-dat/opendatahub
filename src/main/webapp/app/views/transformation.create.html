@@ -62,7 +62,7 @@
                 Welches Lokale Feld soll verwendet werden?
                 <select
                         ng-options="opt as (opt.alias == opt.name?opt.alias+'['+opt.type+']':(opt.alias + ' [' + opt.name + ']'))
-                         for opt in vm.getSelectedFields(table)"
+                         for opt in table.cols"
                         ng-model="vm.selection.expression[table.uniqueId].joinField">
                 </select>
             </label><br/>
@@ -78,7 +78,7 @@
             vm.selection.expression[table.uniqueId].joinTable">
                 <select
                         ng-options="opt as (opt.alias == opt.name?opt.alias+'['+opt.type+']':(opt.alias + ' [' + opt.name + ']'))
-                         for opt in vm.getSelectedFields(vm.selection.expression[table.uniqueId].joinTable)
+                         for opt in vm.selection.expression[table.uniqueId].joinTable.cols
                          | filter:{type:vm.selection.expression[table.uniqueId].joinField.type, }"
                         ng-model="vm.selection.expression[table.uniqueId].foreignKey">
                 </select>
