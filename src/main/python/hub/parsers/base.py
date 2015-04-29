@@ -68,7 +68,7 @@ class Parser(RegistrationMixin):
 
         if exc_infos:
             tbs = '\n'.join([''.join(traceback.format_exception(*ei)) for ei in exc_infos])
-            logging.error('No parser was not able to parse %s with format %s\n%s', file.name, format.__name__, tbs)
+            logging.error('No parser was able to parse %s with format %s\n%s', file.name, format.__name__, tbs)
 
         raise NoParserException('Unable to parse data')
 

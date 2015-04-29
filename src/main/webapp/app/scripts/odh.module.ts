@@ -19,6 +19,7 @@ module openDataHub {
             'ui.ace',
             'restangular',
             'truncate',
+            'duScroll',
             'angularMoment',
             'openDataHub.auth',
             'openDataHub.utils',
@@ -115,6 +116,10 @@ module openDataHub {
                     templateUrl: 'views/transformation.html',
                     controller: 'TransformationController'
 
+                })
+                .state('transformation/help', {
+                    url: '/transformation/help',
+                    templateUrl: 'views/odhql-help.html'
                 })
                 .state('transformation.create', {
                     url: '/create',
