@@ -9,7 +9,7 @@ module odh.main {
         public fileGroups;
         public loading = true;
 
-        public availableFormats:odh.main.IFormat[];
+        public availableFormats;
 
         constructor(private $log:ng.ILogService, private $stateParams:any, private $window:ng.IWindowService,
                     private DocumentService:odh.main.DocumentService, private ToastService:odh.utils.ToastService,
@@ -28,9 +28,7 @@ module odh.main {
         }
 
         private retrieveData() {
-            this.FormatService.getAvailableFormats().then((data) => {
-                this.availableFormats = data.data;
-            });
+            this.availableFormats = this.FormatService.getAvailableFormats();
 
             if (typeof(this.documentId) !== 'undefined') {
                 this.pkg = this.DocumentService.get(this.documentId)

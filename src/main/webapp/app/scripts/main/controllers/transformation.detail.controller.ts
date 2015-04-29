@@ -21,6 +21,8 @@ module odh.main {
         public selected;
         public transformationType:transType = transType.Template;
 
+        public availableFormats;
+
         public previewLoading:boolean;
 
         public showExpertPanel = false;
@@ -29,11 +31,13 @@ module odh.main {
 
         constructor(private $stateParams:any,
                     private TransformationService:main.TransformationService,
+                    private FormatService:odh.main.FormatService,
                     private $state:ng.ui.IStateService,
                     private ToastService:odh.utils.ToastService,
                     private ngTableParams,
                     private $auth:any,
                     private $modal:ng.ui.bootstrap.IModalService) {
+
             // controller init
             this.transformationId = $stateParams.id;
             this.TransformationService.get(this.transformationId).then(data => {
@@ -42,11 +46,10 @@ module odh.main {
                 this.transformation = data.transformation;
                 this.private = data.private;
 
-                this.allowDelete = data.owner.id === $auth.getPayload().user_id;
+                this.allowDelete = $auth.isAuthenticated() && data.owner.id === $auth.getPayload().user_id;
 
                 this.preview();
                 this.selected = {};
-
             });
             this.fileGroupTable = new ngTableParams({
                     page: 1,
@@ -61,11 +64,10 @@ module odh.main {
                             params.total(result.file_groups.length);
                             $defer.resolve(result.file_groups);
                         });
-
                     }
                 }
             );
-
+            this.availableFormats = this.FormatService.getAvailableFormats();
         }
 
 
@@ -93,6 +95,10 @@ module odh.main {
                 this.ToastService.failure('Diese Transformation enthält keine gültigen Daten');
                 this.alerts.push({msg: data.error, type: 'danger', title: 'Fehler:'});
             });
+        }
+
+        public downloadAs(formatName) {
+            this.$window.location.href = group.data + '?fmt=' + formatName;
         }
 
         public remove() {

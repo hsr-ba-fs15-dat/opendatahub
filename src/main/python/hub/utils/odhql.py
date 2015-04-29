@@ -33,13 +33,21 @@ class TransformationUtil(object):
         return df
 
     @staticmethod
-    def df_for_transformation(id):
+    def df_for_transformation(tf):
+        if isinstance(tf, TransformationModel):
+            id = tf.id
+            model = tf
+        else:
+            id = tf
+            model = None
+
         cache_key = ('TRF', id)
         df = cache.get(cache_key)
 
         if df is None:
-            tf = TransformationModel.objects.get(id=id)
-            df = TransformationUtil.interpret(tf.transformation)
+            if model is None:
+                model = TransformationModel.objects.get(id=id)
+            df = TransformationUtil.interpret(model.transformation)
 
             cache.set(cache_key, df)
 

@@ -1,34 +1,51 @@
 <div ng-controller="TransformationDetailController as vm">
-    <div class="btn-toolbar">
-        <button class="btn btn-danger" ng-click="vm.remove()" ng-show="vm.allowDelete">Löschen</button>
-    </div>
     <form name="form" class="form" ng-submit="vm.submit()">
         <h1>{{ vm.name }}</h1>
 
         <p>{{ vm.description }}</p>
 
+        <div class="btn-toolbar">
+            <button class="btn btn-danger" ng-click="vm.remove()" ng-show="vm.allowDelete">Löschen</button>
+            <div class="btn-group pull-right">
+                <a data-target="#" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+                    Herunterladen
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li ng-repeat="format in vm.availableFormats">
+                        <a ng-click="vm.downloadAs(group, format.name)">{{ format.label }}</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
         <p ng-show="vm.previewError">{{ vm.previewError }}</p>
 
-        <h2>Vorschau</h2>
-        <div class="row">
-            <odh-spinner show-while="vm.previewLoading" class="col-md-12 table-responsive">
-                <div class="col-md-12 table-responsive" ng-show="vm.columns">
-                    <table class="table table-striped table-hover">
-                        <thead>
-                        <tr>
-                            <th ng-repeat="col in vm.columns">{{ col }}</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr ng-repeat="row in vm.rows | limitTo: 50">
-                            <td ng-repeat="col in vm.columns">
-                                {{ row[col] }}
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </odh-spinner>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Vorschau
+            </div>
+            <div class="panel-body">
+
+                <odh-spinner show-while="vm.previewLoading">
+                    <div class="table-responsive" ng-show="vm.columns">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                            <tr>
+                                <th ng-repeat="col in vm.columns">{{ col }}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="row in vm.rows | limitTo: 50">
+                                <td ng-repeat="col in vm.columns">
+                                    {{ row[col] }}
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </odh-spinner>
+            </div>
         </div>
 
         <div class="panel panel-default clearfix" style="margin-top: 2em">

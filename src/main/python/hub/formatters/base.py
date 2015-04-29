@@ -50,10 +50,10 @@ class Formatter(RegistrationMixin):
                 cls.formatters_by_target[format].append(cls)
 
     @classmethod
-    def format(cls, file, format, *args, **kwargs):
+    def format(cls, dfs, name, format, *args, **kwargs):
         for formatter in cls.formatters_by_target[format]:
             try:
-                result = com.ensure_tuple(formatter.format(file, format=format, *args, **kwargs))
+                result = com.ensure_tuple(formatter.format(dfs, name, format=format, *args, **kwargs))
                 if not result:
                     raise FormattingException('Formatter did not return any result')
                 return result
@@ -69,13 +69,11 @@ class CSVFormatter(Formatter):
     targets = formats.CSV,
 
     @classmethod
-    def format(cls, file, format, *args, **kwargs):
-        dataframes = file.to_serializable_df()
+    def format(cls, dfs, name, format, *args, **kwargs):
         results = []
 
-        for df in dataframes:
-            results.append(
-                File.from_string(file.basename + '.csv', df.to_csv(index=False, encoding='UTF-8')).file_group)
+        for df in dfs:
+            results.append(File.from_string(name + '.csv', df.to_csv(index=False, encoding='UTF-8')).file_group)
         return results
 
 
@@ -83,12 +81,11 @@ class JSONFormatter(Formatter):
     targets = formats.JSON,
 
     @classmethod
-    def format(cls, file, format, *args, **kwargs):
-        dataframes = file.to_serializable_df()
+    def format(cls, dfs, name, format, *args, **kwargs):
         results = []
 
-        for df in dataframes:
-            results.append(File.from_string(file.basename + '.json', df.to_json(orient='records')).file_group)
+        for df in dfs:
+            results.append(File.from_string(name + '.json', df.to_json(orient='records')).file_group)
         return results
 
 
@@ -96,15 +93,14 @@ class ExcelFormatter(Formatter):
     targets = formats.Excel,
 
     @classmethod
-    def format(cls, file, format, *args, **kwargs):
-        dataframes = file.to_serializable_df()
+    def format(cls, dfs, name, format, *args, **kwargs):
         results = []
 
-        for df in dataframes:
+        for df in dfs:
             with tempfile.NamedTemporaryFile(suffix=".xlsx") as f:
                 df.to_excel(f.name, engine='xlsxwriter', index=False)
                 f.seek(0)
-                results.append(File.from_string(file.basename + '.xlsx', f.read()).file_group)
+                results.append(File.from_string(name + '.xlsx', f.read()).file_group)
         return results
 
 
@@ -112,35 +108,25 @@ class XMLFormatter(Formatter):
     targets = formats.XML,
 
     @classmethod
-    def format(cls, file, format, *args, **kwargs):
-        dataframes = file.to_serializable_df()
+    def format(cls, dfs, name, format, *args, **kwargs):
         results = []
 
-        for df in dataframes:
-            root = etree.Element('root', {'origin': ', '.join(file.file_group.names)})
+        for df in dfs:
+            root = etree.Element('root')
             for i, row in df.iterrows():
                 etree.SubElement(root, 'row', row.dropna().astype(unicode).to_dict())
 
-            results.append(File.from_string(file.basename + '.xml',
+            results.append(File.from_string(name + '.xml',
                                             etree.tostring(root, encoding='UTF-8', xml_declaration=True,
                                                            pretty_print=True)).file_group)
         return results
-
-
-class NoopFormatter(Formatter):
-    targets = formats.Other,
-
-    @classmethod
-    def format(cls, file, format, *args, **kwargs):
-        return [file.file_group]
 
 
 class GeoFormatterBase(Formatter):
     _is_abstract = True
 
     @classmethod
-    def format(cls, file, format, driver, extension, *args, **kwargs):
-        dfs = file.to_df()
+    def format(cls, dfs, name, format, driver, extension, *args, **kwargs):
         formatted = []
 
         for df in dfs:
@@ -148,7 +134,7 @@ class GeoFormatterBase(Formatter):
                 gdf = df.to_gdf()
                 temp_dir = tempfile.mkdtemp()
                 try:
-                    gdf.to_file(os.path.join(temp_dir, file.basename + '.{}'.format(extension)), driver=driver)
+                    gdf.to_file(os.path.join(temp_dir, name + '.{}'.format(extension)), driver=driver)
                     file_group = FileGroup.from_files(*[os.path.join(temp_dir, f) for f in os.listdir(temp_dir)])
                 finally:
                     shutil.rmtree(temp_dir)
@@ -163,14 +149,14 @@ class GeoFormatterBase(Formatter):
 
 class GeoJSONFormatter(GeoFormatterBase):
     @classmethod
-    def format(cls, file, format, *args, **kwargs):
-        super(GeoJSONFormatter, cls).format(file, format, 'GeoJSON', 'json', *args, **kwargs)
+    def format(cls, dfs, name, format, *args, **kwargs):
+        super(GeoJSONFormatter, cls).format(dfs, name, format, 'GeoJSON', 'json', *args, **kwargs)
 
 
 class ShapefileFormatter(GeoFormatterBase):
     @classmethod
-    def format(cls, file, format, *args, **kwargs):
-        super(ShapefileFormatter, cls).format(file, format, 'ESRI Shapefile', 'shp', *args, **kwargs)
+    def format(cls, dfs, name, format, *args, **kwargs):
+        super(ShapefileFormatter, cls).format(dfs, name, format, 'ESRI Shapefile', 'shp', *args, **kwargs)
 
 
 class KMLFormatter(Formatter):
@@ -204,11 +190,10 @@ class KMLFormatter(Formatter):
         return schema
 
     @classmethod
-    def format(cls, file, format, skip_kml_attrs=True, *args, **kwargs):
-        dfs = file.to_df()
+    def format(cls, dfs, name, format, skip_kml_attrs=True, *args, **kwargs):
         kml = fastkml.KML()
         ns = fastkml.config.NS
-        doc = fastkml.Document(ns, str(file.file_group.id), kwargs.get('name'), kwargs.get('description'))
+        doc = fastkml.Document(ns, name, kwargs.get('name'), kwargs.get('description'))
         kml.append(doc)
 
         for i, df in enumerate(dfs):
@@ -252,7 +237,7 @@ class KMLFormatter(Formatter):
                 if geometry:
                     placemark.geometry = geometry
 
-        return [File.from_string(file.basename + '.kml', kml.to_string()).file_group]
+        return [File.from_string(name + '.kml', kml.to_string()).file_group]
 
 
 class GenericOGRFormatter(Formatter):
@@ -271,10 +256,10 @@ class GenericOGRFormatter(Formatter):
     }
 
     @classmethod
-    def format(cls, file, format, *args, **kwargs):
+    def format(cls, dfs, name, format, *args, **kwargs):
         formatted = []
 
-        for fg in Formatter.format(file, formats.KML, skip_kml_attrs=True, *args, **kwargs):
+        for fg in Formatter.format(dfs, name, formats.KML, skip_kml_attrs=True, *args, **kwargs):
             formatted.extend(ogr2ogr.ogr2ogr(fg, cls.FORMAT_TO_OGR[format]))
 
         return formatted
