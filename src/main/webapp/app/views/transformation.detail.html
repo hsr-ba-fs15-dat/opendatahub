@@ -3,149 +3,122 @@
         <button class="btn btn-danger" ng-click="vm.remove()" ng-show="vm.allowDelete">Löschen</button>
     </div>
     <form name="form" class="form" ng-submit="vm.submit()">
-        <fieldset>
-            <div class="form-group" ng-class="{'has-error': form.name.$invalid && vm.submitted}">
-                <label for="transformation_id">Transformation-ID</label>
+        <h1>{{ vm.name }}</h1>
 
-                <p name="transformation_id">{{ vm.transformationId }}</p>
-                <label for="transformation_type">Transformations Art</label>
+        <p>{{ vm.description }}</p>
 
-                <p name=transformation_type>{{ vm.transformationType }}</p>
-                <label for="name">Name/Titel</label>
+        <p ng-show="vm.previewError">{{ vm.previewError }}</p>
 
-                <input id="name" name="name" type="text" placeholder="Name der Transformation"
-                       class="form-control"
-                       ng-model="vm.name"
-                       required>
-
-                <div ng-messages="form.name.$error" ng-show="form.name.submitted">
-                    <span class="help-block">
-                        <div ng-message="required">Bitte geben Sie einen Namen an</div>
-                    </span>
-                </div>
-            </div>
-
-            <!-- Textarea -->
-            <div class="form-group" ng-class="{'has-error': form.description.$invalid && vm.submitted}">
-                <label class="control-label" for="description">Beschreibung</label>
-
-                <textarea class="form-control" id="description" name="description"
-                          ng-model="vm.description"
-                          placeholder="z.B. Vereint alle Verkehrshindernisse der Schweiz"
-                          required
-                          rows="4"
-                        ></textarea>
-
-                <div ng-messages="form.description.$error" ng-show="vm.submitted">
-                    <span class="help-block">
-                        <div ng-message="required">Bitte geben Sie eine Beschreibung an</div>
-                    </span>
-
-                </div>
-            </div>
-            <!-- /Textarea -->
-            <!-- Textarea -->
-            <alert ng-repeat="alert in vm.alerts" type="{{alert.type}}" close="vm.closeAlert($index)">
-                <strong>{{alert.title}}</strong>
-                {{alert.msg}}
-            </alert>
-            <div class="form-group" ng-class="{'has-error': form.description.$invalid && vm.submitted}">
-                <div ui-ace="{
-                useWrapMode : true,
-                showGutter: false,
-                theme:'twilight',
-                mode: 'sql',
-                firstLineNumber: 5,
-                onLoad: vm.aceLoaded,
-
-                }" ng-model="vm.transformation"></div>
-                <div ng-messages="form.description.$error" ng-show="vm.submitted">
-                    <span class="help-block">
-                        <div ng-message="required">Bitte geben Sie die OdhQL Abfrage an.</div>
-                    </span>
-                </div>
-
-            </div>
-            <!-- /Textarea -->
-
-
-            <div class="form-group">
-                <label class="col-md-1 control-label" for="add"></label>
-
-                <div class="col-md-11">
-                    <button disabled id="add" name="add" class="btn btn-primary pull-right">
-                        Neue Transformation ableiten
-                    </button>
-                    <button disabled id="add" name="add" class="btn btn-primary pull-right">
-                        Transformation überschreiben
-                    </button>
-                    <button ng-click="vm.preview()" type='button' class="btn btn-info pull-right">
-                        Vorschau
-                    </button>
-                </div>
-            </div>
-
-            <div ng-show="vm.progress" class="col-md-offset-3 col-md-6">
-                <progressbar class="progress-striped active" max="100"
-                             value="offer.progress" type="info">
-                </progressbar>
-            </div>
-
-        </fieldset>
-        <h2>Benutzte Tabellen</h2>
+        <h2>Vorschau</h2>
         <div class="row">
-            <div class="col-md-12 table-responsive">
-                <table class="table table-striped">
-                    <tr>
-                        <th>Name</th>
-                        <th>Alias</th>
-                    </tr>
-                    <tr ng-repeat="table in vm.usedTables">
-                        <td><select ng-options="v for v in vm.selected[table].values"
-                                    ng-model="vm.selected[table].value"></select>
-                            {{ table.name }} {{ vm.selected[table].value }}
-                        </td>
-                        <td>{{table.alias}}</td>
-                    </tr>
-                </table>
-            </div>
+            <odh-spinner show-while="vm.previewLoading" class="col-md-12 table-responsive">
+                <div class="col-md-12 table-responsive" ng-show="vm.columns">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                        <tr>
+                            <th ng-repeat="col in vm.columns">{{ col }}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="row in vm.rows | limitTo: 50">
+                            <td ng-repeat="col in vm.columns">
+                                {{ row[col] }}
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </odh-spinner>
         </div>
-        <h2>Benutzte Packages</h2> <a href="#">Package hinzufügen</a>
 
-        <div class="row">
-            <div class="col-md-12 table-responsive">
-                <table class="table table-striped table-hover" ng-table="vm.fileGroupTable">
-                    <tr ng-repeat="fileGroup in $data">
-                        <td data-title="'ID'" class="col-sm-1">{{fileGroup.id}}</td>
-                        <td data-title="'Name'">{{ fileGroup.document.name }}</td>
-                        <td data-title="'Privat'"><i class="fa"
-                                                     ng-class="fileGroup.document.private?'fa-lock':'fa-unlock'"></i>
-                        </td>
-                    </tr>
-
-                </table>
+        <div class="panel panel-default clearfix" style="margin-top: 2em">
+            <div class="panel-heading" ng-click="vm.showExpertPanel = !vm.showExpertPanel">
+                Advanced
             </div>
-        </div>
-        <h1>Resultat: </h1>
+            <div class="panel-body" id="expertPanel" collapse="!vm.showExpertPanel">
 
-        <p ng-show="vm.previewError">{{vm.previewError}}</p>
+                <!-- Textarea -->
+                <alert ng-repeat="alert in vm.alerts" type="{{ alert.type }}" close="vm.closeAlert($index)">
+                    <strong>{{ alert.title }}</strong>
+                    {{ alert.msg }}
+                </alert>
+                <div class="form-group" ng-class="{'has-error': form.odhqlinput.$invalid && vm.submitted}">
+                    <div ui-ace="{
+                    useWrapMode : true,
+                    showGutter: false,
+                    theme:'twilight',
+                    mode: 'sql',
+                    firstLineNumber: 5,
+                    onLoad: vm.aceLoaded,
 
-        <div class="row" ng-show="vm.columns">
-            <div class="col-md-12 table-responsive">
-                <table class="table table-striped table-hover">
-                    <thead>
-                    <tr>
-                        <th ng-repeat="col in vm.columns">{{ col }}</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr ng-repeat="row in vm.rows | limitTo: 50">
-                        <td ng-repeat="col in vm.columns">
-                            {{ row[col] }}
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+                    }" ng-model="vm.transformation"></div>
+                    <div ng-messages="form.description.$error" ng-show="vm.submitted">
+                        <span class="help-block">
+                            <div ng-message="required">Bitte geben Sie die OdhQL Abfrage an.</div>
+                        </span>
+                    </div>
+
+                </div>
+                <!-- /Textarea -->
+
+
+                <div class="form-group">
+                    <label class="col-md-1 control-label" for="add"></label>
+
+                    <div class="col-md-11">
+                        <button disabled id="add" name="add" class="btn btn-primary pull-right">
+                            Neue Transformation ableiten
+                        </button>
+                        <button disabled id="add" name="add" class="btn btn-primary pull-right">
+                            Transformation überschreiben
+                        </button>
+                        <button ng-click="vm.preview()" type='button' class="btn btn-info pull-right">
+                            Vorschau
+                        </button>
+                    </div>
+                </div>
+
+                <div ng-show="vm.progress" class="col-md-offset-3 col-md-6">
+                    <progressbar class="progress-striped active" max="100"
+                                 value="offer.progress" type="info">
+                    </progressbar>
+                </div>
+
+                <h2>Benutzte Tabellen</h2>
+
+                <div class="row">
+                    <div class="col-md-12 table-responsive">
+                        <table class="table table-striped">
+                            <tr>
+                                <th>Name</th>
+                                <th>Alias</th>
+                            </tr>
+                            <tr ng-repeat="table in vm.usedTables">
+                                <td><select ng-options="v for v in vm.selected[table].values"
+                                            ng-model="vm.selected[table].value"></select>
+                                    {{ table.name }} {{ vm.selected[table].value }}
+                                </td>
+                                <td>{{ table.alias }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <h2>Benutzte Packages</h2> <a href="#">Package hinzufügen</a>
+
+                <div class="row">
+                    <div class="col-md-12 table-responsive">
+                        <table class="table table-striped table-hover" ng-table="vm.fileGroupTable">
+                            <tr ng-repeat="fileGroup in $data">
+                                <td data-title="'ID'" class="col-sm-1">{{ fileGroup.id }}</td>
+                                <td data-title="'Name'">{{ fileGroup.document.name }}</td>
+                                <td data-title="'Privat'"><i class="fa"
+                                                             ng-class="fileGroup.document.private?'fa-lock':'fa-unlock'"></i>
+                                </td>
+                            </tr>
+
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </form>

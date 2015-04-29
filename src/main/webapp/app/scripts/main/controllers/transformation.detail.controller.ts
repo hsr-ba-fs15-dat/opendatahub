@@ -21,6 +21,10 @@ module odh.main {
         public selected;
         public transformationType:transType = transType.Template;
 
+        public previewLoading:boolean;
+
+        public showExpertPanel = false;
+
         public allowDelete:boolean;
 
         constructor(private $stateParams:any,
@@ -29,7 +33,6 @@ module odh.main {
                     private ToastService:odh.utils.ToastService,
                     private ngTableParams,
                     private $auth:any,
-                    public $filter:ng.IFilterService,
                     private $modal:ng.ui.bootstrap.IModalService) {
             // controller init
             this.transformationId = $stateParams.id;
@@ -74,13 +77,16 @@ module odh.main {
         }
 
         public preview() {
+            this.previewLoading = true;
             this.TransformationService.parse(this.transformation).then((data:any) => {
                 this.usedTables = data.data.tables;
             });
             this.TransformationService.preview(this.transformation).then((data:any) => {
+                this.previewLoading = false;
                 this.columns = data.data.columns;
                 this.rows = data.data.data;
             }).catch((data:any) => {
+                this.previewLoading = false;
                 this.columns = null;
                 this.rows = null;
                 this.previewError = 'Diese Transformation enthält (noch) keine gültigen Daten';

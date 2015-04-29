@@ -1,51 +1,11 @@
 /// <reference path='../../all.d.ts' />
 
-
-module odh {
-    'use strict';
-
-    class DocumentListController {
-
-        public tableParams:any;
-        public loading = true;
-
-        constructor(private $log:ng.ILogService, private DocumentService:odh.main.DocumentService,
-                    private ToastService:odh.utils.ToastService,
-                    private $auth:any, private ngTableParams) {
-            this.tableParams = new ngTableParams({
-                    page: 1,
-                    count: 50,
-                    limit: 50
-                },
-                {
-                    counts: [10, 25, 50, 100],
-                    total: 0,
-                    getData: ($defer, params) => {
-                        this.DocumentService.getList(params.url()).then(result => {
-                            params.total(result.count);
-                            $defer.resolve(result.results);
-                            this.loading = false;
-                        }).catch(error => this.onError(error));
-                    }
-                });
-        }
-
-        public isAuthenticated() {
-            return this.$auth.isAuthenticated();
-        }
-
-        private onError(error) {
-            this.loading = false;
-            this.ToastService.failure('Suche fehlgeschlagen');
-            this.$log.error(error);
-        }
-
-    }
-
+module odh.main {
+    
     class DocumentDetailController {
         public documentId:number;
 
-        public document;
+        public pkg;
         public fileGroups;
         public loading = true;
 
@@ -65,7 +25,6 @@ module odh {
             }).catch(() => {
                 this.ToastService.failure('Die Datei konnte nicht ins gewünschte Format konvertiert werden.');
             });
-
         }
 
         private retrieveData() {
@@ -74,10 +33,10 @@ module odh {
             });
 
             if (typeof(this.documentId) !== 'undefined') {
-                this.document = this.DocumentService.get(this.documentId)
+                this.pkg = this.DocumentService.get(this.documentId)
                     .then(data => {
                         this.$log.debug('Document ' + this.documentId, data);
-                        this.document = data;
+                        this.pkg = data;
                     })
                     .catch(error => {
                         this.ToastService.failure('Dokument wurde nicht gefunden');
@@ -86,7 +45,7 @@ module odh {
 
                 this.fileGroups = this.FileGroupService.getAll(this.documentId, true)
                     .then(data => {
-                        this.$log.debug('File Groups for document ' + this.documentId, data);
+                        this.$log.debug('File Groups for Document ' + this.documentId, data);
                         this.fileGroups = data;
                         this.loading = false;
                     })
@@ -99,7 +58,5 @@ module odh {
     }
 
     angular.module('openDataHub.main')
-        .controller('DocumentListController', DocumentListController)
         .controller('DocumentDetailController', DocumentDetailController);
-
 }

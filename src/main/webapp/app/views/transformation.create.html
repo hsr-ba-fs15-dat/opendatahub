@@ -19,7 +19,7 @@
             get-file-group="vm.getFileGroup(document, count)"
             ></odh-choose-transformation>
     <div class="well" ng-repeat="table in vm.allTables()">
-        <h2>{{table.uniqueId}}</h2>
+        <h2>{{ table.uniqueId }}</h2>
         Alias: <input type="text" ng-model="table.uniqueIdAlias"/><br/><br/>
         Wählen Sie die benötigten Felder aus (Klick) und wählen Sie die Spaltennamen:
         <div class="table-responsive">
@@ -123,9 +123,9 @@
             </div>
             <!-- /Textarea -->
             <!-- Textarea -->
-            <alert ng-repeat="alert in vm.alerts" type="{{alert.type}}" close="vm.closeAlert($index)">
-                <strong>{{alert.title}}</strong>
-                {{alert.msg}}
+            <alert ng-repeat="alert in vm.alerts" type="{{ alert.type }}" close="vm.closeAlert($index)">
+                <strong>{{ alert.title }}</strong>
+                {{ alert.msg }}
             </alert>
             <div class="form-group container" ng-class="{'has-error': form.odhqlinput.$invalid && vm.submitted}">
                 <div class="row">
@@ -135,7 +135,7 @@
                            popover="Diese Transformation wird Privat"></i>
                     <span class="fa-stack fa-md pull-right"
                           ng-click="vm.toggleManualEdit()"
-                          popover="{{vm.manualEdit?'Achtung! Manuelle Änderungen werden zurückgesetzt!':''}}"
+                          popover="{{ vm.manualEdit?'Achtung! Manuelle Änderungen werden zurückgesetzt!':''}}"
                           popover-trigger="mouseenter"
                           popover-placement="left">
                          <i class="fa fa-pencil fa-stack-1x"></i>
@@ -209,7 +209,7 @@
                                     ng-model="vm.selected[table].value"></select>
                             {{ table.name }}
                         </td>
-                        <td>{{table.alias}}</td>
+                        <td>{{ table.alias }}</td>
                     </tr>
                 </table>
             </div>

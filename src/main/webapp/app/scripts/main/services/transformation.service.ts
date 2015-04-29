@@ -79,7 +79,6 @@ module odh.main {
         }
 
         public remove(transformation) {
-            console.log(transformation);
             return this.Restangular.one('transformation', transformation.id).remove();
         }
 
@@ -88,8 +87,6 @@ module odh.main {
         }
 
         public get(transformationId:number) {
-            (<any>window).ral = this.Restangular;
-
             return this.transformations.get(transformationId);
         }
 

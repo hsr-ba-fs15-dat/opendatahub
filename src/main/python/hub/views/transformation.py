@@ -1,18 +1,16 @@
-import re
 from rest_framework import viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
-from django.db.models import Q
 from django.db import transaction
 
 from hub.serializers import FileGroupSerializer, TransformationSerializer
 from hub.models import FileGroupModel, TransformationModel
 from authentication.permissions import IsOwnerOrPublic, IsOwnerOrReadOnly
-from hub.utils.common import str2bool
+from hub.views.mixins import FilterablePackageListViewSet
 
 
-class TransformationViewSet(viewsets.ModelViewSet):
+class TransformationViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet):
     queryset = TransformationModel.objects.all()
     serializer_class = TransformationSerializer
     paginate_by_param = 'count'
@@ -40,43 +38,6 @@ class TransformationViewSet(viewsets.ModelViewSet):
         serializer = TransformationSerializer(TransformationModel.objects.get(id=doc.id),
                                               context={'request': request})
 
-        return Response(serializer.data)
-
-    def list(self, request, *args, **kwargs):
-        """
-        Search for transformations. Valid query parameters:
-        - name: Searches only in the name field.
-        - description: Searches only in the description field.
-        - search: searches all available text fields.
-        Wildcards are not needed.
-        """
-        out = {'filter': {}, 'sorting': {}}
-        params = dict(request.query_params.iterlists())
-        prog = re.compile("^(filter|sorting)\[(\w+)\]$")
-        for k, v in params.iteritems():
-            m = re.match(prog, k)
-            if m:
-                out[m.group(1)][m.group(2)] = str2bool(v[0])
-        if out:
-            params.update(out)
-        documents = TransformationModel.objects.all()
-
-        for key, filt in params['filter'].iteritems():
-            if key == 'name':
-                documents = documents.filter(name__icontains=filt)
-            if key == 'description':
-                documents = documents.filter(description__icontains=filt)
-            if key == 'search':
-                documents = documents.filter(Q(name__icontains=filt) |
-                                             Q(description__icontains=filt))
-            if key == 'mineOnly' and filt:
-                documents = documents.filter(owner__id=request.user.id)
-
-        documents = documents.order_by('id')
-        for key, sort in params['sorting'].iteritems():
-            documents = documents.order_by('-' + key if sort == 'asc' else key)
-
-        serializer = self.get_pagination_serializer(self.paginate_queryset(documents))
         return Response(serializer.data)
 
     @detail_route()

@@ -1,10 +1,8 @@
 <div>
-    <h1>{{ doc.document.name }}</h1>
+    <h1>{{ doc.pkg.name }}</h1>
 
-    <p>{{ doc.document.description }}</p>
-    <p><em>Hinzugefügt: {{ doc.document.created_at | amCalendar }}</em></p>
-
-
+    <p>{{ doc.pkg.description }}</p>
+    <p><em>Hinzugefügt: {{ doc.pkg.created_at | amCalendar }}</em></p>
 </div>
 
 <h3>Dateien</h3>
@@ -16,8 +14,7 @@
             </div>
             <div class="col-md-8 col-full-height col-xs-height">
                 <div class="btn-group">
-                    <a href="bootstrap-elements.html" data-target="#" class="btn btn-default btn-sm dropdown-toggle"
-                       data-toggle="dropdown">
+                    <a data-target="#" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
                         Herunterladen
                         <span class="caret"></span>
                     </a>

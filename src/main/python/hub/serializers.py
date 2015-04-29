@@ -1,8 +1,24 @@
 from rest_framework import serializers
-from rest_framework.pagination import PaginationSerializer
 
 from authentication.serializers import UserSerializer
-from hub.models import DocumentModel, FileGroupModel, FileModel, TransformationModel, UrlModel
+from hub.models import PackageModel, DocumentModel, FileGroupModel, FileModel, TransformationModel, UrlModel
+
+
+class PackageSerializer(serializers.HyperlinkedModelSerializer):
+    owner = UserSerializer(read_only=True)
+
+    type = serializers.SerializerMethodField()
+
+    class Meta(object):
+        model = PackageModel
+        fields = ('id', 'url', 'name', 'description', 'private', 'owner', 'created_at', 'type')
+
+    def get_type(self, obj):
+        if isinstance(obj, DocumentModel):
+            return 'document'
+        elif isinstance(obj, TransformationModel):
+            return 'transformation'
+        return 'unknown'
 
 
 class DocumentSerializer(serializers.HyperlinkedModelSerializer):
@@ -12,6 +28,11 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     class Meta(object):
         model = DocumentModel
         fields = ('id', 'url', 'name', 'description', 'file_groups', 'private', 'owner', 'created_at')
+
+    def to_representation(self, instance):
+        ret = super(DocumentSerializer, self).to_representation(instance)
+        ret['type'] = 'document'
+        return ret
 
 
 class FileSerializer(serializers.HyperlinkedModelSerializer):
@@ -45,11 +66,6 @@ class FileGroupSerializer(serializers.HyperlinkedModelSerializer):
         depth = 1
 
 
-class PaginatedDocumentSerializer(PaginationSerializer):
-    class Meta(object):
-        object_serializer_class = DocumentSerializer
-
-
 class FormatSerializer(serializers.Serializer):
     name = serializers.CharField(read_only=True)
     label = serializers.CharField(read_only=True)
@@ -64,3 +80,8 @@ class TransformationSerializer(serializers.HyperlinkedModelSerializer):
     class Meta(object):
         model = TransformationModel
         fields = ('id', 'url', 'name', 'description', 'transformation', 'private', 'owner', 'file_groups')
+
+    def to_representation(self, instance):
+        ret = super(TransformationSerializer, self).to_representation(instance)
+        ret['type'] = 'transformation'
+        return ret

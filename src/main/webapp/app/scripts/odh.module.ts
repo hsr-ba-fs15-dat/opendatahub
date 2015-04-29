@@ -33,6 +33,8 @@ module openDataHub {
 
             $provide.decorator('$exceptionHandler', ['$delegate', '$injector', function ($delegate, $injector) {
                 return function (exception, cause) {
+                    console.log(exception, cause);
+
                     var $http:ng.IHttpService = $injector.get('$http');
                     var UrlService:odh.utils.UrlService = $injector.get('UrlService');
                     var stacktrace = (<any>window).printStackTrace({e: exception});
@@ -94,40 +96,23 @@ module openDataHub {
                     controller: 'OfferController as offer',
                     templateUrl: 'views/offer.html'
                 })
-                .state('documents', {
-                    url: '/document',
-                    controller: 'DocumentListController as docs',
-                    templateUrl: 'views/document.list.html'
+                .state('packages', {
+                    url: '/packages',
+                    controller: 'PackageListController as docs',
+                    templateUrl: 'views/package.list.html'
                 })
                 .state('document', {
                     url: '/document/{id:int}',
                     controller: 'DocumentDetailController as doc',
                     templateUrl: 'views/document.detail.html'
                 })
-                .state('console', {
-                    url: '/console',
-                    controller: 'OdhQLConsoleController as vm',
-                    templateUrl: 'views/odhql-console.html'
-                })
-                .state('transformation', {
-                    abstract: true,
-                    url: '/transformation',
-                    templateUrl: 'views/transformation.html',
-                    controller: 'TransformationController'
-
-                })
-                .state('transformation.create', {
-                    url: '/create',
+                .state('transformation-create', {
+                    url: '/transformation/create',
                     templateUrl: 'views/transformation.create.html',
                     controller: 'TransformationCreateController as vm'
                 })
-                .state('transformation.list', {
-                    url: '/list',
-                    templateUrl: 'views/transformation.list.html',
-                    controller: 'TransformationListController as vm'
-                })
-                .state('transformation.detail', {
-                    url: '/detail/{id:int}',
+                .state('transformation-detail', {
+                    url: '/transformation/{id:int}',
                     templateUrl: 'views/transformation.detail.html',
                     controller: 'TransformationDetailController as vm'
 

@@ -14,8 +14,6 @@ module odh.main {
         }
 
         public get(documentId:number) {
-            (<any>window).ral = this.Restangular;
-
             return this.documents.get(documentId);
         }
 

@@ -1,28 +1,23 @@
-"""
+'''
 
-"""
-
+'''
 from django.db import models
 
 from opendatahub import settings
 from hub.structures.file import File, FileGroup
 
+from django.db.models.fields.related import SingleRelatedObjectDescriptor
+from django.db.models.query import QuerySet
+
 
 AUTH_USER_MODEL = getattr(settings, 'AUTH_USER_MODEL', 'auth.User')
 
 
-def cap(str, length):
-    return str if len(str) < length else str[:length - 3] + '...'
+def cap(what, length):
+    return what if len(what) < length else what[:length - 3] + '...'
 
 
-class DocumentModel(models.Model):
-    """
-    Metadata for a document.
-    """
-
-    class Meta(object):
-        db_table = 'hub_documents'
-
+class PackageModel(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField()
 
@@ -32,14 +27,17 @@ class DocumentModel(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return "[Document id={} description={}]".format(self.id, cap(self.description, 50))
+
+class DocumentModel(PackageModel):
+    '''
+    Metadata for a document.
+    '''
 
 
 class FileGroupModel(models.Model):
-    """
+    '''
     Group of files belonging to each other.
-    """
+    '''
     document = models.ForeignKey(DocumentModel, related_name='groups')
     format = models.CharField(max_length=50, null=True)
 
@@ -53,9 +51,9 @@ class FileGroupModel(models.Model):
 
 
 class FileModel(models.Model):
-    """
+    '''
     A single file.
-    """
+    '''
     file_name = models.CharField(max_length=255)
     data = models.BinaryField()
     file_group = models.ForeignKey(FileGroupModel, related_name='files')
@@ -65,9 +63,9 @@ class FileModel(models.Model):
 
 
 class UrlModel(models.Model):
-    """
+    '''
     Refreshable URL.
-    """
+    '''
     file_group = models.ForeignKey(FileGroupModel, related_name='urls')
 
     source_url = models.URLField()
@@ -86,16 +84,37 @@ class UrlModel(models.Model):
                        file_group=file_group)
 
 
-class TransformationModel(models.Model):
-    """
+class TransformationModel(PackageModel):
+    '''
     A transformation
-    """
-    name = models.CharField(max_length=255)
+    '''
     transformation = models.TextField()
-    description = models.TextField()
-    private = models.BooleanField(default=False)
-    owner = models.ForeignKey(AUTH_USER_MODEL)
     file_groups = models.ManyToManyField(FileGroupModel)
 
-    def __str__(self):
-        return "[Transformation id={} description={}".format(self.id, cap(self.description, 50))
+
+class InheritanceQuerySet(QuerySet):
+    def select_subclasses(self, *subclasses):
+        if not subclasses:
+            subclasses = [o for o in dir(self.model)
+                          if isinstance(getattr(self.model, o), SingleRelatedObjectDescriptor)\
+                          and issubclass(getattr(self.model,o).related.model, self.model)]
+        new_qs = self.select_related(*subclasses)
+        new_qs.subclasses = subclasses
+        return new_qs
+
+    def _clone(self, klass=None, setup=False, **kwargs):
+        try:
+            kwargs.update({'subclasses': self.subclasses})
+        except AttributeError:
+            pass
+        return super(InheritanceQuerySet, self)._clone(klass, setup, **kwargs)
+
+    def iterator(self):
+        iter = super(InheritanceQuerySet, self).iterator()
+        if getattr(self, 'subclasses', False):
+            for obj in iter:
+                obj = [getattr(obj, s) for s in self.subclasses if hasattr(obj, s)] or [obj]
+                yield obj[0]
+        else:
+            for obj in iter:
+                yield obj

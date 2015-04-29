@@ -18,7 +18,7 @@
         <table class="table table-striped table-hover" ng-table="docs.tableParams">
             <tr ng-repeat="row in $data">
                 <td data-title="'Titel'" sortable="'name'" header-class="'text-left'" class="col-sm-3">
-                    <a ui-sref="document({id: row.id})">
+                    <a ng-click="docs.detail(row)">
                         {{ row.name | characters:50 : true }}
                     </a>
                 <i class="fa fa-eye" ng-show="row.private" tooltip="Dieses Dokument ist Privat"></i></td>
