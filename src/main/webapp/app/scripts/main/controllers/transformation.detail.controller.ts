@@ -20,7 +20,6 @@ module odh.main {
         public previewError;
         public selected;
         public transformationType:transType = transType.Template;
-
         public availableFormats;
 
         public previewLoading:boolean;
@@ -37,7 +36,9 @@ module odh.main {
                     private $state:ng.ui.IStateService,
                     private ToastService:odh.utils.ToastService,
                     private $auth:any,
-                    private $modal:ng.ui.bootstrap.IModalService, private AppConfig:odh.IAppConfig) {
+                    private $modal:ng.ui.bootstrap.IModalService,
+                    private AppConfig:odh.IAppConfig,
+                    private $window:ng.IWindowService) {
 
             // controller init
             AppConfig.then(config => {
@@ -106,7 +107,7 @@ module odh.main {
         }
 
         public downloadAs(formatName) {
-            this.$window.location.href = group.data + '?fmt=' + formatName;
+            this.$window.location.href = '/api/v1/transformation/' + this.transformationId + '/?fmt=' + formatName;
         }
 
         public remove() {

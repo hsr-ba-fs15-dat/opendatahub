@@ -1,7 +1,7 @@
 /// <reference path='../../all.d.ts' />
 
 module odh.main {
-    
+
     class DocumentDetailController {
         public documentId:number;
 
