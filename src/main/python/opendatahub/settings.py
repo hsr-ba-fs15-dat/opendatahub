@@ -66,7 +66,9 @@ LOGGING = {
         },
         'fastkml': {
             # emits warnings if the file does not contains a geometry
-            'level': 'ERROR'
+            'handlers': ['null'],
+            'level': 'ERROR',
+            'propagate': False
         }
     },
 }
