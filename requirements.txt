@@ -46,4 +46,4 @@ django-sslify>=0.2.0
 enum34==1.0.4
 defusedxml==0.4.1
 whitenoise==1.0.6
-
+fastkml==0.9

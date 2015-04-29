@@ -1,4 +1,7 @@
 <div ng-controller="TransformationDetailController as vm">
+    <div class="btn-toolbar">
+        <button class="btn btn-danger" ng-click="vm.remove()" ng-show="vm.allowDelete">Löschen</button>
+    </div>
     <form name="form" class="form" ng-submit="vm.submit()">
         <fieldset>
             <div class="form-group" ng-class="{'has-error': form.name.$invalid && vm.submitted}">

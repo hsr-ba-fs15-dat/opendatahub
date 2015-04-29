@@ -10,6 +10,7 @@ module odh {
         public name:string;
         public description:string;
         public isPrivate:boolean;
+        public format:string;
         public params:any = {};
         public progress = 0;
         public submitted:boolean = false;
@@ -27,12 +28,16 @@ module odh {
 
         private fieldsByType = {
             online: {
-                id: {url: 'url', refresh: 'url.refresh', format: 'url.format'},
+                id: {url: 'url', refresh: 'url.refresh'},
                 placeholder: {url: 'http://'},
-                label: {url: 'Adresse', refresh: 'Abfrage-Intervall', format: 'Format'},
+                label: {url: 'Adresse', refresh: 'Abfrage-Intervall'},
                 defaults: {refresh: 3600}
             },
-            file: {id: 'file', label: 'Wählen oder ziehen Sie Ihre Dateien', type: 'file'}
+            file: {
+                id: 'file',
+                label: 'Wählen oder ziehen Sie Ihre Dateien',
+                type: 'file'
+            }
         };
 
         constructor(private $http:ng.IHttpService, private $state:ng.ui.IStateService, private $scope:any,
@@ -77,7 +82,12 @@ module odh {
             if (this.params.file) {
                 promise = this.$upload.upload({
                     url: url,
-                    fields: {name: this.name, description: this.description, 'private': this.isPrivate},
+                    fields: {
+                        name: this.name,
+                        description: this.description,
+                        'private': this.isPrivate,
+                        format: this.format
+                    },
                     file: this.params.file
                 });
 
@@ -91,7 +101,7 @@ module odh {
                     description: this.description,
                     url: this.params.url,
                     refresh: this.params.refresh,
-                    format: this.params.format
+                    format: this.format
                 });
             }
 

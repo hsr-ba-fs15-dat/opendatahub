@@ -141,27 +141,33 @@ class BooleanType(OdhType):
 
 class TextType(OdhType):
     name = 'TEXT'
-    dtypes = np.object,
+    dtypes = np.object_,
     ptypes = unicode, str
 
     def convert(self, series):
-        return series._constructor(series.values.astype(unicode).astype(object), index=series.index).__finalize__(
-            series)
+        try:
+            return series._constructor(series.values.astype(unicode).astype(object), index=series.index).__finalize__(
+                series)
+        except:  # fallback, slower
+            return series._constructor(series.astype(unicode).astype(object), index=series.index).__finalize__(series)
 
 
 class GeometryType(OdhType):
     name = 'GEOMETRY'
-    dtypes = np.object,
-    ptypes = shapely.geometry.Point, shapely.geometry.LineString, shapely.geometry.Polygon, shapely.geometry.LinearRing
+    dtypes = np.object_,
+    ptypes = (
+        shapely.geometry.Point, shapely.geometry.LineString, shapely.geometry.Polygon, shapely.geometry.LinearRing,
+        shapely.geometry.MultiLineString, shapely.geometry.MultiPoint, shapely.geometry.MultiPolygon
+    )
 
 
 class OdhFrame(pd.DataFrame):
     _metadata = ['name']
 
     @classmethod
-    def from_df(cls, df, name):
+    def from_df(cls, df, name=None):
         odf = cls(df, index=df.index).__finalize__(df)
-        odf.name = name
+        odf.name = name or getattr(df, 'name', None)
         return odf
 
     def rename(self, *args, **kwargs):

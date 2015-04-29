@@ -181,18 +181,13 @@ class File(object):
                 invalidate = True
 
         if invalidate and id_:
-            if len(self.dfs) == 1:
-                self.dfs[0].name = 'ODH' + str(id_)
-            else:
-                for df in self.dfs:
-                    df.name = 'ODH_' + self.basename
-
             params = {}
             if self.cache_timeout:
                 params['timeout'] = self.cache_timeout
 
             cache.set(('FG', id_), self.dfs, **params)
 
+        assert all([df.name for df in self.dfs]), 'DataFrame must have a name'
         return self.dfs
 
     def to_serializable_df(self):

@@ -79,6 +79,7 @@ module odh.main {
         }
 
         public remove(transformation) {
+            console.log(transformation);
             return this.Restangular.one('transformation', transformation.id).remove();
         }
 

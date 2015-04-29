@@ -20,7 +20,7 @@ from hub.odhql.exceptions import OdhQLExecutionException
 
 class OdhQLInterpreter(object):
 
-    FILE_GROUP_RE = re.compile('ODH([1-9]\d*)(_"?.+?"?)?', re.IGNORECASE)
+    FILE_GROUP_RE = re.compile('ODH([1-9]\d*)(_.+)?', re.IGNORECASE)
 
     parser = parser.OdhQLParser()
 
@@ -154,7 +154,11 @@ class OdhQLInterpreter(object):
         :return: Renamed/prepared dataframes
         :rtype: dict[alias] -> DataFrame
         """
-        dfs = {ds.alias: self.source_dfs[ds.name.lower()].copy() for ds in query.data_sources}
+        try:
+            dfs = {ds.alias: self.source_dfs[ds.name.lower()].copy() for ds in query.data_sources}
+        except KeyError as e:
+            raise OdhQLExecutionException('Data source "{}" does not exist.'.format(e.message))
+
         for alias, df in dfs.items():
             df.rename(columns={name: self._make_name(alias, name) for name in df.columns}, inplace=True)
 

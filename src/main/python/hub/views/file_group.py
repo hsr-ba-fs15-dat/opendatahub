@@ -1,7 +1,7 @@
 import zipfile
 import logging
+import json
 
-import types
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route
@@ -13,7 +13,6 @@ from hub.serializers import FileGroupSerializer, FileSerializer
 from authentication.permissions import IsOwnerOrPublic
 from hub.utils.pandasutils import DataFrameUtils
 from opendatahub.utils.cache import cache
-import json
 
 
 logger = logging.getLogger(__name__)
@@ -50,7 +49,7 @@ class FileGroupViewSet(viewsets.ModelViewSet):
                                  'type': 'formatter'},
                                 status=HttpResponseServerError.status_code)
 
-        assert isinstance(result_list, types.ListType)
+        assert isinstance(result_list, (list, tuple))
 
         if request.is_ajax():
             cache.L1.set(('file_group', 'data', pk, format_name), result_list)
@@ -85,5 +84,5 @@ class FileGroupViewSet(viewsets.ModelViewSet):
         model = FileGroupModel.objects.get(id=pk)
         dfs = model.to_file_group().to_df()
 
-        data = [DataFrameUtils.to_json_dict(df, start, limit) for df in dfs]
+        data = [DataFrameUtils.to_json_dict(df, model.id, start, limit) for df in dfs]
         return JsonResponse(data, encoder=json.JSONEncoder, safe=False)

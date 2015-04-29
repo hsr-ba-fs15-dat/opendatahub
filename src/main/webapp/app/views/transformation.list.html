@@ -1,28 +1,16 @@
-<div ng-controller="TransformationListController as vm">
-    <table ng-table="vm.tableParams">
-        <tbody ng-repeat="transformation in $data">
-        <tr>
-            <td data-title="'ID'" class="col-sm-1 col-md-1 col-lg-1">tf{{ transformation.id}}</td>
-            <td data-title="'Name'" sortable="name" filter="{ 'name': 'text' }" class="col-sm-4 col-md-4 col-lg-4">
+<div ng-controller="TransformationListController as vm" class="table-responsive">
+    <table ng-table="vm.tableParams" class="table table-striped table-hover">
+        <tr ng-repeat="transformation in $data">
+            <td data-title="'Name'" sortable="'name'" header-class="'text-left'" filter="{ 'name': 'text' }" class="col-sm-4">
                 <a ui-sref="transformation.detail({id: transformation.id})">
                     <strong>{{ transformation.name }}</strong> <i class="fa fa-eye" ng-show="transformation.private"
                                                                   tooltip="Dieses Dokument ist Privat"></i>
-                    <small>(<i>{{transformation.owner.username}}</i>)</small>
                 </a>
             </td>
-            <td data-title="'Beschreibung'" class="col-sm-7 col-md-7 col-lg-7">
+            <td data-title="'Beschreibung'" sortable="'description'" header-class="'text-left'" class="col-sm-6">
                 {{transformation.description}}
             </td>
-            <td>
-                {{transformation.owner.username}}
-            </td>
-            <td data-title="'Löschen'">
-                <a ng-click="vm.remove(transformation)">
-                    Löschen
-                </a>
-            </td>
-
+            <td data-title="'Besitzer'" header-class="'text-left'" class="col-sm-2">{{transformation.owner.username}}</td>
         </tr>
-        </tbody>
     </table>
 </div>

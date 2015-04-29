@@ -2,8 +2,13 @@
 OdhQL string functions
 """
 
+import pandas as pd
+
 from hub.odhql.functions.core import VectorizedFunction, OdhQLExecutionException
 from hub.structures.frame import OdhType
+
+from defusedxml import lxml
+import types
 
 
 class Concat(VectorizedFunction):
@@ -67,11 +72,32 @@ class Length(VectorizedFunction):
 class Extract(VectorizedFunction):
     name = 'EXTRACT'
 
-    def apply(self, strings, pattern):
+    def apply(self, strings, pattern, group=1):
         self.assert_str('string', strings)
+
         self.assert_regex('pattern', pattern)
+        self.assert_value('pattern', pattern)
+
+        self.assert_int('group', group)
+        self.assert_value('group', group)
+
+        if group < 1:
+            raise OdhQLExecutionException('Invalid parameter: group can not be smaller than 1')
+
         try:
-            return strings.str.extract(pattern)
+            res = strings.str.extract(pattern)
+
+            if isinstance(res, pd.Series) and group > 1:
+                raise OdhQLExecutionException('Error in regular expression: Only 1 group')
+            elif isinstance(res, pd.DataFrame):
+                if group > len(res.columns):
+                    raise OdhQLExecutionException(
+                        'Error in regular expression: Requested group {} > {} groups returned'
+                        .format(group, len(res.columns)))
+
+                res = res[group - 1]
+
+            return res
         except ValueError as e:
             raise OdhQLExecutionException(e.message)
 
@@ -108,7 +134,10 @@ class Contains(VectorizedFunction):
 
     def apply(self, strings, pattern, match_case=True):
         self.assert_str('string', strings)
+
         self.assert_regex('pattern', pattern)
+        self.assert_value('pattern', pattern)
+
         self.assert_bool('match_case', match_case)
         return strings.str.contains(pattern, match_case)
 
@@ -118,7 +147,10 @@ class Replace(VectorizedFunction):
 
     def apply(self, strings, pattern, replace, match_case=True):
         self.assert_str('string', strings)
+
         self.assert_regex('pattern', pattern)
+        self.assert_value('pattern', pattern)
+
         self.assert_str('replace', replace)
         self.assert_bool('match_case', match_case)
         return strings.str.replace(pattern, replace, case=match_case)
@@ -149,6 +181,8 @@ class Count(VectorizedFunction):
     def apply(self, strings, pattern):
         self.assert_str('string', strings)
         self.assert_regex('pattern', pattern)
+        self.assert_value('pattern', pattern)
+
         return strings.str.count(pattern)
 
 
@@ -157,8 +191,13 @@ class Substring(VectorizedFunction):
 
     def apply(self, strings, start, end):
         self.assert_str('string', strings)
+
         self.assert_int('start', start)
+        self.assert_value('start', start)
+
         self.assert_int('end', end)
+        self.assert_value('end', end)
+
         return strings.str.slice(start, end)
 
 
@@ -172,3 +211,32 @@ class ToChar(VectorizedFunction):
                 return values.apply(lambda d: d.strftime(format))
             else:
                 return OdhType.TEXT.convert(self.expand(values))
+
+
+class XPath(VectorizedFunction):
+    name = 'XPATH'
+
+    def apply(self, values, path):
+        self.assert_str('values', values)
+        self.assert_str('path', path)
+        self.assert_value('path', path)
+        return values.apply(self._extract(path))
+
+    def _extract(self, path):
+        def extractor(v):
+            res = lxml.fromstring(v).xpath(path)
+
+            if isinstance(res, types.ListType):
+                if len(res) == 0:
+                    return None
+                if len(res) > 1:
+                    raise OdhQLExecutionException('Error in xpath expression: Result must be a scalar')
+
+                res = res[0]
+
+            if isinstance(res, basestring):
+                return unicode(res)
+
+            return res
+
+        return extractor

@@ -35,6 +35,7 @@ module odh {
         }
 
         private onError(error) {
+            this.loading = false;
             this.ToastService.failure('Suche fehlgeschlagen');
             this.$log.error(error);
         }
