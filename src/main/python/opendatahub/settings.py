@@ -16,6 +16,7 @@ import os
 import dj_database_url
 
 
+
 # SECURITY WARNING: don't run with debug turned on in production!
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 DEBUG = bool(os.environ.get('DJANGO_DEBUG', False))
@@ -247,3 +248,7 @@ if EMAIL_HOST_PASSWORD:
 
 if not PRODUCTION:
     SSLIFY_DISABLE = True
+
+## ODH SETTINGS
+PACKAGE_PREFIX = 'ODH'
+TRANSFORMATION_PREFIX = 'TRF'

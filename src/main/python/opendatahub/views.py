@@ -6,6 +6,7 @@ from django.core.mail import mail_admins
 from django.views.generic import View
 
 from authentication.config import FACEBOOK_PUBLIC, GITHUB_PUBLIC
+from opendatahub.settings import TRANSFORMATION_PREFIX, PACKAGE_PREFIX
 
 
 class ConfigView(ViewSet):
@@ -13,6 +14,8 @@ class ConfigView(ViewSet):
         return JsonResponse({
             'FACEBOOK_PUBLIC': FACEBOOK_PUBLIC,
             'GITHUB_PUBLIC': GITHUB_PUBLIC,
+            'TRANSFORMATION_PREFIX': TRANSFORMATION_PREFIX,
+            'PACKAGE_PREFIX': PACKAGE_PREFIX,
         })
 
 
