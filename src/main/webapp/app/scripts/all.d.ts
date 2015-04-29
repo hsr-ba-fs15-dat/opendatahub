@@ -19,6 +19,7 @@
 /// <reference path='main/controllers/transformation.detail.controller.ts' />
 /// <reference path='main/controllers/transformation.list.controller.ts' />
 /// <reference path='main/directives/focus.ts' />
+/// <reference path='main/directives/transformation.choser.ts' />
 /// <reference path='main/main.module.ts' />
 /// <reference path='main/services/document.service.ts' />
 /// <reference path='main/services/format.service.ts' />

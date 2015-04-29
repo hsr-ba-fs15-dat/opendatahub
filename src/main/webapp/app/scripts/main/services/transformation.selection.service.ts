@@ -16,6 +16,7 @@ module odh.main {
         public joinOperations:any;
         private useQuotes:boolean = true;
         private privateCount:number = 0;
+        private itemCounter:number = 1;
 
         constructor(private JOIN_OPERATIONS:main.IOperations) {
             this.items = [];
@@ -32,7 +33,7 @@ module odh.main {
         public addTable(item:main.ITable) {
             if (this.items.indexOf(item) === -1) {
                 item.uniqueId = item.name;
-                item.uniqueIdAlias = item.name;
+                item.uniqueIdAlias = 't' + this.itemCounter++;
                 this.expression[item.uniqueId] = {operation: this.JOIN_OPERATIONS.none};
                 this.items.push(item);
                 this.fileGroups.push(item.parent);
@@ -98,43 +99,42 @@ module odh.main {
 
         public generateTransformation() {
             var fields:string[] = [];
-            var master:string = '';
+            var master:main.ITable;
             var joinStatements:string[];
             var unionStatements:string[];
             unionStatements = [];
             joinStatements = [];
 
             this.joinTargets = [];
-
             angular.forEach(this.expression, (value:IExpression, key:string) => {
-
+                var table = this.getTableByName(key);
                 if (!value.operation.operation || value.operation.operation === 'none') {
                     if (!master) {
-                        fields = this.createFieldNames(this.fields[key], key).concat(fields);
-                        master = key;
-                        this.joinTargets.push(this.getTableByName(key));
+                        fields = this.createFieldNames(this.fields[key], table.uniqueIdAlias).concat(fields);
+                        master = table;
+                        this.joinTargets.push(table);
 
                     }
 
                 }
                 if (value.operation.operation === 'union') {
-                    this.joinTargets.push(this.getTableByName(key));
-                    var unionFields = this.createFieldNames(this.fields[key], key);
+                    this.joinTargets.push(table);
+                    var unionFields = this.createFieldNames(this.fields[key], table.uniqueIdAlias);
                     unionStatements.push(' \nUNION \n SELECT '.concat(unionFields.join(',\n'),
-                        ' FROM "', key + '"'));
+                        ' FROM "', this.aliasedTable(table) + '"'));
                 }
                 if (value.operation.operation === 'join') {
-                    this.joinTargets.push(this.getTableByName(key));
+                    this.joinTargets.push(table);
 
                     if (value.foreignKey) {
-                        fields = this.createFieldNames(this.fields[key], key).concat(fields);
+                        fields = this.createFieldNames(this.fields[key], table.uniqueIdAlias).concat(fields);
                         joinStatements.push(
                             ' JOIN '.concat(
-                                this.quote(key),
+                                this.aliasedTable(table),
                                 ' on ',
-                                this.createFieldNames([value.foreignKey], value.joinTable.uniqueId, true)[0],
+                                this.createFieldNames([value.foreignKey], value.joinTable.uniqueIdAlias, true)[0],
                                 ' = ',
-                                this.createFieldNames([value.joinField], key, true)[0]
+                                this.createFieldNames([value.joinField], table.uniqueIdAlias, true)[0]
                             )
                         );
                     }
@@ -147,7 +147,7 @@ module odh.main {
                 return 'SELECT '.concat(
                     fields.join(',\n'),
                     ' \nFROM ',
-                    this.quote(master),
+                    this.aliasedTable(master),
                     ' \n',
                     joinStatements.join(' \n '),
                     unionStatements.join(' \n')
@@ -175,6 +175,14 @@ module odh.main {
 
         public getJoinOperation(table:main.ITable) {
             return this.expression[table.uniqueId].operation;
+        }
+
+        private aliasedTable(table:ITable):string {
+            if (table.uniqueId === table.uniqueIdAlias) {
+                return this.quote(table.uniqueId);
+            } else {
+                return [this.quote(table.uniqueId), this.quote(table.uniqueIdAlias)].join(' as ');
+            }
         }
 
         private createFieldNames(fields:IField[], group:string, doNotCheckAlias:boolean = false):string[] {

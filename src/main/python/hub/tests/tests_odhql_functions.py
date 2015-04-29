@@ -98,6 +98,7 @@ class TestStringFunctions(TestInterpreterBase):
         self.assertTrue(all(d == '01-01-2015' for d in df.date.tolist()))
 
     def test_xpath(self):
+
         df = self.execute('select e.surname, xpath(concat(\'<name>\', e.surname, \'</name>\'), \'/name/text()\') '
                           'as xpath from employee as e')
         self.assertListEqual(df['surname'].tolist(), df['xpath'].tolist())

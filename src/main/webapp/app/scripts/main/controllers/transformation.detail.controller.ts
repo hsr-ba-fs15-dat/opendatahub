@@ -18,6 +18,7 @@ module odh.main {
         public fileGroupTable;
         public usedTables:{};
         public previewError;
+        public selected;
         public transformationType:transType = transType.Template;
 
         public allowDelete:boolean;
@@ -28,6 +29,7 @@ module odh.main {
                     private ToastService:odh.utils.ToastService,
                     private ngTableParams,
                     private $auth:any,
+                    public $filter:ng.IFilterService,
                     private $modal:ng.ui.bootstrap.IModalService) {
             // controller init
             this.transformationId = $stateParams.id;
@@ -40,6 +42,7 @@ module odh.main {
                 this.allowDelete = data.owner.id === $auth.getPayload().user_id;
 
                 this.preview();
+                this.selected = {};
 
             });
             this.fileGroupTable = new ngTableParams({
@@ -50,6 +53,8 @@ module odh.main {
                     total: 0,
                     getData: ($defer, params) => {
                         this.TransformationService.get(this.transformationId).then(result => {
+                            this.selected.vals = result.file_groups;
+                            console.log(this.selected);
                             params.total(result.file_groups.length);
                             $defer.resolve(result.file_groups);
                         });
