@@ -43,7 +43,7 @@ module openDataHub {
                         stracktrace: stacktrace.join('\n'),
                         message: message,
                         url: url,
-                        cause: cause.toString() || ''
+                        cause: cause || ''
                     });
 
                     $delegate(exception, cause);

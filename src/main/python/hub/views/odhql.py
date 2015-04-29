@@ -39,12 +39,10 @@ class ParseView(View):
                                 )
         except MultiValueDictKeyError:
             return JsonResponse({'error': 'Es wurde keine ODHQL Abfrage angegeben.',
-                                 'type': 'execution', # todo what exactly are we executing here?
+                                 'type': 'execution',  # todo what exactly are we executing here?
                                  },
                                 status=HttpResponseBadRequest.status_code
                                 )
-
-        
 
         return JsonResponse(data_sources)
 
@@ -79,7 +77,6 @@ class AdHocOdhQLView(View):
                                 status=HttpResponseBadRequest.status_code
                                 )
         except KeyError as e:
-            logging.error(traceback.format_exc())
             return JsonResponse({'error': e.message,
                                  'type': 'execution',
                                  },

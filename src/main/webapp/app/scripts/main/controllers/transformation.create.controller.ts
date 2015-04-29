@@ -20,6 +20,7 @@ module odh {
         public query:string;
         public columns:string[];
         public rows:{};
+        public types:string[];
         public submitted:boolean = false;
         public documents:Object[];
         public odhqlInputString = '';
@@ -31,6 +32,7 @@ module odh {
         public selection:main.ITransformationSelection;
         public quotes = true;
         public useAsTemplate:boolean = false;
+        public fileGroupTable;
 
         constructor(private $http:ng.IHttpService, private $state:ng.ui.IStateService, private $scope:any,
                     private ToastService:odh.utils.ToastService, private $window:ng.IWindowService, private $upload,
@@ -42,8 +44,7 @@ module odh {
 
             this.tableParams = new ngTableParams({
                 page: 1,            // show first page
-                count: 10,           // count per page
-                limit: 10
+                count: 10           // count per page
             }, {
                 counts: [10, 25, 50, 100],
                 total: 0, // length of data
@@ -56,7 +57,19 @@ module odh {
             });
 
             this.selection = angular.copy(TransformationSelection);
+            this.fileGroupTable = new ngTableParams({
+                    page: 1,
+                    count: 10
+                }, {
+                    counts: [],
+                    total: 0,
+                    getData: ($defer, params) => {
+                        params.total(this.selection.allTables().length);
+                        $defer.resolve(this.selection.allTables());
 
+                    }
+                }
+            );
         }
 
         public getFileGroup(document, count = 3) {
@@ -165,6 +178,7 @@ module odh {
                 } else {
                     this.columns = data.data.columns;
                     this.rows = data.data.data;
+                    this.types = data.data.types;
                 }
             }).catch((data:any) => {
                 if (typeof data === 'object') {
@@ -201,13 +215,6 @@ module odh {
             return this.$auth.isAuthenticated();
         }
 
-        public execute() {
-            this.$http.get(this.UrlService.get('odhql'), {params: {query: this.query}}).then((data:any) => {
-                this.columns = data.data.columns;
-                this.rows = data.data.data;
-            });
-        }
-
         public isPrivate():boolean {
             return this.selection.isPrivate();
         }
@@ -219,7 +226,13 @@ module odh {
         public submit() {
             this.submitted = true;
             this.$scope.form.$setDirty();
-            this.TransformationService.preview(this.transformation()).then(() => {
+            var defer;
+            if (this.useAsTemplate) {
+                defer = this.TransformationService.parse(this.transformation());
+            } else {
+                defer = this.TransformationService.preview(this.transformation());
+            }
+            defer.then(() => {
                 if (this.$scope.form.$invalid) {
                     return;
                 }

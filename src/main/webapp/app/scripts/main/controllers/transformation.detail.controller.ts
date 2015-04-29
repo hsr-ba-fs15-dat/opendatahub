@@ -18,7 +18,9 @@ module odh.main {
         public fileGroupTable;
         public usedTables:{};
         public previewError;
+        public selected;
         public transformationType:transType = transType.Template;
+
         constructor(private $log:ng.ILogService, private $stateParams:any,
                     private TransformationService:main.TransformationService, private $http:ng.IHttpService,
                     private $state:ng.ui.IStateService, private $scope:any,
@@ -35,6 +37,7 @@ module odh.main {
                 this.transformation = data.transformation;
                 this.private = data.private;
                 this.preview();
+                this.selected = {};
 
             });
             this.fileGroupTable = new ngTableParams({
@@ -45,6 +48,8 @@ module odh.main {
                     total: 0,
                     getData: ($defer, params) => {
                         this.TransformationService.get(this.transformationId).then(result => {
+                            this.selected.vals = result.file_groups;
+                            console.log(this.selected);
                             params.total(result.file_groups.length);
                             $defer.resolve(result.file_groups);
                         });
@@ -75,7 +80,6 @@ module odh.main {
                 this.rows = null;
                 this.previewError = 'Diese Transformation enthält (noch) keine gültigen Daten';
                 this.ToastService.failure('Diese Transformation enthält keine gültigen Daten');
-                this.alerts.push({msg: data.error, type: 'danger', title: 'Fehler:'});
             });
         }
 

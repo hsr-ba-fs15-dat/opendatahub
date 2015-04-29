@@ -75,6 +75,7 @@ module.exports = function(config) {
       'app/scripts/main/controllers/transformation.detail.controller.js',
       'app/scripts/auth/services/user.service.js',
       'app/scripts/main/directives/focus.js',
+        'app/scripts/main/directives/transformation.choser.js',
       'app/scripts/main/controllers/about.controller.js',
       'app/scripts/main/services/document.service.js',
       'app/scripts/main/services/format.service.js',

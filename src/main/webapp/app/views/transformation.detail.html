@@ -98,13 +98,16 @@
                         <th>Alias</th>
                     </tr>
                     <tr ng-repeat="table in vm.usedTables">
-                        <td>{{table.name}}</td>
+                        <td><select ng-options="v for v in vm.selected[table].values"
+                                    ng-model="vm.selected[table].value"></select>
+                            {{ table.name }} {{ vm.selected[table].value }}
+                        </td>
                         <td>{{table.alias}}</td>
                     </tr>
                 </table>
             </div>
         </div>
-        <h2>Benutzte Packages</h2>
+        <h2>Benutzte Packages</h2> <a href="#">Package hinzufügen</a>
 
         <div class="row">
             <div class="col-md-12 table-responsive">

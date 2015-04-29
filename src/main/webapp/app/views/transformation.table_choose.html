@@ -1,0 +1,67 @@
+<div class="row">
+    <div class="col-md-6 inline-checkbox-fix">
+        <input id="name" name="name" type="text" placeholder="Suche"
+               class="form-control input-md floating-label"
+               ng-model="tableParams.filter()['name']"
+               ng-model-options="{ updateOn: 'default blur', debounce: {'default': 200, 'blur': 0} }"
+                >
+    </div>
+    <div class="col-md-6 checkbox checkbox-inline" ng-show="isAuthenticated()">
+        <label><input type="checkbox" ng-model="tableParams.filter()['mineOnly']"/>
+            Nur eigene Daten anzeigen</label>
+    </div>
+</div>
+
+
+<table class="table table-hover" ng-table="tableParams">
+    <tbody ng-repeat="document in $data">
+    <tr>
+        <td data-title="'ID'" class="col-sm-1 col-md-1 col-lg-1">doc{{ document.id}}</td>
+        <td data-title="'Name'" sortable="name" filter="{ 'name': 'text' }" class="col-sm-4 col-md-4 col-lg-4">
+            <a ng-click="getFileGroup({document: document})">
+                            <span class="glyphicon"
+                                  ng-class="{ 'fa fa-chevron-right': !document.$showRows, 'fa fa-chevron-down': document.$showRows }">
+
+                            </span>
+                <strong>{{ document.name }}</strong> <i class="fa fa-eye" ng-show="document.private"
+                                                        tooltip="Dieses Dokument ist Privat"></i>
+                <small>(<i>{{document.owner.username}}</i>)</small>
+            </a>
+        </td>
+        <td data-title="'Beschreibung'" class="col-sm-7 col-md-7 col-lg-7" colspan="2">
+            {{document.description}}
+        </td>
+
+    </tr>
+
+
+    <tr ng-repeat="fileGroup in document.fileGroup">
+        <td>
+            fg{{ fileGroup.id }}
+        </td>
+        <td>
+            {{fileGroup.files[0].file_name}}
+        </td>
+        <td class="col-sm-1">
+            {{ fileGroup.preview.length }} {{ fileGroup.preview.length > 1 ? 'Tabellen' : 'Tabelle'
+            }}:
+
+        </td>
+
+        <td>
+            <p ng-repeat="preview in fileGroup.preview">
+                <a ng-click="addRemoveTable({table: preview})">
+                    <i class="fa fa-plus-circle"
+                       ng-class="checkTableSelected({table: preview})?'fa-minus-circle':'fa-plus-circle'"></i>
+                    {{preview.name}}:
+                </a>
+
+                {{preview.cols.length}} (Spalten / {{preview.count}} Zeilen)
+            </p>
+
+        </td>
+
+
+    </tr>
+    </tbody>
+</table>

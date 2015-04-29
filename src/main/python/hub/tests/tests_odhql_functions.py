@@ -142,7 +142,7 @@ class TestMiscFunctions(TestInterpreterBase):
         self.assertListEqual([3] * len(df), df.age.tolist())
 
     def test_parse_datetime(self):
-        df = self.execute('SELECT PARSE_DATETIME(\'1990-10-13\') AS bday FROM child AS c')
+        df = self.execute('SELECT TO_DATE(\'1990-10-13\') AS bday FROM child AS c')
         bday = df.bday[0]
         self.assertListEqual([bday.day, bday.month, bday.year], [13, 10, 1990])  # yes, my bday!
 
