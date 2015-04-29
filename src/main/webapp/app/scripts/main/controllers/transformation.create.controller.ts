@@ -34,11 +34,11 @@ module odh {
         public useAsTemplate:boolean = false;
         public fileGroupTable;
 
-        constructor(private $http:ng.IHttpService, private $state:ng.ui.IStateService, private $scope:any,
-                    private ToastService:odh.utils.ToastService, private $window:ng.IWindowService, private $upload,
-                    private UrlService:odh.utils.UrlService, private FileGroupService:main.FileGroupService,
+        constructor(private $state:ng.ui.IStateService, private $scope:any,
+                    private ToastService:odh.utils.ToastService,
+                    private FileGroupService:main.FileGroupService,
                     private DocumentService:main.DocumentService,
-                    private $log:ng.ILogService, private ngTableParams, public $filter:ng.IFilterService,
+                    private $log:ng.ILogService, private ngTableParams,
                     private $auth:any, private TransformationService:main.TransformationService,
                     private TransformationSelection:main.TransformationSelection, private JOIN_OPERATIONS) {
 
@@ -96,7 +96,6 @@ module odh {
         public transformation(newInput:string = '') {
             if (newInput && this.manualEdit) {
                 this.odhqlInputString = newInput;
-                return newInput;
             }
             if (!this.manualEdit) {
                 this.odhqlInputString = this.selection.generateTransformation();
@@ -106,9 +105,21 @@ module odh {
 
         public aceLoaded(editor) {
             editor.$blockScrolling = 'Infinity';
-            editor.setOptions({
-                maxLines: Infinity
+            var _renderer = editor.renderer;
+            var _session = editor.getSession();
+            _session.setOptions({mode: 'ace/mode/sql'});
+            _renderer.setOptions({
+                maxLines: Infinity,
+                theme: 'twilight'
+
             });
+            editor.setOptions({
+
+                showGutter: true,
+                firstLineNumber: 1
+
+            });
+
         }
 
         public getJoinOperations() {
