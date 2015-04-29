@@ -2,19 +2,17 @@ from __future__ import unicode_literals
 
 import logging
 import json
-import itertools
 
 from django.utils.datastructures import MultiValueDictKeyError
 from django.views.generic import View
 from django.http.response import JsonResponse, HttpResponseBadRequest
 from pyparsing import ParseException
 
-from hub.models import FileGroupModel
 from hub.odhql import parser
 from hub.odhql.exceptions import OdhQLExecutionException
-from hub.odhql.interpreter import OdhQLInterpreter
 from hub.odhql.parser import OdhQLParser
 from hub.utils.pandasutils import DataFrameUtils
+from hub.utils.odhql import TransformationUtil
 
 
 logger = logging.getLogger(__name__)
@@ -58,18 +56,7 @@ class AdHocOdhQLView(View):
             page = int(request.GET.get('page', 1))
             start = limit * (page - 1)
 
-            ids = OdhQLInterpreter.parse_sources(statement)
-
-            fgs = FileGroupModel.objects.filter(id__in=ids.values())
-            # iteration over ((fg_id, df), (fg_id, df), ...)
-
-            pairs = list(itertools.chain(*[zip(itertools.cycle([fg.id]), fg.to_file_group().to_df()) for fg in fgs]))
-            sources = {'ODH{}_{}'.format(id, df.name): df for id, df in pairs}
-            # allows for lookup without name -> ODH5 (takes the first table)
-            sources.update({'ODH{}'.format(id): df for id, df in reversed(pairs)})
-            sources = {name: sources[name] for name in ids.keys() if name in sources}
-
-            df = OdhQLInterpreter(sources).execute(statement)
+            df = TransformationUtil.interpret(statement)
 
         except OdhQLExecutionException as e:
             return JsonResponse({'error': e.message,

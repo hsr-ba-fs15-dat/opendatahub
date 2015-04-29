@@ -243,8 +243,11 @@ class TestInterpreter(TestInterpreterBase):
         self.assertListEqual(df.prename.tolist(), sorted(self.employees.Prename.tolist()))
 
     def test_parse_sources(self):
-        ids = OdhQLInterpreter.parse_sources('SELECT e.prename FROM ODH12 AS e UNION SELECT c.prename FROM ODH88 AS c')
-        self.assertDictEqual(ids, {'ODH12': 12, 'ODH88': 88})
+        file_groups, transformations = OdhQLInterpreter.parse_sources('SELECT e.prename FROM ODH12 AS e UNION '
+                                                                      'SELECT c.prename FROM ODH88 AS c UNION '
+                                                                      'SELECT d.prename FROM TRF14 AS d')
+        self.assertDictEqual(file_groups, {'odh12': 12, 'odh88': 88})
+        self.assertDictEqual(transformations, {'trf14': 14})
 
     def test_dup_colnames(self):
         df = self.execute('SELECT e.prename, e.prename, e.surname AS prename FROM employee AS e')

@@ -21,6 +21,7 @@ from hub.odhql.exceptions import OdhQLExecutionException
 class OdhQLInterpreter(object):
 
     FILE_GROUP_RE = re.compile('ODH([1-9]\d*)(_.+)?', re.IGNORECASE)
+    TRANSFORMATION_RE = re.compile('TRF([1-9]\d*)', re.IGNORECASE)
 
     parser = parser.OdhQLParser()
 
@@ -73,14 +74,19 @@ class OdhQLInterpreter(object):
         data_sources = itertools.chain(*[q.data_sources for q in query.queries]) if isinstance(query, parser.Union) \
             else query.data_sources
 
-        ids = {}
+        file_groups = {}
+        transformations = {}
         for ds in data_sources:
             try:
-                ids[ds.name] = int(cls.FILE_GROUP_RE.match(ds.name).group(1))
+                match = cls.FILE_GROUP_RE.match(ds.name)
+                if match:
+                    file_groups[ds.name.lower()] = int(match.group(1))
+                else:
+                    transformations[ds.name.lower()] = int(cls.TRANSFORMATION_RE.match(ds.name).group(1))
             except Exception:
                 raise OdhQLExecutionException('Table "{}" is not a valid OpenDataHub source'.format(ds.name))
 
-        return ids
+        return file_groups, transformations
 
     # @profilehooks.profile(immediate=True)
     def execute(self, query):
