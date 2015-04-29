@@ -16,6 +16,8 @@ import os
 import dj_database_url
 
 
+
+
 # SECURITY WARNING: don't run with debug turned on in production!
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 DEBUG = bool(os.environ.get('DJANGO_DEBUG', False))
@@ -71,7 +73,8 @@ LOGGING = {
     },
 }
 
-ALLOWED_HOSTS = [host.strip() for host in os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost').split(',')]
+ALLOWED_HOSTS = [host.strip() for host in
+                 os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost,192.168.56.101').split(',')]
 
 # correct protocol (http vs. https) when behind reverse proxy like heroku
 USE_X_FORWARDED_HOST = True

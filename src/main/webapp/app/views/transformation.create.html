@@ -28,7 +28,8 @@
                 <tr>
                     <th ng-repeat="col in table.cols"
                         ng-class="vm.getFields(table.uniqueId).indexOf(col) > -1 ? 'selected': ''">
-                        <input type="text" ng-model="col.alias"/><br/>
+                        <input type="text" ng-model="col.alias" class="form-control hasclear"/><br/>
+                        <span class="clearer glyphicon glyphicon-remove-circle form-control-feedback"></span>
                         :{{ table.types[col.name] }}
                     </th>
                 </tr>

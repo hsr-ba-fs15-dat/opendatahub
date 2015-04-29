@@ -96,6 +96,7 @@ class TestStringFunctions(TestInterpreterBase):
     def test_to_char(self):
         df = self.execute('SELECT TO_CHAR(TO_DATE(\'2015-01-01\', \'%Y-%m-%d\'), \'%d-%d-%Y\') as date from employee')
         self.assertTrue(all(d == '01-01-2015' for d in df.date.tolist()))
+
     def test_xpath(self):
 
         df = self.execute('select e.surname, xpath(concat(\'<name>\', e.surname, \'</name>\'), \'/name/text()\') '

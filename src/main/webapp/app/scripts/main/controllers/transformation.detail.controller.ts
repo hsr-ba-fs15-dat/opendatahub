@@ -29,7 +29,7 @@ module odh.main {
                     private ToastService:odh.utils.ToastService,
                     private ngTableParams,
                     private $auth:any,
-                    private ngTableParams, public $filter:ng.IFilterService,
+                    public $filter:ng.IFilterService,
                     private $modal:ng.ui.bootstrap.IModalService) {
             // controller init
             this.transformationId = $stateParams.id;
