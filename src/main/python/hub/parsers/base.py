@@ -207,7 +207,7 @@ class GenericOGRParser(Parser):
 
         try:
             file_groups = ogr2ogr.ogr2ogr(file.file_group, ogr2ogr.KML, addtl_args=['-t_srs', 'EPSG:4326'],
-                                          raise_on_error=False)
+                                          log_on_error=False)
         except ogr2ogr.Ogr2OgrException:
             file_groups = ogr2ogr.ogr2ogr(file.file_group, ogr2ogr.KML)
 

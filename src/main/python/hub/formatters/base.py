@@ -55,6 +55,7 @@ class Formatter(RegistrationMixin):
     @classmethod
     def format(cls, dfs, name, format, *args, **kwargs):
         exc_infos = []
+
         for formatter in cls.formatters_by_target[format]:
             try:
                 result = com.ensure_tuple(formatter.format(dfs, name, format=format, *args, **kwargs))
@@ -146,7 +147,7 @@ class GeoFormatterBase(Formatter):
                 finally:
                     shutil.rmtree(temp_dir)
             else:
-                formatted = Formatter.format(file, formats.CSV, *args, **kwargs)
+                formatted = list(Formatter.format(file, formats.CSV, *args, **kwargs))
                 file_group = ogr2ogr.ogr2ogr(formatted[0], ogr2ogr.CSV)[0]
 
             formatted.append(file_group)
@@ -159,7 +160,7 @@ class GeoJSONFormatter(GeoFormatterBase):
 
     @classmethod
     def format(cls, dfs, name, format, *args, **kwargs):
-        super(GeoJSONFormatter, cls).format(dfs, name, format, 'GeoJSON', 'json', *args, **kwargs)
+        return super(GeoJSONFormatter, cls).format(dfs, name, format, 'GeoJSON', 'json', *args, **kwargs)    
 
 
 class ShapefileFormatter(GeoFormatterBase):
@@ -167,7 +168,7 @@ class ShapefileFormatter(GeoFormatterBase):
 
     @classmethod
     def format(cls, dfs, name, format, *args, **kwargs):
-        super(ShapefileFormatter, cls).format(dfs, name, format, 'ESRI Shapefile', 'shp', *args, **kwargs)
+        return super(ShapefileFormatter, cls).format(dfs, name, format, 'ESRI Shapefile', 'shp', *args, **kwargs)
 
 
 class KMLFormatter(Formatter):
@@ -212,8 +213,9 @@ class KMLFormatter(Formatter):
         for i, df in enumerate(dfs):
             df_attrs = df[[c for c in df if df[c].odh_type != OdhType.GEOMETRY]]
             df_geoms = df[[c for c in df if df[c].odh_type == OdhType.GEOMETRY]]
-            for c, s in df_geoms.iteritems():
-                df_geoms[c] = s.to_crs(cls.CRS)
+            # TODO
+            # for c, s in df_geoms.iteritems():
+            #     df_geoms[c] = s.to_crs(cls.CRS)
 
             folder = fastkml.Folder(ns, str(i), df.name)
             doc.append(folder)
