@@ -26,6 +26,7 @@
 /// <reference path='main/services/transformation.selection.service.ts' />
 /// <reference path='main/services/transformation.service.ts' />
 /// <reference path='odh.module.ts' />
+/// <reference path='overrides.ts' />
 /// <reference path='services/appconfig.service.ts' />
 /// <reference path='utils/apploader.service.ts' />
 /// <reference path='utils/block.directive.ts' />

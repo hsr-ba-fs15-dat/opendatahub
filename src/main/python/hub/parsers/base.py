@@ -5,6 +5,8 @@
 
 import logging
 import collections
+import traceback
+import sys
 
 import pandas
 import geopandas as gp
@@ -49,6 +51,7 @@ class Parser(RegistrationMixin):
 
     @classmethod
     def parse(cls, file, format, *args, **kwargs):
+        exc_infos = []
         for parser in cls.parsers_by_format[format]:
             try:
                 dfs = com.ensure_tuple(parser.parse(file, format=format, *args, **kwargs))
@@ -60,9 +63,12 @@ class Parser(RegistrationMixin):
                 assert len(set([df.name for df in dfs])) == len(dfs), 'Duplicate DataFrame names'
                 return dfs
             except:
-                logging.debug('%s was not able to parse data with format %s', parser.__name__, format.__name__,
-                              exc_info=True)
+                exc_infos.append(sys.exc_info())
                 continue
+
+        if exc_infos:
+            tbs = '\n'.join([''.join(traceback.format_exception(*ei)) for ei in exc_infos])
+            logging.error('No parser was able to parse %s with format %s\n%s', file.name, format.__name__, tbs)
 
         raise NoParserException('Unable to parse data')
 
@@ -200,7 +206,8 @@ class GenericOGRParser(Parser):
         # GML, KML: Not supported by fiona so geopandas can't read it
 
         try:
-            file_groups = ogr2ogr.ogr2ogr(file.file_group, ogr2ogr.KML, addtl_args=['-t_srs', 'EPSG:4326'])
+            file_groups = ogr2ogr.ogr2ogr(file.file_group, ogr2ogr.KML, addtl_args=['-t_srs', 'EPSG:4326'],
+                                          raise_on_error=False)
         except ogr2ogr.Ogr2OgrException:
             file_groups = ogr2ogr.ogr2ogr(file.file_group, ogr2ogr.KML)
 

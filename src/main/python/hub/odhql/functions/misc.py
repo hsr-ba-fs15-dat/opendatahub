@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 """
 Misc. functions/utils
 """
@@ -26,12 +29,24 @@ class Round(VectorizedFunction):
 
 
 class Cast(VectorizedFunction):
+    """
+    Konvertiert den Datentyp einer Spalte oder eines einzelnen Wertes.
+
+    Parameter
+        - `values`: Spalte oder Wert der konvertiert werden soll.
+        - `datatype`: Gültiger ODHQL Datentyp
+
+    Beispiel
+        .. code:: sql
+
+            CAST(ODH42.age, 'INTEGER') AS age
+    """
     name = 'CAST'
 
-    def apply(self, values, type_):
-        type_ = type_.upper()
-        self.assert_in('type', type_.upper(), OdhType.by_name.keys())
-        odh_type = OdhType.by_name[type_]
+    def apply(self, values, datatype):
+        datatype = datatype.upper()
+        self.assert_in('type', datatype.upper(), OdhType.by_name.keys())
+        odh_type = OdhType.by_name[datatype]
         with self.errorhandler('Unable to cast ({exception})'):
             return odh_type.convert(self.expand(values))
 

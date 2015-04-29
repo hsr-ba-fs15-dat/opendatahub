@@ -11,7 +11,7 @@ from hub.views.format import FormatView
 from hub.views.packages import PackageViewSet
 from hub.views.url import UrlViewSet
 from opendatahub.views import ConfigView, AngularErrorHandler
-from hub.views.odhql import AdHocOdhQLView, ParseView
+from hub.views.odhql import AdHocOdhQLView, ParseView, DocumentationView
 
 
 router = routers.DefaultRouter(trailing_slash=True)
@@ -28,6 +28,7 @@ urlpatterns = (
     url(r'api/v1/', include(router.urls)),
     url(r'^admin/', include(admin.site.urls)),
     url(r'api/v1/auth/', include('authentication.urls')),
+    url(r'api/v1/odhql/doc', DocumentationView.as_view()),
     url(r'api/v1/odhql', AdHocOdhQLView.as_view()),
     url(r'api/v1/parse', ParseView.as_view()),
     url(r'api/v1/error_handler', AngularErrorHandler.as_view()),

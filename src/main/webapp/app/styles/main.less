@@ -2,8 +2,21 @@
 @import "../../bower_components/bootstrap-material-design/less/material-fullpalette.less";
 @import "material-spinner.less";
 
+
 // Override @primary color with one took from _colors.less
 @primary: @blue-grey-700;
+
+.odh-docutils {
+  h1.title {
+    text-align: left !important;
+    font-weight: bold;
+  }
+
+  @import "docutils.less";
+  @import "pygments-monokai.less";
+}
+
+
 
 #loading-bar .bar {
   background: @darkbg-text !important;

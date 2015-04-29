@@ -103,35 +103,41 @@
 
                 <h2>Benutzte Tabellen</h2>
 
-                <div class="row">
-                    <div class="col-md-12 table-responsive">
-                        <table class="table table-striped">
-                            <tr>
-                                <th>Name</th>
-                                <th>Alias</th>
-                            </tr>
-                            <tr ng-repeat="table in vm.usedTables">
-                                <td><select ng-options="v for v in vm.selected[table].values"
-                                            ng-model="vm.selected[table].value"></select>
-                                    {{ table.name }} {{ vm.selected[table].value }}
-                                </td>
-                                <td>{{ table.alias }}</td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
-                <h2>Benutzte Packages</h2> <a href="#">Package hinzufügen</a>
+        </fieldset>
+        <h2>Benutzte Tabellen</h2>
+        <div class="row">
+            <div class="col-md-12 table-responsive">
+                <table class="table table-striped">
+                    <tr>
+                        <th>Name</th>
+                        <th>Alias</th>
+                        <th>ODH Table? (Debug Output)</th>
+                    </tr>
+                    <tr ng-repeat="table in vm.usedTables">
+                        <td><select ng-options="v for v in vm.selected[table].values"
+                                    ng-model="vm.selected[table].value"></select>
+                            {{ table.name }}
+                        </td>
+                        <td>{{table.alias}}</td>
+                        <td>{{ vm.checkIfOurTable(table)?'Vermutlich ODH Table':'Sicher keine ODH Table' }} |
+                            {{ vm.checkIfTableInDB(table)?'Sicher unsere Tabelle':'Doch nicht unsere' }}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <h2>Benutzte Packages</h2> <a href="#">Package hinzufügen</a>
 
-                <div class="row">
-                    <div class="col-md-12 table-responsive">
-                        <table class="table table-striped table-hover" ng-table="vm.fileGroupTable">
-                            <tr ng-repeat="fileGroup in $data">
-                                <td data-title="'ID'" class="col-sm-1">{{ fileGroup.id }}</td>
-                                <td data-title="'Name'">{{ fileGroup.document.name }}</td>
-                                <td data-title="'Privat'"><i class="fa"
-                                                             ng-class="fileGroup.document.private?'fa-lock':'fa-unlock'"></i>
-                                </td>
-                            </tr>
+        <div class="row">
+            <div class="col-md-12 table-responsive">
+                <table class="table table-striped table-hover">
+                    <tr ng-repeat="fileGroup in vm.fileGroupTables">
+                        <td data-title="'ID'" class="col-sm-1">{{fileGroup.id}}</td>
+                        <td data-title="'Name'">{{ fileGroup.name }}</td>
+                        <td data-title="'Privat'"><i class="fa"
+                                                     ng-class="fileGroup.document.private?'fa-lock':'fa-unlock'"></i>
+                        </td>
+                    </tr>
 
                         </table>
                     </div>

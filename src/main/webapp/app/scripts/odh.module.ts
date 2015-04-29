@@ -19,6 +19,7 @@ module openDataHub {
             'ui.ace',
             'restangular',
             'truncate',
+            'duScroll',
             'angularMoment',
             'openDataHub.auth',
             'openDataHub.utils',
@@ -33,8 +34,6 @@ module openDataHub {
 
             $provide.decorator('$exceptionHandler', ['$delegate', '$injector', function ($delegate, $injector) {
                 return function (exception, cause) {
-                    console.log(exception, cause);
-
                     var $http:ng.IHttpService = $injector.get('$http');
                     var UrlService:odh.utils.UrlService = $injector.get('UrlService');
                     var stacktrace = (<any>window).printStackTrace({e: exception});
@@ -105,6 +104,10 @@ module openDataHub {
                     url: '/document/{id:int}',
                     controller: 'DocumentDetailController as doc',
                     templateUrl: 'views/document.detail.html'
+                })
+                .state('transformation/help', {
+                    url: '/transformation/help',
+                    templateUrl: 'views/odhql-help.html'
                 })
                 .state('transformation-create', {
                     url: '/transformation/create',

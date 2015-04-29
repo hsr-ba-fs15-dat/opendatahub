@@ -57,18 +57,19 @@ WFS = OgrFormat('wfs', 'WFS', False)
 INTERLIS_1 = OgrFormat(['itf', 'ili', 'imd'], 'Interlis 1', True)
 
 
-def _ogr2ogr_cli(arguments, *args, **kwargs):
+def _ogr2ogr_cli(arguments, raise_on_error=True, *args, **kwargs):
     cmd = ['ogr2ogr'] + arguments
     logger.debug('Running ogr2ogr: %s', ' '.join(cmd))
     try:
-        output = subprocess.check_output(cmd)
+        output = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
         logger.debug(output)
     except subprocess.CalledProcessError as e:
-        logger.error('%s: %s\n%s', e.returncode, e.cmd, e.output)
-        raise Ogr2OgrException(e.returncode)
+        if raise_on_error:
+            logger.error('%s: %s\n%s', e.returncode, e.cmd, e.output)
+            raise Ogr2OgrException(e.returncode)
 
 
-def ogr2ogr(file_group, to_type, addtl_args=()):
+def ogr2ogr(file_group, to_type, addtl_args=(), *args, **kwargs):
     assert (isinstance(file_group, FileGroup))
 
     from_format = OgrFormat.get_format(file_group)
@@ -80,7 +81,7 @@ def ogr2ogr(file_group, to_type, addtl_args=()):
         path = os.path.join(temp_dir, 'out')
 
         if from_format is WFS:
-            _ogr2ogr_cli(['-f', to_type.identifier, path, 'WFS:{}'.format(file_group[0].url)])
+            _ogr2ogr_cli(['-f', to_type.identifier, path, 'WFS:{}'.format(file_group[0].url)], *args, **kwargs)
             main_file = None
         else:
             files_by_extension = (file for ext in from_format.extension
@@ -94,9 +95,9 @@ def ogr2ogr(file_group, to_type, addtl_args=()):
                 files = sorted([os.path.join(temp_dir, f.name) for f in file_group],
                                partial(sort_by_extension_index, from_format))
 
-                _ogr2ogr_cli(ogr2ogr_args + [','.join(files)])
+                _ogr2ogr_cli(ogr2ogr_args + [','.join(files)] * args, **kwargs)
             else:
-                _ogr2ogr_cli(ogr2ogr_args + [os.path.join(temp_dir, main_file.name)])
+                _ogr2ogr_cli(ogr2ogr_args + [os.path.join(temp_dir, main_file.name)], *args, **kwargs)
 
         files = []
         if os.path.isdir(path):

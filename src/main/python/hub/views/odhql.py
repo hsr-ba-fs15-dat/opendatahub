@@ -1,18 +1,23 @@
+# -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import logging
 import json
+import inspect
+import logging
 
 from django.utils.datastructures import MultiValueDictKeyError
 from django.views.generic import View
-from django.http.response import JsonResponse, HttpResponseBadRequest
+from django.http.response import JsonResponse, HttpResponseBadRequest, HttpResponse
 from pyparsing import ParseException
+import docutils
+import docutils.core
 
 from hub.odhql import parser
 from hub.odhql.exceptions import OdhQLExecutionException
-from hub.odhql.parser import OdhQLParser
 from hub.utils.pandasutils import DataFrameUtils
 from hub.utils.odhql import TransformationUtil
+from hub.odhql.parser import OdhQLParser
+from hub.odhql.functions.core import OdhQLFunction
 
 
 logger = logging.getLogger(__name__)
@@ -40,7 +45,7 @@ class ParseView(View):
                                 )
         except MultiValueDictKeyError:
             return JsonResponse({'error': 'Es wurde keine ODHQL Abfrage angegeben.',
-                                 'type': 'execution',  # todo what exactly are we executing here?
+                                 'type': 'execution',  # todo check in frontend
                                  },
                                 status=HttpResponseBadRequest.status_code
                                 )
@@ -74,3 +79,22 @@ class AdHocOdhQLView(View):
 
         data = DataFrameUtils.to_json_dict(df, None, start, limit)
         return JsonResponse(data, encoder=json.JSONEncoder)
+
+
+class DocumentationView(View):
+    def get(self, request):
+        doc = """
+        OpenDataHub Query Language (ODHQL)
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        .. contents:: Inhalt
+            :backlinks: top
+
+        {}
+        {}
+        """
+        doc = inspect.cleandoc(doc).format(OdhQLParser.gen_doc(), OdhQLFunction.gen_all_docs())
+        html = docutils.core.publish_parts(doc, writer_name='html', settings_overrides={'syntax_highlight': 'short'})[
+            'html_body']
+        html = html.replace('href="#', '<a du-smooth-scroll href="#')
+        return HttpResponse(html)

@@ -8,12 +8,15 @@ import tempfile
 import shutil
 import logging
 from lxml import etree
+import sys
+import traceback
 
 import os
 import pygeoif
 from lxml.etree import CDATA
 import fastkml
 import fastkml.config
+from fiona.crs import from_epsg
 
 from opendatahub.utils.plugins import RegistrationMixin
 from hub import formats
@@ -51,6 +54,7 @@ class Formatter(RegistrationMixin):
 
     @classmethod
     def format(cls, dfs, name, format, *args, **kwargs):
+        exc_infos = []
         for formatter in cls.formatters_by_target[format]:
             try:
                 result = com.ensure_tuple(formatter.format(dfs, name, format=format, *args, **kwargs))
@@ -58,10 +62,13 @@ class Formatter(RegistrationMixin):
                     raise FormattingException('Formatter did not return any result')
                 return result
             except:
-                logger.debug('%s was not able to format %s with target format %s', formatter.__name__, file.name,
-                             format.__name__, exc_info=True)
+                exc_infos.append(sys.exc_info())
                 continue
 
+        if exc_infos:
+            tbs = '\n'.join([''.join(traceback.format_exception(*ei)) for ei in exc_infos])
+            logger.debug('No formatter was able to format %s with target format %s:\n%s', file.name, format.__name__,
+                         tbs)
         raise NoFormatterException('Unable to format {} as {}'.format(file.name, format.name))
 
 
@@ -148,12 +155,16 @@ class GeoFormatterBase(Formatter):
 
 
 class GeoJSONFormatter(GeoFormatterBase):
+    targets = formats.GeoJSON,
+
     @classmethod
     def format(cls, dfs, name, format, *args, **kwargs):
         super(GeoJSONFormatter, cls).format(dfs, name, format, 'GeoJSON', 'json', *args, **kwargs)
 
 
 class ShapefileFormatter(GeoFormatterBase):
+    targets = formats.Shapefile,
+
     @classmethod
     def format(cls, dfs, name, format, *args, **kwargs):
         super(ShapefileFormatter, cls).format(dfs, name, format, 'ESRI Shapefile', 'shp', *args, **kwargs)
@@ -174,6 +185,8 @@ class KMLFormatter(Formatter):
         OdhType.BOOLEAN: 'bool',
         OdhType.FLOAT: 'float',
     }
+
+    CRS = from_epsg(4326)
 
     @classmethod
     def _create_schema(cls, df, skip_kml_attrs):
@@ -199,6 +212,8 @@ class KMLFormatter(Formatter):
         for i, df in enumerate(dfs):
             df_attrs = df[[c for c in df if df[c].odh_type != OdhType.GEOMETRY]]
             df_geoms = df[[c for c in df if df[c].odh_type == OdhType.GEOMETRY]]
+            for c, s in df_geoms.iteritems():
+                df_geoms[c] = s.to_crs(cls.CRS)
 
             folder = fastkml.Folder(ns, str(i), df.name)
             doc.append(folder)
