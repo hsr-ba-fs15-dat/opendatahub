@@ -80,9 +80,13 @@ class FileGroupViewSet(viewsets.ModelViewSet):
         limit = int(request.GET.get('count', 3))
         page = int(request.GET.get('page', 1))
         start = limit * (page - 1)
+        name = request.GET.get('name', None)
 
         model = FileGroupModel.objects.get(id=pk)
         dfs = model.to_file_group().to_df()
+
+        if name:
+            dfs = [df for df in dfs if df.name == name]
 
         data = [DataFrameUtils.to_json_dict(df, model.id, start, limit) for df in dfs]
         return JsonResponse(data, encoder=json.JSONEncoder, safe=False)
