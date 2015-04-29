@@ -32,7 +32,6 @@ module odh.main {
 
         public addTable(item:main.ITable) {
             if (this.items.indexOf(item) === -1) {
-                item.uniqueId = item.name;
                 item.uniqueIdAlias = 't' + this.itemCounter++;
                 this.expression[item.uniqueId] = {operation: this.JOIN_OPERATIONS.none};
                 this.items.push(item);

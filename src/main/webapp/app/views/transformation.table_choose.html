@@ -53,7 +53,7 @@
                 <a ng-click="addRemoveTable({table: preview})">
                     <i class="fa fa-plus-circle"
                        ng-class="checkTableSelected({table: preview})?'fa-minus-circle':'fa-plus-circle'"></i>
-                    {{preview.name}}:
+                    {{preview.uniqueId}}:
                 </a>
 
                 {{preview.cols.length}} (Spalten / {{preview.count}} Zeilen)

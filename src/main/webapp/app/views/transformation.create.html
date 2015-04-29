@@ -207,9 +207,9 @@
                     <tr ng-repeat="table in vm.allTables()">
                         <td><select ng-hide="true" ng-options="v as v.uniqueId for v in vm.allTables()"
                                     ng-model="vm.selected[table].value"></select>
-                            {{ table.name }}
+                            {{ table.uniqueId }}
                         </td>
-                        <td>{{table.alias}}</td>
+                        <td>{{table.uniqueIdAlias}}</td>
                     </tr>
                 </table>
             </div>

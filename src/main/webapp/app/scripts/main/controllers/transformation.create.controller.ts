@@ -77,6 +77,7 @@ module odh {
                 if (!document.$showRows) {
                     angular.forEach(filegroups, (fg) => {
                         angular.forEach(fg.preview, (preview) => {
+                            preview.uniqueId = preview.unique_name;
                             preview.cols = [];
                             preview.parent = fg.id;
                             preview.private = document.private;
