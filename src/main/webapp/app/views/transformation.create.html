@@ -28,9 +28,12 @@
                 <tr>
                     <th ng-repeat="col in table.cols"
                         ng-class="vm.getFields(table.uniqueId).indexOf(col) > -1 ? 'selected': ''">
-                        <input type="text" ng-model="col.alias" class="form-control hasclear"/><br/>
-                        <span class="clearer glyphicon glyphicon-remove-circle form-control-feedback"></span>
-                        :{{ table.types[col.name] }}
+                        <label>
+                            <small>[{{ table.types[col.name] }}]</small>
+                            <input type="text" ng-model="col.alias" class="hasclear"/>
+                            <span class="clearer fa fa-times" ng-click="col.alias = col.name"
+                                  ng-show="col.name != col.alias"></span>
+                        </label>
                     </th>
                 </tr>
                 </thead>
@@ -159,10 +162,9 @@
                 onLoad: vm.aceLoaded
                 }" ng-model="vm.transformation" ng-model-options="{ getterSetter: true }"></div>
                 </div>
-                <textarea disabled ng-model="vm.transformation" ng-model-options="{ getterSetter: true }"
-                          class="form-control" id="odhqlinputText" name="odhqlinput">
+                <input type="hidden" disabled ng-model="vm.transformation" ng-model-options="{ getterSetter: true }"
+                       class="form-control" id="odhqlinputText" name="odhqlinput"/>
 
-                </textarea>
 
                 <div class="row">
 
