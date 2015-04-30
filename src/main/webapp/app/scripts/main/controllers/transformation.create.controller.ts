@@ -231,7 +231,7 @@ module odh {
         }
 
         private createSuccess(data) {
-            this.$state.go('transformation.detail', {id: data.id});
+            this.$state.go('transformation-detail', {id: data.id});
             this.ToastService.success('Ihre Daten wurden gespeichert ');
         }
 
