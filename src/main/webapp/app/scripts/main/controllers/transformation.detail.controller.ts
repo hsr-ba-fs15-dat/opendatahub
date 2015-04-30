@@ -15,7 +15,7 @@ module odh.main {
         public columns;
         public rows;
         public alerts:any;
-        public loadedTables:ITable[] = [];
+        public loadedTables:{} = {};
         public usedTables:{};
         public previewError;
         public selected;
@@ -68,13 +68,31 @@ module odh.main {
             if (this.checkIfOurTable(table)) {
                 this.FileGroupService.getPreviewByUniqueName(table.name).then(result => {
                     if (result[0]) {
-                        this.loadedTables.push(result[0]);
+                        this.loadedTables[result[0].unique_name] = result[0];
                         this.selected[table.name] = result[0];
                     }
                 });
             }
         }
 
+        public addRemoveTable(table:main.ITable) {
+            var index = this.loadedTables[table.unique_name];
+            console.log(table, index);
+            if (index) {
+                delete this.loadedTables[table.unique_name];
+            } else {
+                this.loadedTables[table.unique_name] = table;
+            }
+            console.log(this.loadedTables);
+        }
+
+        public checkTableSelected(table) {
+            /**
+             * Checks if the Table is selected.
+             * @returns boolean
+             */
+            return typeof this.loadedTables[table.unique_name] !== 'undefined';
+        }
 
         public aceLoaded(editor) {
             editor.$blockScrolling = 'Infinity';

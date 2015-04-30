@@ -94,7 +94,14 @@
         </fieldset>
         <div class="row">
             <div class="col-md-6 table-responsive">
-                <h2>Geladene Tabellen</h2> <a href="#">Tabelle laden</a>
+                <h2>Geladene Tabellen</h2>
+                <odh-choose-transformation
+                        add-remove-table="vm.addRemoveTable(table)"
+                        check-table-selected="vm.checkTableSelected(table)"
+                        modal="true"
+                        modal-visible="false"
+                        modal-opener="'Tabelle laden'"
+                        ></odh-choose-transformation>
 
                 <div class="row">
                     <div class="col-md-12 table-responsive">
@@ -152,4 +159,6 @@
             </div>
         </div>
     </form>
+
+
 </div>

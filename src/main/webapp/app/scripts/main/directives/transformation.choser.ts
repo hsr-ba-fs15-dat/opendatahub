@@ -4,9 +4,10 @@
 module odh.main {
     'use strict';
 
-    export class odhChooseTransformation implements ng.IDirective {
+    export class OdhChooseTransformation implements ng.IDirective {
         static $inject = ['private DocumentService:main.DocumentService', 'ngTableParams:any',
             'FileGroupService:main.FileGroupService', '$auth:any', 'ToastService:odh.utils.ToastService'];
+        public modal:boolean = false;
 
         constructor(private DocumentService:main.DocumentService, private ngTableParams:any, private $auth:any,
                     private FileGroupService:main.FileGroupService, private ToastService:odh.utils.ToastService) {
@@ -14,12 +15,33 @@ module odh.main {
 
 
         restrict = 'AE';
-        templateUrl = 'views/transformation.table_choose.html';
+        templateUrl = (modal) => {
+            modal = modal.context.attributes.modal;
+            if (!modal) {
+                return 'views/directives/transformation.table_choose.html';
+            } else {
+                return 'views/directives/transformation.table_choose.modal.html';
+            }
+        };
         scope = {
             addRemoveTable: '&',
-            checkTableSelected: '&'
+            checkTableSelected: '&',
+            modal: '=',
+            modalVisible: '=',
+            modalOpener: '='
         };
-        link = (scope) => {
+        link = (scope, element, attrs) => {
+            var modal = element.find('#modal');
+            scope.toggleModal = () => {
+                scope.modalVisible = !scope.modalVisible;
+                if (scope.modalVisible) {
+                    modal.modal('show');
+                } else {
+                    modal.modal('hide');
+                }
+            };
+
+
             scope.tableParams = new this.ngTableParams({
                 page: 1,            // show first page
                 count: 10           // count per page
@@ -57,17 +79,21 @@ module odh.main {
                     }
                     document.$showRows = !document.$showRows;
                 }).catch(error => this.ToastService.failure('Es ist ein Fehler aufgetreten.'));
-            }
-
-
+            };
         };
 
 
     }
 
     angular.module('openDataHub.main').directive('odhChooseTransformation',
-        (DocumentService:main.DocumentService, ngTableParams:any, $auth:any, FileGroupService:main.FileGroupService,
-         ToastService:odh.utils.ToastService) => {
-            return new odhChooseTransformation(DocumentService, ngTableParams, $auth, FileGroupService, ToastService);
-        });
+        (DocumentService:main.DocumentService,
+         ngTableParams:any,
+         $auth:any,
+         FileGroupService:main.FileGroupService,
+         ToastService:odh.utils.ToastService, $modal) => {
+            return new OdhChooseTransformation(
+                DocumentService, ngTableParams, $auth, FileGroupService, ToastService);
+        }
+    )
+    ;
 }
