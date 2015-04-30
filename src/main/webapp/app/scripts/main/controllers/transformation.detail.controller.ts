@@ -138,7 +138,7 @@ module odh.main {
                 name: this.name,
                 description: this.description,
                 odhql: this.transformation
-            })
+            });
         }
 
         public downloadAs(formatName) {
