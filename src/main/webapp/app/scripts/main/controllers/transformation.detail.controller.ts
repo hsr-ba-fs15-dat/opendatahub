@@ -140,7 +140,7 @@ module odh.main {
             this.TransformationService.name = this.name;
             this.$state.go('transformation-create', {
                 loadTransformation: true
-            })
+            });
         }
 
         public downloadAs(formatName) {

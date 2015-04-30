@@ -69,11 +69,11 @@ module odh.main {
     }
     export class TransformationService {
 
-        private transformations:restangular.IElement;
         public name;
         public description;
         public transformation;
         public forceManualEdit;
+        private transformations:restangular.IElement;
 
         constructor(private $log:ng.ILogService, private Restangular:restangular.IService,
                     private $http:ng.IHttpService,
