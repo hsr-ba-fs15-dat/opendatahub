@@ -36,6 +36,7 @@ class Command(BaseCommand):
         ('perf/employees.csv',): formats.CSV,
         ('perf/children.csv',): formats.CSV,
         ('interlis1/Bahnhoefe.ili', 'interlis1/Bahnhoefe.itf'): formats.INTERLIS1,
+        ('trobdb/Baustellen Mai 2015.xls',): formats.Excel,
         # ('interlis1/Bahnhoefe.ili', 'interlis1/Bahnhoefe.xml'): formats.INTERLIS2
     }
 
