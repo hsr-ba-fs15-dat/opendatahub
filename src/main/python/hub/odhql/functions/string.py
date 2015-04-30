@@ -187,9 +187,9 @@ class Extract(VectorizedFunction):
                 raise OdhQLExecutionException('Error in regular expression: Only 1 group')
             elif isinstance(res, pd.DataFrame):
                 if group > len(res.columns):
-                    raise OdhQLExecutionException(
-                        'Error in regular expression: Requested group {} > {} groups returned'
-                            .format(group, len(res.columns)))
+                    raise OdhQLExecutionException('Error in regular expression: '
+                                                  'Requested group {} > {} groups returned'
+                                                  .format(group, len(res.columns)))
 
                 res = res[group - 1]
 
