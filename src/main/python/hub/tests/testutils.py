@@ -26,11 +26,11 @@ class TestBase(unittest.TestCase):
     password = 'secret'
 
     @classmethod
-    def get_test_user(self):
+    def get_test_user(cls):
         try:
-            user = UserProfile.objects.get(username=self.username)
+            user = UserProfile.objects.get(username=cls.username)
         except ObjectDoesNotExist:
-            user = UserProfile.objects.create_user(username=self.username, email=self.email, password=self.password)
+            user = UserProfile.objects.create_user(username=cls.username, email=cls.email, password=cls.password)
 
         return user
 

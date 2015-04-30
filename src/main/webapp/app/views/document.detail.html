@@ -2,18 +2,19 @@
     <h1>{{ doc.pkg.name }}</h1>
 
     <p>{{ doc.pkg.description }}</p>
+
     <p><em>Hinzugefügt: {{ doc.pkg.created_at | amCalendar }}</em></p>
 </div>
 
 <h3>Dateien</h3>
 <odh-spinner show-while="doc.loading">
-    <div class="row" ng-repeat="group in doc.fileGroups" style="margin-left:0.5em">
-        <div class="row-same-height row-full-height">
-            <div class="col-md-4 col-full-height col-xs-height" style="vertical-align:middle">
-                <span ng-repeat="file in group.files">{{ file.file_name }}{{ $last ? '' : ', ' }}</span>
-            </div>
-            <div class="col-md-8 col-full-height col-xs-height">
-                <div class="btn-group">
+    <div class="panel panel-default" ng-repeat="group in doc.fileGroups">
+        <div class="panel-body">
+            <div class="row-same-height row-full-height">
+                <div class="col-md-4 col-full-height col-xs-height" style="vertical-align:middle">
+                    <span ng-repeat="file in group.files">{{ file.file_name }}{{ $last ? '' : ', ' }}</span>
+                </div>
+                <div class="btn-group pull-right">
                     <a data-target="#" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
                         Herunterladen
                         <span class="caret"></span>
@@ -25,25 +26,25 @@
                     </ul>
                 </div>
             </div>
-        </div>
 
-        <div class="row" ng-repeat="preview in group.preview">
-            <div class="col-md-12">
-                <div class="col-md-12 table-responsive">
-                    <table class="table table-striped table-hover">
-                        <thead>
-                        <tr>
-                            <th ng-repeat="col in preview.columns">{{ col }}</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr ng-repeat="row in preview.data | limitTo: 50">
-                            <td ng-repeat="col in preview.columns">
-                                {{ row[col] | characters:25 :true }}
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
+            <div class="row" ng-repeat="preview in group.preview">
+                <div class="col-md-12">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                            <tr>
+                                <th ng-repeat="col in preview.columns">{{ col }}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="row in preview.data | limitTo: 50">
+                                <td ng-repeat="col in preview.columns">
+                                    {{ row[col] | characters:25 :true }}
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

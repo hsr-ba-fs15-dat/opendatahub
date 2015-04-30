@@ -115,29 +115,29 @@ class OdhQLParser(DocMixin):
 
     .. code:: sql
 
-        select null as userid,                                                               -- Null-Ausdruck
-               substring(nvl(extract(t.text, '\|([^|\.]+)'), 'no value'), 0, 100) as title,  -- Funktions-Aufruf
-               extract(t.text, '\|([^|]+)') as description,
-               cast(cast(t."df", 'bigint'), 'datetime') as trob_start,
-               cast(cast(t."dd", 'bigint'), 'datetime') as trob_end,
-               null as trob_interval,
-               'both' as direction,                                                          -- String-Ausdruck
-               null as diversion_advice,
-               case when t.p = 'Switzerland' then 'CH'                                       -- Case-Ausdruck
-                    when t.p = 'France' then 'FR'
-                    when t.p = 'Austria' then 'AT'
-               end as country,
-               t.text as reason,                                                             -- Feld
-               extract(t.text, '\|([^|,]+)') as object_name,
-               'street' as object_type,
-               case when contains(t.text, 'closed', false) then 'closed'
-                    when (contains(t.text, 'maintenance', false) or contains(t.text, 'maintenance', false))
-                        then 'obstructed'
-                    else 'other'
-               end as trob_type,
-               st_setsrid(st_geomfromtext(concat('POINT(', t.x, ' ', t.y, ')')), 3395) as trobdb_point
-          from ODH11 as t                                                                    -- Datenquelle
-         order by 4
+        SELECT NULL AS userid,                                                               -- Null-Ausdruck
+               SUBSTRING(NVL(EXTRACT(t.text, '\|([^|\.]+)'), 'no value'), 0, 100) AS title,  -- Funktions-Aufruf
+               EXTRACT(t.text, '\|([^|]+)') AS description,
+               CAST(CAST(t."df", 'bigint'), 'datetime') AS trob_start,
+               CAST(CAST(t."dd", 'bigint'), 'datetime') AS trob_end,
+               NULL AS trob_interval,
+               'both' AS direction,                                                          -- String-Ausdruck
+               NULL AS diversion_advice,
+               CASE WHEN t.p = 'Switzerland' THEN 'CH'                                       -- Case-Ausdruck
+                    WHEN t.p = 'France' THEN 'FR'
+                    WHEN t.p = 'Austria' THEN 'AT'
+               END AS country,
+               t.text AS reason,                                                             -- Feld
+               EXTRACT(t.text, '\|([^|,]+)') AS object_name,
+               'street' AS object_type,
+               CASE WHEN CONTAINS(t.text, 'closed', FALSE) THEN 'closed'
+                    WHEN (CONTAINS(t.text, 'maintenance', FALSE) OR CONTAINS(t.text, 'maintenance', FALSE))
+                        THEN 'obstructed'
+                    ELSE 'other'
+               END AS trob_type,
+               ST_SETSRID(ST_GEOMFROMTEXT(CONCAT('POINT(', t.x, ' ', t.y, ')')), 3395) AS trobdb_point
+          FROM ODH11 AS t                                                                    -- Datenquelle
+         ORDER BY 4
 
     Felder und Ausdrücke
     --------------------
@@ -150,7 +150,7 @@ class OdhQLParser(DocMixin):
 
             .. code:: sql
 
-                prefix.feld as alias
+                prefix.feld AS alias
         Wert
             Ganzzahl (Integer), Fliesskommazahl (Float, Trennzeichen ist ein Punkt), Zeichenkette (String, in einfachen
             Anführungszeichen), Boolean (true, false) oder Null. Es muss ein Alias angegeben werden.
@@ -163,7 +163,7 @@ class OdhQLParser(DocMixin):
 
             .. code:: sql
 
-                substring(nvl(extract(t.text, '\|([^|\.]+)'), 'no value'), 0, 100) as title
+                SUBSTRING(NVL(EXTRACT(t.text, '\|([^|\.]+)'), 'no value'), 0, 100) AS title
 
         Fallunterscheidung (Case-Ausdruck)
             Kann verwendet werden, um Werte zu übersetzen. Es muss mindestens eine Bedingung angegeben werden.
@@ -173,11 +173,11 @@ class OdhQLParser(DocMixin):
 
             .. code:: sql
 
-                case when contains(t.text, 'closed', false) then 'closed'
-                     when (contains(t.text, 'maintenance', false) or contains(t.text, 'maintenance', false))
-                        then 'obstructed'
-                     else 'other'
-                end as trob_type
+                CASE WHEN CONTAINS(t.text, 'closed', FALSE) THEN 'closed'
+                     WHEN (CONTAINSs(t.text, 'maintenance', FALSE) OR CONTAINS(t.text, 'maintenance', FALSE))
+                        THEN 'obstructed'
+                     ELSE 'other'
+                END
 
     Datenquellen
     ------------
@@ -189,26 +189,26 @@ class OdhQLParser(DocMixin):
 
     .. code:: sql
 
-        from ODH12 as employees
-        join ODH13 as employers on employees.employer_id = employers.id
+        FROM ODH12 AS employees
+        JOIN ODH13 AS employers ON employees.employer_id = employers.id
 
     Filter
     ------
 
     Folgende Filter-Ausdrücke sind möglich:
-        is null, is not null
+        `is null`, `is not null`
             Prüft ob ein Feld (nicht) null ist
-        in, not in
+        `in`, `not in`
             Prüft ob ein Ausdruck (nicht) in einer Liste enthalten ist.
             Beispiel:
 
             .. code:: sql
 
-                country in ('CH', 'DE', 'AT')
+                country IN ('CH', 'DE', 'AT')
 
         <, >, <=, >=, =, !=
             Vergleicht zwei Ausdrücke miteinander.
-        like, not like
+        `like`, `not like`
             Prüft ob ein Ausdruck einem Muster entspricht. Verwendet wird dazu ein Regulärer Ausdruck mit
             `Python Syntax <https://docs.python.org/2/library/re.html#regular-expression-syntax>`_.
         Prädikat
@@ -220,8 +220,8 @@ class OdhQLParser(DocMixin):
 
     .. code:: sql
 
-        where t.a is not null
-          and (t.b in (1, 2, 3) or t.b > 20)
+        WHERE t.a IS NOT NULL
+          AND (t.b IN (1, 2, 3) OR t.b > 20)
 
     Sortier-Klausel
     ---------------
@@ -383,7 +383,7 @@ class OdhQLParser(DocMixin):
         return line
 
     def strip_comments(self, query):
-        return '\n'.join(map(self._strip_line_comment, query.splitlines()))
+        return '\n'.join([self._strip_line_comment(l) for l in query.splitlines()])
 
     def parse(self, query):
         return self.build_grammar().parseString(self.strip_comments(query))[0]

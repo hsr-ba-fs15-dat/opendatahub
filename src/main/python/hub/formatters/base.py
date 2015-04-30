@@ -68,9 +68,8 @@ class Formatter(RegistrationMixin):
 
         if exc_infos:
             tbs = '\n'.join([''.join(traceback.format_exception(*ei)) for ei in exc_infos])
-            logger.debug('No formatter was able to format %s with target format %s:\n%s', file.name, format.__name__,
-                         tbs)
-        raise NoFormatterException('Unable to format {} as {}'.format(file.name, format.name))
+            logger.debug('No formatter was able to format %s with target format %s:\n%s', name, format.__name__, tbs)
+        raise NoFormatterException('Unable to format {} as {}'.format(name, format.name))
 
 
 class CSVFormatter(Formatter):
@@ -147,7 +146,7 @@ class GeoFormatterBase(Formatter):
                 finally:
                     shutil.rmtree(temp_dir)
             else:
-                formatted = list(Formatter.format(file, formats.CSV, *args, **kwargs))
+                formatted = list(Formatter.format(dfs, name, formats.CSV, *args, **kwargs))
                 file_group = ogr2ogr.ogr2ogr(formatted[0], ogr2ogr.CSV)[0]
 
             formatted.append(file_group)
@@ -160,7 +159,7 @@ class GeoJSONFormatter(GeoFormatterBase):
 
     @classmethod
     def format(cls, dfs, name, format, *args, **kwargs):
-        return super(GeoJSONFormatter, cls).format(dfs, name, format, 'GeoJSON', 'json', *args, **kwargs)    
+        return super(GeoJSONFormatter, cls).format(dfs, name, format, 'GeoJSON', 'json', *args, **kwargs)
 
 
 class ShapefileFormatter(GeoFormatterBase):
@@ -215,7 +214,7 @@ class KMLFormatter(Formatter):
             df_geoms = df[[c for c in df if df[c].odh_type == OdhType.GEOMETRY]]
             # TODO
             # for c, s in df_geoms.iteritems():
-            #     df_geoms[c] = s.to_crs(cls.CRS)
+            # df_geoms[c] = s.to_crs(cls.CRS)
 
             folder = fastkml.Folder(ns, str(i), df.name)
             doc.append(folder)

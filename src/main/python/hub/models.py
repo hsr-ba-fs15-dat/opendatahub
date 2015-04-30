@@ -3,11 +3,12 @@
 '''
 from django.db import models
 
-from opendatahub import settings
-from hub.structures.file import File, FileGroup
-
 from django.db.models.fields.related import SingleRelatedObjectDescriptor
 from django.db.models.query import QuerySet
+
+from opendatahub import settings
+
+from hub.structures.file import File, FileGroup
 
 
 AUTH_USER_MODEL = getattr(settings, 'AUTH_USER_MODEL', 'auth.User')
@@ -96,8 +97,8 @@ class InheritanceQuerySet(QuerySet):
     def select_subclasses(self, *subclasses):
         if not subclasses:
             subclasses = [o for o in dir(self.model)
-                          if isinstance(getattr(self.model, o), SingleRelatedObjectDescriptor)\
-                          and issubclass(getattr(self.model,o).related.model, self.model)]
+                          if isinstance(getattr(self.model, o), SingleRelatedObjectDescriptor)
+                          and issubclass(getattr(self.model, o).related.model, self.model)]
         new_qs = self.select_related(*subclasses)
         new_qs.subclasses = subclasses
         return new_qs

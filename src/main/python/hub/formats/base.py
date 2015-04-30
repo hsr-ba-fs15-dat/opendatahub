@@ -57,7 +57,7 @@ class Format(RegistrationMixin):
         return format
 
     @classmethod
-    def is_format(self, file, *args, **kwargs):
+    def is_format(cls, file, *args, **kwargs):
         raise NotImplementedError
 
 
@@ -77,7 +77,7 @@ class CSV(Format):
     """
 
     @classmethod
-    def is_format(self, file, *args, **kwargs):
+    def is_format(cls, file, *args, **kwargs):
         return file.extension == 'csv'
 
 
@@ -89,7 +89,7 @@ class JSON(Format):
     """
 
     @classmethod
-    def is_format(self, file, *args, **kwargs):
+    def is_format(cls, file, *args, **kwargs):
         return file.extension == 'json' and '"geometry"' not in file  # todo figure out a better way
 
 
@@ -100,7 +100,7 @@ class XML(Format):
     """
 
     @classmethod
-    def is_format(self, file, *args, **kwargs):
+    def is_format(cls, file, *args, **kwargs):
         return file.extension == 'xml'  # or '<?xml' in file  # do not uncomment, GML are xml too (and many more)
 
 
@@ -112,7 +112,7 @@ class Excel(Format):
     """
 
     @classmethod
-    def is_format(self, file, *args, **kwargs):
+    def is_format(cls, file, *args, **kwargs):
         return file.extension in ('xls', 'xlsx')
 
 
@@ -124,7 +124,7 @@ class Shapefile(Format):
     """
 
     @classmethod
-    def is_format(self, file, *args, **kwargs):
+    def is_format(cls, file, *args, **kwargs):
         return file.extension == 'shp'
 
 
@@ -136,7 +136,7 @@ class GML(Format):
     """
 
     @classmethod
-    def is_format(self, file, *args, **kwargs):
+    def is_format(cls, file, *args, **kwargs):
         return file.extension == 'gml'
 
 
@@ -149,7 +149,7 @@ class KML(Format):
     """
 
     @classmethod
-    def is_format(self, file, *args, **kwargs):
+    def is_format(cls, file, *args, **kwargs):
         return file.extension == 'kml'
 
 
@@ -161,7 +161,7 @@ class INTERLIS1(Format):
     """
 
     @classmethod
-    def is_format(self, file, *args, **kwargs):
+    def is_format(cls, file, *args, **kwargs):
         return file.extension == 'itf' or file.extension == 'imd'
 
 
@@ -174,7 +174,7 @@ class INTERLIS2(Format):
     is_export_format = False
 
     @classmethod
-    def is_format(self, file, *args, **kwargs):
+    def is_format(cls, file, *args, **kwargs):
         return file.extension == 'xtf'
 
 
@@ -186,7 +186,7 @@ class GeoJSON(Format):
     """
 
     @classmethod
-    def is_format(self, file, *args, **kwargs):
+    def is_format(cls, file, *args, **kwargs):
         return file.extension == 'geojson' or (
             file.extension == 'json' and '"geometry"' in file)  # todo figure out a better way
 
@@ -198,7 +198,7 @@ class WFS(Format):
     """
 
     @classmethod
-    def is_format(self, file, *args, **kwargs):
+    def is_format(cls, file, *args, **kwargs):
         return False
 
 
@@ -209,7 +209,7 @@ class GeoPackage(Format):
     """
 
     @classmethod
-    def is_format(self, file, *args, **kwargs):
+    def is_format(cls, file, *args, **kwargs):
         return file.extension == 'gpkg'
 
 
@@ -221,7 +221,7 @@ class Other(Format):
     """
 
     @classmethod
-    def is_format(self, file, *args, **kwargs):
+    def is_format(cls, file, *args, **kwargs):
         return False
 
 

@@ -3,12 +3,11 @@ from rest_framework.response import Response
 
 from hub.models import PackageModel, DocumentModel, InheritanceQuerySet
 from hub.serializers import PackageSerializer, DocumentSerializer, TransformationSerializer
-from authentication.permissions import IsOwnerOrPublic, IsOwnerOrReadOnly
 from hub.views.mixins import FilterablePackageListViewSet
 
 
 class PackageViewSet(ReadOnlyModelViewSet, FilterablePackageListViewSet):
-    queryset = InheritanceQuerySet(model = PackageModel).select_subclasses()
+    queryset = InheritanceQuerySet(model=PackageModel).select_subclasses()
     serializer_class = PackageSerializer
 
     paginate_by_param = 'count'
@@ -18,4 +17,4 @@ class PackageViewSet(ReadOnlyModelViewSet, FilterablePackageListViewSet):
         pkg = self.get_object()
         serializer = DocumentSerializer if isinstance(pkg, DocumentModel) else TransformationSerializer
 
-        return Response(serializer(pkg, context={'request':request}).data)
+        return Response(serializer(pkg, context={'request': request}).data)

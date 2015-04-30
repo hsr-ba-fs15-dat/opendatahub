@@ -197,7 +197,7 @@ class File(object):
         from hub import formatters
         from hub.formats.base import Format
 
-        return formatters.Formatter.format(self, Format.from_string(format))
+        return formatters.Formatter.format(self.to_serializable_df(), self.name, Format.from_string(format))
 
     def __contains__(self, string):
         return string in self.ustream.read()

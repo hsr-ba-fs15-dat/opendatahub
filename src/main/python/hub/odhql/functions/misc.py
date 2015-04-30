@@ -12,6 +12,18 @@ from hub.odhql.functions.core import VectorizedFunction
 
 
 class NVL(VectorizedFunction):
+    """
+    Gibt das zweite Argument zurück, falls das erste NULL ist.
+
+    Parameter
+        - `a`: Spalte oder Wert der auf NULL geprüft werden soll
+        - `b`: Spalte oder Wert der als Ersatz verwendet werden soll
+
+    Beispiel
+        .. code:: sql
+
+         NVL(ODH12.title, '') as title
+    """
     name = 'NVL'
 
     def apply(self, a, b):
@@ -19,6 +31,18 @@ class NVL(VectorizedFunction):
 
 
 class Round(VectorizedFunction):
+    """
+    Rundet auf die angegebene Anzahl Nachkommastellen.
+
+    Parameter:
+        - `col`: Spalte oder Wert der gerundet werden soll. Muss vom Datentyp FLOAT sein.
+        - `decimals`: Anzahl Nachkommastellen, auf die gerundet werden soll.
+
+    Beispiel:
+        .. code:: sql
+
+         ROUND(ODH20.fraction, 4) AS fraction
+    """
     name = 'ROUND'
 
     def apply(self, col, decimals):
@@ -52,6 +76,18 @@ class Cast(VectorizedFunction):
 
 
 class ToDate(VectorizedFunction):
+    """
+    Konvertiert ein Datum in TEXT-Form zu DATETIME.
+
+    Parameter
+        - `values`: Spalte oder Wert der konvertiert werden soll.
+        - `format`: Format-Angabe. Siehe `Dokumentation <https://docs.python.org/2/library/time.html#time.strftime>`_.
+
+    Beispiel
+        .. code:: sql
+
+            TO_DATE(ODH5.baubeginn, '%d%m%Y') as baubeginn
+    """
     name = 'TO_DATE'
 
     def apply(self, values, format=None):

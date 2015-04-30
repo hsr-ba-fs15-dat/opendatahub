@@ -98,7 +98,6 @@ class TestStringFunctions(TestInterpreterBase):
         self.assertTrue(all(d == '01-01-2015' for d in df.date.tolist()))
 
     def test_xpath(self):
-
         df = self.execute('select e.surname, xpath(concat(\'<name>\', e.surname, \'</name>\'), \'/name/text()\') '
                           'as xpath from employee as e')
         self.assertListEqual(df['surname'].tolist(), df['xpath'].tolist())
@@ -198,8 +197,7 @@ class TestGeometryFunctions(TestInterpreterBase):
         self.execute('SELECT ST_SetSRID(ST_GeomFromText(\'POINT(7.2234283 48.8183157)\'), 4326) AS hsr '
                      'FROM child AS c UNION '
                      'SELECT ST_SetSRID(ST_GeomFromText(\'POINT(804108.360138 6244089.40913)\'), 3857) AS hsr '
-                     'FROM child AS c'
-                     )
+                     'FROM child AS c')
         # todo assert
 
     def test_st_x(self):

@@ -7,32 +7,34 @@
                 >
     </div>
     <div class="col-md-6 checkbox checkbox-inline" ng-show="docs.isAuthenticated()">
-        <label><input type="checkbox" ng-model="docs.tableParams.filter()['mineOnly']" />
+        <label><input type="checkbox" ng-model="docs.tableParams.filter()['mineOnly']"/>
             Nur eigene Daten anzeigen</label>
     </div>
 </div>
 
 <div class="row">
-
-    <odh-spinner show-while="docs.loading" class="col-md-12 table-responsive">
-        <table class="table table-striped table-hover" ng-table="docs.tableParams">
-            <tr ng-repeat="row in $data">
-                <td data-title="'Titel'" sortable="'name'" header-class="'text-left'" class="col-sm-3">
-                    <a ng-click="docs.detail(row)">
-                        {{ row.name | characters:50 : true }}
-                    </a>
-                <i class="fa fa-eye" ng-show="row.private" tooltip="Dieses Dokument ist Privat"></i></td>
-                <td data-title="'Beschreibung'" sortable="'description'" header-class="'text-left'" class="col-sm-4">
-                    {{ row.description | characters:100 }}
-                </td>
-                <td data-title="'Hinzugefügt'" sortable="'created_at'" header-class="'text-left'" class="col-sm-2">
-                    <span am-time-ago="row.created_at"></span>
-                </td>
-                <td data-title="'Besitzer'" header-class="'text-left'" class="col-sm-1 col-md-1 col-lg-1">
-                    {{row.owner.username}}
-                </td>
-            </tr>
-        </table>
+    <div class="col-md-12">
+        <odh-spinner show-while="docs.loading" class="table-responsive">
+            <table class="table table-striped table-hover" ng-table="docs.tableParams">
+                <tr ng-repeat="row in $data">
+                    <td data-title="'Titel'" sortable="'name'" header-class="'text-left'" class="col-sm-3">
+                        <a ng-click="docs.detail(row)">
+                            {{ row.name | characters:50 : true }}
+                        </a>
+                        <i class="fa fa-eye" ng-show="row.private" tooltip="Dieses Dokument ist Privat"></i></td>
+                    <td data-title="'Beschreibung'" sortable="'description'" header-class="'text-left'"
+                        class="col-sm-4">
+                        {{ row.description | characters:100 }}
+                    </td>
+                    <td data-title="'Hinzugefügt'" sortable="'created_at'" header-class="'text-left'" class="col-sm-2">
+                        <span am-time-ago="row.created_at"></span>
+                    </td>
+                    <td data-title="'Besitzer'" header-class="'text-left'" class="col-sm-1 col-md-1 col-lg-1">
+                        {{ row.owner.username }}
+                    </td>
+                </tr>
+            </table>
+        </odh-spinner>
     </div>
 </div>
 

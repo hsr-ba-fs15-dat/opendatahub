@@ -16,7 +16,6 @@ from hub.odhql.interpreter import OdhQLInterpreter
 
 logger = logging.getLogger(__name__)
 
-
 EMPLOYEES_CSV = """
 Id,Prename,Surname,Boss
 0,Dieter ,Holzmann,
@@ -315,4 +314,4 @@ if __name__ == '__main__':
               'FROM child AS c JOIN employee AS e ON c.parent = e.id ORDER BY e.id')
     # import cProfile
     # cProfile.run(
-    #     'i.execute("SELECT c.prename, e.prename AS parent FROM child AS c JOIN employee AS e ON c.parent = e.id")')
+    # 'i.execute("SELECT c.prename, e.prename AS parent FROM child AS c JOIN employee AS e ON c.parent = e.id")')
