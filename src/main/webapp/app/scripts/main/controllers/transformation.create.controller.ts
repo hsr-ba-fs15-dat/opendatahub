@@ -39,8 +39,15 @@ module odh {
                     private FileGroupService:main.FileGroupService,
                     private $log:ng.ILogService, private ngTableParams,
                     private $auth:any, private TransformationService:main.TransformationService,
-                    private TransformationSelection:main.TransformationSelection, private JOIN_OPERATIONS) {
+                    private TransformationSelection:main.TransformationSelection, private JOIN_OPERATIONS,
+                    private $stateParams:{loadTransformation:boolean}) {
 
+            if ($stateParams.loadTransformation) {
+                this.name = TransformationService.name;
+                this.description = TransformationService.description;
+                this.manualEdit = true;
+                this.odhqlInputString = TransformationService.transformation;
+            }
 
             this.selection = angular.copy(TransformationSelection);
             this.fileGroupTable = new ngTableParams({

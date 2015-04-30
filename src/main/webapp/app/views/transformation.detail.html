@@ -78,16 +78,17 @@
                 </div>
                 <!-- /Textarea -->
 
-
+                {{ vm.transformation }}
                 <div class="form-group">
                     <label class="col-md-1 control-label" for="add"></label>
 
                     <div class="col-md-11">
-                        <button disabled id="add" name="add" class="btn btn-primary pull-right">
-                            Neue Transformation ableiten
+                        <button id="add" name="add" class="btn btn-primary pull-right"
+                                ng-click="vm.duplicateTransformation()">
+                            Klonen
                         </button>
                         <button disabled id="add" name="add" class="btn btn-primary pull-right">
-                            Transformation überschreiben
+                            Speichern
                         </button>
                         <button ng-click="vm.preview()" type='button' class="btn btn-info pull-right">
                             Vorschau

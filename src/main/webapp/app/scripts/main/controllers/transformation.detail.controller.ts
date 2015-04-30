@@ -134,10 +134,12 @@ module odh.main {
         }
 
         public duplicateTransformation() {
+            this.TransformationService.description = this.description;
+            this.TransformationService.forceManualEdit = true;
+            this.TransformationService.transformation = this.transformation;
+            this.TransformationService.name = this.name;
             this.$state.go('transformation-create', {
-                name: this.name,
-                description: this.description,
-                odhql: this.transformation
+                loadTransformation: true
             })
         }
 
