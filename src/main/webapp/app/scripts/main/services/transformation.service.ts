@@ -19,6 +19,7 @@ module odh.main {
     }
     export interface ITable {
         uniqueId: string;
+        unique_name: string;
         parent: string;
         name: string;
         uniqueIdAlias: string;

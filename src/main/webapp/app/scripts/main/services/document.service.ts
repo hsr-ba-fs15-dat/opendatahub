@@ -97,7 +97,14 @@ module odh.main {
             return promise;
         }
 
-        public getPreview(filegroup:any, count:number = 3) {
+        public getPreviewByUniqueName(uniqueName:string) {
+            console.log(uniqueName, 'uniqueName');
+            return this.Restangular.all('fileGroup').customGET('preview_by_unique_name', {
+                name: uniqueName
+            });
+        }
+
+        public getPreview(filegroup:any, count:number = 3, name:string = '') {
             var promise;
             var d = this.$q.defer();
             var url;
@@ -110,7 +117,8 @@ module odh.main {
                 url: url,
                 method: 'GET',
                 params: {
-                    count: count
+                    count: count,
+                    name: name
                 }
             }).then(data => {
                 filegroup.preview = data.data;

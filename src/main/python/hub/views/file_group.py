@@ -2,9 +2,10 @@ import zipfile
 import logging
 import json
 
+import re
 from rest_framework import viewsets
 from rest_framework.response import Response
-from rest_framework.decorators import detail_route
+from rest_framework.decorators import detail_route, list_route
 from django.http.response import HttpResponse, HttpResponseNotFound, HttpResponseServerError, JsonResponse
 from django.utils.text import slugify
 
@@ -12,6 +13,7 @@ from hub.models import FileGroupModel, FileModel
 from hub.serializers import FileGroupSerializer, FileSerializer
 from authentication.permissions import IsOwnerOrPublic
 from hub.utils.pandasutils import DataFrameUtils
+from opendatahub.settings import PACKAGE_PREFIX, TRANSFORMATION_PREFIX
 from opendatahub.utils.cache import cache
 
 
@@ -75,12 +77,31 @@ class FileGroupViewSet(viewsets.ModelViewSet):
 
         return response
 
+    @list_route()
+    def preview_by_unique_name(self, request):
+        name = request.GET.get('name', None)
+        print '====='
+        if name:
+            regex = '^({0}|{1})(?P<id>\\d+)_(?P<name>.*$)'.format(PACKAGE_PREFIX, TRANSFORMATION_PREFIX)
+            print '================'
+            print name
+            print type(name)
+            m = re.search(regex, name)
+            fg_id = m.group('id')
+            name = m.group('name')
+            if m:
+                print id, name
+                item = FileGroupModel.objects.get(id=fg_id)
+                print '============'
+                return self.preview(request, item.id, name)
+        return JsonResponse({})
+
     @detail_route()
-    def preview(self, request, pk):
+    def preview(self, request, pk, name=None):
         limit = int(request.GET.get('count', 3))
         page = int(request.GET.get('page', 1))
         start = limit * (page - 1)
-        name = request.GET.get('name', None)
+        name = name or request.GET.get('name', None)
 
         model = FileGroupModel.objects.get(id=pk)
         dfs = model.to_file_group().to_df()

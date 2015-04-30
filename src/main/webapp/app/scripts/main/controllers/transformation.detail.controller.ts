@@ -15,7 +15,7 @@ module odh.main {
         public columns;
         public rows;
         public alerts:any;
-        public fileGroupTables:ITable[] = [];
+        public loadedTables:{} = {};
         public usedTables:{};
         public previewError;
         public selected;
@@ -29,6 +29,7 @@ module odh.main {
         public allowDelete:boolean;
         public transformationPrefix:string;
         public packagePrefix:string;
+        public isOwn:boolean;
 
         constructor(private $stateParams:any,
                     private TransformationService:main.TransformationService,
@@ -38,14 +39,13 @@ module odh.main {
                     private $auth:any,
                     private $modal:ng.ui.bootstrap.IModalService,
                     private AppConfig:odh.IAppConfig,
+                    private FileGroupService:main.FileGroupService,
                     private $window:ng.IWindowService) {
-
             // controller init
             AppConfig.then(config => {
                 this.transformationPrefix = config.TRANSFORMATION_PREFIX;
                 this.packagePrefix = config.PACKAGE_PREFIX;
             });
-            this.fileGroupTables = [];
             this.transformationId = $stateParams.id;
             this.TransformationService.get(this.transformationId).then(data => {
                 this.name = data.name;
@@ -72,13 +72,34 @@ module odh.main {
             return regEx.test(table.name);
         }
 
-        public checkIfTableInDB(table:main.ITable) {
+        public loadIfPackageUsed(table:main.ITable) {
             if (this.checkIfOurTable(table)) {
-                // todo: check if table name exists in database
-
-
+                this.FileGroupService.getPreviewByUniqueName(table.name).then(result => {
+                    if (result[0]) {
+                        this.loadedTables[result[0].unique_name] = result[0];
+                        this.selected[table.name] = result[0];
+                    }
+                });
             }
-            return this.checkIfOurTable(table);
+        }
+
+        public addRemoveTable(table:main.ITable) {
+            var index = this.loadedTables[table.unique_name];
+            console.log(table, index);
+            if (index) {
+                delete this.loadedTables[table.unique_name];
+            } else {
+                this.loadedTables[table.unique_name] = table;
+            }
+            console.log(this.loadedTables);
+        }
+
+        public checkTableSelected(table) {
+            /**
+             * Checks if the Table is selected.
+             * @returns boolean
+             */
+            return typeof this.loadedTables[table.unique_name] !== 'undefined';
         }
 
         public aceLoaded(editor) {
@@ -91,7 +112,11 @@ module odh.main {
         public preview() {
             this.previewLoading = true;
             this.TransformationService.parse(this.transformation).then((data:any) => {
+                angular.forEach(data.data.tables, table => {
+                    table.isOwn = this.loadIfPackageUsed(table);
+                });
                 this.usedTables = data.data.tables;
+
             });
             this.TransformationService.preview(this.transformation).then((data:any) => {
                 this.previewLoading = false;

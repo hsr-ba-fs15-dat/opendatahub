@@ -37,24 +37,10 @@ module odh {
         constructor(private $state:ng.ui.IStateService, private $scope:any,
                     private ToastService:odh.utils.ToastService,
                     private FileGroupService:main.FileGroupService,
-                    private DocumentService:main.DocumentService,
                     private $log:ng.ILogService, private ngTableParams,
                     private $auth:any, private TransformationService:main.TransformationService,
                     private TransformationSelection:main.TransformationSelection, private JOIN_OPERATIONS) {
 
-            this.tableParams = new ngTableParams({
-                page: 1,            // show first page
-                count: 10           // count per page
-            }, {
-                counts: [10, 25, 50, 100],
-                total: 0, // length of data
-                getData: ($defer, params) => {
-                    DocumentService.getList(params.url()).then(result => {
-                        params.total(result.count);
-                        $defer.resolve(result.results);
-                    });
-                }
-            });
 
             this.selection = angular.copy(TransformationSelection);
             this.fileGroupTable = new ngTableParams({
@@ -72,27 +58,6 @@ module odh {
             );
         }
 
-        public getFileGroup(document, count = 3) {
-            this.FileGroupService.getAll(document.id, true, count).then(filegroups => {
-                if (!document.$showRows) {
-                    angular.forEach(filegroups, (fg) => {
-                        angular.forEach(fg.preview, (preview) => {
-                            preview.uniqueId = preview.unique_name;
-                            preview.cols = [];
-                            preview.parent = fg.id;
-                            preview.private = document.private;
-                            angular.forEach(preview.columns, (col) => {
-                                preview.cols.push({name: col, alias: col, type: preview.types[col]});
-                            });
-                        });
-                    });
-                    document.fileGroup = filegroups;
-                } else {
-                    document.fileGroup = [];
-                }
-                document.$showRows = !document.$showRows;
-            }).catch(error => this.ToastService.failure('Es ist ein Fehler aufgetreten.'));
-        }
 
         public transformation(newInput:string = '') {
             if (newInput && this.manualEdit) {

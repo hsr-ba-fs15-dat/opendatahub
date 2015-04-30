@@ -12,11 +12,8 @@
         </ul>
     </div>
     <odh-choose-transformation
-            table-params="vm.tableParams"
-            is-authenticated="vm.isAuthenticated()"
             add-remove-table="vm.addRemoveTable(table)"
             check-table-selected="vm.checkTableSelected(table)"
-            get-file-group="vm.getFileGroup(document, count)"
             ></odh-choose-transformation>
     <div class="well" ng-repeat="table in vm.allTables()">
         <h2>{{ table.uniqueId }}</h2>
