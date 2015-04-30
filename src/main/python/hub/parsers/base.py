@@ -68,7 +68,7 @@ class Parser(RegistrationMixin):
 
         if exc_infos:
             tbs = '\n'.join([''.join(traceback.format_exception(*ei)) for ei in exc_infos])
-            logging.error('No parser was not able to parse %s with format %s\n%s', file.name, format.__name__, tbs)
+            logging.error('No parser was able to parse %s with format %s\n%s', file.name, format.__name__, tbs)
 
         raise NoParserException('Unable to parse data')
 
@@ -207,7 +207,7 @@ class GenericOGRParser(Parser):
 
         try:
             file_groups = ogr2ogr.ogr2ogr(file.file_group, ogr2ogr.KML, addtl_args=['-t_srs', 'EPSG:4326'],
-                                          raise_on_error=False)
+                                          log_on_error=False)
         except ogr2ogr.Ogr2OgrException:
             file_groups = ogr2ogr.ogr2ogr(file.file_group, ogr2ogr.KML)
 

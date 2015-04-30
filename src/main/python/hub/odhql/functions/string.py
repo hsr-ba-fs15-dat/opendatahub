@@ -1,14 +1,16 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 """
 OdhQL string functions
 """
 
 import pandas as pd
+from defusedxml import lxml
+import types
 
 from hub.odhql.functions.core import VectorizedFunction, OdhQLExecutionException
 from hub.structures.frame import OdhType
-
-from defusedxml import lxml
-import types
 
 
 class Concat(VectorizedFunction):

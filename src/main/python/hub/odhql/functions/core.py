@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 """
 Core/Infrastructure for OdhQL function implementations
 """
@@ -15,12 +18,13 @@ import re
 from opendatahub.utils.plugins import RegistrationMixin
 from hub.structures.frame import OdhType, OdhSeries
 from ..exceptions import OdhQLExecutionException
+from opendatahub.utils.doc import DocMixin
 
 
 logger = logging.getLogger(__name__)
 
 
-class OdhQLFunction(RegistrationMixin):
+class OdhQLFunction(RegistrationMixin, DocMixin):
     _is_abstract = True
     functions = {}
     name = ''
@@ -29,6 +33,29 @@ class OdhQLFunction(RegistrationMixin):
         self.num_rows = num_rows
         self.raw_args = raw_args or []
         self.check_args()
+
+    @staticmethod
+    def gen_all_docs(section='-'):
+        doc = """
+            Funktionen
+            ==========
+
+            {}
+        """
+
+        fns = OdhQLFunction.functions
+        fns_help = ''.join(['{}\n'.format(fns[f].gen_doc()) for f in sorted(OdhQLFunction.functions)])
+        doc = inspect.cleandoc(doc).format(fns_help)
+        return doc
+
+    @classmethod
+    def gen_doc(cls, section='-'):
+        doc = super(OdhQLFunction, cls).gen_doc()
+        pairs = DocMixin.get_method_args(cls.apply)[1:]  # omit self
+        signature = ', '.join(['{}{}'.format(name, '=' + default if default else '') for name, default in pairs])
+        title = '{}({})'.format(cls.name, signature)
+        help = '{}\n{}\n{}\n'.format(title, section * len(title), doc)
+        return help
 
     def check_args(self):
         argspec = inspect.getargspec(self.apply)
@@ -144,5 +171,5 @@ class VectorizedFunction(OdhQLFunction):
 # class SampleElementFunction(ElementFunction):
 # name = 'TEST'
 #
-#     def apply(self, a, b):
-#         return a + b
+# def apply(self, a, b):
+# return a + b

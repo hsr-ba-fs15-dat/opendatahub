@@ -1,4 +1,6 @@
-# encoding: utf-8
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 from collections import Sequence
 
 from pyparsing import nums
@@ -7,8 +9,10 @@ from pyparsing import Optional, OneOrMore, ZeroOrMore, Or, Group, NotAny, Forwar
 from pyparsing import delimitedList
 from enum import Enum
 
+from opendatahub.utils.doc import DocMixin
 
-class OdhQLParser(object):
+
+class OdhQLParser(DocMixin):
     """
     Parser for the OpenDataHub Query Language (OdhQL).
 
@@ -81,19 +85,26 @@ class OdhQLParser(object):
     UI_HELP = """
     .. class:: language
 
-    Hilfe zu ODHQL
+    Was ist ODHQL?
     ==============
 
     ODHQL ist eine an SQL angelehnte Abfrage- und Transformations-Sprache für OpenDataHub.
+
+    Syntax
+    ======
 
     Bestandteile einer Abfrage
     --------------------------
 
     Eine Abfrage besteht aus folgenden Teilen:
-    - Eine Liste von Feldern oder Ausdrücken, welche im Resultat erscheinen sollen
-    - Eine Liste von Datenquellen
-    - Optional eine Liste von Filter-Ausdrücken
-    - Optional eine Sortier-Klausel
+
+    * Eine Liste von Feldern oder Ausdrücken, welche im Resultat erscheinen sollen
+
+    * Eine Liste von Datenquellen
+
+    * Optional eine Liste von Filter-Ausdrücken
+
+    * Optional eine Sortier-Klausel
 
     Gross- und Kleinschreibung wird nicht beachtet.
 
