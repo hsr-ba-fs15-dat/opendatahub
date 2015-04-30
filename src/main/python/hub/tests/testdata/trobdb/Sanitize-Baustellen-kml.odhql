@@ -5,4 +5,4 @@ SELECT t.name as name,
        xpath(t.description, '//tr[4]/td[2]/text()') as projektbeschrieb,
        xpath(t.description, '//tr[5]/td[2]/text()') as projektleiter,
        t.geometry2 as geometry
-FROM "ODH13" as t
+FROM "ODH12" as t

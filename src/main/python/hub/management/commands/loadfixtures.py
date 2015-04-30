@@ -19,39 +19,39 @@ logging.getLogger('django.db.backends').setLevel(logging.WARN)
 class Command(BaseCommand):
     help = 'Loads test data into the database'
 
-    IMPORT = {
+    IMPORT = [
         # first element in considered the main file
-        ('mockaroo.com.csv',): formats.CSV,
-        ('mockaroo.com.json',): formats.JSON,
-        ('mockaroo.com.xlsx',): formats.Excel,
-        ('gml/Bahnhoefe.gml', 'gml/Bahnhoefe.gfs', 'gml/Bahnhoefe.xsd',): formats.GML,
-        ('json/Bahnhoefe.json',): formats.GeoJSON,
-        ('kml/Bahnhoefe.kml',): formats.KML,
-        ('shp/Bahnhoefe.shp', 'shp/Bahnhoefe.shx', 'shp/Bahnhoefe.dbf', 'shp/Bahnhoefe.ili'): formats.Shapefile,
-        ('trobdb/Baustellen Februar 2015.xls',): formats.Excel,
-        ('trobdb/TbaBaustellenZHWFS.gml', 'trobdb/TbaBaustellenZHWFS.xsd'): formats.GML,
-        ('trobdb/tiefbaustelle.json',): formats.GeoJSON,
-        ('trobdb/truckinfo.xml',): formats.XML,
-        ('trobdb/Baustellen.kml',): formats.KML,
-        ('perf/employees.csv',): formats.CSV,
-        ('perf/children.csv',): formats.CSV,
-        ('interlis1/Bahnhoefe.ili', 'interlis1/Bahnhoefe.itf'): formats.INTERLIS1,
-        ('trobdb/Baustellen Mai 2015.xls',): formats.Excel,
+        (formats.CSV, 'mockaroo.com.csv',),
+        (formats.JSON, 'mockaroo.com.json',),
+        (formats.Excel, 'mockaroo.com.xlsx',),
+        (formats.GML, 'gml/Bahnhoefe.gml', 'gml/Bahnhoefe.gfs', 'gml/Bahnhoefe.xsd',),
+        (formats.GeoJSON, 'json/Bahnhoefe.json',),
+        (formats.KML, 'kml/Bahnhoefe.kml',),
+        (formats.Shapefile, 'shp/Bahnhoefe.shp', 'shp/Bahnhoefe.shx', 'shp/Bahnhoefe.dbf', 'shp/Bahnhoefe.ili'),
+        (formats.Excel, 'trobdb/Baustellen Februar 2015.xls',),
+        (formats.GML, 'trobdb/TbaBaustellenZHWFS.gml', 'trobdb/TbaBaustellenZHWFS.xsd'),
+        (formats.GeoJSON, 'trobdb/tiefbaustelle.json',),
+        (formats.XML, 'trobdb/truckinfo.xml',),
+        (formats.KML, 'trobdb/Baustellen.kml',),
+        (formats.CSV, 'perf/employees.csv',),
+        (formats.CSV, 'perf/children.csv',),
+        (formats.INTERLIS1, 'interlis1/Bahnhoefe.ili', 'interlis1/Bahnhoefe.itf'),
+        (formats.Excel, 'trobdb/Baustellen Mai 2015.xls',),
         # ('interlis1/Bahnhoefe.ili', 'interlis1/Bahnhoefe.xml'): formats.INTERLIS2
-    }
+    ]
 
-    URLS = {
+    URLS = [
         ('http://maps.zh.ch/wfs/HaltestellenZHWFS', 'Haltestellen öffentlicher Verkehr ZH', formats.WFS),
         ('http://maps.zh.ch/wfs/TbaBaustellenZHWFS', 'Baustellen Kantonsstrassen ZH', formats.WFS)
-    }
+    ]
 
-    TRANSFORMATIONS = {
-        ('trobdb/BaustellenExcel.odhql', 'TROBDB: Baustellen Februar 2015', 2),
-        ('trobdb/tiefbaustelle-zh.odhql', 'TROBDB: Tiefbaustellen ZH (aus GeoJSON)', 5),
+    TRANSFORMATIONS = [
+        ('trobdb/BaustellenExcel.odhql', 'TROBDB: Baustellen Februar 2015', 8),
+        ('trobdb/tiefbaustelle-zh.odhql', 'TROBDB: Tiefbaustellen ZH (aus GeoJSON)', 10),
         ('trobdb/TruckInfo.odhql', 'TROBDB: TruckInfo', 11),
-        ('trobdb/WFS-Baustellen-ZH.odhql', 'TROBDB: Baustellen Zürich (WFS)', 17),
-        ('trobdb/Sanitize-Baustellen-kml.odhql', 'Sanitize Baustellen.kml', 13)
-    }
+        ('trobdb/WFS-Baustellen-ZH.odhql', 'TROBDB: Baustellen Zürich (WFS)', 18),
+        ('trobdb/Sanitize-Baustellen-kml.odhql', 'Sanitize Baustellen.kml', 12)
+    ]
 
     def add_document(self, desc, format, name):
         if len(name) > 200:
@@ -98,8 +98,10 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.user = TestBase.get_test_user()
 
-        for files, format in self.IMPORT.iteritems():
-            fg = FileGroup.from_files(*[TestBase.get_test_file_path(f) for f in files])
+        for args in self.IMPORT:
+            it = iter(args)
+            format = next(it)
+            fg = FileGroup.from_files(*[TestBase.get_test_file_path(f) for f in it])
             self.add_fg(fg, format)
 
         for (url, name, format) in self.URLS:
