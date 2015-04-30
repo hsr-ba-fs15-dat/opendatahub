@@ -110,15 +110,12 @@ module openDataHub {
                     templateUrl: 'views/odhql-help.html'
                 })
                 .state('transformation-create', {
-                    url: '/transformation/create',
-                    templateUrl: 'views/transformation.create.html',
-                    controller: 'TransformationCreateController as vm'
+                    url: '/transformation/create?odhlq&name&description',
+                    templateUrl: 'views/transformation.create.html'
                 })
                 .state('transformation-detail', {
                     url: '/transformation/{id:int}',
-                    templateUrl: 'views/transformation.detail.html',
-                    controller: 'TransformationDetailController as vm'
-
+                    templateUrl: 'views/transformation.detail.html'
                 }
             )
             ;

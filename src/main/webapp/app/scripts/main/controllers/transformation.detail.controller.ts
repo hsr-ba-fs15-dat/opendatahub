@@ -59,7 +59,9 @@ module odh.main {
                 this.preview();
                 this.selected = {};
             });
-            FormatService.getAvailableFormats().then(data => { this.availableFormats = data.data; });
+            FormatService.getAvailableFormats().then(data => {
+                this.availableFormats = data.data;
+            });
         }
 
         /**
@@ -129,6 +131,14 @@ module odh.main {
                 this.previewError = 'Diese Transformation enthält (noch) keine gültigen Daten';
                 this.ToastService.failure('Diese Transformation enthält keine gültigen Daten');
             });
+        }
+
+        public duplicateTransformation() {
+            this.$state.go('transformation-create', {
+                name: this.name,
+                description: this.description,
+                odhql: this.transformation
+            })
         }
 
         public downloadAs(formatName) {

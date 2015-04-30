@@ -12,7 +12,7 @@
     </div>
 </div>
 
-
+<odh-spinner show-while="tableParams.settings().$loading" class="table-responsive">
 <table class="table table-hover" ng-table="tableParams">
     <tbody ng-repeat="document in $data">
     <tr>
@@ -65,3 +65,4 @@
     </tr>
     </tbody>
 </table>
+</odh-spinner>
