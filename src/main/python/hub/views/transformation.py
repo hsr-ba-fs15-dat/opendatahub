@@ -1,3 +1,5 @@
+import zipfile
+
 from rest_framework import viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
@@ -6,15 +8,15 @@ from django.db import transaction
 from django.http.response import JsonResponse
 from django.http import HttpResponseNotFound, HttpResponseServerError, HttpResponse
 from django.utils.text import slugify
-import zipfile
 
-from opendatahub.utils import cache
+from opendatahub.utils.cache import cache
 from hub.serializers import FileGroupSerializer, TransformationSerializer
 from hub.models import FileGroupModel, TransformationModel
 from authentication.permissions import IsOwnerOrPublic, IsOwnerOrReadOnly
 from hub.views.mixins import FilterablePackageListViewSet
 from hub.utils.odhql import TransformationUtil
 from hub import formatters
+from hub.formats import Format
 
 
 class TransformationViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet):
@@ -62,11 +64,12 @@ class TransformationViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet)
             except:
                 return JsonResponse({'error': 'File does not exist'}, status=HttpResponseNotFound.status_code)
 
-            if not df:
+            if df is None:
                 return JsonResponse({'error': 'Transformation returned no data'},
                                     status=HttpResponseServerError.status_code)
 
-            result_list = formatters.Formatter.format([df], slugify(model.name), format_name)
+            result_list = formatters.Formatter.format([df], slugify(unicode(model.name)),
+                                                      Format.from_string(format_name))
 
         if not result_list:
             return JsonResponse({'error': 'Conversion failed', 'type': 'formatter'},
@@ -81,7 +84,7 @@ class TransformationViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet)
         response = HttpResponse()
         if len(result_list) > 1 or len(result_list) > 0 and len(result_list[0].files) > 1:
             response['Content-Disposition'] = 'attachment; filename="{}.zip"'.format(
-                slugify(unicode(model.document.name))[:200])
+                slugify(unicode(model.name))[:200])
 
             zip = zipfile.ZipFile(response, 'w')
             for result in result_list:

@@ -40,6 +40,7 @@ module odh.main {
                     private $modal:ng.ui.bootstrap.IModalService,
                     private AppConfig:odh.IAppConfig,
                     private FileGroupService:main.FileGroupService,
+                    private UrlService:odh.utils.UrlService,
                     private $window:ng.IWindowService) {
             // controller init
             AppConfig.then(config => {
@@ -58,8 +59,7 @@ module odh.main {
                 this.preview();
                 this.selected = {};
             });
-
-
+            FormatService.getAvailableFormats().then(data => { this.availableFormats = data.data; });
         }
 
         /**
@@ -132,7 +132,8 @@ module odh.main {
         }
 
         public downloadAs(formatName) {
-            this.$window.location.href = '/api/v1/transformation/' + this.transformationId + '/?fmt=' + formatName;
+            this.$window.location.href = this.UrlService.get('transformation/{{id}}/data',
+                {id: this.transformationId}) + '?fmt=' + formatName;
         }
 
         public remove() {
