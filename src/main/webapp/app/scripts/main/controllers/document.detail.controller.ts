@@ -28,7 +28,7 @@ module odh.main {
         }
 
         private retrieveData() {
-            this.availableFormats = this.FormatService.getAvailableFormats();
+            this.FormatService.getAvailableFormats().then(data => { this.availableFormats = data.data; });
 
             if (typeof(this.documentId) !== 'undefined') {
                 this.pkg = this.DocumentService.get(this.documentId)
