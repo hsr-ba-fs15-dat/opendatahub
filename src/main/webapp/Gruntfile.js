@@ -457,7 +457,8 @@ module.exports = function (grunt) {
                 options: {
                     collapseWhitespace: true,
                     conservativeCollapse: true,
-                    collapseBooleanAttributes: true,
+                    // https://github.com/esvit/ng-table/issues/230
+                    collapseBooleanAttributes: false,
                     removeCommentsFromCDATA: true,
                     removeOptionalTags: true
                 },
