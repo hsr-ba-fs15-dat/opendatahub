@@ -80,7 +80,7 @@ class CSVFormatter(Formatter):
         results = []
 
         for df in dfs:
-            results.append(File.from_string(name + '.csv', df.as_safe_serializable().to_csv(index=False, encoding='UTF-8')).file_group)
+            results.append(File.from_string(df.name + '.csv', df.as_safe_serializable().to_csv(index=False, encoding='UTF-8')).file_group)
         return results
 
 
@@ -92,7 +92,7 @@ class JSONFormatter(Formatter):
         results = []
 
         for df in dfs:
-            results.append(File.from_string(name + '.json', df.as_safe_serializable().to_json(orient='records')).file_group)
+            results.append(File.from_string(df.name + '.json', df.as_safe_serializable().to_json(orient='records')).file_group)
         return results
 
 
@@ -107,7 +107,7 @@ class ExcelFormatter(Formatter):
             with tempfile.NamedTemporaryFile(suffix=".xlsx") as f:
                 df.as_safe_serializable().to_excel(f.name, engine='xlsxwriter', index=False)
                 f.seek(0)
-                results.append(File.from_string(name + '.xlsx', f.read()).file_group)
+                results.append(File.from_string(df.name + '.xlsx', f.read()).file_group)
         return results
 
 
@@ -124,7 +124,7 @@ class XMLFormatter(Formatter):
             for i, row in df.iterrows():
                 etree.SubElement(root, 'row', row.dropna().astype(unicode).to_dict())
 
-            results.append(File.from_string(name + '.xml',
+            results.append(File.from_string(df.name + '.xml',
                                             etree.tostring(root, encoding='UTF-8', xml_declaration=True,
                                                            pretty_print=True)).file_group)
         return results
@@ -142,13 +142,16 @@ class GeoFormatterBase(Formatter):
                 gdf = df.to_gdf()
                 temp_dir = tempfile.mkdtemp()
                 try:
-                    gdf.to_file(os.path.join(temp_dir, name + '.{}'.format(extension)), driver=driver)
+                    gdf.to_file(os.path.join(temp_dir, df.name + '.{}'.format(extension)), driver=driver)
                     file_group = FileGroup.from_files(*[os.path.join(temp_dir, f) for f in os.listdir(temp_dir)])
                 finally:
                     shutil.rmtree(temp_dir)
             else:
-                formatted = list(Formatter.format(dfs, name, formats.CSV, *args, **kwargs))
-                file_group = ogr2ogr.ogr2ogr(formatted[0], ogr2ogr.CSV)[0]
+
+                formatted.extend(list(GenericOGRFormatter.format(dfs, name, format)))
+                continue
+                # formatted = list(Formatter.format(dfs, df.name, formats.CSV, *args, **kwargs))
+                # file_group = ogr2ogr.ogr2ogr(formatted[0], ogr2ogr.CSV)[0]
 
             formatted.append(file_group)
 
@@ -269,6 +272,7 @@ class GenericOGRFormatter(Formatter):
         formats.KML: ogr2ogr.KML,
         formats.Shapefile: ogr2ogr.SHP,
         formats.INTERLIS1: ogr2ogr.INTERLIS_1,
+        formats.GeoJSON: ogr2ogr.GEO_JSON,
         # formats.GeoPackage: ogr2ogr.GPKG
     }
 
