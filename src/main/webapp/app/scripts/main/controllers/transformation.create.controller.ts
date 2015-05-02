@@ -33,7 +33,7 @@ module odh {
         public quotes = true;
         public useAsTemplate:boolean = false;
         public fileGroupTable;
-
+        public forceManualEdit:boolean = false;
         constructor(private $state:ng.ui.IStateService, private $scope:any,
                     private ToastService:odh.utils.ToastService,
                     private FileGroupService:main.FileGroupService,
@@ -47,6 +47,7 @@ module odh {
                 this.description = TransformationService.description;
                 this.manualEdit = true;
                 this.odhqlInputString = TransformationService.transformation;
+                this.forceManualEdit = TransformationService.forceManualEdit;
             }
 
             this.selection = angular.copy(TransformationSelection);
@@ -68,6 +69,7 @@ module odh {
 
         public transformation(newInput:string = '') {
             if (newInput && this.manualEdit) {
+                this.forceManualEdit = true;
                 this.odhqlInputString = newInput;
             }
             if (!this.manualEdit) {
@@ -210,7 +212,6 @@ module odh {
 
         public submit() {
             this.submitted = true;
-            this.$scope.form.$setDirty();
             var defer;
             if (this.useAsTemplate) {
                 defer = this.TransformationService.parse(this.transformation());
@@ -218,9 +219,6 @@ module odh {
                 defer = this.TransformationService.preview(this.transformation());
             }
             defer.then(() => {
-                if (this.$scope.form.$invalid) {
-                    return;
-                }
                 var transformation:main.ITransformation;
                 transformation = {
                     name: this.name,
@@ -232,8 +230,6 @@ module odh {
                 var promise = this.TransformationService.post(transformation);
                 promise.then(data => this.createSuccess(data))
                     .catch(data => this.createFailure(data));
-            }).catch(() => {
-                this.$scope.form.odhqlinput.$setValidity('required', false);
             });
         }
 
