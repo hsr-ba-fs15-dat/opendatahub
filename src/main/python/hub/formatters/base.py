@@ -80,7 +80,7 @@ class CSVFormatter(Formatter):
         results = []
 
         for df in dfs:
-            results.append(File.from_string(name + '.csv', df.to_csv(index=False, encoding='UTF-8')).file_group)
+            results.append(File.from_string(name + '.csv', df.as_safe_serializable().to_csv(index=False, encoding='UTF-8')).file_group)
         return results
 
 
@@ -92,7 +92,7 @@ class JSONFormatter(Formatter):
         results = []
 
         for df in dfs:
-            results.append(File.from_string(name + '.json', df.to_json(orient='records')).file_group)
+            results.append(File.from_string(name + '.json', df.as_safe_serializable().to_json(orient='records')).file_group)
         return results
 
 
@@ -105,7 +105,7 @@ class ExcelFormatter(Formatter):
 
         for df in dfs:
             with tempfile.NamedTemporaryFile(suffix=".xlsx") as f:
-                df.to_excel(f.name, engine='xlsxwriter', index=False)
+                df.as_safe_serializable().to_excel(f.name, engine='xlsxwriter', index=False)
                 f.seek(0)
                 results.append(File.from_string(name + '.xlsx', f.read()).file_group)
         return results
@@ -119,6 +119,7 @@ class XMLFormatter(Formatter):
         results = []
 
         for df in dfs:
+            df = df.as_safe_serializable()
             root = etree.Element('root')
             for i, row in df.iterrows():
                 etree.SubElement(root, 'row', row.dropna().astype(unicode).to_dict())
