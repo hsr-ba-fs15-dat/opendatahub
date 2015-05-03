@@ -8,7 +8,6 @@ from rest_framework.decorators import detail_route, list_route
 from django.http.response import JsonResponse
 
 from hub.models import FileGroupModel, FileModel
-
 from hub.serializers import FileGroupSerializer, FileSerializer
 from authentication.permissions import IsOwnerOrPublic
 from hub.utils.pandasutils import DataFrameUtils
@@ -46,19 +45,14 @@ class FileGroupViewSet(viewsets.ModelViewSet, DataDownloadMixin):
     @list_route()
     def preview_by_unique_name(self, request):
         name = request.GET.get('name', None)
-        print '====='
         if name:
             regex = '^({0}|{1})(?P<id>\\d+)_(?P<name>.*$)'.format(PACKAGE_PREFIX, TRANSFORMATION_PREFIX)
-            print '================'
-            print name
-            print type(name)
             m = re.search(regex, name)
             fg_id = m.group('id')
             name = m.group('name')
             if m:
                 print id, name
                 item = FileGroupModel.objects.get(id=fg_id)
-                print '============'
                 return self.preview(request, item.id, name)
         return JsonResponse({})
 
