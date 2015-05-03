@@ -60,7 +60,7 @@ module odh.main {
                 this.selected = {};
             });
             FormatService.getAvailableFormats().then(data => {
-                this.availableFormats = data.data;
+                this.availableFormats = this.FormatService.sortByLabel(data.data);
             });
         }
 
