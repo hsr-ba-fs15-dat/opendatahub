@@ -2,12 +2,10 @@
 
 '''
 from django.db import models
-
 from django.db.models.fields.related import SingleRelatedObjectDescriptor
 from django.db.models.query import QuerySet
 
 from opendatahub import settings
-
 from hub.structures.file import File, FileGroup
 
 
@@ -30,15 +28,15 @@ class PackageModel(models.Model):
 
 
 class DocumentModel(PackageModel):
-    '''
+    """
     Metadata for a document.
-    '''
+    """
 
 
 class FileGroupModel(models.Model):
-    '''
+    """
     Group of files belonging to each other.
-    '''
+    """
     document = models.ForeignKey(DocumentModel, related_name='groups')
     format = models.CharField(max_length=50, null=True)
 
@@ -52,9 +50,9 @@ class FileGroupModel(models.Model):
 
 
 class FileModel(models.Model):
-    '''
+    """
     A single file.
-    '''
+    """
     file_name = models.CharField(max_length=255)
     data = models.BinaryField()
     file_group = models.ForeignKey(FileGroupModel, related_name='files')
@@ -64,9 +62,9 @@ class FileModel(models.Model):
 
 
 class UrlModel(models.Model):
-    '''
+    """
     Refreshable URL.
-    '''
+    """
     file_group = models.ForeignKey(FileGroupModel, related_name='urls')
 
     source_url = models.URLField()
@@ -86,9 +84,9 @@ class UrlModel(models.Model):
 
 
 class TransformationModel(PackageModel):
-    '''
+    """
     A transformation
-    '''
+    """
     transformation = models.TextField()
     file_groups = models.ManyToManyField(FileGroupModel)
 
