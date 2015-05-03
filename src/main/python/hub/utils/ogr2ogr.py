@@ -7,6 +7,8 @@ import subprocess
 import collections
 import shutil
 import logging
+import random
+import string
 
 import os
 import types
@@ -57,6 +59,10 @@ WFS = OgrFormat('wfs', 'WFS', False)
 INTERLIS_1 = OgrFormat(['itf', 'ili', 'imd'], 'Interlis 1', True)
 
 
+def _rand_string(n):
+    return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(n))
+
+
 def _ogr2ogr_cli(arguments, log_on_error=True, *args, **kwargs):
     cmd = ['ogr2ogr'] + arguments
     logger.debug('Running ogr2ogr: %s', ' '.join(cmd))
@@ -78,7 +84,9 @@ def ogr2ogr(file_group, to_type, addtl_args=(), *args, **kwargs):
         return [file_group]
 
     with file_group.on_filesystem() as temp_dir:
-        path = os.path.join(temp_dir, 'out')
+        out_path = os.path.join(temp_dir, _rand_string(24))
+        os.mkdir(out_path)
+        path = os.path.join(out_path, 'out')
 
         if from_format is WFS:
             _ogr2ogr_cli(['-f', to_type.identifier, path, 'WFS:{}'.format(file_group[0].url)], *args, **kwargs)
@@ -103,13 +111,14 @@ def ogr2ogr(file_group, to_type, addtl_args=(), *args, **kwargs):
         if os.path.isdir(path):
             files = [os.path.join(path, name) for name in os.listdir(path)]
         elif os.path.exists(path):
-            for filename in os.listdir(temp_dir):
+            for filename in os.listdir(out_path):
                 if os.path.splitext(filename)[0] == 'out':
-                    ext = to_type.extension[0] if filename == 'out' else os.path.splitext(filename)[1]
+                    # splitext returns extension *including* the dot
+                    ext = '.' + to_type.extension[0] if filename == 'out' else os.path.splitext(filename)[1]
 
                     files.append(
-                        os.path.join(temp_dir, '{}.{}'.format(main_file.basename if main_file else 'out', ext)))
-                    shutil.move(os.path.join(temp_dir, filename), files[-1])
+                        os.path.join(out_path, '{}{}'.format(main_file.basename if main_file else 'out', ext)))
+                    shutil.move(os.path.join(out_path, filename), files[-1])
 
         groups = collections.defaultdict(list)
         for file in files:
