@@ -30,6 +30,7 @@ module odh.main {
         public transformationPrefix:string;
         public packagePrefix:string;
         public isOwn:boolean;
+        public transformationObject:any;
 
         constructor(private $stateParams:any,
                     private TransformationService:main.TransformationService,
@@ -49,6 +50,8 @@ module odh.main {
             });
             this.transformationId = $stateParams.id;
             this.TransformationService.get(this.transformationId).then(data => {
+                this.transformationObject = data;
+                console.log(data);
                 this.name = data.name;
                 this.description = data.description;
                 this.transformation = data.transformation;
@@ -64,6 +67,9 @@ module odh.main {
             });
         }
 
+        public isAuthenticated() {
+            return this.$auth.isAuthenticated();
+        }
         /**
          * Checks if this Table could belongs to our system.
          */
@@ -133,6 +139,17 @@ module odh.main {
             });
         }
 
+        public saveTransformation() {
+            this.transformationObject.transformation = this.transformation;
+            this.transformationObject.name = this.name;
+            this.transformationObject.description = this.description;
+            this.transformationObject.put().then(() => {
+                this.ToastService.success('Transformation gespeichert');
+            }).catch((error) => {
+                this.ToastService.failure('Es ist ein Fehler aufgetreten');
+                console.error(error);
+            });
+        }
         public duplicateTransformation() {
             this.TransformationService.description = this.description;
             this.TransformationService.forceManualEdit = true;
