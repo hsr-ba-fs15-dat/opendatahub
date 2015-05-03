@@ -80,7 +80,8 @@ class CSVFormatter(Formatter):
         results = []
 
         for df in dfs:
-            results.append(File.from_string(df.name + '.csv', df.as_safe_serializable().to_csv(index=False, encoding='UTF-8')).file_group)
+            results.append(File.from_string(df.name + '.csv',
+                                            df.as_safe_serializable().to_csv(index=False, encoding='UTF-8')).file_group)
         return results
 
 
@@ -92,7 +93,8 @@ class JSONFormatter(Formatter):
         results = []
 
         for df in dfs:
-            results.append(File.from_string(df.name + '.json', df.as_safe_serializable().to_json(orient='records')).file_group)
+            results.append(
+                File.from_string(df.name + '.json', df.as_safe_serializable().to_json(orient='records')).file_group)
         return results
 
 
