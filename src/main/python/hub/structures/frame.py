@@ -203,9 +203,11 @@ class OdhFrame(pd.DataFrame):
         df.__class__ = gp.GeoDataFrame
         geoseries = collections.OrderedDict([(c, s) for c, s in df.iteritems() if s.odh_type == OdhType.GEOMETRY])
         geometry = geoseries.get('geometry', geoseries.values()[0]).copy()
-        geometry.name = 'geometry'
-        geometry.__class__ == gp.GeoSeries
+        # remove additional geometry series, not supported
+        df.drop(set(geoseries.keys()) - {geometry.name}, axis=1, inplace=True)
+        df.rename(columns={geometry.name: 'geometry'}, inplace=True)
         df.crs = geometry.crs
+        geometry.__class__ == gp.GeoSeries
         return df
 
     @property
