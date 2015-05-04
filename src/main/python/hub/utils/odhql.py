@@ -6,6 +6,7 @@ from hub.odhql.interpreter import OdhQLInterpreter
 from hub.odhql.exceptions import OdhQLExecutionException
 from hub.models import FileGroupModel, TransformationModel
 from opendatahub.utils import cache
+from django.utils.text import slugify
 
 
 class TransformationUtil(object):
@@ -55,6 +56,7 @@ class TransformationUtil(object):
                 if not user_id and model.private or model.owner != user_id:
                     raise OdhQLExecutionException("Fehlende Berechtigung")
             df = TransformationUtil.interpret(model.transformation)
+            df.name = slugify(unicode(tf.name))
 
             cache.set(cache_key, df)
 
