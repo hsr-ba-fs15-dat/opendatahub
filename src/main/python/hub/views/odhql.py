@@ -32,10 +32,8 @@ class ParseView(View):
             query = OdhQLParser().parse(statement)
             query = [q.data_sources[0] for q in query.queries] if \
                 isinstance(query, parser.Union) else query.data_sources
-            print type(query)
-            print query
+
             data_sources = {'tables': [{'name': table.name, 'alias': table.alias} for table in query]}
-            print data_sources
         except ParseException as e:
             return JsonResponse({'error': e.message,
                                  'type': 'parse',
@@ -62,7 +60,7 @@ class AdHocOdhQLView(View):
             page = int(request.GET.get('page', 1))
             start = limit * (page - 1)
 
-            df = TransformationUtil.interpret(statement)
+            df = TransformationUtil.interpret(statement, user_id=request.user.id)
 
         except OdhQLExecutionException as e:
             return JsonResponse({'error': e.message,
