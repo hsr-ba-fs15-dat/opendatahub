@@ -1,0 +1,22 @@
+<script id="sample_ng_header" type="text/ng-template">
+    <tr>
+        <th ng-repeat="column in cols"
+            class="text-center">
+            {{column.title}}
+        </th>
+        <!--<th>Columns:{{columns.length}}</th>-->
+    </tr>
+</script>
+
+<div class="table-responsive">
+    <table ng-table="ngTableParams" template-header="sample_ng_header"
+           class="table table-striped">
+
+        <tr ng-repeat="row in $data">
+            <td ng-repeat="col in cols">
+                {{row[col.field]}}
+            </td>
+        </tr>
+    </table>
+
+</div>

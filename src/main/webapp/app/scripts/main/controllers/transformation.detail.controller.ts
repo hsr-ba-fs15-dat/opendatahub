@@ -51,7 +51,6 @@ module odh.main {
             this.transformationId = $stateParams.id;
             this.TransformationService.get(this.transformationId).then(data => {
                 this.transformationObject = data;
-                console.log(data);
                 this.name = data.name;
                 this.description = data.description;
                 this.transformation = data.transformation;
