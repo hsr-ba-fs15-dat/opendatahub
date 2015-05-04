@@ -90,7 +90,7 @@ class TestStringFunctions(TestInterpreterBase):
         self.assertListEqual(df.occurrences.tolist(), [n.count('i') for n in self.employees.Prename.tolist()])
 
     def test_substring(self):
-        df = self.execute('SELECT SUBSTRING(e.prename, 0, 2) as subs FROM employee AS e')
+        df = self.execute('SELECT SUBSTRING(e.prename, 1, 2) as subs FROM employee AS e')
         self.assertListEqual(df.subs.tolist(), [n[0:2] for n in self.employees.Prename.tolist()])
 
     def test_to_char(self):
