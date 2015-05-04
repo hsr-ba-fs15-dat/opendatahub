@@ -799,13 +799,6 @@ class BinaryCondition(ASTBase):
         right = tokens.get('right')
         op = tokens.get('operator')
 
-        v = FindClassVisitor(Field)
-        left.accept(v)
-        if not v.found:
-            right.accept(v)
-            if not v.found:
-                raise TokenException('illegal BinaryCondition: at least one side needs to reference a Field')
-
         return cls(left, op, right)
 
     @classmethod
@@ -1028,16 +1021,6 @@ class OrderBy(ASTBase):
 
     def __repr__(self):
         return '<OrderBy field={} direction={}>'.format(self.field, self.direction)
-
-
-class FindClassVisitor(object):
-    def __init__(self, target_class):
-        self.target = target_class
-        self.found = False
-
-    def visit(self, obj):
-        if isinstance(obj, self.target):
-            self.found = True
 
 
 class TokenException(Exception):
