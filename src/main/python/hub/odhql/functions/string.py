@@ -154,17 +154,19 @@ class Extract(VectorizedFunction):
     Wendet einen Regulären Ausdruck (Regex) auf die angegebene Spalte oder den Wert an und liefert das Resultat
     der angegebenen Gruppe zurück.
 
+    Da Backslashes ('\')
+
     Parameter
         - `strings`: TEXT-Spalte oder -Wert
         - `pattern`: Regulärer Ausdruck. Siehe Regex-Dokumentation_.
         - `group`: Optional. Gruppe, welche ausgewertet werden soll. Default: 1.
 
-        .. _Regex-Dokumentation: https://docs.python.org/2/library/re.html#regular-expression-syntax>
+        .. _Regex-Dokumentation: https://docs.python.org/2/library/re.html#regular-expression-syntax
 
     Beispiel
         .. code:: sql
 
-            EXTRACT(t.text, '\|([^|\.]+)') AS title
+            EXTRACT(t.text, '\\|([^|\\.]+)') AS title
     """
     name = 'EXTRACT'
 
@@ -394,27 +396,32 @@ class Substring(VectorizedFunction):
 
     Parameter
         - `strings`: Spalte oder Wert
-        - `start`: Startposition
-        - `end`: Endposition
+        - `start`: Startposition (startet bei 1)
+        - `length`: Gewünschte Länge. Ohne Längenangabe wird der Rest des Texts zurückgegeben.
 
     Beispiel
         .. code:: sql
 
-         SUBSTRING(ODH30.description, 0, 100) AS title
+         SUBSTRING(ODH30.description, 1, 100) AS title
     """
-    # FIXME 1-basiert?
     name = 'SUBSTRING'
 
-    def apply(self, strings, start, end):
+    def apply(self, strings, start, length=None):
         self.assert_str('string', strings)
 
         self.assert_int('start', start)
         self.assert_value('start', start)
 
-        self.assert_int('end', end)
-        self.assert_value('end', end)
+        if length:
+            self.assert_int('length', length)
+            self.assert_value('length', length)
 
-        return strings.str.slice(start, end)
+        if start < 1:
+            raise OdhQLExecutionException('Invalid start position: Must be at least 1')
+        if length < 1:
+            raise OdhQLExecutionException('Invalid length: Must be at least 1')
+
+        return strings.str.slice(start - 1, start - 1 + length if length else None)
 
 
 class ToChar(VectorizedFunction):
@@ -423,7 +430,8 @@ class ToChar(VectorizedFunction):
 
     Parameter
         - `values`: Spalte oder Wert
-        - `format`: Falls `values` vom Typ DATETIME ist: Format-Angabe für die Konversion.
+        - `format`: Falls `values` vom Typ DATETIME ist. Siehe
+          `Dokumentation <https://docs.python.org/2/library/time.html#time.strftime>`_.
 
     Beispiel
         .. code:: sql
