@@ -3,6 +3,7 @@ import itertools
 from hub.odhql.interpreter import OdhQLInterpreter
 from hub.models import FileGroupModel, TransformationModel
 from opendatahub.utils import cache
+from django.utils.text import slugify
 
 
 class TransformationUtil(object):
@@ -48,6 +49,7 @@ class TransformationUtil(object):
             if model is None:
                 model = TransformationModel.objects.get(id=id)
             df = TransformationUtil.interpret(model.transformation)
+            df.name = slugify(unicode(tf.name))
 
             cache.set(cache_key, df)
 

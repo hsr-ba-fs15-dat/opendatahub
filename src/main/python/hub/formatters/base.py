@@ -54,6 +54,7 @@ class Formatter(RegistrationMixin):
 
     @classmethod
     def format(cls, dfs, name, format, *args, **kwargs):
+        assert all([df.name for df in dfs]), 'DataFrame must have a name'
         exc_infos = []
 
         for formatter in cls.formatters_by_target[format]:

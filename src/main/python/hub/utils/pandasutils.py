@@ -13,5 +13,5 @@ class DataFrameUtils(object):
             'columns': slice_.columns.tolist(),
             'types': {c: s.odh_type.name for c, s in df.iteritems()},
             'data': slice_.to_dict(orient='records'),
-            'count': df.shape[0]
+            'count': len(df)
         }
