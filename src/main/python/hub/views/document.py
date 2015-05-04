@@ -1,16 +1,16 @@
 from rest_framework import viewsets
-
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
+
+from django.http.response import HttpResponseNotFound
 from django.db import transaction
+from django.db.models import Q
 
 from hub.serializers import DocumentSerializer, FileGroupSerializer
-
 from hub.models import DocumentModel, FileGroupModel
 from authentication.permissions import IsOwnerOrPublic, IsOwnerOrReadOnly
 from hub.utils.upload import UploadHandler
-
 from hub.views.mixins import FilterablePackageListViewSet
 
 
@@ -38,8 +38,10 @@ class DocumentViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet):
 
     @detail_route()
     def filegroup(self, request, pk, *args, **kwargs):
-        file_group = FileGroupModel.objects.filter(document__id=pk)
-        self.check_object_permissions(request, file_group)
+        file_group = FileGroupModel.objects.filter(
+            Q(document__id=pk) & (Q(document__private=False) | Q(document__owner=request.user.id)))
+        if not file_group:
+            return HttpResponseNotFound()
 
         serializer = FileGroupSerializer(file_group, many=True, context={'request': request})
         return Response(serializer.data)
