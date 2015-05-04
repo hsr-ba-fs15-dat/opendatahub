@@ -23,7 +23,7 @@ class FilterablePackageListViewSet(mixins.ListModelMixin, viewsets.GenericViewSe
         """
         out = {'filter': {}, 'sorting': {}}
         params = dict(request.query_params.iterlists())
-        parameter_regex = re.compile("^(filter|sorting)\[(\w+)\]$")
+        parameter_regex = re.compile(r"^(filter|sorting)\[(\w+)\]$")
         for k, v in params.iteritems():
             m = re.match(parameter_regex, k)
             if m:

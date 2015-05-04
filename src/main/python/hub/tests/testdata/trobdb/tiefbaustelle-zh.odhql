@@ -1,5 +1,5 @@
 SELECT null as userid,
-       substring(t.Projektbeschrieb, 0, 100) as title,
+       substring(t.Projektbeschrieb, 1, 100) as title,
        concat(t.Projektbeschrieb, ' (', cast(t.Baunummer, 'text'), ')') as description,
        to_char(to_date(t.Baubeginn, '%Y%m%d'), '%Y-%m-%d') as trob_start,
        to_char(to_date(t.Bauende, '%Y%m%d'), '%Y-%m-%d') as trob_end,

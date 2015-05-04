@@ -1,5 +1,5 @@
 SELECT t."Federführende_Stelle" as userid,
-       substring(t.Bauarbeiten, 0, 100) as title,
+       substring(t.Bauarbeiten, 1, 100) as title,
        t.Bauarbeiten as description,
        to_char(to_date(concat(extract(t.Dauer, '^((?:\\d\\d?\\.){2})'),
                                      nvl(extract(t.Dauer, '(\\d{4}) -'), extract(t.Dauer, '(\\d{4})$'))),

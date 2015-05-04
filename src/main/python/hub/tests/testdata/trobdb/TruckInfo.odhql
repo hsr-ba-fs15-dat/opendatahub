@@ -1,5 +1,5 @@
 SELECT null as userid,
-       substring(nvl(extract(t.text, '\\|([^|\\.]+)'), 'no value'), 0, 100) as title,
+       substring(nvl(extract(t.text, '\\|([^|\\.]+)'), 'no value'), 1, 100) as title,
        extract(t.text, '\\|([^|]+)') as description,
        to_char(cast(cast(t."df", 'bigint'), 'datetime'), '%Y-%m-%d') as trob_start,
        to_char(cast(cast(t."dd", 'bigint'), 'datetime'), '%Y-%m-%d') as trob_end,
