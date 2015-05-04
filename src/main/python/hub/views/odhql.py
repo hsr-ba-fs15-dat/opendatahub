@@ -11,6 +11,7 @@ from django.http.response import JsonResponse, HttpResponseBadRequest, HttpRespo
 from pyparsing import ParseException
 import docutils
 import docutils.core
+from django.views.decorators.cache import cache_page
 
 from hub.odhql import parser
 from hub.odhql.exceptions import OdhQLExecutionException
@@ -98,3 +99,8 @@ class DocumentationView(View):
             'html_body']
         html = html.replace('href="#', '<a du-smooth-scroll href="#')
         return HttpResponse(html)
+
+    @classmethod
+    def as_view(cls, **initkwargs):
+        # cache forever as it's impossible for it to change at runtime anyway
+        return cache_page(None)(super(DocumentationView, cls).as_view(**initkwargs))
