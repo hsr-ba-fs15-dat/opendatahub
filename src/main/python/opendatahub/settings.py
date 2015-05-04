@@ -69,6 +69,11 @@ LOGGING = {
             'handlers': ['null'],
             'level': 'ERROR',
             'propagate': False
+        },
+        'hub.tests': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False
         }
     },
 }

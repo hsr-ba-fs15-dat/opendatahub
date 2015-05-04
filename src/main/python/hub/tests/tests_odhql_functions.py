@@ -165,6 +165,14 @@ class TestMiscFunctions(TestInterpreterBase):
     def test_nvl(self):
         self.execute('SELECT NVL(c.age, c.id) AS with_col, NVL(c.age, \'no age\') AS with_literal FROM child AS c')
 
+    def test_range(self):
+        df = self.execute('SELECT RANGE() AS id FROM child AS c')
+        self.assertListEqual(df.id.tolist(), range(1, len(df) + 1))
+
+    def test_range_step(self):
+        df = self.execute('SELECT RANGE(1, 2) AS id FROM child AS c')
+        self.assertListEqual(df.id.tolist(), range(1, 2 * len(df) + 1, 2))
+
     def test_fails(self):
         statements = (
             'SELECT CAST(e.surname, \'foobar\') AS test FROM employee AS e',
