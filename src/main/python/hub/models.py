@@ -7,6 +7,7 @@ from django.db.models.query import QuerySet
 
 from opendatahub import settings
 from hub.structures.file import File, FileGroup
+from hub.formats import Format, Other
 
 
 AUTH_USER_MODEL = getattr(settings, 'AUTH_USER_MODEL', 'auth.User')
@@ -38,10 +39,10 @@ class FileGroupModel(models.Model):
     Group of files belonging to each other.
     """
     document = models.ForeignKey(DocumentModel, related_name='groups')
-    format = models.CharField(max_length=50, null=True)
 
     def to_file_group(self):
         group = FileGroup(id=self.id)
+
         group.add(*[f.to_file(group) for f in self.files.all()])
 
         group.add(*[u.to_file(group) for u in self.urls.all()])
@@ -56,9 +57,16 @@ class FileModel(models.Model):
     file_name = models.CharField(max_length=255)
     data = models.BinaryField()
     file_group = models.ForeignKey(FileGroupModel, related_name='files')
+    format = models.CharField(max_length=50, null=True)
 
     def to_file(self, file_group=None):
-        return File.from_string(self.file_name, self.data, file_group=file_group)
+        fmt = Format.from_string(self.format) if self.format else Other
+        file = File.from_string(self.file_name, self.data, file_group=file_group)
+
+        if fmt is not Other and fmt.is_format(file):
+            file.format = fmt
+
+        return file
 
 
 class UrlModel(models.Model):
@@ -92,6 +100,8 @@ class TransformationModel(PackageModel):
 
 
 class InheritanceQuerySet(QuerySet):
+    subclasses = list()
+
     def select_subclasses(self, *subclasses):
         if not subclasses:
             subclasses = [o for o in dir(self.model)

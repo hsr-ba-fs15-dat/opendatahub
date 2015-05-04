@@ -67,7 +67,7 @@ class Command(BaseCommand):
     def add_fg(self, fg, format, name=None, desc=None):
         doc = self.add_document(desc, format, name or 'Test {}'.format(', '.join(fg.names)))
 
-        file_group = FileGroupModel(document=doc, format=None)
+        file_group = FileGroupModel(document=doc)
         file_group.save()
 
         for f in fg:
@@ -79,7 +79,7 @@ class Command(BaseCommand):
     def add_url(self, url, format, name=None, desc=None):
         doc = self.add_document(desc, format, name or 'Test {}'.format(url))
 
-        file_group = FileGroupModel(document=doc, format=None)
+        file_group = FileGroupModel(document=doc)
         file_group.save()
 
         url_model = UrlModel(source_url=url, type='wfs' if format is formats.WFS else 'auto', file_group=file_group,
