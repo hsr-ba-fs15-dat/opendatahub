@@ -69,7 +69,7 @@ class Formatter(RegistrationMixin):
 
         if exc_infos:
             tbs = '\n'.join([''.join(traceback.format_exception(*ei)) for ei in exc_infos])
-            logger.debug('No formatter was able to format %s with target format %s:\n%s', name, format.__name__, tbs)
+            logger.error('No formatter was able to format %s with target format %s:\n%s', name, format.__name__, tbs)
         raise NoFormatterException('Unable to format {} as {}'.format(name, format.name))
 
 
