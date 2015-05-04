@@ -36,21 +36,23 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class FileSerializer(serializers.HyperlinkedModelSerializer):
+    file_format = serializers.CharField(source='format')
+
     class Meta(object):
         model = FileModel
-        fields = ('id', 'url', 'file_name', 'file_group')
+        fields = ('id', 'url', 'file_name', 'file_format', 'file_group')
 
 
 class UrlSerializer(serializers.HyperlinkedModelSerializer):
     source_url = serializers.URLField()
+    url_format = serializers.CharField(source='format')
 
     class Meta(object):
         model = UrlModel
-        fields = ('id', 'url', 'source_url', 'refresh_after', 'type', 'file_group')
+        fields = ('id', 'url', 'source_url', 'url_format', 'refresh_after', 'type', 'file_group')
 
 
 class FileGroupSerializer(serializers.HyperlinkedModelSerializer):
-    file_format = serializers.CharField(source='format')
     files = FileSerializer(many=True, read_only=True)
     urls = UrlSerializer(many=True, read_only=True)
 
@@ -62,7 +64,7 @@ class FileGroupSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta(object):
         model = FileGroupModel
-        fields = ('id', 'url', 'file_format', 'document', 'files', 'urls', 'data', 'preview')
+        fields = ('id', 'url', 'document', 'files', 'urls', 'data', 'preview')
         depth = 1
 
 

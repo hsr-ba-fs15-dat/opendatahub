@@ -7,6 +7,7 @@ import defusedxml.ElementTree as etree
 
 from hub.models import UrlModel, DocumentModel, FileGroupModel, FileModel
 from hub import formats
+from hub.formats import Format
 
 
 class UploadHandler(object):
@@ -31,6 +32,8 @@ class UploadHandler(object):
 class FileHandler(object):
     def handle_file_upload(self, request, document):
         files = request.data.getlist('file')
+        format_name = request.data.get('format', None)
+        fmt = Format.from_string(format_name) if format_name else None
 
         groups = collections.defaultdict(list)
 
@@ -39,11 +42,12 @@ class FileHandler(object):
             groups[name].append(file)
 
         for group in groups.itervalues():
-            file_group = FileGroupModel(document=document, format=request.data.get('format', None))
+            file_group = FileGroupModel(document=document)
             file_group.save()
 
             for file in group:
-                file_model = FileModel(file_name=file.name, data=file.read(), file_group=file_group)
+                file_model = FileModel(file_name=file.name, data=file.read(), file_group=file_group,
+                                       format=fmt.name if fmt is not None else None)
                 file_model.save()
 
 

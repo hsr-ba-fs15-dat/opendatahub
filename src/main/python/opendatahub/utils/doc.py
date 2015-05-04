@@ -21,4 +21,8 @@ class DocMixin(object):
         args = spec.args
         defaults = spec.defaults or []
         defaults = [None] * (len(args) - len(defaults)) + [unicode(d) for d in defaults]
+        if spec.varargs:
+            args.append('...' + spec.varargs)
+            defaults.append(None)
+
         return zip(args, defaults)

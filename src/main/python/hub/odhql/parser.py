@@ -232,7 +232,7 @@ class OdhQLParser(DocMixin):
 
     .. code:: sql
 
-        order by 1, 2 desc
+        ORDER BY 1, ODH4.name desc, surname ASC
 
     Union
     -----
