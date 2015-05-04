@@ -2,7 +2,6 @@
 @import "../../bower_components/bootstrap-material-design/less/material-fullpalette.less";
 @import "material-spinner.less";
 
-
 // Override @primary color with one took from _colors.less
 @primary: @blue-grey-700;
 
@@ -15,8 +14,6 @@
   @import "docutils.less";
   @import "pygments-default.less";
 }
-
-
 
 #loading-bar .bar {
   background: @darkbg-text !important;
@@ -189,10 +186,23 @@ a {
 
 // allow override for ng-table defaults
 .ng-table th.text-left {
-    text-align: left;
+  text-align: left;
+}
+
+// try to fix sorting arrows in minified build
+.ng-table th.sortable .sort-indicator:before {
+  content: "";
+  border-width: 0 4px 4px;
+  border-style: solid;
+  border-color: #000 transparent;
+  visibility: visible;
+  right: 5px;
+  top: 50%;
+  position: absolute;
+  opacity: .3;
+  margin-top: -4px
 }
 
 .ace_editor {
   min-height: 200px;
 }
-
