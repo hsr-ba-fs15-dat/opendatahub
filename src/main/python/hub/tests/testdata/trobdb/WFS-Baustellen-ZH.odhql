@@ -1,5 +1,5 @@
 select b.ansprechperson as userid,
-       substring(concat(b.strassenname, ' ', b.gemeindename), 0, 100) as title,
+       substring(concat(b.strassenname, ' ', b.gemeindename), 1, 100) as title,
        b.beschreibung as description,
        to_char(to_date(b.datum_baubeginn), '%Y-%m-%d') as trob_start,
        to_char(to_date(b.datum_bauende), '%Y-%m-%d') as trob_end,

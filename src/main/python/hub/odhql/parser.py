@@ -116,7 +116,7 @@ class OdhQLParser(DocMixin):
     .. code:: sql
 
         SELECT NULL AS userid,                                                               -- Null-Ausdruck
-               SUBSTRING(NVL(EXTRACT(t.text, '\|([^|\.]+)'), 'no value'), 0, 100) AS title,  -- Funktions-Aufruf
+               SUBSTRING(NVL(EXTRACT(t.text, '\|([^|\.]+)'), 'no value'), 1, 100) AS title,  -- Funktions-Aufruf
                EXTRACT(t.text, '\|([^|]+)') AS description,
                CAST(CAST(t."df", 'bigint'), 'datetime') AS trob_start,
                CAST(CAST(t."dd", 'bigint'), 'datetime') AS trob_end,
@@ -163,7 +163,7 @@ class OdhQLParser(DocMixin):
 
             .. code:: sql
 
-                SUBSTRING(NVL(EXTRACT(t.text, '\|([^|\.]+)'), 'no value'), 0, 100) AS title
+                SUBSTRING(NVL(EXTRACT(t.text, '\|([^|\.]+)'), 'no value'), 1, 100) AS title
 
         Fallunterscheidung (Case-Ausdruck)
             Kann verwendet werden, um Werte zu übersetzen. Es muss mindestens eine Bedingung angegeben werden.
