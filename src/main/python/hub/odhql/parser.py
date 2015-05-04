@@ -174,7 +174,7 @@ class OdhQLParser(DocMixin):
             .. code:: sql
 
                 CASE WHEN CONTAINS(t.text, 'closed', FALSE) THEN 'closed'
-                     WHEN (CONTAINSs(t.text, 'maintenance', FALSE) OR CONTAINS(t.text, 'maintenance', FALSE))
+                     WHEN (CONTAINS(t.text, 'maintenance', FALSE) OR CONTAINS(t.text, 'maintenance', FALSE))
                         THEN 'obstructed'
                      ELSE 'other'
                 END
