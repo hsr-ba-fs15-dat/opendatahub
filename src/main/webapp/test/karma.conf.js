@@ -49,7 +49,6 @@ module.exports = function(config) {
       'bower_components/ng-table/dist/ng-table.min.js',
       'bower_components/ace-builds/src-noconflict/ace.js',
       'bower_components/ace-builds/src-noconflict/mode-sql.js',
-      'bower_components/ace-builds/src-noconflict/theme-twilight.js',
       'bower_components/angular-ui-ace/ui-ace.js',
       'bower_components/moment/moment.js',
       'bower_components/moment/locale/de.js',

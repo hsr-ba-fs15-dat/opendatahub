@@ -84,8 +84,7 @@ module odh {
             var _session = editor.getSession();
             _session.setOptions({mode: 'ace/mode/sql'});
             _renderer.setOptions({
-                maxLines: Infinity,
-                theme: 'twilight'
+                maxLines: Infinity
             });
             editor.setOptions({
                 showGutter: true,
