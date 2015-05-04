@@ -44,31 +44,39 @@
                     <h2>{{ table.uniqueId }}</h2>
                     Alias: <input type="text" ng-model="table.uniqueIdAlias"/><br/><br/>
                     Wählen Sie die benötigten Felder aus (Klick) und wählen Sie die Spaltennamen:
+
                     <div class="table-responsive">
-                        <table class="table table-striped">
-                            <thead>
+                        <script id="previewTableHeader" type="text/ng-template">
                             <tr>
-                                <th ng-repeat="col in table.cols"
+                                <th ng-repeat="col in $columns"
+                                    class="text-center"
                                     ng-class="vm.getFields(table.uniqueId).indexOf(col) > -1 ? 'selected': ''">
                                     <label>
                                         <small>[{{ table.types[col.name] }}]</small>
-                                        <input type="text" ng-model="col.alias" class="hasclear"/>
-                            <span class="clearer fa fa-times" ng-click="col.alias = col.name"
+                                        <span class="clearer fa fa-times" ng-click="col.alias = col.name"
                                   ng-show="col.name != col.alias"></span>
+                                        <input type="text" ng-model="col.alias" class="hasclear"/>
+
                                     </label>
                                 </th>
+                                <!--<th>Columns:{{columns.length}}</th>-->
                             </tr>
-                            </thead>
-                            <tr ng-repeat="row in table.data">
-                                <td ng-class="vm.getFields(table.uniqueId).indexOf(col) > -1 ? 'selected': ''"
-                                    ng-repeat="col in table.cols" ng-click="vm.addRemoveField(col, table)">
-                                    {{ row[col.name] | characters:25 :true }}
+                        </script>
+                        <table ng-table-dynamic="table.ngTableParams with table.cols"
+                               template-header="previewTableHeader"
+                               class="table table-striped ng-table-responsive">
+                            <tr ng-repeat="row in $data">
+                                <td ng-repeat="col in $columns"
+                                    ng-class="vm.getFields(table.uniqueId).indexOf(col) > -1 ? 'selected': ''"
+                                    ng-click="vm.addRemoveField(col, table)">
+                                    <span ng-if="row[col.field].length <= 50">{{ row[col.field] }}</span>
+                                    <span ng-if="row[col.field].length > 50 " ng-click="col.showAll = true">
+                                        {{row[col.field] | limitTo : 50}}...</span>
                                 </td>
                             </tr>
                         </table>
 
                     </div>
-
                     <a ng-click="vm.addRemoveTable(table)">Tabelle entfernen</a><br/>
 
 
@@ -107,6 +115,11 @@
                         </label><br/>
                     </div>
                 </div>
+                <label class="control-label" for="useQuotes">
+                    <input id=useQuotes" type="checkbox" ng-model="vm.quotes" ng-change="vm.useQuotes()"/>
+                    Anführungszeichen verwenden.
+                </label>
+
                 <div class="col-sm-12" ui-ace="{onLoad: vm.aceLoaded}" ng-model="vm.transformation"
                      ng-model-options="{ getterSetter: true }" ng-readonly="true"></div>
                 <button ng-click="vm.preview()" type='button' class="btn btn-info pull-right">
@@ -125,10 +138,7 @@
                     {{ alert.msg }}
                 </alert>
                 <a ui-sref="transformation/help" target="_blank"><i class="fa fa-question-circle"></i></a>
-                <label class="control-label" for="useQuotes">
-                    <input id=useQuotes" type="checkbox" ng-model="vm.quotes" ng-change="vm.useQuotes()"/>
-                    Anführungszeichen verwenden.
-                </label>
+
                 <label class="control-label" for="isTemplate">
                     <input id=useQuotes" type="checkbox" ng-model="vm.useAsTemplate"/>
                     Als Template verwenden.

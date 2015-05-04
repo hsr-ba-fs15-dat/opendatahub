@@ -18,7 +18,8 @@ module odh.main {
         private privateCount:number = 0;
         private itemCounter:number = 1;
 
-        constructor(private JOIN_OPERATIONS:main.IOperations) {
+        constructor(private JOIN_OPERATIONS:main.IOperations, private ngTableParams:any,
+                    private FileGroupService:main.FileGroupService) {
             this.items = [];
             this.expression = {};
             this.fields = {};
@@ -33,6 +34,21 @@ module odh.main {
         public addTable(item:main.ITable) {
             if (this.items.indexOf(item) === -1) {
                 item.uniqueIdAlias = 't' + this.itemCounter++;
+                item.ngTableParams = new this.ngTableParams({
+                        page: 1,            // show first page
+                        count: 3           // count per page
+                    },
+                    {
+                        counts: [3, 10, 25, 100],
+                        total: 0, // length of data
+                        getData: ($defer, params) => {
+                            this.FileGroupService.getPreview(item.parent, params.url(), item.name).then(result => {
+                                params.total(result.data[0].count);
+                                $defer.resolve(result.data[0].data);
+
+                            }).catch(err => console.error(err));
+                        }
+                    });
                 this.expression[item.uniqueId] = {operation: this.JOIN_OPERATIONS.none};
                 this.items.push(item);
                 this.fileGroups.push(item.parent);

@@ -69,7 +69,14 @@ module odh.main {
                                 preview.parent = fg.id;
                                 preview.private = document.private;
                                 angular.forEach(preview.columns, (col) => {
-                                    preview.cols.push({name: col, alias: col, type: preview.types[col]});
+                                    preview.cols.push({
+                                        name: col,
+                                        alias: col,
+                                        type: preview.types[col],
+                                        title: col,
+                                        show: true,
+                                        field: col
+                                    });
                                 });
                             });
                         });

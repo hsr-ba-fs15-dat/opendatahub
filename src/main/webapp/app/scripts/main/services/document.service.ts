@@ -104,25 +104,33 @@ module odh.main {
             });
         }
 
-        public getPreview(filegroup:any, count:number = 3, name:string = '') {
+        public getPreview(filegroup:any, params:any, name:string = '') {
             var promise;
             var d = this.$q.defer();
             var url;
-            if (typeof filegroup.preview === 'string') {
+            if (name) {
+                params.name = name;
+            }
+            console.log(filegroup, typeof filegroup);
+            if (typeof filegroup === 'number') {
+                promise = this.Restangular.one('fileGroup', filegroup).get().then(fg => {
+                    promise = this.getPreview(fg, params).then(res => {
+                        d.resolve(res);
+                    }).catch(err => console.log(err));
+                });
+                return d.promise;
+            } else if (typeof filegroup.preview === 'string') {
                 url = filegroup.preview;
             } else {
                 url = filegroup.previewUrl;
             }
+
             this.$http({
                 url: url,
                 method: 'GET',
-                params: {
-                    count: count,
-                    name: name
-                }
+                params: params
             }).then(data => {
                 filegroup.preview = data.data;
-                filegroup.preview.count = count;
                 d.resolve(data);
             }).catch(e => d.reject(e));
             promise = d.promise;

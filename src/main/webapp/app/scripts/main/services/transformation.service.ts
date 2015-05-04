@@ -23,6 +23,7 @@ module odh.main {
         parent: string;
         name: string;
         uniqueIdAlias: string;
+        ngTableParams: any;
         'private': boolean;
         types: any[];
         cols: any[];

@@ -18,6 +18,7 @@
 /// <reference path='main/controllers/transformation.create.controller.ts' />
 /// <reference path='main/controllers/transformation.detail.controller.ts' />
 /// <reference path='main/directives/focus.ts' />
+/// <reference path='main/directives/preview.ts' />
 /// <reference path='main/directives/transformation.chooser.ts' />
 /// <reference path='main/directives/transformation.validation.ts' />
 /// <reference path='main/main.module.ts' />

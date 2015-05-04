@@ -30,6 +30,8 @@
             <div class="row" ng-repeat="preview in group.preview">
                 <div class="col-md-12">
                     <div class="table-responsive">
+                        <odh-preview table="preview" read-only="true" add-remove-field="angular.noop(col, table)"
+                                     get-fields="angular.noop(table)"></odh-preview>
                         <table class="table table-striped table-hover">
                             <thead>
                             <tr>
