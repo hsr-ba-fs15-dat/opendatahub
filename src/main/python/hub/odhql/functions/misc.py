@@ -6,8 +6,9 @@ Misc. functions/utils
 """
 
 import pandas as pd
+import numpy as np
 
-from hub.structures.frame import OdhType
+from hub.structures.frame import OdhType, OdhSeries
 from hub.odhql.functions.core import VectorizedFunction
 
 
@@ -95,3 +96,27 @@ class ToDate(VectorizedFunction):
         self.assert_str(0, values)
         with self.errorhandler('Unable to parse datetimes ({exception})'):
             return pd.to_datetime(values, format=format, infer_datetime_format=True, coerce=True)
+
+
+class Range(VectorizedFunction):
+    """
+    Liefert eine Sequenz von Ganzzahlen. Geeignet um beispielsweise künstliche IDs zu erstellen.
+
+    Parameter
+        - `start`: Erster Wert der Sequenz.
+        - `step`: Abstand zwischen den Ganzzahlen.
+
+    Beispiel
+        .. code:: sql
+
+            RANGE() AS id
+    """
+    name = 'RANGE'
+
+    def apply(self, start=1, step=1):
+        self.assert_value('start', start)
+        self.assert_value('step', step)
+        self.assert_int('start', start)
+        self.assert_int('step', step)
+        stop = (start + self.num_rows) * step
+        return OdhSeries(np.arange(start, stop, step))

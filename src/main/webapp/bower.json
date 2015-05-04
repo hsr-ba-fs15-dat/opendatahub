@@ -53,8 +53,7 @@
     "ace-builds": {
       "main": [
         "src-noconflict/ace.js",
-        "src-noconflict/mode-sql.js",
-        "src-noconflict/theme-twilight.js"
+        "src-noconflict/mode-sql.js"
       ]
     },
     "moment": {

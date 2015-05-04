@@ -20,8 +20,8 @@ from hub.odhql.exceptions import OdhQLExecutionException
 
 class OdhQLInterpreter(object):
 
-    FILE_GROUP_RE = re.compile('ODH([1-9]\d*)(_"?.+?"?)?', re.IGNORECASE)
-    TRANSFORMATION_RE = re.compile('TRF([1-9]\d*)', re.IGNORECASE)
+    FILE_GROUP_RE = re.compile(r'ODH([1-9]\d*)(_"?.+?"?)?', re.IGNORECASE)
+    TRANSFORMATION_RE = re.compile(r'TRF([1-9]\d*)', re.IGNORECASE)
 
     parser = parser.OdhQLParser()
 

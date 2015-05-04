@@ -90,7 +90,7 @@ class TestStringFunctions(TestInterpreterBase):
         self.assertListEqual(df.occurrences.tolist(), [n.count('i') for n in self.employees.Prename.tolist()])
 
     def test_substring(self):
-        df = self.execute('SELECT SUBSTRING(e.prename, 0, 2) as subs FROM employee AS e')
+        df = self.execute('SELECT SUBSTRING(e.prename, 1, 2) as subs FROM employee AS e')
         self.assertListEqual(df.subs.tolist(), [n[0:2] for n in self.employees.Prename.tolist()])
 
     def test_to_char(self):
@@ -164,6 +164,14 @@ class TestMiscFunctions(TestInterpreterBase):
 
     def test_nvl(self):
         self.execute('SELECT NVL(c.age, c.id) AS with_col, NVL(c.age, \'no age\') AS with_literal FROM child AS c')
+
+    def test_range(self):
+        df = self.execute('SELECT RANGE() AS id FROM child AS c')
+        self.assertListEqual(df.id.tolist(), range(1, len(df) + 1))
+
+    def test_range_step(self):
+        df = self.execute('SELECT RANGE(1, 2) AS id FROM child AS c')
+        self.assertListEqual(df.id.tolist(), range(1, 2 * len(df) + 1, 2))
 
     def test_fails(self):
         statements = (

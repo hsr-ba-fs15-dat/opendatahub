@@ -28,8 +28,10 @@ class FileGroupViewSet(viewsets.ModelViewSet, DataDownloadMixin):
 
     @detail_route()
     def file(self, request, pk, *args, **kwargs):
-        queryset = FileModel.objects.filter(file_group__id=pk)
-        serializer = FileSerializer(queryset, many=True, context={'request': request})
+        file = FileModel.objects.filter(file_group__id=pk)
+        self.check_object_permissions(request, file)
+
+        serializer = FileSerializer(file, many=True, context={'request': request})
         return Response(serializer.data)
 
     def format_object(self, model, format):
@@ -46,14 +48,13 @@ class FileGroupViewSet(viewsets.ModelViewSet, DataDownloadMixin):
     def preview_by_unique_name(self, request):
         name = request.GET.get('name', None)
         if name:
-            regex = '^({0}|{1})(?P<id>\\d+)_(?P<name>.*$)'.format(PACKAGE_PREFIX, TRANSFORMATION_PREFIX)
+            regex = r'^({0}|{1})(?P<id>\d+)_(?P<name>.*$)'.format(PACKAGE_PREFIX, TRANSFORMATION_PREFIX)
             m = re.search(regex, name)
-            fg_id = m.group('id')
-            name = m.group('name')
             if m:
-                print id, name
-                item = FileGroupModel.objects.get(id=fg_id)
-                return self.preview(request, item.id, name)
+                fg_id = m.group('id')
+                name = m.group('name')
+
+                return self.preview(request, fg_id, name)
         return JsonResponse({})
 
     @detail_route()
@@ -63,7 +64,7 @@ class FileGroupViewSet(viewsets.ModelViewSet, DataDownloadMixin):
         start = limit * (page - 1)
         name = name or request.GET.get('name', None)
 
-        model = FileGroupModel.objects.get(id=pk)
+        model = self.get_object()
         dfs = model.to_file_group().to_df()
 
         if name:

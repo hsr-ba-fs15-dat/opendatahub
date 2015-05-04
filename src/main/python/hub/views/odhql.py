@@ -11,6 +11,7 @@ from django.http.response import JsonResponse, HttpResponseBadRequest, HttpRespo
 from pyparsing import ParseException
 import docutils
 import docutils.core
+from django.views.decorators.cache import cache_page
 
 from hub.odhql import parser
 from hub.odhql.exceptions import OdhQLExecutionException
@@ -31,10 +32,8 @@ class ParseView(View):
             query = OdhQLParser().parse(statement)
             query = [q.data_sources[0] for q in query.queries] if \
                 isinstance(query, parser.Union) else query.data_sources
-            print type(query)
-            print query
+
             data_sources = {'tables': [{'name': table.name, 'alias': table.alias} for table in query]}
-            print data_sources
         except ParseException as e:
             return JsonResponse({'error': e.message,
                                  'type': 'parse',
@@ -61,7 +60,7 @@ class AdHocOdhQLView(View):
             page = int(request.GET.get('page', 1))
             start = limit * (page - 1)
 
-            df = TransformationUtil.interpret(statement)
+            df = TransformationUtil.interpret(statement, user_id=request.user.id)
 
         except OdhQLExecutionException as e:
             return JsonResponse({'error': e.message,
@@ -98,3 +97,8 @@ class DocumentationView(View):
             'html_body']
         html = html.replace('href="#', '<a du-smooth-scroll href="#')
         return HttpResponse(html)
+
+    @classmethod
+    def as_view(cls, **initkwargs):
+        # cache forever as it's impossible for it to change at runtime anyway
+        return cache_page(None)(super(DocumentationView, cls).as_view(**initkwargs))

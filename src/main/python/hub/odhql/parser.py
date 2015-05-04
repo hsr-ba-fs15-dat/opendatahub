@@ -116,7 +116,7 @@ class OdhQLParser(DocMixin):
     .. code:: sql
 
         SELECT NULL AS userid,                                                               -- Null-Ausdruck
-               SUBSTRING(NVL(EXTRACT(t.text, '\|([^|\.]+)'), 'no value'), 0, 100) AS title,  -- Funktions-Aufruf
+               SUBSTRING(NVL(EXTRACT(t.text, '\|([^|\.]+)'), 'no value'), 1, 100) AS title,  -- Funktions-Aufruf
                EXTRACT(t.text, '\|([^|]+)') AS description,
                CAST(CAST(t."df", 'bigint'), 'datetime') AS trob_start,
                CAST(CAST(t."dd", 'bigint'), 'datetime') AS trob_end,
@@ -163,7 +163,7 @@ class OdhQLParser(DocMixin):
 
             .. code:: sql
 
-                SUBSTRING(NVL(EXTRACT(t.text, '\|([^|\.]+)'), 'no value'), 0, 100) AS title
+                SUBSTRING(NVL(EXTRACT(t.text, '\|([^|\.]+)'), 'no value'), 1, 100) AS title
 
         Fallunterscheidung (Case-Ausdruck)
             Kann verwendet werden, um Werte zu übersetzen. Es muss mindestens eine Bedingung angegeben werden.
@@ -799,13 +799,6 @@ class BinaryCondition(ASTBase):
         right = tokens.get('right')
         op = tokens.get('operator')
 
-        v = FindClassVisitor(Field)
-        left.accept(v)
-        if not v.found:
-            right.accept(v)
-            if not v.found:
-                raise TokenException('illegal BinaryCondition: at least one side needs to reference a Field')
-
         return cls(left, op, right)
 
     @classmethod
@@ -1028,16 +1021,6 @@ class OrderBy(ASTBase):
 
     def __repr__(self):
         return '<OrderBy field={} direction={}>'.format(self.field, self.direction)
-
-
-class FindClassVisitor(object):
-    def __init__(self, target_class):
-        self.target = target_class
-        self.found = False
-
-    def visit(self, obj):
-        if isinstance(obj, self.target):
-            self.found = True
 
 
 class TokenException(Exception):
