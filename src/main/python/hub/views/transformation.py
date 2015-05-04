@@ -52,7 +52,7 @@ class TransformationViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet,
 
     def format_object(self, model, format):
         try:
-            df = TransformationUtil.df_for_transformation(model)
+            df = TransformationUtil.df_for_transformation(model, user_id=self.request.user.id)
         except:
             return JsonResponse({'error': 'File does not exist'}, status=HttpResponseNotFound.status_code)
 

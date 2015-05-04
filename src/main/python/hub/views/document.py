@@ -38,6 +38,8 @@ class DocumentViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet):
 
     @detail_route()
     def filegroup(self, request, pk, *args, **kwargs):
-        queryset = FileGroupModel.objects.filter(document__id=pk)
-        serializer = FileGroupSerializer(queryset, many=True, context={'request': request})
+        file_group = FileGroupModel.objects.filter(document__id=pk)
+        self.check_object_permissions(request, file_group)
+
+        serializer = FileGroupSerializer(file_group, many=True, context={'request': request})
         return Response(serializer.data)

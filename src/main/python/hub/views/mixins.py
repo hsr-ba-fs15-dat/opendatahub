@@ -32,7 +32,7 @@ class FilterablePackageListViewSet(mixins.ListModelMixin, viewsets.GenericViewSe
         if out:
             params.update(out)
 
-        packages = self.get_queryset().all()
+        packages = self.get_queryset().filter(Q(owner = request.user.id) | Q(private = False))
 
         for key, filter in params['filter'].iteritems():
             if key == 'name':
@@ -68,7 +68,7 @@ class DataDownloadMixin(viewsets.GenericViewSet):
         cache_key = (self.cache_prefix, 'data', pk, format_name)
         result_list = cache.L1.get(cache_key)
 
-        model = self.get_queryset().get(id=pk)
+        model = self.get_object()
 
         if not model:
             return JsonResponse({'error': 'Object does not exist'}, status=HttpResponseNotFound.status_code)

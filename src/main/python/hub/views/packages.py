@@ -1,6 +1,7 @@
 from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework.response import Response
 
+from django.db.models import Q
 from hub.models import PackageModel, DocumentModel, InheritanceQuerySet
 from hub.serializers import PackageSerializer, DocumentSerializer, TransformationSerializer
 from hub.views.mixins import FilterablePackageListViewSet
