@@ -86,7 +86,7 @@ class ToDate(VectorizedFunction):
     Beispiel
         .. code:: sql
 
-            TO_DATE(ODH5.baubeginn, '%d%m%Y') as baubeginn
+            TO_DATE(ODH5.baubeginn, '%d%m%Y') AS baubeginn
     """
     name = 'TO_DATE'
 
