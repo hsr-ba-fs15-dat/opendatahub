@@ -32,7 +32,7 @@ class FilterablePackageListViewSet(mixins.ListModelMixin, viewsets.GenericViewSe
         if out:
             params.update(out)
 
-        packages = self.get_queryset().filter(Q(owner = request.user.id) | Q(private = False))
+        packages = self.get_queryset().filter(Q(owner=request.user.id) | Q(private=False))
 
         for key, filter in params['filter'].iteritems():
             if key == 'name':
