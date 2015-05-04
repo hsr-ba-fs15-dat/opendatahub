@@ -354,7 +354,7 @@ class Pad(VectorizedFunction):
     Beispiel
         .. code:: sql
 
-            PAD(ODH4.name, 20, 'right) AS name
+            PAD(ODH4.name, 20, 'right') AS name
     """
     name = 'PAD'
 
@@ -453,7 +453,7 @@ class XPath(VectorizedFunction):
     Beispiel
         .. code:: sql
 
-         XPATH(t.description, '//tr[1]/td[2]/text()') AS abschnitt,
+         XPATH(t.description, '//tr[1]/td[2]/text()') AS abschnitt
     """
     name = 'XPATH'
 

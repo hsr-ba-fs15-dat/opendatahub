@@ -105,7 +105,7 @@ module openDataHub {
                     controller: 'DocumentDetailController as doc',
                     templateUrl: 'views/document.detail.html'
                 })
-                .state('transformation/help', {
+                .state('odhql-help', {
                     url: '/transformation/help',
                     templateUrl: 'views/odhql-help.html'
                 })
