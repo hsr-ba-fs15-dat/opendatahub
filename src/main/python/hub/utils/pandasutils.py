@@ -6,7 +6,7 @@
 class DataFrameUtils(object):
     @staticmethod
     def to_json_dict(df, id, start, count):
-        slice_ = df.iloc[start:start + count].as_safe_serializable().fillna('NULL')
+        slice_ = df.iloc[start:start + count].reset_index(drop=True).as_safe_serializable().fillna('NULL')
         return {
             'name': getattr(df, 'name', None),
             'unique_name': 'ODH{}_{}'.format(id, df.name) if id else None,
