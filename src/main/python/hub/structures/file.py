@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 """ Contains file structures used for the different converters/parsers.
 """
 

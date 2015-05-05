@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 from social.apps.django_app.default.models import UserSocialAuth

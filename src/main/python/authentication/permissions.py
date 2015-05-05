@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 from hub.models import DocumentModel, FileGroupModel, FileModel, TransformationModel

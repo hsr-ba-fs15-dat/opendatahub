@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 """
 
 """
@@ -5,6 +8,8 @@
 import unittest
 
 import os
+from opendatahub.utils import cache
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'opendatahub.settings')
 
 from authentication.models import UserProfile
@@ -14,6 +19,10 @@ from django.core.exceptions import ObjectDoesNotExist
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 TEMP_DIR = os.path.join(BASE_DIR, 'temp')
+
+cache.set = lambda *a, **k: None
+cache.get = lambda *a, **k: None
+cache.delete = lambda *a, **k: None
 
 
 class TestBase(unittest.TestCase):

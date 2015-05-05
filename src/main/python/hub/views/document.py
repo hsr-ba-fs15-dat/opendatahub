@@ -1,9 +1,13 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
+
 from rest_framework import viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 
-from django.http.response import HttpResponseNotFound
+from django.http.response import HttpResponseNotFound, JsonResponse, HttpResponseBadRequest
 from django.db import transaction
 from django.db.models import Q
 
@@ -12,6 +16,7 @@ from hub.models import DocumentModel, FileGroupModel
 from authentication.permissions import IsOwnerOrPublic, IsOwnerOrReadOnly
 from hub.utils.upload import UploadHandler
 from hub.views.mixins import FilterablePackageListViewSet
+from hub.parsers.base import NoParserException
 
 
 class DocumentViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet):
@@ -29,8 +34,12 @@ class DocumentViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet):
         if not ('name' in request.data and 'description' in request.data):
             raise ValidationError('Insufficient information')
 
-        with transaction.atomic():
-            doc = UploadHandler().handle_upload(request)
+        try:
+            with transaction.atomic():
+                doc = UploadHandler().handle_upload(request)
+        except NoParserException as e:
+            return JsonResponse({'error': e.message,
+                                 'type': e.__class__.__name__}, status=HttpResponseBadRequest.status_code)
 
         serializer = DocumentSerializer(DocumentModel.objects.get(id=doc.id), context={'request': request})
 
