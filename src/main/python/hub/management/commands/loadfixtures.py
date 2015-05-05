@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# coding=utf-8
 from __future__ import unicode_literals
 
 """
@@ -9,12 +9,12 @@ import logging
 
 from django.core.management.base import BaseCommand
 from django import db
+import codecs
 
 from hub.tests.testutils import TestBase
 from hub.models import DocumentModel, FileGroupModel, FileModel, UrlModel, TransformationModel
 from hub import formats
 from hub.structures.file import FileGroup
-import codecs
 from hub.utils.odhql import TransformationUtil
 
 logging.getLogger('django.db.backends').setLevel(logging.WARN)
@@ -54,7 +54,8 @@ class Command(BaseCommand):
         ('trobdb/tiefbaustelle-zh.odhql', 'TROBDB: Tiefbaustellen ZH (aus GeoJSON)', 10),
         ('trobdb/TruckInfo.odhql', 'TROBDB: TruckInfo', 11),
         ('trobdb/WFS-Baustellen-ZH.odhql', 'TROBDB: Baustellen Zürich (WFS)', 18),
-        ('trobdb/Sanitize-Baustellen-kml.odhql', 'Sanitize Baustellen.kml', 12)
+        ('trobdb/Sanitize-Baustellen-kml.odhql', 'Sanitize Baustellen.kml', 12),
+        ('trobdb/Baustellen-kml.odhql', 'TROBDB: Baustellen.kml', None)
     ]
 
     def add_document(self, desc, format, name):
@@ -91,15 +92,17 @@ class Command(BaseCommand):
                              refresh_after=3600)
         url_model.save()
 
-    def add_transformation(self, file, name, group, desc=None):
+    def add_transformation(self, file, name, group=None, desc=None):
 
         with codecs.open(file, 'r', 'utf-8') as f:
             transformation = TransformationModel(name=name, description=desc or name, transformation=f.read(),
                                                  owner=self.user)
             transformation.save()
 
-            transformation.file_groups = FileGroupModel.objects.filter(id=group)
-            transformation.save()
+            if group:
+                transformation.file_groups = FileGroupModel.objects.filter(id=group)
+                transformation.save()
+
             TransformationUtil.df_for_transformation(transformation, self.user.id)
 
     def handle(self, *args, **options):
