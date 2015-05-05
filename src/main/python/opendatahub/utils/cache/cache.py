@@ -1,14 +1,47 @@
-from threading import Thread
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
+from threading import Thread, Condition
+import logging
 
 from django.core.cache import cache as default_cache, caches
 from django.db import connections, router
-
 from django.core.cache.backends.base import DEFAULT_TIMEOUT
-
 import types
 
 
+logger = logging.getLogger(__name__)
+
+
+class AsyncCachingThread(Thread):
+    _threads = []
+    _condition = Condition()
+
+    def __init__(self, *args, **kwargs):
+        self._threads.append(self)
+        super(AsyncCachingThread, self).__init__(*args, **kwargs)
+
+    def run(self):
+        try:
+            super(AsyncCachingThread, self).run()
+        except:
+            logger.error('Error while asynchronously trying to cache object', exc_info=True)
+        finally:
+            self._threads.remove(self)
+            if not self._threads:
+                with self._condition:
+                    self._condition.notifyAll()
+
+    @classmethod
+    def wait(cls, timeout=None):
+        with cls._condition:
+            while cls._threads:
+                cls._condition.wait(timeout=timeout)
+
+
 class CacheWrapper(object):
+    _threads = []
+
     def __init__(self, django_cache):
         self._cache = django_cache
 
@@ -34,7 +67,6 @@ class CacheWrapper(object):
 
 
 class LocalCacheWrapper(CacheWrapper):
-
     def delete(self, key, version=None, cascade=True):
         key = self._cache.make_key(self.make_key(key))
         if cascade:
@@ -45,10 +77,10 @@ class LocalCacheWrapper(CacheWrapper):
 
 
 class DatabaseCacheWrapper(CacheWrapper):
-
     def set(self, key, value, version=None, timeout=DEFAULT_TIMEOUT):
         key = self.make_key(key)
-        Thread(target=super(DatabaseCacheWrapper, self).set, args=(key, value), kwargs={'version': version}).start()
+        AsyncCachingThread(target=super(DatabaseCacheWrapper, self).set, args=(key, value),
+                           kwargs={'version': version}).start()
 
     def delete(self, key, version=None, cascade=True):
         key = self._cache.make_key(self.make_key(key))

@@ -12,6 +12,8 @@ from hub.tests.testutils import TestBase
 from hub.models import DocumentModel, FileGroupModel, FileModel, UrlModel, TransformationModel
 from hub import formats
 from hub.structures.file import FileGroup
+import codecs
+from hub.utils.odhql import TransformationUtil
 
 logging.getLogger('django.db.backends').setLevel(logging.WARN)
 
@@ -70,10 +72,11 @@ class Command(BaseCommand):
 
         file_group = FileGroupModel(document=doc)
         file_group.save()
-
         for f in fg:
             file_model = FileModel(file_name=f.name, data=f.stream.getvalue(), file_group=file_group)
             file_model.save()
+
+        file_group.to_file_group().to_df()  # force parse & caching
 
         db.reset_queries()
 
@@ -88,7 +91,8 @@ class Command(BaseCommand):
         url_model.save()
 
     def add_transformation(self, file, name, group=None, desc=None):
-        with open(file, 'r') as f:
+
+        with codecs.open(file, 'r', 'utf-8') as f:
             transformation = TransformationModel(name=name, description=desc or name, transformation=f.read(),
                                                  owner=self.user)
             transformation.save()
@@ -96,6 +100,8 @@ class Command(BaseCommand):
             if group:
                 transformation.file_groups = FileGroupModel.objects.filter(id=group)
                 transformation.save()
+            
+            TransformationUtil.df_for_transformation(transformation, self.user.id)
 
     def handle(self, *args, **options):
         self.user = TestBase.get_test_user()
@@ -112,8 +118,8 @@ class Command(BaseCommand):
         for (file, name, group) in self.TRANSFORMATIONS:
             self.add_transformation(TestBase.get_test_file_path(file), name, group)
 
-        self.add_multiple(FileGroup.from_files(TestBase.get_test_file_path('perf/employees.csv')), formats.CSV, 10)
-        self.add_multiple(FileGroup.from_files(TestBase.get_test_file_path('mockaroo.com.json')), formats.JSON, 500)
+        # self.add_multiple(FileGroup.from_files(TestBase.get_test_file_path('perf/employees.csv')), formats.CSV, 5)
+        self.add_multiple(FileGroup.from_files(TestBase.get_test_file_path('mockaroo.com.json')), formats.JSON, 10)
 
     def add_multiple(self, fg, format, n=100):
         for i in xrange(n):

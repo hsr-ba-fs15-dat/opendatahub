@@ -1,7 +1,9 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 import os
 from opendatahub.settings import PRODUCTION
 
-__author__ = 'remoliebi'
 FACEBOOK_SECRET = os.environ.get('FACEBOOK_SECRET') or 'Facebook Client Secret'
 GITHUB_SECRET = os.environ.get('GITHUB_SECRET') or 'GitHub Client Secret'
 FOURSQUARE_SECRET = os.environ.get('FOURSQUARE_SECRET') or 'Foursquare Client Secret'

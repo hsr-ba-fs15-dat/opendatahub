@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 import itertools
 
 from django.db.models import Q
@@ -54,7 +57,7 @@ class TransformationUtil(object):
             if model is None:
                 model = TransformationModel.objects.get(id=id)
                 if model.private and (not user_id or model.owner != user_id):
-                    raise OdhQLExecutionException("Fehlende Berechtigung")
+                    raise OdhQLExecutionException('Fehlende Berechtigung')
             df = TransformationUtil.interpret(model.transformation)
             df.name = slugify(unicode(model.name))
 

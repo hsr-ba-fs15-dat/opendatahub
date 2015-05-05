@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 
 
 import logging
@@ -56,6 +57,7 @@ class TestInterpreterBase(TestBase):
         cls.employees = None
         cls.children = None
         cls.source_dfs = None
+        super(TestInterpreterBase, cls).tearDownClass()
 
     @classmethod
     def get_source_dfs(cls):

@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 """
 
 """
@@ -5,6 +8,8 @@
 import unittest
 
 import os
+from opendatahub.utils import cache
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'opendatahub.settings')
 
 from authentication.models import UserProfile
@@ -24,6 +29,12 @@ class TestBase(unittest.TestCase):
     username = 'testuser'
     email = username + '@opendatahub.ch'
     password = 'secret'
+
+    @classmethod
+    def setUpClass(cls):
+        cache.set = lambda *a, **k: None
+        cache.get = lambda *a, **k: None
+        cache.delete = lambda *a, **k: None
 
     @classmethod
     def get_test_user(cls):

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 """
 Base/infrastructure classes for formats and basic/builtin formats
 """
-
-from __future__ import unicode_literals
 
 from opendatahub.utils.plugins import RegistrationMixin
 

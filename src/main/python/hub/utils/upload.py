@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 import urlparse
 import collections
 
@@ -18,13 +21,17 @@ class UploadHandler(object):
         doc.save()
 
         if 'url' in request.data:
-            UrlHandler().handle_url_upload(request, doc)
+            file_groups = UrlHandler().handle_url_upload(request, doc)
 
         elif 'file' in request.data:
-            FileHandler().handle_file_upload(request, doc)
+            file_groups = FileHandler().handle_file_upload(request, doc)
 
         else:
             raise RuntimeError('No data source specified')
+
+        for fg in file_groups:
+            # enforce that everything must be parseable and is cached
+            fg.to_file_group().to_df()
 
         return doc
 
@@ -41,14 +48,18 @@ class FileHandler(object):
             name = os.path.splitext(file.name)[0]
             groups[name].append(file)
 
+        file_groups = []
         for group in groups.itervalues():
             file_group = FileGroupModel(document=document)
             file_group.save()
+            file_groups.append(file_group)
 
             for file in group:
                 file_model = FileModel(file_name=file.name, data=file.read(), file_group=file_group,
                                        format=fmt.name if fmt is not None else None)
                 file_model.save()
+
+        return file_groups
 
 
 class UrlHandler(object):
@@ -76,6 +87,8 @@ class UrlHandler(object):
 
         url_model = UrlModel(source_url=url, refresh_after=refresh, type=type, file_group=file_group, format=format)
         url_model.save()
+
+        return [file_group]
 
     def check_wfs(self, url):
         (scheme, host, path, _, _, _) = urlparse.urlparse(url)
