@@ -25,10 +25,14 @@ logger = logging.getLogger(__name__)
 
 
 class ParseView(View):
-    def get(self, request):
+    def post(self, request):
         try:
-            statement = request.GET['query']
+            body = json.loads(request.body, encoding=request.encoding)
+            params = body['params']
+
+            statement = params['query']
             logger.debug('Validating ODHQL query "%s"', statement)
+
             query = OdhQLParser().parse(statement)
             query = [q.data_sources[0] for q in query.queries] if \
                 isinstance(query, parser.Union) else query.data_sources
@@ -53,11 +57,15 @@ class ParseView(View):
 
 
 class AdHocOdhQLView(View):
-    def get(self, request):
+    def post(self, request):
         try:
-            statement = request.GET['query']
-            limit = int(request.GET.get('count', 3))
-            page = int(request.GET.get('page', 1))
+            body = json.loads(request.body, encoding=request.encoding)
+            params = body['params']
+
+            statement = params['query']
+            limit = params.get('count', 3)
+            page = params.get('page', 1)
+
             start = limit * (page - 1)
 
             df = TransformationUtil.interpret(statement, user_id=request.user.id)

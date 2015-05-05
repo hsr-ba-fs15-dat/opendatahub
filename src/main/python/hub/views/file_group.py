@@ -16,6 +16,7 @@ from authentication.permissions import IsOwnerOrPublic
 from hub.utils.pandasutils import DataFrameUtils
 from opendatahub.settings import PACKAGE_PREFIX, TRANSFORMATION_PREFIX
 from hub.views.mixins import DataDownloadMixin
+from opendatahub import settings
 
 
 logger = logging.getLogger(__name__)
@@ -27,7 +28,7 @@ class FileGroupViewSet(viewsets.ModelViewSet, DataDownloadMixin):
 
     permission_classes = IsOwnerOrPublic,
 
-    cache_prefix = 'file_group'
+    cache_prefix = settings.TRANSFORMATION_PREFIX
 
     @detail_route()
     def file(self, request, pk, *args, **kwargs):
@@ -40,8 +41,10 @@ class FileGroupViewSet(viewsets.ModelViewSet, DataDownloadMixin):
     def format_object(self, model, format):
         group = model.to_file_group()
 
-        result_list = group.to_format(format)
-
+        if format:
+            result_list = group.to_format(format)
+        else:
+            result_list = [group]
         return result_list
 
     def get_name(self, model):

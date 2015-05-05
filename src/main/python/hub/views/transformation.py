@@ -2,7 +2,6 @@
 from __future__ import unicode_literals
 
 from rest_framework import viewsets
-
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
@@ -12,13 +11,14 @@ from django.http import HttpResponseNotFound, HttpResponseServerError
 from django.utils.text import slugify
 
 from hub.serializers import FileGroupSerializer, TransformationSerializer
-
 from hub.models import FileGroupModel, TransformationModel
 from authentication.permissions import IsOwnerOrPublic, IsOwnerOrReadOnly
 from hub.views.mixins import FilterablePackageListViewSet, DataDownloadMixin
 from hub.utils.odhql import TransformationUtil
 from hub import formatters
-from hub.formats import Format
+from hub.formats import CSV
+from opendatahub.utils.cache import cache
+from opendatahub import settings
 
 
 class TransformationViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet, DataDownloadMixin):
@@ -28,7 +28,7 @@ class TransformationViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet,
     paginate_by = 20
     permission_classes = IsOwnerOrPublic, IsOwnerOrReadOnly,
 
-    cache_prefix = 'transformation'
+    cache_prefix = settings.TRANSFORMATION_PREFIX
 
     def create(self, request, *args, **kwargs):
         """
@@ -53,6 +53,12 @@ class TransformationViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet,
 
         return Response(serializer.data)
 
+    def update(self, request, *args, **kwargs):
+        id = self.get_object().id
+        cache.delete((settings.TRANSFORMATION_PREFIX, id))
+
+        return super(TransformationViewSet, self).update(request, *args, **kwargs)
+
     def format_object(self, model, format):
         try:
             df = TransformationUtil.df_for_transformation(model, user_id=self.request.user.id)
@@ -64,7 +70,7 @@ class TransformationViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet,
                                 status=HttpResponseServerError.status_code)
 
         result_list = formatters.Formatter.format([df], slugify(unicode(model.name)),
-                                                  Format.from_string(format))
+                                                  format or CSV)
 
         return result_list
 

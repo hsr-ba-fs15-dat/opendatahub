@@ -21,7 +21,7 @@ module odh.main {
         public downloadAs(group, formatName) {
             this.$log.debug('Triggered download of ', group, 'as', formatName);
             group.canDownload(formatName).then(() => {
-                this.$window.location.href = group.data + '?fmt=' + formatName;
+                this.$window.location.href = group.data + ( formatName ? '?fmt=' + formatName : '');
             }).catch(() => {
                 this.ToastService.failure('Die Datei konnte nicht ins gewünschte Format konvertiert werden.');
             });
@@ -29,7 +29,9 @@ module odh.main {
 
         private retrieveData() {
             this.FormatService.getAvailableFormats().then(data => {
-                this.availableFormats = this.FormatService.sortByLabel(data.data);
+                var results = this.FormatService.sortByLabel(data.data);
+                results.push({name: null, label: 'Original', description: 'Unveränderte Daten', example: null});
+                this.availableFormats = results;
             });
 
             if (typeof(this.documentId) !== 'undefined') {

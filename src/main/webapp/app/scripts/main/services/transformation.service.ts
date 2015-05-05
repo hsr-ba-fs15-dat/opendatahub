@@ -116,7 +116,7 @@ module odh.main {
         }
 
         public preview(transformation:string) {
-            return this.$http.get(this.UrlService.get('odhql'), {
+            return this.$http.post(this.UrlService.get('odhql'), {
                 params: {
                     query: transformation
                 }
@@ -126,7 +126,7 @@ module odh.main {
         }
 
         public parse(transformation:string) {
-            return this.$http.get(this.UrlService.get('parse'), {
+            return this.$http.post(this.UrlService.get('parse'), {
                 params: {
                     query: transformation
                 }

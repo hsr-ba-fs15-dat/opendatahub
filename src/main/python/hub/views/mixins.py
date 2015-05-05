@@ -66,9 +66,9 @@ class DataDownloadMixin(viewsets.GenericViewSet):
 
     @detail_route()
     def data(self, request, pk, *args, **kwargs):
-        format_name = request.query_params.get('fmt', 'CSV')
+        format_name = request.query_params.get('fmt', None)
 
-        cache_key = (self.cache_prefix, 'data', pk, format_name)
+        cache_key = self.get_cache_key(pk, format_name)
         result_list = cache.L1.get(cache_key)
 
         model = self.get_object()
@@ -77,7 +77,7 @@ class DataDownloadMixin(viewsets.GenericViewSet):
             return JsonResponse({'error': 'Object does not exist'}, status=HttpResponseNotFound.status_code)
 
         if not result_list:
-            result_list = self.format_object(model, Format.from_string(format_name))
+            result_list = self.format_object(model, Format.from_string(format_name) if format_name else None)
 
         if not result_list:
             return JsonResponse({'error': 'Conversion failed', 'type': 'formatter'},
@@ -108,6 +108,11 @@ class DataDownloadMixin(viewsets.GenericViewSet):
         response.flush()
 
         return response
+
+    def get_cache_key(self, pk, format_name=None):
+        if format_name:
+            return (self.cache_prefix, pk, 'data')
+        return (self.cache_prefix, pk, 'data', format_name)
 
     def format_object(self, model, format):
         pass
