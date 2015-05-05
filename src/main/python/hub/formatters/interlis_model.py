@@ -95,7 +95,7 @@ class Table(object):
 
         for name in self.df.columns:
             type = self.df[name].odh_type
-            if type is OdhType.TEXT:
+            if type == OdhType.TEXT:
                 max_length = self.df[name].str.len().max() if self.df[name].any() else 0
 
                 fields.append((name, "TEXT*{}".format(max_length)))
@@ -112,11 +112,11 @@ class Table(object):
                 max = next_nines(max) if max and max > 0 else 0
 
                 fields.append((name, "[{} .. {}]".format(min, max)))
-            elif type is OdhType.DATETIME:
+            elif type == OdhType.DATETIME:
                 fields.append((name, "DATE"))  # actually, this can't include time in interlis. oh well.
             else:
                 first_valid = self.df[name].first_valid_index()
-                if type is OdhType.GEOMETRY and first_valid is not None:
+                if type == OdhType.GEOMETRY and first_valid is not None:
                     import shapely.geometry as shp
 
                     value = self.df[name][first_valid]
