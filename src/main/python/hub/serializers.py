@@ -76,7 +76,7 @@ class FormatSerializer(serializers.Serializer):
 
 
 class TransformationSerializer(serializers.HyperlinkedModelSerializer):
-    file_groups = FileGroupSerializer(many=True)
+    file_groups = FileGroupSerializer(many=True, read_only=True)
     owner = UserSerializer(read_only=True)
 
     class Meta(object):
