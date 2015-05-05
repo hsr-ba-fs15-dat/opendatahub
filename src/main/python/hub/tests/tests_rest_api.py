@@ -1,13 +1,15 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 import json
 
 from rest_framework.test import APIClient
 from django.core.files.uploadedfile import SimpleUploadedFile
 
-from . import testutils
+from hub.tests.testutils import TestBase
 
 
-class RestApiTests(testutils.TestBase):
-
+class RestApiTests(TestBase):
     def setUp(self):
         self.user = self.get_test_user()
 

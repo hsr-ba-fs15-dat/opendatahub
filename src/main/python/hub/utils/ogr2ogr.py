@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 """
 ogr2ogr (GDAL) command line interface wrapper
 Requires ogr2ogr to be installed (e.g. sudo apt-get install gdal-bin)

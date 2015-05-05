@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 """
 Core OdhQL interpreter. Meant to be compact and fast. All extended functionality (i.e. functions) are implemented
 separately.
