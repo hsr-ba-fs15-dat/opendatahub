@@ -2,9 +2,7 @@ from django.utils.text import slugify
 
 from hub.models import TransformationModel, DocumentModel
 from hub.utils.odhql import TransformationUtil
-from hub.structures.frame import *
-
-from pandas import isnull
+from hub.structures.frame import OdhType
 
 
 class InterlisOneUtil(object):
