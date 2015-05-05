@@ -53,10 +53,10 @@ class TransformationUtil(object):
         if df is None:
             if model is None:
                 model = TransformationModel.objects.get(id=id)
-                if not user_id and model.private or model.owner != user_id:
+                if model.private and (not user_id or model.owner != user_id):
                     raise OdhQLExecutionException("Fehlende Berechtigung")
             df = TransformationUtil.interpret(model.transformation)
-            df.name = slugify(unicode(tf.name))
+            df.name = slugify(unicode(model.name))
 
             cache.set(cache_key, df)
 
