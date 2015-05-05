@@ -1,7 +1,9 @@
 import zipfile
+import json
+
+import re
 
 from django.db.models import Q
-import re
 from rest_framework import mixins, viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
@@ -116,3 +118,34 @@ class DataDownloadMixin(viewsets.GenericViewSet):
 
     def get_name(self, model):
         pass
+
+
+class PreviewMixin(viewsets.GenericViewSet):
+
+    @detail_route()
+    def preview(self, request, pk=None, name=None):
+        count = int(request.GET.get('count', 3))
+        page = int(request.GET.get('page', 1))
+        start = count * (page - 1)
+
+        dfs = self.get_dfs(pk, request)
+        data = []
+        for df in dfs:
+            slice_ = df.iloc[start:start + count].reset_index(drop=True).as_safe_serializable().fillna('NULL')
+            data = [{
+                        'name': getattr(df, 'name', None),
+                        'unique_name': self.get_unique_name(pk, df.name),
+                        'columns': slice_.columns.tolist(),
+                        'types': {c: s.odh_type.name for c, s in df.iteritems()},
+                        'data': slice_.to_dict(orient='records'),
+                        'count': len(df),
+                        'parent': pk
+                    }]
+
+        return JsonResponse(data, encoder=json.JSONEncoder, safe=False)
+
+    def get_unique_name(self, pk, df_name):
+        pass
+
+    def get_dfs(self, pk, request):
+        return []

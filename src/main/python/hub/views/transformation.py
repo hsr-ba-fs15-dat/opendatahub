@@ -1,16 +1,21 @@
+import json
+
 from rest_framework import viewsets
-from rest_framework.decorators import detail_route
+from rest_framework.decorators import detail_route, list_route
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from django.db import transaction
 from django.http.response import JsonResponse
-from django.http import HttpResponseNotFound, HttpResponseServerError
+from django.http import HttpResponseNotFound, HttpResponseServerError, HttpResponseBadRequest
 from django.utils.text import slugify
+from pyparsing import ParseException
+
+from hub.odhql.exceptions import OdhQLExecutionException
 
 from hub.serializers import FileGroupSerializer, TransformationSerializer
 from hub.models import FileGroupModel, TransformationModel
 from authentication.permissions import IsOwnerOrPublic, IsOwnerOrReadOnly
-from hub.views.mixins import FilterablePackageListViewSet, DataDownloadMixin
+from hub.views.mixins import FilterablePackageListViewSet, DataDownloadMixin, PreviewMixin
 from hub.utils.odhql import TransformationUtil
 from hub import formatters
 from hub.formats import CSV
@@ -18,7 +23,7 @@ from opendatahub.utils.cache import cache
 from opendatahub import settings
 
 
-class TransformationViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet, DataDownloadMixin):
+class TransformationViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet, DataDownloadMixin, PreviewMixin):
     queryset = TransformationModel.objects.all()
     serializer_class = TransformationSerializer
     paginate_by_param = 'count'
@@ -79,3 +84,37 @@ class TransformationViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet,
         queryset = FileGroupModel.objects.filter(document__id=pk)
         serializer = FileGroupSerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data)
+
+    def get_dfs(self, pk, request):
+        if pk is not None:
+            return [TransformationUtil.df_for_transformation(self.get_object())]
+        else:
+            body = json.loads(request.body, encoding=request.encoding)
+            params = body['params']
+
+            statement = params['query']
+            return [TransformationUtil.interpret(statement, user_id=request.user.id)]
+
+    def get_unique_name(self, pk, df_name):
+        return 'TRF{}'.format(pk) if pk else None
+
+    @list_route(methods={'post'})
+    def adhoc(self, request):
+        try:
+
+            return self.preview(request)
+
+        except OdhQLExecutionException as e:
+            return JsonResponse({'error': e.message,
+                                 'type': 'execution'},
+                                status=HttpResponseBadRequest.status_code
+                                )
+        except ParseException as e:
+            return JsonResponse({'error': e.message,
+                                 'type': 'parse',
+                                 'line': e.line,
+                                 'lineno': e.lineno,
+                                 'col': e.col},
+                                status=HttpResponseBadRequest.status_code
+                                )
+

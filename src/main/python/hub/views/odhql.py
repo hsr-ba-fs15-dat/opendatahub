@@ -14,9 +14,6 @@ import docutils.core
 from django.views.decorators.cache import cache_page
 
 from hub.odhql import parser
-from hub.odhql.exceptions import OdhQLExecutionException
-from hub.utils.pandasutils import DataFrameUtils
-from hub.utils.odhql import TransformationUtil
 from hub.odhql.parser import OdhQLParser
 from hub.odhql.functions.core import OdhQLFunction
 
@@ -54,38 +51,6 @@ class ParseView(View):
                                 )
 
         return JsonResponse(data_sources)
-
-
-class AdHocOdhQLView(View):
-    def post(self, request):
-        try:
-            body = json.loads(request.body, encoding=request.encoding)
-            params = body['params']
-
-            statement = params['query']
-            limit = params.get('count', 3)
-            page = params.get('page', 1)
-
-            start = limit * (page - 1)
-
-            df = TransformationUtil.interpret(statement, user_id=request.user.id)
-
-        except OdhQLExecutionException as e:
-            return JsonResponse({'error': e.message,
-                                 'type': 'execution'},
-                                status=HttpResponseBadRequest.status_code
-                                )
-        except ParseException as e:
-            return JsonResponse({'error': e.message,
-                                 'type': 'parse',
-                                 'line': e.line,
-                                 'lineno': e.lineno,
-                                 'col': e.col},
-                                status=HttpResponseBadRequest.status_code
-                                )
-
-        data = DataFrameUtils.to_json_dict(df, None, start, limit)
-        return JsonResponse(data, encoder=json.JSONEncoder)
 
 
 class DocumentationView(View):

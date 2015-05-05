@@ -1,5 +1,4 @@
 import logging
-import json
 
 import re
 from rest_framework import viewsets
@@ -10,16 +9,15 @@ from django.http.response import JsonResponse
 from hub.models import FileGroupModel, FileModel
 from hub.serializers import FileGroupSerializer, FileSerializer
 from authentication.permissions import IsOwnerOrPublic
-from hub.utils.pandasutils import DataFrameUtils
 from opendatahub.settings import PACKAGE_PREFIX, TRANSFORMATION_PREFIX
-from hub.views.mixins import DataDownloadMixin
+from hub.views.mixins import DataDownloadMixin, PreviewMixin
 from opendatahub import settings
 
 
 logger = logging.getLogger(__name__)
 
 
-class FileGroupViewSet(viewsets.ModelViewSet, DataDownloadMixin):
+class FileGroupViewSet(viewsets.ModelViewSet, DataDownloadMixin, PreviewMixin):
     queryset = FileGroupModel.objects.all()
     serializer_class = FileGroupSerializer
 
@@ -60,18 +58,15 @@ class FileGroupViewSet(viewsets.ModelViewSet, DataDownloadMixin):
                 return self.preview(request, fg_id, name)
         return JsonResponse({})
 
-    @detail_route()
-    def preview(self, request, pk, name=None):
-        limit = int(request.GET.get('count', 3))
-        page = int(request.GET.get('page', 1))
-        start = limit * (page - 1)
-        name = name or request.GET.get('name', None)
-
+    def get_dfs(self, pk, request):
         model = self.get_object()
         dfs = model.to_file_group().to_df()
 
+        name = request.GET.get('name', None)
         if name:
             dfs = [df for df in dfs if df.name == name]
 
-        data = [DataFrameUtils.to_json_dict(df, model.id, start, limit) for df in dfs]
-        return JsonResponse(data, encoder=json.JSONEncoder, safe=False)
+        return dfs
+
+    def get_unique_name(self, pk, df_name):
+        return 'ODH{}_{}'.format(pk, df_name)
