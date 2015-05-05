@@ -171,7 +171,7 @@ module odh.main {
             });
             instance.result.then(() => {
                     this.TransformationService.remove({id: this.transformationId}).then(() =>
-                            this.$state.go('transformation.list')
+                            this.$state.go('packages')
                     ).catch((err) =>
                             this.ToastService.failure('Beim Löschen der Transformation ist ein Fehler aufgetreten.')
                     );
