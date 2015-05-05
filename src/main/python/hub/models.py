@@ -100,6 +100,12 @@ class TransformationModel(PackageModel):
 
 
 class InheritanceQuerySet(QuerySet):
+    """
+    Simplifies querying of package model above by automatically casting the models into their respective child classes.
+    This is done using select_related in order to avoid n+1-query situations.
+
+    Shamelessly lifted from http://jeffelmore.org/2010/11/11/automatic-downcasting-of-inherited-models-in-django/
+    """
     subclasses = list()
 
     def select_subclasses(self, *subclasses):
