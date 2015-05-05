@@ -20,10 +20,6 @@ from django.core.exceptions import ObjectDoesNotExist
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 TEMP_DIR = os.path.join(BASE_DIR, 'temp')
 
-cache.set = lambda *a, **k: None
-cache.get = lambda *a, **k: None
-cache.delete = lambda *a, **k: None
-
 
 class TestBase(unittest.TestCase):
     """
@@ -33,6 +29,12 @@ class TestBase(unittest.TestCase):
     username = 'testuser'
     email = username + '@opendatahub.ch'
     password = 'secret'
+
+    @classmethod
+    def setUpClass(cls):
+        cache.set = lambda *a, **k: None
+        cache.get = lambda *a, **k: None
+        cache.delete = lambda *a, **k: None
 
     @classmethod
     def get_test_user(cls):
