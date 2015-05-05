@@ -7,12 +7,12 @@ import logging
 
 from django.core.management.base import BaseCommand
 from django import db
+import codecs
 
 from hub.tests.testutils import TestBase
 from hub.models import DocumentModel, FileGroupModel, FileModel, UrlModel, TransformationModel
 from hub import formats
 from hub.structures.file import FileGroup
-import codecs
 from hub.utils.odhql import TransformationUtil
 
 logging.getLogger('django.db.backends').setLevel(logging.WARN)
@@ -100,7 +100,7 @@ class Command(BaseCommand):
             if group:
                 transformation.file_groups = FileGroupModel.objects.filter(id=group)
                 transformation.save()
-            
+
             TransformationUtil.df_for_transformation(transformation, self.user.id)
 
     def handle(self, *args, **options):
