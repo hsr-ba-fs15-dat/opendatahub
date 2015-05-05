@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from rest_framework import serializers
+from rest_framework.reverse import reverse
 
 from authentication.serializers import UserSerializer
 from hub.models import PackageModel, DocumentModel, FileGroupModel, FileModel, TransformationModel, UrlModel
@@ -11,10 +12,11 @@ class PackageSerializer(serializers.HyperlinkedModelSerializer):
     owner = UserSerializer(read_only=True)
 
     type = serializers.SerializerMethodField()
+    preview = serializers.SerializerMethodField()
 
     class Meta(object):
         model = PackageModel
-        fields = ('id', 'url', 'name', 'description', 'private', 'owner', 'created_at', 'type')
+        fields = ('id', 'url', 'name', 'description', 'private', 'owner', 'created_at', 'type', 'preview')
 
     def get_type(self, obj):
         if isinstance(obj, DocumentModel):
@@ -22,6 +24,13 @@ class PackageSerializer(serializers.HyperlinkedModelSerializer):
         elif isinstance(obj, TransformationModel):
             return 'transformation'
         return 'unknown'
+
+    def get_preview(self, obj):
+        request = self.context.get('request', None)
+        format = self.context.get('format', None)
+
+        return reverse('{}model-preview'.format(self.get_type(obj)), kwargs={'pk': obj.id}, request=request,
+                       format=format)
 
 
 class DocumentSerializer(serializers.HyperlinkedModelSerializer):

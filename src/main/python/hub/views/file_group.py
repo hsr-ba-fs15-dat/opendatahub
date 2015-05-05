@@ -61,15 +61,12 @@ class FileGroupViewSet(viewsets.ModelViewSet, DataDownloadMixin, PreviewMixin):
                 return self.preview(request, fg_id, name)
         return JsonResponse({})
 
-    def get_dfs(self, pk, request):
+    def get_dfs_for_preview(self, pk, request):
         model = self.get_object()
-        dfs = model.to_file_group().to_df()
+        dfs = [('ODH{}_{}'.format(pk, df.name), df) for df in model.to_file_group().to_df()]
 
         name = request.GET.get('name', None)
         if name:
-            dfs = [df for df in dfs if df.name == name]
+            dfs = [(unique_name, df) for (unique_name, df) in dfs if df.name == name]
 
         return dfs
-
-    def get_unique_name(self, pk, df_name):
-        return 'ODH{}_{}'.format(pk, df_name)

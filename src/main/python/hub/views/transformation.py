@@ -10,11 +10,11 @@ from rest_framework.exceptions import ValidationError
 from django.db import transaction
 from django.http.response import JsonResponse
 from django.http import HttpResponseNotFound, HttpResponseServerError, HttpResponseBadRequest
+
 from django.utils.text import slugify
 from pyparsing import ParseException
 
 from hub.odhql.exceptions import OdhQLExecutionException
-
 from hub.serializers import FileGroupSerializer, TransformationSerializer
 from hub.models import FileGroupModel, TransformationModel
 from authentication.permissions import IsOwnerOrPublic, IsOwnerOrReadOnly
@@ -88,18 +88,15 @@ class TransformationViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet,
         serializer = FileGroupSerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data)
 
-    def get_dfs(self, pk, request):
+    def get_dfs_for_preview(self, pk, request):
         if pk is not None:
-            return [TransformationUtil.df_for_transformation(self.get_object())]
+            return [('TRF{}'.format(pk), TransformationUtil.df_for_transformation(self.get_object()))]
         else:
             body = json.loads(request.body, encoding=request.encoding)
             params = body['params']
 
             statement = params['query']
-            return [TransformationUtil.interpret(statement, user_id=request.user.id)]
-
-    def get_unique_name(self, pk, df_name):
-        return 'TRF{}'.format(pk) if pk else None
+            return [(None, TransformationUtil.interpret(statement, user_id=request.user.id))]
 
     @list_route(methods={'post'})
     def adhoc(self, request):
@@ -120,4 +117,3 @@ class TransformationViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet,
                                  'col': e.col},
                                 status=HttpResponseBadRequest.status_code
                                 )
-
