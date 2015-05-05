@@ -1,8 +1,8 @@
 SELECT t.name as name,
-       xpath(t.description, '//tr[1]/td[2]/text()') as abschnitt,
-       xpath(t.description, '//tr[2]/td[2]/text()') as baubeginn,
-       xpath(t.description, '//tr[3]/td[2]/text()') as bauende,
-       xpath(t.description, '//tr[4]/td[2]/text()') as projektbeschrieb,
-       xpath(t.description, '//tr[5]/td[2]/text()') as projektleiter,
+       trim(replace(xpath(t.description, '//tr[1]/td[2]/text()'), ';', ',')) as abschnitt,
+       trim(xpath(t.description, '//tr[2]/td[2]/text()')) as baubeginn,
+       trim(xpath(t.description, '//tr[3]/td[2]/text()')) as bauende,
+       trim(replace(xpath(t.description, '//tr[4]/td[2]/text()'), ';', ',')) as projektbeschrieb,
+       trim(replace(xpath(t.description, '//tr[5]/td[2]/text()'), ';', ',')) as projektleiter,
        t.geometry2 as geometry
 FROM "ODH12" as t
