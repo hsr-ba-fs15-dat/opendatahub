@@ -141,9 +141,10 @@ class PreviewMixin(viewsets.GenericViewSet):
                      'count': len(df),
                      'parent': pk,
                      'url': reverse(self.get_view_name().lower() + 'model-preview', kwargs={'pk': pk},
-                                    request=request)}]
+                                    request=request)
+                     }]
 
-            return JsonResponse(data, encoder=json.JSONEncoder, safe=False)
+        return JsonResponse(data, encoder=json.JSONEncoder, safe=False)
 
-        def get_dfs_for_preview(self, pk, request):
-            return []
+    def get_dfs_for_preview(self, pk, request):
+        return []
