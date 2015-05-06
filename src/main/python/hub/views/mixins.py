@@ -140,7 +140,7 @@ class PreviewMixin(viewsets.GenericViewSet):
                           'data': slice_.to_dict(orient='records'),
                           'count': len(df),
                           'parent': pk,
-                          'url': reverse(self.get_view_name().lower() + 'model-preview', kwargs={'pk': pk},
+                          'url': reverse(self.get_queryset().model.__name__.lower() + '-preview', kwargs={'pk': pk},
                                          request=request)
                           }])
 
