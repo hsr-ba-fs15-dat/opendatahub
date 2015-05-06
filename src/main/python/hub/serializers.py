@@ -37,9 +37,11 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     file_groups = serializers.HyperlinkedIdentityField('documentmodel-filegroup')
     owner = UserDisplaySerializer(read_only=True)
 
+    preview = serializers.HyperlinkedIdentityField('documentmodel-preview')
+
     class Meta(object):
         model = DocumentModel
-        fields = ('id', 'url', 'name', 'description', 'file_groups', 'private', 'owner', 'created_at')
+        fields = ('id', 'url', 'name', 'description', 'file_groups', 'private', 'owner', 'created_at', 'preview')
 
     def to_representation(self, instance):
         ret = super(DocumentSerializer, self).to_representation(instance)
