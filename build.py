@@ -13,6 +13,8 @@ from pybuilder.errors import BuildFailedException
 from pybuilder.pluginhelper.external_command import ExternalCommandBuilder
 import os
 import fnmatch
+import threading
+import time
 
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -29,6 +31,14 @@ use_plugin('python.install_dependencies')
 
 default_task = ['clean', 'install_dependencies', 'django_makemigrations', 'django_migrate', 'django_createcachetable',
                 'django_test', 'grunt', 'analyze', 'publish']
+
+def travis_keep_alive():
+    print 'TRAVIS KEEP ALIVE'
+    time.sleep(5 * 60)
+
+thread = threading.Thread(target=travis_keep_alive)
+thread.setDaemon(True)
+thread.start()
 
 
 @init

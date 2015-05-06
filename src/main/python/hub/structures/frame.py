@@ -4,7 +4,6 @@ from __future__ import unicode_literals
 """
 
 """
-
 import datetime as dt
 import collections
 
@@ -206,11 +205,20 @@ class OdhFrame(pd.DataFrame):
         df.__class__ = gp.GeoDataFrame
         geoseries = collections.OrderedDict([(c, s) for c, s in df.iteritems() if s.odh_type == OdhType.GEOMETRY])
         geometry = geoseries.get('geometry', geoseries.values()[0]).copy()
+        df.rename(columns={geometry.name: 'geometry'}, inplace=True)
+
         # remove additional geometry series, not supported
         df.drop(set(geoseries.keys()) - {geometry.name}, axis=1, inplace=True)
-        df.rename(columns={geometry.name: 'geometry'}, inplace=True)
+
         df.crs = geometry.crs
-        geometry.__class__ == gp.GeoSeries
+        geom_type = geometry.first_valid_entry.geom_type
+        geometry = gp.GeoSeries(geometry, crs=geometry.crs).fillna(EmptyGeometryMarker(geom_type))
+        df['geometry'] = geometry
+
+        # putmask/fillna does not work as the shapely objects seem to be recognized as array for some reason
+        # for i in np.where(df.geometry.isnull())[0]:
+        # df.geometry.iat[i] = empty_geometry
+
         return df
 
     @property
@@ -257,6 +265,7 @@ class OdhSeries(pd.Series):
             self.__finalize__(data)
         super(OdhSeries, self).__init__(data, *args, **kwargs)
         self._odh_type = None
+        self._first_valid_entry = None
 
     @property
     def odh_type(self):
@@ -287,6 +296,14 @@ class OdhSeries(pd.Series):
         for attr in self._metadata:
             setattr(self, attr, state.get(attr, None))
 
+    @property
+    def first_valid_entry(self):
+        if self._first_valid_entry is None:
+            ix = self.first_valid_index()
+            if ix is not None:
+                self._first_valid_entry = self.iat[ix]
+        return self._first_valid_entry
+
     @classmethod
     def concat(cls, series, *args, **kwargs):
         df = OdhFrame(pd.concat(series, *args, **kwargs))
@@ -304,3 +321,28 @@ class OdhSeries(pd.Series):
             s = OdhType.TEXT.convert(s)
 
         return s
+
+
+class EmptyGeometryMarker(shapely.geometry.Point):
+    def __init__(self, geom_type='Point'):
+        self.__geom_type = geom_type
+        super(EmptyGeometryMarker, self).__init__()
+
+    def geometryType(self):
+        return self.__geom_type
+
+
+def monkey_patch_geopandas():
+    import geopandas.geodataframe as geodataframe
+
+    original_mapping = geodataframe.mapping
+
+    def mapping(geometry, *a, **kw):
+        if geometry.__class__ == EmptyGeometryMarker:
+            return None
+        return original_mapping(geometry, *a, **kw)
+
+    geodataframe.mapping = mapping
+
+
+monkey_patch_geopandas()
