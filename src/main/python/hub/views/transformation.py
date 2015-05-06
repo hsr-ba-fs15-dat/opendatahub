@@ -10,7 +10,6 @@ from rest_framework.exceptions import ValidationError
 from django.db import transaction
 from django.http.response import JsonResponse
 from django.http import HttpResponseNotFound, HttpResponseServerError, HttpResponseBadRequest
-
 from django.utils.text import slugify
 from pyparsing import ParseException
 
@@ -90,7 +89,8 @@ class TransformationViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet,
 
     def get_dfs_for_preview(self, pk, request):
         if pk is not None:
-            return [('TRF{}'.format(pk), TransformationUtil.df_for_transformation(self.get_object()))]
+            return [('{}{}'.format(settings.TRANSFORMATION_PREFIX, pk),
+                     TransformationUtil.df_for_transformation(self.get_object()))]
         else:
             body = json.loads(request.body, encoding=request.encoding)
             params = body['params']

@@ -133,7 +133,7 @@ class PreviewMixin(viewsets.GenericViewSet):
         data = []
         for (unique_name, df) in self.get_dfs_for_preview(pk, request):
             slice_ = df.iloc[start:start + count].reset_index(drop=True).as_safe_serializable().fillna('NULL')
-            data.append([{'name': getattr(df, 'name', None),
+            data.extend([{'name': getattr(df, 'name', None),
                           'unique_name': unique_name,
                           'columns': slice_.columns.tolist(),
                           'types': {c: s.odh_type.name for c, s in df.iteritems()},

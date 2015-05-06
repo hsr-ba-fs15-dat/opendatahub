@@ -12,6 +12,7 @@ from hub.serializers import FileGroupSerializer, FileSerializer
 from authentication.permissions import IsOwnerOrPublic
 from hub.views.mixins import DataDownloadMixin, PreviewMixin
 
+from opendatahub import settings
 
 logger = logging.getLogger(__name__)
 
@@ -46,7 +47,7 @@ class FileGroupViewSet(viewsets.ModelViewSet, DataDownloadMixin, PreviewMixin):
 
     def get_dfs_for_preview(self, pk, request):
         model = self.get_object()
-        dfs = [('ODH{}_{}'.format(pk, df.name), df) for df in model.to_file_group().to_df()]
+        dfs = [('{}{}_{}'.format(settings.PACKAGE_PREFIX, pk, df.name), df) for df in model.to_file_group().to_df()]
 
         name = request.GET.get('name', None)
         if name:

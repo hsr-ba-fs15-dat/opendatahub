@@ -9,6 +9,7 @@ from django.http.response import HttpResponseNotFound, JsonResponse, HttpRespons
 from django.db import transaction
 from django.db.models import Q
 
+from opendatahub import settings
 from hub.serializers import DocumentSerializer, FileGroupSerializer
 from hub.models import DocumentModel, FileGroupModel
 from authentication.permissions import IsOwnerOrPublic, IsOwnerOrReadOnly
@@ -60,7 +61,7 @@ class DocumentViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet, Previ
         dfs = []
         for fg in file_groups:
             for df in fg.to_file_group().to_df():
-                dfs.append(('ODH{}_{}'.format(fg.id, df.name), df))
+                dfs.append(('{}{}_{}'.format(settings.PACKAGE_PREFIX, fg.id, df.name), df))
 
         name = request.GET.get('name', None)
         if name:
