@@ -10,8 +10,8 @@ from rest_framework import mixins, viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from django.http.response import HttpResponse, HttpResponseServerError, HttpResponseNotFound, JsonResponse
-
 from django.utils.text import slugify
+from rest_framework.reverse import reverse
 
 from opendatahub.utils.cache import cache
 from hub.formats.base import Format
@@ -139,9 +139,11 @@ class PreviewMixin(viewsets.GenericViewSet):
                      'types': {c: s.odh_type.name for c, s in df.iteritems()},
                      'data': slice_.to_dict(orient='records'),
                      'count': len(df),
-                     'parent': pk}]
+                     'parent': pk,
+                     'url': reverse(self.get_view_name().lower() + 'model-preview', kwargs={'pk': pk},
+                                    request=request)}]
 
-        return JsonResponse(data, encoder=json.JSONEncoder, safe=False)
+            return JsonResponse(data, encoder=json.JSONEncoder, safe=False)
 
-    def get_dfs_for_preview(self, pk, request):
-        return []
+        def get_dfs_for_preview(self, pk, request):
+            return []
