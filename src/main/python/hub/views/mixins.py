@@ -4,13 +4,13 @@ from __future__ import unicode_literals
 import zipfile
 import json
 
+import abc
 import re
 from django.db.models import Q
 from rest_framework import mixins, viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from django.http.response import HttpResponse, HttpResponseServerError, HttpResponseNotFound, JsonResponse
-
 from django.utils.text import slugify
 
 from opendatahub.utils.cache import cache
@@ -143,5 +143,6 @@ class PreviewMixin(viewsets.GenericViewSet):
 
         return JsonResponse(data, encoder=json.JSONEncoder, safe=False)
 
+    @abc.abstractmethod
     def get_dfs_for_preview(self, pk, request):
         return []
