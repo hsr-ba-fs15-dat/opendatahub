@@ -9,9 +9,9 @@ module odh.main {
             'FileGroupService:main.FileGroupService', '$auth:any', 'ToastService:odh.utils.ToastService'];
         public modal:boolean = false;
 
-        constructor(private TransformationService:main.TransformationService, private ngTableParams:any, private $auth:any,
-                    private FileGroupService:main.FileGroupService, private ToastService:odh.utils.ToastService,
-                    private PackageService:main.PackageService) {
+        constructor(private TransformationService:main.TransformationService, private ngTableParams:any,
+                    private $auth:any, private FileGroupService:main.FileGroupService,
+                    private ToastService:odh.utils.ToastService, private PackageService:main.PackageService) {
         }
 
 
@@ -88,8 +88,7 @@ module odh.main {
                                 });
                             });
                             pkg.fileGroup = filegroups;
-                        }
-                        else {
+                        } else {
                             pkg.fileGroup = [];
                         }
                         pkg.$showRows = !pkg.$showRows;
