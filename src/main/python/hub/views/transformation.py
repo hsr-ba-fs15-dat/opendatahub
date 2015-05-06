@@ -110,7 +110,10 @@ class TransformationViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet,
         return Response(serializer.data)
 
     def get_preview_view_name(self, pk, request):
-        reverse('transformationmodel-{}'.format('preview' if pk else 'adhoc'), kwargs={'pk': pk}, request=request)
+        if pk:
+            return reverse('transformationmodel-preview', kwargs={'pk': pk}, request=request)
+        else:
+            return reverse('transformationmodel-adhoc', request=request)
 
     def get_dfs_for_preview(self, pk, request):
         if pk is not None:
@@ -123,7 +126,7 @@ class TransformationViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet,
             statement = params['query']
             return [(None, TransformationUtil.interpret(statement, user_id=request.user.id))]
 
-    @list_route(methods={'post'})
+    @list_route(methods={'post'}, permission_classes=[])
     def adhoc(self, request):
         try:
 
