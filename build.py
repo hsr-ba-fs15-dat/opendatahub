@@ -35,9 +35,10 @@ default_task = ['clean', 'install_dependencies', 'django_makemigrations', 'djang
 
 
 def travis_keep_alive():
-    print 'TRAVIS KEEP ALIVE'
-    sys.stdout.flush()
-    time.sleep(5 * 60)
+    while True:
+        print 'TRAVIS KEEP ALIVE'
+        sys.stdout.flush()
+        time.sleep(5 * 60)
 
 
 thread = threading.Thread(target=travis_keep_alive)
