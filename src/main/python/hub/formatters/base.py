@@ -11,6 +11,7 @@ import logging
 from lxml import etree
 import sys
 import traceback
+import re
 
 import os
 import pygeoif
@@ -126,11 +127,16 @@ class XMLFormatter(Formatter):
             df = df.as_safe_serializable()
             root = etree.Element('root')
             for i, row in df.iterrows():
-                etree.SubElement(root, 'row', row.dropna().astype(unicode).to_dict())
+                attributes = {}
+                for k, v in row.dropna().astype(unicode).to_dict().items():
+                    k = re.sub(r'\W', '', k, flags=re.UNICODE)
+                    attributes[k] = v
 
-            results.append(File.from_string(df.name + '.xml',
-                                            etree.tostring(root, encoding='UTF-8', xml_declaration=True,
-                                                           pretty_print=True)).file_group)
+                etree.SubElement(root, 'row', attributes)
+
+                results.append(File.from_string(df.name + '.xml',
+                                                etree.tostring(root, encoding='UTF-8', xml_declaration=True,
+                                                               pretty_print=True)).file_group)
         return results
 
 
