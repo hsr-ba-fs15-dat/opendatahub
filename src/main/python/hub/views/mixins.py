@@ -113,8 +113,8 @@ class DataDownloadMixin(viewsets.GenericViewSet):
 
     def get_cache_key(self, pk, format_name=None):
         if format_name:
-            return (self.cache_prefix, pk, 'data')
-        return (self.cache_prefix, pk, 'data', format_name)
+            return (self.cache_prefix, pk, 'data', format_name)
+        return (self.cache_prefix, pk, 'data')
 
     def format_object(self, model, format):
         pass
