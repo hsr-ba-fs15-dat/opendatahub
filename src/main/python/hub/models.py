@@ -96,7 +96,11 @@ class TransformationModel(PackageModel):
     A transformation
     """
     transformation = models.TextField()
-    file_groups = models.ManyToManyField(FileGroupModel)
+
+    is_template = models.BooleanField(default=False, null=False)
+
+    referenced_file_groups = models.ManyToManyField(FileGroupModel)
+    referenced_transformations = models.ManyToManyField('TransformationModel')
 
 
 class InheritanceQuerySet(QuerySet):
