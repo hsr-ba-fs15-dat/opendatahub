@@ -126,7 +126,7 @@ module odh.main {
                 }
             }
             if (typeof transformation === 'string') {
-                console.log('http-post')
+                console.log('http-post');
                 promise = this.$http.post(this.UrlService.get('transformation/adhoc'), {
                 params: {
                     query: transformation
@@ -134,7 +134,7 @@ module odh.main {
             });
             }
 
-            return promise
+            return promise;
         }
 
         public parse(transformation:string) {
