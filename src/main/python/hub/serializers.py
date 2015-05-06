@@ -97,7 +97,7 @@ class TransformationSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta(object):
         model = TransformationModel
-        fields = ('id', 'url', 'name', 'description', 'transformation', 'private', 'owner', 'data', 'preview', 
+        fields = ('id', 'url', 'name', 'description', 'transformation', 'private', 'owner', 'data', 'preview',
                   'file_groups')
 
     def to_representation(self, instance):
