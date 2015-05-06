@@ -62,4 +62,8 @@ class DocumentViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet, Previ
             for df in fg.to_file_group().to_df():
                 dfs.append(('ODH{}_{}'.format(fg.id, df.name), df))
 
+        name = request.GET.get('name', None)
+        if name:
+            dfs = [(unique_name, df) for (unique_name, df) in dfs if unique_name == name]
+
         return dfs

@@ -67,6 +67,6 @@ class FileGroupViewSet(viewsets.ModelViewSet, DataDownloadMixin, PreviewMixin):
 
         name = request.GET.get('name', None)
         if name:
-            dfs = [(unique_name, df) for (unique_name, df) in dfs if df.name == name]
+            dfs = [(unique_name, df) for (unique_name, df) in dfs if unique_name == name]
 
         return dfs

@@ -125,7 +125,7 @@ class DataDownloadMixin(viewsets.GenericViewSet):
 
 class PreviewMixin(viewsets.GenericViewSet):
     @detail_route()
-    def preview(self, request, pk=None, name=None):
+    def preview(self, request, pk=None):
         count = int(request.GET.get('count', 3))
         page = int(request.GET.get('page', 1))
         start = count * (page - 1)
