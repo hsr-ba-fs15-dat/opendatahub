@@ -5,7 +5,7 @@ module odh.main {
 
     enum transType {Template, Final}
     class TransformationDetailController implements main.ITransformation {
-
+        public pkg;
         public name;
         public description;
         public transformationId;
@@ -42,14 +42,18 @@ module odh.main {
                     private AppConfig:odh.IAppConfig,
                     private FileGroupService:main.FileGroupService,
                     private UrlService:odh.utils.UrlService,
-                    private $window:ng.IWindowService) {
+                    private $window:ng.IWindowService,
+                    private PackageService:main.PackageService,
+                    private $q:ng.IQService) {
             // controller init
             AppConfig.then(config => {
                 this.transformationPrefix = config.TRANSFORMATION_PREFIX;
                 this.packagePrefix = config.PACKAGE_PREFIX;
             });
             this.transformationId = $stateParams.id;
-            this.TransformationService.get(this.transformationId).then(data => {
+            this.pkg = this.TransformationService.get(this.transformationId);
+            this.pkg.then(data => {
+
                 this.transformationObject = data;
                 this.name = data.name;
                 this.description = data.description;
@@ -57,8 +61,6 @@ module odh.main {
                 this.private = data.private;
 
                 this.allowDelete = $auth.isAuthenticated() && data.owner.id === $auth.getPayload().user_id;
-
-                this.preview();
                 this.selected = {};
             });
             FormatService.getAvailableFormats().then(data => {
@@ -69,6 +71,7 @@ module odh.main {
         public isAuthenticated() {
             return this.$auth.isAuthenticated();
         }
+
         /**
          * Checks if this Table could belongs to our system.
          */
@@ -117,6 +120,7 @@ module odh.main {
         }
 
         public preview() {
+
             this.previewLoading = true;
             this.TransformationService.parse(this.transformation).then((data:any) => {
                 angular.forEach(data.data.tables, table => {
@@ -125,17 +129,7 @@ module odh.main {
                 this.usedTables = data.data.tables;
 
             });
-            this.TransformationService.preview(this.transformation).then((data:any) => {
-                this.previewLoading = false;
-                this.columns = data.data.columns;
-                this.rows = data.data.data;
-            }).catch((data:any) => {
-                this.previewLoading = false;
-                this.columns = null;
-                this.rows = null;
-                this.previewError = 'Diese Transformation enthält (noch) keine gültigen Daten';
-                this.ToastService.failure('Diese Transformation enthält keine gültigen Daten');
-            });
+            this.pkg = this.TransformationService.preview(this.transformation);
         }
 
         public saveTransformation() {
@@ -149,6 +143,7 @@ module odh.main {
                 console.error(error);
             });
         }
+
         public duplicateTransformation() {
             this.TransformationService.description = this.description;
             this.TransformationService.forceManualEdit = true;

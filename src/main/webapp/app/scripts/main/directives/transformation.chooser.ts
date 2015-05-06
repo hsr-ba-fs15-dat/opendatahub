@@ -9,8 +9,9 @@ module odh.main {
             'FileGroupService:main.FileGroupService', '$auth:any', 'ToastService:odh.utils.ToastService'];
         public modal:boolean = false;
 
-        constructor(private DocumentService:main.DocumentService, private ngTableParams:any, private $auth:any,
-                    private FileGroupService:main.FileGroupService, private ToastService:odh.utils.ToastService) {
+        constructor(private TransformationService:main.TransformationService, private ngTableParams:any, private $auth:any,
+                    private FileGroupService:main.FileGroupService, private ToastService:odh.utils.ToastService,
+                    private PackageService:main.PackageService) {
         }
 
 
@@ -49,7 +50,7 @@ module odh.main {
                 counts: [10, 25, 50, 100],
                 total: 0, // length of data
                 getData: ($defer, params) => {
-                    this.DocumentService.getList(params.url()).then(result => {
+                    this.PackageService.getList(params.url()).then(result => {
                         params.total(result.count);
                         $defer.resolve(result.results);
                     });
@@ -59,33 +60,71 @@ module odh.main {
                 return this.$auth.isAuthenticated();
             };
 
-            scope.getFileGroup = (document, count = 3) => {
-                this.FileGroupService.getAll(document.id, true, count).then(filegroups => {
-                    if (!document.$showRows) {
-                        angular.forEach(filegroups, (fg) => {
-                            angular.forEach(fg.preview, (preview) => {
-                                preview.uniqueId = preview.unique_name;
-                                preview.cols = [];
-                                preview.parent = fg.id;
-                                preview.private = document.private;
-                                angular.forEach(preview.columns, (col) => {
-                                    preview.cols.push({
-                                        name: col,
-                                        alias: col,
-                                        type: preview.types[col],
-                                        title: col,
-                                        show: true,
-                                        field: col
+            scope.getFileGroup = (pkg, count = 3) => {
+                console.log(pkg);
+                if (pkg.type === 'transformation') {
+                    this.TransformationService.preview(pkg).then(data => {
+                        console.log(data);
+                        if (!pkg.$showRows) {
+                            var filegroups = [{
+                                preview: [
+                                    data[0]
+
+                                ]
+                            }];
+                            var preview = filegroups[0].preview[0];
+                            preview.uniqueId = preview.unique_name;
+                            preview.cols = [];
+                            preview.private = pkg.private;
+                            angular.forEach(preview.columns, (col) => {
+                                preview.cols.push({
+                                    name: col,
+                                    alias: col,
+                                    type: preview.types[col],
+                                    title: col,
+                                    parent: 0,
+                                    show: true,
+                                    field: col
+                                });
+                            });
+                            pkg.fileGroup = filegroups;
+                        }
+                        else {
+                            pkg.fileGroup = [];
+                        }
+                        pkg.$showRows = !pkg.$showRows;
+                    })
+                        .catch(error => this.ToastService.failure('Es ist ein Fehler aufgetreten.'));
+
+                }
+                if (pkg.type === 'document') {
+                    this.FileGroupService.getAll(pkg.id, true, count).then(filegroups => {
+                        if (!pkg.$showRows) {
+                            angular.forEach(filegroups, (fg) => {
+                                angular.forEach(fg.preview, (preview) => {
+                                    preview.uniqueId = preview.unique_name;
+                                    preview.cols = [];
+                                    preview.parent = fg.id;
+                                    preview.private = pkg.private;
+                                    angular.forEach(preview.columns, (col) => {
+                                        preview.cols.push({
+                                            name: col,
+                                            alias: col,
+                                            type: preview.types[col],
+                                            title: col,
+                                            show: true,
+                                            field: col
+                                        });
                                     });
                                 });
                             });
-                        });
-                        document.fileGroup = filegroups;
-                    } else {
-                        document.fileGroup = [];
-                    }
-                    document.$showRows = !document.$showRows;
-                }).catch(error => this.ToastService.failure('Es ist ein Fehler aufgetreten.'));
+                            pkg.fileGroup = filegroups;
+                        } else {
+                            pkg.fileGroup = [];
+                        }
+                        pkg.$showRows = !pkg.$showRows;
+                    }).catch(error => this.ToastService.failure('Es ist ein Fehler aufgetreten.'));
+                }
             };
         };
 
@@ -93,13 +132,13 @@ module odh.main {
     }
 
     angular.module('openDataHub.main').directive('odhChooseTransformation',
-        (DocumentService:main.DocumentService,
+        (TransformationService:main.TransformationService,
          ngTableParams:any,
          $auth:any,
          FileGroupService:main.FileGroupService,
-         ToastService:odh.utils.ToastService, $modal) => {
+         ToastService:odh.utils.ToastService, PackageService:main.PackageService) => {
             return new OdhChooseTransformation(
-                DocumentService, ngTableParams, $auth, FileGroupService, ToastService);
+                TransformationService, ngTableParams, $auth, FileGroupService, ToastService, PackageService);
         }
     )
     ;

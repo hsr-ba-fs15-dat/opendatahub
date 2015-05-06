@@ -115,14 +115,26 @@ module odh.main {
             return this.Restangular.oneUrl('transformation', '').get(params);
         }
 
-        public preview(transformation:string) {
-            return this.$http.post(this.UrlService.get('odhql'), {
+
+        public preview(transformation:any) {
+            var promise;
+            if (typeof transformation === 'object') {
+                if (transformation.type === 'transformation') {
+                    console.log('restangular');
+                    promise = this.Restangular.one('transformation', transformation.id).one('preview').get();
+
+                }
+            }
+            if (typeof transformation === 'string') {
+                console.log('http')
+                promise = this.$http.post(this.UrlService.get('transformation/adhoc'), {
                 params: {
                     query: transformation
                 }
             });
+            }
 
-
+            return promise
         }
 
         public parse(transformation:string) {

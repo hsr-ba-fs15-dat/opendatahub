@@ -1,9 +1,9 @@
 <div ng-controller="TransformationDetailController as vm">
+    <odh-spinner show-while="doc.loading">
     <form name="form" class="form" ng-submit="vm.submit()">
         <h1>{{ vm.name }}</h1>
 
         <p>{{ vm.description }}</p>
-
         <div class="btn-toolbar">
             <button class="btn btn-danger" ng-click="vm.remove()" ng-show="vm.allowDelete">Löschen</button>
             <div class="btn-group pull-right">
@@ -26,24 +26,9 @@
                 Vorschau
             </div>
             <div class="panel-body">
-                <odh-spinner show-while="vm.previewLoading">
-                    <div class="table-responsive" ng-show="vm.columns">
-                        <table class="table table-striped table-hover">
-                            <thead>
-                            <tr>
-                                <th ng-repeat="col in vm.columns">{{ col }}</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr ng-repeat="row in vm.rows | limitTo: 50">
-                                <td ng-repeat="col in vm.columns">
-                                    {{ row[col] }}
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </odh-spinner>
+
+                <odh-preview pkg="vm.pkg" query="vm.transformation"></odh-preview>
+
             </div>
         </div>
 
@@ -52,7 +37,7 @@
                 Advanced
             </div>
             <div class="panel-body" id="expertPanel" collapse="!vm.showExpertPanel">
-               <a ui-sref="transformation/help" target="_blank"><i class="fa fa-question-circle"></i></a>
+                <a ui-sref="transformation/help" target="_blank"><i class="fa fa-question-circle"></i></a>
                 <!-- Textarea -->
                 <alert ng-repeat="alert in vm.alerts" type="{{ alert.type }}" close="vm.closeAlert($index)">
                     <strong>{{ alert.title }}</strong>
@@ -145,4 +130,5 @@
 
         </div>
     </form>
+    </odh-spinner>
 </div>

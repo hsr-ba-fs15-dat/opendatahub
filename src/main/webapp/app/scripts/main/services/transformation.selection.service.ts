@@ -51,6 +51,7 @@ module odh.main {
                     });
                 this.expression[item.uniqueId] = {operation: this.JOIN_OPERATIONS.none};
                 this.items.push(item);
+                this.fields[item.uniqueId] = {};
                 this.fileGroups.push(item.parent);
                 if (item.private) {
                     this.privateCount += 1;

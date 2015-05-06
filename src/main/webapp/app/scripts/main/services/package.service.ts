@@ -1,4 +1,5 @@
 /// <reference path='../../all.d.ts' />
+///<reference path="transformation.service.ts"/>
 
 
 module odh.main {
@@ -8,7 +9,8 @@ module odh.main {
         private packages:restangular.IElement;
 
 
-        constructor(private $log:ng.ILogService, private Restangular:restangular.IService) {
+        constructor(private $log:ng.ILogService, private Restangular:restangular.IService,
+                    private $q:ng.IQService, private $http:ng.IHttpService) {
 
             this.packages = this.Restangular.all('package');
         }
@@ -35,6 +37,19 @@ module odh.main {
 
         public getList(params:any) {
             return this.Restangular.oneUrl('package', '').get(params);
+        }
+
+        public getPreview(pkg:any, params:any) {
+            var promise;
+            if (typeof pkg === 'object') {
+                if (typeof pkg.preview === 'string') {
+                    promise = this.$http.get(pkg.preview, {params: params});
+                }
+                else {
+                    promise = this.$http.get(pkg.url, {params: params});
+                }
+                return promise;
+            }
         }
     }
 

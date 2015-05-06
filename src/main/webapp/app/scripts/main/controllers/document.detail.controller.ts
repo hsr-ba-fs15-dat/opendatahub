@@ -13,7 +13,8 @@ module odh.main {
 
         constructor(private $log:ng.ILogService, private $stateParams:any, private $window:ng.IWindowService,
                     private DocumentService:odh.main.DocumentService, private ToastService:odh.utils.ToastService,
-                    private FormatService:odh.main.FormatService, private FileGroupService:odh.main.FileGroupService) {
+                    private FormatService:odh.main.FormatService, private FileGroupService:odh.main.FileGroupService,
+                    private PackageService:main.PackageService) {
             this.documentId = $stateParams.id;
             this.retrieveData();
         }
@@ -28,6 +29,7 @@ module odh.main {
         }
 
         private retrieveData() {
+
             this.FormatService.getAvailableFormats().then(data => {
                 var results = this.FormatService.sortByLabel(data.data);
                 results.push({name: null, label: 'Original', description: 'Unveränderte Daten', example: null});
@@ -56,6 +58,7 @@ module odh.main {
                         this.$log.error(error);
                     });
             }
+
         }
     }
 

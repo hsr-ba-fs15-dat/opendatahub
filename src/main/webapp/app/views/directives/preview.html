@@ -7,16 +7,16 @@
         <!--<th>Columns:{{columns.length}}</th>-->
     </tr>
 </script>
-
 <div class="table-responsive">
     <table ng-table="ngTableParams" template-header="sample_ng_header"
            class="table table-striped">
-
         <tr ng-repeat="row in $data">
             <td ng-repeat="col in cols">
-                {{row[col.field]}}
+                {{row[col.field] | characters:50}}
+                <i ng-if="row[col.field].length>50" class="fa fa-question-circle" popover="{{row[col.field]}}"
+                   popover-trigger="mouseenter"></i>
             </td>
         </tr>
     </table>
-
+    {{query}}
 </div>
