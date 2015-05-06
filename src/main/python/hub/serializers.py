@@ -93,7 +93,7 @@ class TransformationSerializer(serializers.HyperlinkedModelSerializer):
     referenced_file_groups = serializers.HyperlinkedRelatedField()
     referenced_transformations = serializers.HyperlinkedRelatedField()
 
-    owner = UserSerializer(read_only=True)
+    owner = UserDisplaySerializer(read_only=True)
 
     data = serializers.HyperlinkedIdentityField('transformationmodel-data')
 
