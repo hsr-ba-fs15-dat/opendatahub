@@ -23,6 +23,10 @@ logging.getLogger('django.db.backends').setLevel(logging.WARN)
 class Command(BaseCommand):
     help = 'Loads test data into the database'
 
+    def __init__(self, *args, **kwargs):
+        self.parse = kwargs.get('parse', True)
+
+
     IMPORT = [
         # first element in considered the main file
         (formats.CSV, 'mockaroo.com.csv',),
@@ -78,7 +82,8 @@ class Command(BaseCommand):
             file_model = FileModel(file_name=f.name, data=f.stream.getvalue(), file_group=file_group)
             file_model.save()
 
-        file_group.to_file_group().to_df()  # force parse & caching
+        if self.parse:
+            file_group.to_file_group().to_df()  # force parse & caching
 
         db.reset_queries()
 
@@ -103,6 +108,7 @@ class Command(BaseCommand):
                 transformation.file_groups = FileGroupModel.objects.filter(id=group)
                 transformation.save()
 
+        if self.parse:
             TransformationUtil.df_for_transformation(transformation, self.user.id)
 
     def handle(self, *args, **options):

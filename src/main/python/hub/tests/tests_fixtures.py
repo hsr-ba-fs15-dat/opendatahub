@@ -11,6 +11,7 @@ class FixtureTest(APITestCase):
     def setUpClass(cls):
         cls.format_list = [fmt['name'] for fmt in client.get('/api/v1/format/').data]
 
+        LoadFixtures(parse=False).handle()
 
 EXCLUDED_DOCUMENTS = [
     'Dummy',  # those are for paging tests and just repeat
@@ -37,27 +38,22 @@ def find_fixtures(client):
 
 def get_fixture_test(id, url):
     def fixture_test(self):
-        results = {}
         for fmt in self.format_list:
             data_url = '{}?fmt={}'.format(url, fmt)
             try:
                 response = self.client.get(data_url)
                 print '{} -> {}'.format(data_url, response.status_code)
 
-                results[fmt] = response.status_code
+                self.assertEqual(200, response.status_code)
             except Exception as e:
-                print '{} -> {}'.format(data_url, e.message)
-                results[fmt] = e
-
-        for fmt, status in results.iteritems():
-            print "id: {}, fmt: {} -> {}".format(id, fmt, status)
+                self.fail('Format {} failed with error {}'.format(fmt, e.message))
 
     return fixture_test
 
 
 from rest_framework.test import APIClient
 
-LoadFixtures().handle()
+LoadFixtures(parse=False).handle()
 
 client = APIClient()
 fixtures = find_fixtures(client)
