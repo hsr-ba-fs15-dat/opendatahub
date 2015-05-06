@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import zipfile
 import json
 
+import abc
 import re
 from django.db.models import Q
 from rest_framework import mixins, viewsets
@@ -146,5 +147,6 @@ class PreviewMixin(viewsets.GenericViewSet):
 
         return JsonResponse(data, encoder=json.JSONEncoder, safe=False)
 
+    @abc.abstractmethod
     def get_dfs_for_preview(self, pk, request):
         return []
