@@ -26,7 +26,7 @@ class FileGroupViewSet(viewsets.ModelViewSet, DataDownloadMixin, PreviewMixin):
 
     permission_classes = IsOwnerOrPublic,
 
-    cache_prefix = settings.TRANSFORMATION_PREFIX
+    cache_prefix = 'FG'
 
     @detail_route()
     def file(self, request, pk, *args, **kwargs):
