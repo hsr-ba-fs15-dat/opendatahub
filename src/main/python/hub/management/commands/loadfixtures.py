@@ -26,7 +26,6 @@ class Command(BaseCommand):
     def __init__(self, *args, **kwargs):
         self.parse = kwargs.get('parse', True)
 
-
     IMPORT = [
         # first element in considered the main file
         (formats.CSV, 'mockaroo.com.csv',),

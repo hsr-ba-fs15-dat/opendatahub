@@ -16,7 +16,6 @@ from authentication.permissions import IsOwnerOrPublic
 from hub.utils.pandasutils import DataFrameUtils
 from opendatahub.settings import PACKAGE_PREFIX, TRANSFORMATION_PREFIX
 from hub.views.mixins import DataDownloadMixin
-from opendatahub import settings
 
 
 logger = logging.getLogger(__name__)

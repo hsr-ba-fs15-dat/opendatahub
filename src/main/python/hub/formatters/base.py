@@ -128,7 +128,7 @@ class XMLFormatter(Formatter):
             root = etree.Element('root')
             for i, row in df.iterrows():
                 attributes = {}
-                for k,v in row.dropna().astype(unicode).to_dict().items():
+                for k, v in row.dropna().astype(unicode).to_dict().items():
                     k = re.sub(r'\W', '', k, flags=re.UNICODE)
                     attributes[k] = v
 

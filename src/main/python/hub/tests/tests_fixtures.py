@@ -13,6 +13,7 @@ class FixtureTest(APITestCase):
 
         LoadFixtures(parse=False).handle()
 
+
 EXCLUDED_DOCUMENTS = [
     'Dummy',  # those are for paging tests and just repeat
     'employee'  # excessive amounts of data, actually segfaults for interlis1
