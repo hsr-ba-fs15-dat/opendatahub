@@ -4,12 +4,12 @@ from __future__ import unicode_literals
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 
-from authentication.serializers import UserSerializer
+from authentication.serializers import UserDisplaySerializer
 from hub.models import PackageModel, DocumentModel, FileGroupModel, FileModel, TransformationModel, UrlModel
 
 
 class PackageSerializer(serializers.HyperlinkedModelSerializer):
-    owner = UserSerializer(read_only=True)
+    owner = UserDisplaySerializer(read_only=True)
 
     type = serializers.SerializerMethodField()
     preview = serializers.SerializerMethodField()
@@ -35,7 +35,7 @@ class PackageSerializer(serializers.HyperlinkedModelSerializer):
 
 class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     file_groups = serializers.HyperlinkedIdentityField('documentmodel-filegroup')
-    owner = UserSerializer(read_only=True)
+    owner = UserDisplaySerializer(read_only=True)
 
     class Meta(object):
         model = DocumentModel
@@ -89,7 +89,7 @@ class FormatSerializer(serializers.Serializer):
 
 class TransformationSerializer(serializers.HyperlinkedModelSerializer):
     file_groups = FileGroupSerializer(many=True, read_only=True)
-    owner = UserSerializer(read_only=True)
+    owner = UserDisplaySerializer(read_only=True)
 
     preview = serializers.HyperlinkedIdentityField('transformationmodel-preview')
 

@@ -34,3 +34,11 @@ class UserSerializer(ModelSerializer):
         fields = (
             'id', 'username', 'email', 'first_name', 'last_name', 'profile_photo', 'description', 'social_auth'
         )
+
+
+class UserDisplaySerializer(ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = (
+            'id', 'username', 'first_name', 'last_name'
+        )
