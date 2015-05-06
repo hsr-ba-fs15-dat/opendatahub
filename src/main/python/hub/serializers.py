@@ -82,9 +82,11 @@ class TransformationSerializer(serializers.HyperlinkedModelSerializer):
     file_groups = FileGroupSerializer(many=True, read_only=True)
     owner = UserSerializer(read_only=True)
 
+    data = serializers.HyperlinkedIdentityField('transformationmodel-data')
+
     class Meta(object):
         model = TransformationModel
-        fields = ('id', 'url', 'name', 'description', 'transformation', 'private', 'owner', 'file_groups')
+        fields = ('id', 'url', 'name', 'description', 'transformation', 'private', 'owner', 'data', 'file_groups')
 
     def to_representation(self, instance):
         ret = super(TransformationSerializer, self).to_representation(instance)
