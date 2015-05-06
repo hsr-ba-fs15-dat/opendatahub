@@ -3,8 +3,8 @@ from __future__ import unicode_literals
 
 import zipfile
 import json
-
 import abc
+
 import re
 from django.db.models import Q
 from rest_framework import mixins, viewsets
@@ -12,7 +12,6 @@ from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from django.http.response import HttpResponse, HttpResponseServerError, HttpResponseNotFound, JsonResponse
 from django.utils.text import slugify
-from rest_framework.reverse import reverse
 
 from opendatahub.utils.cache import cache
 from hub.formats.base import Format
@@ -141,11 +140,13 @@ class PreviewMixin(viewsets.GenericViewSet):
                           'data': slice_.to_dict(orient='records'),
                           'count': len(df),
                           'parent': pk,
-                          'url': reverse(self.get_queryset().model.__name__.lower() + '-preview', kwargs={'pk': pk},
-                                         request=request)
+                          'url': self.get_preview_view_name(pk, request)
                           }])
 
         return JsonResponse(data, encoder=json.JSONEncoder, safe=False)
+
+    def get_preview_view_name(self, pk, request):
+        pass
 
     @abc.abstractmethod
     def get_dfs_for_preview(self, pk, request):

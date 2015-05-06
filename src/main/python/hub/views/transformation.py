@@ -12,6 +12,7 @@ from django.http.response import JsonResponse
 from django.http import HttpResponseNotFound, HttpResponseServerError, HttpResponseBadRequest
 from django.utils.text import slugify
 from pyparsing import ParseException
+from rest_framework.reverse import reverse
 
 from hub.odhql.interpreter import OdhQLInterpreter
 from hub.odhql.exceptions import OdhQLExecutionException
@@ -97,10 +98,19 @@ class TransformationViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet,
         return model.name
 
     @detail_route()
-    def filegroup(self, request, pk, *args, **kwargs):
-        queryset = FileGroupModel.objects.filter(document__id=pk)
+    def filegroups(self, request, pk, *args, **kwargs):
+        queryset = self.get_object().referenced_file_groups.all()
         serializer = FileGroupSerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data)
+
+    @detail_route()
+    def transformations(self, request, pk, *args, **kwargs):
+        queryset = self.get_object().referenced_transformations.all()
+        serializer = TransformationSerializer(queryset, many=True, context={'request': request})
+        return Response(serializer.data)
+
+    def get_preview_view_name(self, pk, request):
+        reverse('transformationmodel-{}'.format('preview' if pk else 'adhoc'), kwargs={'pk': pk}, request=request)
 
     def get_dfs_for_preview(self, pk, request):
         if pk is not None:

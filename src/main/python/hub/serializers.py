@@ -90,8 +90,8 @@ class FormatSerializer(serializers.Serializer):
 
 
 class TransformationSerializer(serializers.HyperlinkedModelSerializer):
-    referenced_file_groups = serializers.HyperlinkedRelatedField()
-    referenced_transformations = serializers.HyperlinkedRelatedField()
+    referenced_file_groups = serializers.HyperlinkedIdentityField('transformationmodel-filegroups')
+    referenced_transformations = serializers.HyperlinkedIdentityField('transformationmodel-transformations')
 
     owner = UserDisplaySerializer(read_only=True)
 

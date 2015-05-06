@@ -6,12 +6,12 @@ import logging
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route
+from rest_framework.reverse import reverse
 
 from hub.models import FileGroupModel, FileModel
 from hub.serializers import FileGroupSerializer, FileSerializer
 from authentication.permissions import IsOwnerOrPublic
 from hub.views.mixins import DataDownloadMixin, PreviewMixin
-
 from opendatahub import settings
 
 logger = logging.getLogger(__name__)
@@ -44,6 +44,9 @@ class FileGroupViewSet(viewsets.ModelViewSet, DataDownloadMixin, PreviewMixin):
 
     def get_name(self, model):
         return model.document.name
+
+    def get_preview_view_name(self, pk, request):
+        reverse('filegroupmodel-preview', kwargs={'pk': pk}, request=request)
 
     def get_dfs_for_preview(self, pk, request):
         model = self.get_object()

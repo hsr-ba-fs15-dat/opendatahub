@@ -8,6 +8,7 @@ from rest_framework.exceptions import ValidationError
 from django.http.response import HttpResponseNotFound, JsonResponse, HttpResponseBadRequest
 from django.db import transaction
 from django.db.models import Q
+from rest_framework.reverse import reverse
 
 from opendatahub import settings
 from hub.serializers import DocumentSerializer, FileGroupSerializer
@@ -53,6 +54,9 @@ class DocumentViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet, Previ
 
         serializer = FileGroupSerializer(file_group, many=True, context={'request': request})
         return Response(serializer.data)
+
+    def get_preview_view_name(self, pk, request):
+        reverse('documentmodel-preview', kwargs={'pk': pk}, request=request)
 
     def get_dfs_for_preview(self, pk, request):
         file_groups = FileGroupModel.objects.filter(
