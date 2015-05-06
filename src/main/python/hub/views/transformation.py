@@ -56,7 +56,6 @@ class TransformationViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet,
             is_template = True
 
         with transaction.atomic():
-
             transformation = TransformationModel(name=request.data['name'], description=request.data['description'],
                                                  private=request.data.get('private', False), owner=request.user,
                                                  transformation=statement, is_template=is_template)
@@ -129,19 +128,9 @@ class TransformationViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet,
     @list_route(methods={'post'}, permission_classes=[])
     def adhoc(self, request):
         try:
-
             return self.preview(request)
-
         except OdhQLExecutionException as e:
-            return JsonResponse({'error': e.message,
-                                 'type': 'execution'},
-                                status=HttpResponseBadRequest.status_code
-                                )
+            return JsonResponse({'error': e.message, 'type': 'execution'}, status=HttpResponseBadRequest.status_code)
         except ParseException as e:
-            return JsonResponse({'error': e.message,
-                                 'type': 'parse',
-                                 'line': e.line,
-                                 'lineno': e.lineno,
-                                 'col': e.col},
-                                status=HttpResponseBadRequest.status_code
-                                )
+            return JsonResponse({'error': e.message, 'type': 'parse', 'line': e.line, 'lineno': e.lineno,
+                                 'col': e.col}, status=HttpResponseBadRequest.status_code)
