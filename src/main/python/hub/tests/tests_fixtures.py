@@ -7,51 +7,62 @@ from hub.management.commands.loadfixtures import Command as LoadFixtures
 
 
 class FixtureTest(APITestCase):
-    EXCLUDED_DOCUMENTS = [
-        'Dummy',  # those are for paging tests and just repeat
-        'employee'  # excessive amounts of data, actually segfaults for interlis1
-    ]
-
     @classmethod
     def setUpClass(cls):
-        LoadFixtures().handle()
+        cls.format_list = [fmt['name'] for fmt in client.get('/api/v1/format/').data]
 
-    def setUp(self):
-        self.format_list = [fmt['name'] for fmt in self.client.get('/api/v1/format/').data]
 
-        self.fixtures = self.find_fixtures()
+EXCLUDED_DOCUMENTS = [
+    'Dummy',  # those are for paging tests and just repeat
+    'employee'  # excessive amounts of data, actually segfaults for interlis1
+]
 
-    def find_fixtures(self):
-        documents = self.client.get('/api/v1/document/?count=50&page=1')
-        transformations = self.client.get('/api/v1/transformation/?count=50&page=1')
-        fixtures = []
 
-        for doc in documents.data['results']:
-            if all(doc['name'].find(excluded) < 0 for excluded in self.EXCLUDED_DOCUMENTS):
-                file_groups = self.client.get(doc['file_groups'])
-                for fg in file_groups.data:
-                    fixtures.append(('ODH{}'.format(fg['id']), fg['data']))
+def find_fixtures(client):
+    documents = client.get('/api/v1/document/?count=50&page=1')
+    transformations = client.get('/api/v1/transformation/?count=50&page=1')
+    fixtures = []
 
-        for trf in transformations.data['results']:
-            fixtures.append(('TRF{}'.format(trf['id']), '/api/v1/transformation/{}/data/'.format(trf['id'])))
+    for doc in documents.data['results']:
+        if all(doc['name'].find(excluded) < 0 for excluded in EXCLUDED_DOCUMENTS):
+            file_groups = client.get(doc['file_groups'])
+            for fg in file_groups.data:
+                fixtures.append(('ODH{}'.format(fg['id']), fg['data']))
 
-        return fixtures
+    for trf in transformations.data['results']:
+        fixtures.append(('TRF{}'.format(trf['id']), '/api/v1/transformation/{}/data/'.format(trf['id'])))
 
-    def test_formats(self):
+    return fixtures
+
+
+def get_fixture_test(id, url):
+    def fixture_test(self):
         results = {}
-        for (id, url) in self.fixtures:
-            results[id] = {}
-            for fmt in self.format_list:
-                data_url = '{}?fmt={}'.format(url, fmt)
-                try:
-                    response = self.client.get(data_url)
-                    print '{} -> {}'.format(data_url, response.status_code)
+        for fmt in self.format_list:
+            data_url = '{}?fmt={}'.format(url, fmt)
+            try:
+                response = self.client.get(data_url)
+                print '{} -> {}'.format(data_url, response.status_code)
 
-                    results[id][fmt] = response.status_code
-                except Exception as e:
-                    print '{} -> {}'.format(data_url, e.message)
-                    results[id][fmt] = e
+                results[fmt] = response.status_code
+            except Exception as e:
+                print '{} -> {}'.format(data_url, e.message)
+                results[fmt] = e
 
-        for id, fmts in results.iteritems():
-            for fmt, status in fmts.iteritems():
-                print "id: {}, fmt: {} -> {}".format(id, fmt, status)
+        for fmt, status in results.iteritems():
+            print "id: {}, fmt: {} -> {}".format(id, fmt, status)
+
+    return fixture_test
+
+
+from rest_framework.test import APIClient
+
+LoadFixtures().handle()
+
+client = APIClient()
+fixtures = find_fixtures(client)
+for (id, url) in fixtures:
+    test = get_fixture_test(id, url)
+    test_name = 'test_{}'.format(id.lower())
+
+    setattr(FixtureTest, test_name, test)
