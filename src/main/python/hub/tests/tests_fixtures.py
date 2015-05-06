@@ -16,7 +16,8 @@ class FixtureTest(APITestCase):
 
 EXCLUDED_DOCUMENTS = [
     'Dummy',  # those are for paging tests and just repeat
-    'employee'  # excessive amounts of data, actually segfaults for interlis1
+    'employee',  # excessive amounts of data, actually segfaults for interlis1
+    'children'  # same
 ]
 
 
