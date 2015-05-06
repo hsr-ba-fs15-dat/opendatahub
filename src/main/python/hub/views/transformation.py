@@ -10,6 +10,8 @@ from django.http.response import JsonResponse
 from django.http import HttpResponseNotFound, HttpResponseServerError
 from django.utils.text import slugify
 
+from hub.odhql.interpreter import OdhQLInterpreter
+from hub.odhql.exceptions import OdhQLExecutionException
 from hub.serializers import FileGroupSerializer, TransformationSerializer
 from hub.models import FileGroupModel, TransformationModel
 from authentication.permissions import IsOwnerOrPublic, IsOwnerOrReadOnly
@@ -38,17 +40,31 @@ class TransformationViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet,
         if not ('name' in request.data and 'description' in request.data):
             raise ValidationError('Insufficient information')
 
-        with transaction.atomic():
-            doc = TransformationModel(name=request.data['name'], description=request.data['description'],
-                                      private=request.data.get('private', False), owner=request.user,
-                                      transformation=request.data.get('transformation'))
-            doc.save()
-            doc.file_groups.add(
-                *[FileGroupModel.objects.get(id=str(fg)) for fg in request.data.get('file_groups')]
-            )
-            doc.save()
+        statement = request.data.get('transformation')
 
-        serializer = TransformationSerializer(TransformationModel.objects.get(id=doc.id),
+        file_group_ids = []
+        transformation_ids = []
+        is_template = False
+
+        try:
+            file_group_ids, transformation_ids = OdhQLInterpreter.parse_sources(statement)
+        except OdhQLExecutionException:
+            is_template = True
+
+        with transaction.atomic():
+
+            transformation = TransformationModel(name=request.data['name'], description=request.data['description'],
+                                                 private=request.data.get('private', False), owner=request.user,
+                                                 transformation=statement, is_template=is_template)
+            transformation.save()
+
+            if not is_template:
+                transformation.referenced_file_groups.add(FileGroupModel.objects.filter(id_in=file_group_ids))
+                transformation.referenced_transformations.add(
+                    TransformationModel.objects.filter(id_in=transformation_ids))
+                transformation.save()
+
+        serializer = TransformationSerializer(TransformationModel.objects.get(id=transformation.id),
                                               context={'request': request})
 
         return Response(serializer.data)

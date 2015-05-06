@@ -24,6 +24,8 @@ class Command(BaseCommand):
     help = 'Loads test data into the database'
 
     def __init__(self, *args, **kwargs):
+        super(Command, self).__init__()
+
         self.parse = kwargs.get('parse', True)
 
     IMPORT = [
@@ -104,7 +106,7 @@ class Command(BaseCommand):
             transformation.save()
 
             if group:
-                transformation.file_groups = FileGroupModel.objects.filter(id=group)
+                transformation.referenced_file_groups = FileGroupModel.objects.filter(id=group)
                 transformation.save()
 
         if self.parse:

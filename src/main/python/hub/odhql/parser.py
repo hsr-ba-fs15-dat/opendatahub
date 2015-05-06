@@ -50,7 +50,7 @@ class OdhQLParser(DocMixin):
     DataSourceNameOrAlias ::= DataSourceName | Alias
 
     DataSourceSelection ::= "from" DataSourceName ( "as"? Alias )? ( JoinDefinition )*
-    JoinDefinition ::= "join" DataSourceName ( "as"? Alias )? "on" JoinCondition
+    JoinDefinition ::= ("left" | "right" | "full" )? "join" DataSourceName ( "as"? Alias )? "on" JoinCondition
     JoinCondition ::= SingleJoinCondition | "(" SingleJoinCondition ( "and" SingleJoinCondition )* ")"
     SingleJoinCondition ::= Field "=" Field
 
@@ -185,12 +185,35 @@ class OdhQLParser(DocMixin):
     Es muss mindestens eine Datenquelle angegeben werden. Falls mehrere Datenquellen verwendet werden sollen, muss eine
     Verknüpfungsbedingung angegeben werden.
 
-    Beispiel:
+    Unterstützt werden folgende Join-Typen:
+        Inner
+            Standard. Verlangt, dass beide Seiten vorhanden sind
+            .. code:: sql
 
-    .. code:: sql
+            FROM ODH12 AS employees
+            JOIN ODH13 AS employers ON employees.employer_id = employers.id
+        Left
+            Verwendet die Schlüssel der linken Seite für den Vergleich (rechte Seite kann null sein)
 
-        FROM ODH12 AS employees
-        JOIN ODH13 AS employers ON employees.employer_id = employers.id
+            .. code:: sql
+
+            FROM ODH12 AS employees
+            LEFT JOIN ODH13 AS employers ON employees.employer_id = employers.id
+        Right
+            Verwendet die Schlüssel der rechten Seite für den Vergleich (linke Seite kann null sein)
+
+            .. code:: sql
+
+            FROM ODH12 AS employees
+            RIGHT JOIN ODH13 AS employers ON employees.employer_id = employers.id
+        FULL
+            Verwendet die Vereinigungsmenge der Schlüssel der beiden Seiten für den Vergleich (beide Seiten sind
+            optional, es kann jedoch pro Zeile nur eine Seite null sein).
+
+            .. code:: sql
+
+            FROM ODH12 AS employees
+            FULL JOIN ODH13 AS employers ON employees.employer_id = employers.id
 
     Filter
     ------
@@ -323,9 +346,11 @@ class OdhQLParser(DocMixin):
                           Suppress('(') + filter_alternative + Suppress(')'))
 
         # 'as' is optional here in sql - let's do that too
-        data_source = (identifier('name') +
-                       Optional(NotAny(CK('join') | CK('on') | CK('where') | CK('union') | CK('order')) +
-                                Optional(CK('as')) + identifier('alias')))
+        data_source_alias_blacklist = NotAny(
+            CK('join') | CK('left') | CK('right') | CK('full') | CK('inner') | CK('outer') | CK(
+                'on') | CK('where') | CK('union') | CK('order'))
+        data_source = (identifier('name') + Optional(data_source_alias_blacklist + Optional(CK('as')) +
+                                                     identifier('alias')))
         data_source.setParseAction(DataSource.parse)
 
         join_single_condition = field('left') + '=' + field('right')
@@ -337,8 +362,11 @@ class OdhQLParser(DocMixin):
 
         join_condition_list = join_single_condition | join_multi_condition
 
-        join = (CK('join') + data_source.copy()('datasource') +
-                CK('on') + join_condition_list.copy()('condition'))
+        join_type = Optional(CK('left') | CK('right') | CK('full')) + CK('join')
+        join_type.setParseAction(JoinedDataSource.parse_join_type)
+
+        join = (join_type('join_type') + data_source.copy()('datasource') + CK('on') +
+                join_condition_list.copy()('condition'))
         join.setParseAction(JoinedDataSource.parse)
 
         order_by_position = Word(nums)
@@ -742,9 +770,16 @@ class JoinConditionList(ASTBase, Sequence):
 
 
 class JoinedDataSource(DataSource):
-    def __init__(self, name, alias, condition):
+    class JoinType(Enum):
+        inner = 1
+        left_outer = 2
+        right_outer = 3
+        full_outer = 4
+
+    def __init__(self, name, alias, join_type, condition):
         super(JoinedDataSource, self).__init__(name, alias)
 
+        self.join_type = join_type
         self.condition = condition
 
     @classmethod
@@ -755,9 +790,21 @@ class JoinedDataSource(DataSource):
             raise TokenException('join without conditions')
 
         datasource = tokens.get('datasource')
+        join_type = tokens.get('join_type')
         condition = tokens.get('condition')
 
-        return cls(datasource.name, datasource.alias, condition)
+        return cls(datasource.name, datasource.alias, join_type, condition)
+
+    @classmethod
+    def parse_join_type(cls, tokens):
+        lower_tokens = [token.lower() for token in tokens if isinstance(token, basestring)]
+        if 'left' in lower_tokens:
+            return cls.JoinType.left_outer
+        elif 'right' in lower_tokens:
+            return cls.JoinType.right_outer
+        elif 'full' in lower_tokens or 'outer' in lower_tokens:
+            return cls.JoinType.full_outer
+        return cls.JoinType.inner
 
     def __repr__(self):
         return '<JoinedDataSource name=\'{}\' alias=\'{}\' condition={}>'.format(self.name, self.alias, self.condition)

@@ -523,6 +523,25 @@ class TestParser(TestBase):
         self.assertEqual(result.fields[1].expression.value, 'test')
         self.assertEqual(result.fields[1].alias, '--')
 
+    def test_join_types(self):
+        p = odhql.OdhQLParser()
+
+        types = odhql.JoinedDataSource.JoinType
+
+        def assert_join_type(type, query):
+            result = p.parse(query)
+            self.assertIsInstance(result, odhql.Query)
+
+            join_ds = result.data_sources[1]
+            self.assertIsInstance(join_ds, odhql.JoinedDataSource)
+
+            self.assertEqual(type, join_ds.join_type, msg=str(type))
+
+        assert_join_type(types.inner, 'select a.a from a join b on a.x = b.x')
+        assert_join_type(types.left_outer, 'select a.a from a left join b on a.x = b.x')
+        assert_join_type(types.right_outer, 'select a.a from a right join b on a.x = b.x')
+        assert_join_type(types.full_outer, 'select a.a from a full join b on a.x = b.x')
+
     def test_malformed_expressions(self):
         p = odhql.OdhQLParser()
 
@@ -543,7 +562,11 @@ class TestParser(TestBase):
             ('select a.a from a order by a.a union select b.a from b order by b.b', 'order only at end of unions'),
             ('select a.a from a order by -1', 'negative order by position is invalid'),
             ('select a.a from a order by 0', 'zero as order by position is invalid'),
-            ('select 1.-1 as a from a', 'invalid float')
+            ('select 1.-1 as a from a', 'invalid float'),
+            ('select a.a from a inner join b on a.x = b.x', 'just use \'join\' instead'),
+            ('select a.a from a left outer join b on a.x = b.x', 'use \'left join\' instead'),
+            ('select a.a from a right outer join b on a.x = b.x', 'use \'right join\' instead'),
+            ('select a.a from a full outer  join b on a.x = b.x', 'use \'full join\' instead')
         ]
 
         for expr, reason in expressions_to_test:
