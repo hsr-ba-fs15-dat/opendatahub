@@ -79,6 +79,9 @@ class FileGroup(object):
         file = self.get_main_file() or self.files[0]
         return file.to_format(format)
 
+    def __contains__(self, item):
+        return item in self.names
+
     def __iter__(self):
         return iter(self.files)
 
@@ -200,7 +203,7 @@ class File(object):
         from hub import formatters
         from hub.formats.base import Format
 
-        return formatters.Formatter.format(self.to_serializable_df(), self.basename, Format.from_string(format))
+        return formatters.Formatter.format(self.to_df(), self.basename, Format.from_string(format))
 
     def __contains__(self, string):
         return string in self.ustream.read()

@@ -78,7 +78,8 @@ class CSV(Format):
 
     @classmethod
     def is_format(cls, file, *args, **kwargs):
-        return file.extension == 'csv'
+        extensions = [f.extension for f in file.file_group]
+        return file.extension == 'csv' and not ('csvt' in extensions or 'prj' in extensions)
 
 
 class JSON(Format):
@@ -202,15 +203,28 @@ class WFS(Format):
         return False
 
 
-class GeoPackage(Format):
-    label = 'GeoPackage'
+# class GeoPackage(Format):
+# label = 'GeoPackage'
+# description = """
+#     GeoPackage ist ein Datenformat zum Austausch von Geodaten.
+#     """
+#
+#     @classmethod
+#     def is_format(cls, file, *args, **kwargs):
+#         return file.extension == 'gpkg'
+
+
+class GeoCSV(Format):
+    label = 'GeoCSV'
     description = """
-    GeoPackage ist ein Datenformat zum Austausch von Geodaten.
+    Ist ein von dem HSR GeometaLab spezifiziertes, CSV-ähnliches Format für Geo-Daten.
     """
 
     @classmethod
     def is_format(cls, file, *args, **kwargs):
-        return file.extension == 'gpkg'
+        return (file.extension == 'csv' and
+               (file.basename + '.csvt' in file.file_group or file.basename + '.prj' in file.file_group)) or \
+               (file.extension == 'geocsv')
 
 
 class Other(Format):
