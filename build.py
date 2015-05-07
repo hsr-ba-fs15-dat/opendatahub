@@ -6,6 +6,9 @@ PyBuilder configuration file
 
 import shutil
 import itertools
+import threading
+import time
+import sys
 
 from pybuilder.core import use_plugin, after, init, task, depends
 from pybuilder.utils import assert_can_execute, execute_command, read_file
@@ -13,8 +16,6 @@ from pybuilder.errors import BuildFailedException
 from pybuilder.pluginhelper.external_command import ExternalCommandBuilder
 import os
 import fnmatch
-import threading
-import time
 
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -32,9 +33,13 @@ use_plugin('python.install_dependencies')
 default_task = ['clean', 'install_dependencies', 'django_makemigrations', 'django_migrate', 'django_createcachetable',
                 'django_test', 'grunt', 'analyze', 'publish']
 
+
 def travis_keep_alive():
-    print 'TRAVIS KEEP ALIVE'
-    time.sleep(5 * 60)
+    while True:
+        print 'TRAVIS KEEP ALIVE'
+        sys.stdout.flush()
+        time.sleep(5 * 60)
+
 
 thread = threading.Thread(target=travis_keep_alive)
 thread.setDaemon(True)
@@ -131,7 +136,8 @@ def grunt(project, logger):
 @task
 @depends('prepare')
 def django_test(project, logger):
-    django_exec(project, logger, ['test', '--noinput', '--failfast'] + project.get_property('django_apps'), fail_stderr=False)
+    django_exec(project, logger, ['test', '--noinput', '--failfast'] + project.get_property('django_apps'),
+                fail_stderr=False)
 
 
 @task
