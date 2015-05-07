@@ -3,16 +3,19 @@ from __future__ import unicode_literals
 
 import logging
 
+import re
 from rest_framework import viewsets
 from rest_framework.response import Response
-from rest_framework.decorators import detail_route
+from rest_framework.decorators import detail_route, list_route
 from rest_framework.reverse import reverse
+from django.http.response import JsonResponse
 
 from hub.models import FileGroupModel, FileModel
 from hub.serializers import FileGroupSerializer, FileSerializer
 from authentication.permissions import IsOwnerOrPublic
 from hub.views.mixins import DataDownloadMixin, PreviewMixin
 from opendatahub import settings
+
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +35,20 @@ class FileGroupViewSet(viewsets.ModelViewSet, DataDownloadMixin, PreviewMixin):
 
         serializer = FileSerializer(file, many=True, context={'request': request})
         return Response(serializer.data)
+
+    @list_route()
+    def preview_by_unique_name(self, request):
+        name = request.GET.get('name', None)
+        if name:
+            regex = r'^({0}|{1})(?P<id>\d+)_(?P<name>.*$)'.format(settings.PACKAGE_PREFIX,
+                                                                  settings.TRANSFORMATION_PREFIX)
+            match = re.search(regex, name)
+            if match:
+                fg_id = match.group('id')
+                name = match.group('name')
+
+                return self.preview(request, fg_id, name)
+        return JsonResponse({})
 
     def format_object(self, model, format):
         group = model.to_file_group()
