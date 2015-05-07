@@ -4,20 +4,6 @@
         <h1>{{ vm.name }}</h1>
 
         <p>{{ vm.description }}</p>
-        <div class="btn-toolbar">
-            <button class="btn btn-danger" ng-click="vm.remove()" ng-show="vm.allowDelete">Löschen</button>
-            <div class="btn-group pull-right">
-                <a data-target="#" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
-                    Herunterladen
-                    <span class="caret"></span>
-                </a>
-                <ul class="dropdown-menu">
-                    <li ng-repeat="format in vm.availableFormats">
-                        <a ng-click="vm.downloadAs(format.name)">{{ format.label }}</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
 
         <p ng-show="vm.previewError">{{ vm.previewError }}</p>
 
@@ -27,7 +13,7 @@
             </div>
             <div class="panel-body">
 
-                <odh-preview pkg="vm.pkg" query="vm.transformation"></odh-preview>
+                <odh-preview pkg="vm.pkg" query="vm.transformation" download="vm.downloadAs(format)"></odh-preview>
 
             </div>
         </div>

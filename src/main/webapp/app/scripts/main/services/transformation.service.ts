@@ -78,9 +78,23 @@ module odh.main {
 
         constructor(private $log:ng.ILogService, private Restangular:restangular.IService,
                     private $http:ng.IHttpService,
-                    private UrlService:odh.utils.UrlService) {
+                    private UrlService:odh.utils.UrlService, private $q:ng.IQService) {
 
             this.transformations = this.Restangular.all('transformation');
+        }
+
+        public static aceLoaded(editor) {
+            editor.$blockScrolling = 'Infinity';
+            var _renderer = editor.renderer;
+            var _session = editor.getSession();
+            _session.setOptions({mode: 'ace/mode/sql'});
+            _renderer.setOptions({
+                maxLines: Infinity
+            });
+            editor.setOptions({
+                showGutter: true,
+                firstLineNumber: 1
+            });
         }
 
         public remove(transformation) {
@@ -115,26 +129,31 @@ module odh.main {
             return this.Restangular.oneUrl('transformation', '').get(params);
         }
 
-
-        public preview(transformation:any) {
-            var promise;
+        public preview(transformation:any, params = null) {
+            var deferred = this.$q.defer();
             if (typeof transformation === 'object') {
                 if (transformation.type === 'transformation') {
-                    console.log('restangular');
-                    promise = this.Restangular.one('transformation', transformation.id).one('preview').get();
+                    this.Restangular.one('transformation', transformation.id).one('preview').get(params)
+                        .then((data => {
+                            deferred.resolve(data);
+                        }));
 
                 }
             }
             if (typeof transformation === 'string') {
                 console.log('http-post');
-                promise = this.$http.post(this.UrlService.get('transformation/adhoc'), {
-                params: {
-                    query: transformation
-                }
-            });
+
+                this.$http.post(this.UrlService.get('transformation/adhoc'), {
+                    params: {
+                        query: transformation
+
+                    }
+                }, {params: params}).then(data => {
+                    deferred.resolve(data.data[0]);
+                });
             }
 
-            return promise;
+            return deferred.promise;
         }
 
         public parse(transformation:string) {

@@ -7,6 +7,19 @@
         <!--<th>Columns:{{columns.length}}</th>-->
     </tr>
 </script>
+<div class="container">
+    <div class="btn-group pull-right" ng-if="success">
+        <a data-target="#" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+            Herunterladen
+            <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+            <li ng-repeat="format in availableFormats">
+                <a ng-click="download({group: group, format: format.name})">{{ format.label }}</a>
+            </li>
+        </ul>
+    </div>
+</div>
 <div class="table-responsive">
     <table ng-table="ngTableParams" template-header="sample_ng_header"
            class="table table-striped">
@@ -18,5 +31,4 @@
             </td>
         </tr>
     </table>
-    {{query}}
 </div>

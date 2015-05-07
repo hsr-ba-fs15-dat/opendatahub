@@ -8,31 +8,34 @@ module odh.main {
         static $inject = ['FileGroupService:main.FileGroupService', 'ngTableParams:any'];
         public modal:boolean = false;
 
-        constructor(private FileGroupService:main.FileGroupService, private ngTableParams:any,
+        constructor(private TransformationService:main.TransformationService, private ngTableParams:any,
                     private PackageService:main.PackageService,
-                    private $q:ng.IQService) {
+                    private $q:ng.IQService, private ToastService:odh.utils.ToastService,
+                    private FormatService:main.FormatService) {
         }
-
-
+        success = false;
+        availableFormats = [];
         restrict = 'AE';
         templateUrl = 'views/directives/preview.html';
 
         scope = {
             pkg: '=',
-            query: '='
+            query: '=',
+            download: '&'
         };
-        link = (scope:ng.IScope, element, attrs) => {
+        link = (scope, element, attrs) => {
             this.ngTable(scope);
             scope.$watch('pkg', (oldVal, newVal) => {
-                console.log(444444444444, oldVal, newVal, oldVal === newVal);
                 if (oldVal !== newVal) {
                     this.ngTable(scope);
                 }
+            });
 
-
-            })
-
-
+            this.FormatService.getAvailableFormats().then(data => {
+                var results = this.FormatService.sortByLabel(data.data);
+                results.push({name: null, label: 'Original', description: 'Unveränderte Daten', example: null});
+                scope.availableFormats = results;
+            });
         };
 
         public ngTable(scope) {
@@ -40,7 +43,6 @@ module odh.main {
             scope.cols = [];
 
             scope.pkgNew.then(pack => {
-                console.log('===>', pack);
                 scope.ngTableParams = new this.ngTableParams({
                         page: 1,            // show first page
                         name: pack.unique_name || '',
@@ -52,29 +54,54 @@ module odh.main {
                         total: 0, // length of data
 
                         getData: ($defer, params) => {
-                            console.log('get_data');
+                            scope.success = false;
                             if (typeof pack === 'object') {
-                                this.PackageService.getPreview(pack, params.url()).then(result => {
-                                    console.log('getPreview')
-                                    var data = result.data;
-                                    if (result.data.length === 1) {
-                                        data = result.data[0];
-                                    }
-                                    if (result.data.length > 1) {
-                                        throw "Only one preview excepted!! Got " + result.data.length
-                                    }
-                                    angular.forEach(data.columns, (col) => {
-                                        scope.cols.push({
-                                            name: col,
-                                            alias: col,
-                                            title: col,
-                                            show: true,
-                                            field: col
+                                if (!(scope.query && (pack.route !== 'transformation'))) {
+                                    this.PackageService.getPreview(pack, params.url()).then(result => {
+                                        var data = result.data;
+                                        if (result.data.length === 1) {
+                                            data = result.data[0];
+                                        }
+                                        if (result.data.length > 1) {
+                                            var error = 'Only one preview excepted!! Got ' + result.data.length;
+                                            this.ToastService.failure(error);
+                                            throw error;
+                                        }
+                                        scope.cols = [];
+                                        angular.forEach(data.columns, (col) => {
+                                            scope.cols.push({
+                                                name: col,
+                                                alias: col,
+                                                title: col,
+                                                show: true,
+                                                field: col
+                                            });
                                         });
+                                        params.total(data.count);
+                                        $defer.resolve(data.data);
+                                        scope.success = true;
+                                    }).catch(error => {
+                                        this.ToastService.failure(error);
                                     });
-                                    params.total(data.count);
-                                    $defer.resolve(data.data);
-                                });
+                                } else {
+                                    this.TransformationService.preview(scope.query, params.url()).then((result:any) => {
+                                        scope.cols = [];
+                                        angular.forEach(result.columns, (col) => {
+                                            scope.cols.push({
+                                                name: col,
+                                                alias: col,
+                                                title: col,
+                                                show: true,
+                                                field: col
+                                            });
+                                        });
+                                        params.total(result.count);
+                                        $defer.resolve(result.data);
+                                        scope.success = true;
+                                    }).catch(error => {
+                                        this.ToastService.failure(error);
+                                    });
+                                }
                             }
                         }
                     });
@@ -83,11 +110,14 @@ module odh.main {
     }
 
     angular.module('openDataHub.main').directive('odhPreview',
-        (FileGroupService:main.FileGroupService,
+        (TransformationService:main.TransformationService,
          ngTableParams:any,
          PackageService:main.PackageService,
-         $q:ng.IQService) => {
-            return new OdhPreview(FileGroupService, ngTableParams, PackageService, $q);
+         $q:ng.IQService,
+         ToastService:odh.utils.ToastService,
+         FormatService:main.FormatService) => {
+            return new OdhPreview(TransformationService, ngTableParams, PackageService, $q, ToastService,
+                FormatService);
         }
     )
     ;
