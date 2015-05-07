@@ -105,6 +105,9 @@ class File(object):
         if not file_group:
             file_group = FileGroup([self])
 
+        if type(name) == str:
+            name = unicode(name, 'UTF-8')
+
         self.name = name
         self._stream = stream
         self.file_group = file_group
@@ -225,7 +228,6 @@ class WfsUrl(File):
 class Url(File):
     def __init__(self, name, url, *args, **kwargs):
         super(Url, self).__init__(name, None, *args, **kwargs)
-
         self.url = url
 
     @property
