@@ -42,13 +42,10 @@ def get_fixture_test(id, url):
     def fixture_test(self):
         for fmt in self.format_list:
             data_url = '{}?fmt={}'.format(url, fmt)
-            try:
-                response = self.client.get(data_url)
-                print '{} -> {}'.format(data_url, response.status_code)
+            response = self.client.get(data_url)
+            print '{} -> {}'.format(data_url, response.status_code)
 
-                self.assertEqual(200, response.status_code)
-            except Exception as e:
-                self.fail('Format {} failed with error {}'.format(fmt, e.message))
+            self.assertEqual(200, response.status_code)
 
     return fixture_test
 
