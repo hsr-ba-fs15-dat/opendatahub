@@ -68,7 +68,7 @@ class DataDownloadMixin(viewsets.GenericViewSet):
 
     @detail_route()
     def data(self, request, pk, *args, **kwargs):
-        format_name = request.query_params.get('fmt', None)
+        format_name = request.query_params.get('fmt').lower() if 'fmt' in request.query_params else None
 
         cache_key = self.get_cache_key(pk, format_name)
         result_list = cache.L1.get(cache_key)
@@ -92,6 +92,8 @@ class DataDownloadMixin(viewsets.GenericViewSet):
             return JsonResponse({})  # just signal that it can be downloaded (200)
 
         response = HttpResponse()
+        response['Content-Type'] = 'application/octet-stream'
+
         if len(result_list) > 1 or len(result_list) > 0 and len(result_list[0].files) > 1:
             response['Content-Disposition'] = 'attachment; filename="{}.zip"'.format(
                 slugify(unicode(self.get_name(model)))[:200])
@@ -106,7 +108,6 @@ class DataDownloadMixin(viewsets.GenericViewSet):
             response['Content-Disposition'] = 'attachment; filename="{}"'.format(file.name)
             response.write(file.stream.getvalue())
 
-        response['Content-Type'] = 'application/octet-stream'
         response.flush()
 
         return response

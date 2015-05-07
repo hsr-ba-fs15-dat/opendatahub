@@ -9,9 +9,9 @@ from hub.management.commands.loadfixtures import Command as LoadFixtures
 class FixtureTest(APITestCase):
     @classmethod
     def setUpClass(cls):
-        cls.format_list = [fmt['name'] for fmt in client.get('/api/v1/format/').data]
-
+        print "Loading fixtures (2/2) ..."
         LoadFixtures(parse=False).handle()
+        print "Done."
 
 
 EXCLUDED_DOCUMENTS = [
@@ -38,26 +38,31 @@ def find_fixtures(client):
     return fixtures
 
 
-def get_fixture_test(id, url):
+def get_fixture_test(id, url, fmt):
     def fixture_test(self):
-        for fmt in self.format_list:
-            data_url = '{}?fmt={}'.format(url, fmt)
-            response = self.client.get(data_url)
-            print '{} -> {}'.format(data_url, response.status_code)
+        data_url = '{}?fmt={}'.format(url, fmt)
+        print "Testing {}".format(data_url)
+        response = self.client.get(data_url)
 
-            self.assertEqual(200, response.status_code)
+        self.assertEqual(200, response.status_code)
 
     return fixture_test
 
 
 from rest_framework.test import APIClient
 
+print "Loading fixtures (1/2) ..."
 LoadFixtures(parse=False).handle()
 
+print "Creating test cases..."
 client = APIClient()
 fixtures = find_fixtures(client)
-for (id, url) in fixtures:
-    test = get_fixture_test(id, url)
-    test_name = 'test_{}'.format(id.lower())
+format_list = [fmt['name'] for fmt in client.get('/api/v1/format/').data]
 
-    setattr(FixtureTest, test_name, test)
+for (id, url) in fixtures:
+    for fmt in format_list:
+        test = get_fixture_test(id, url, fmt)
+        test_name = 'test_{}_{}'.format(id.lower(), fmt.lower())
+
+        setattr(FixtureTest, test_name, test)
+print "Preparations done."
