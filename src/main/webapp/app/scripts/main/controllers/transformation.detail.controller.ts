@@ -12,18 +12,12 @@ module odh.main {
         public transformation;
         public file_groups;
         public 'private';
-        public columns;
-        public rows;
         public alerts:any;
         public loadedTables:{} = {};
         public usedTables:{};
-        public previewError;
         public selected;
         public transformationType:transType = transType.Template;
         public availableFormats;
-
-        public previewLoading:boolean;
-
         public showExpertPanel = false;
 
         public allowDelete:boolean;
@@ -53,7 +47,6 @@ module odh.main {
             this.transformationId = $stateParams.id;
             this.pkg = this.TransformationService.get(this.transformationId);
             this.pkg.then(data => {
-
                 this.transformationObject = data;
                 this.name = data.name;
                 this.description = data.description;
@@ -112,15 +105,11 @@ module odh.main {
             return typeof this.loadedTables[table.unique_name] !== 'undefined';
         }
 
-        public aceLoaded(editor) {
-            editor.$blockScrolling = 'Infinity';
-            editor.setOptions({
-                maxLines: Infinity
-            });
+        public static aceLoaded(editor) {
+            odh.main.TransformationService.aceLoaded(editor);
         }
 
         public preview() {
-
             this.previewLoading = true;
             this.TransformationService.parse(this.transformation).then((data:any) => {
                 angular.forEach(data.data.tables, table => {

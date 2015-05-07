@@ -78,19 +78,8 @@ module odh {
             return this.odhqlInputString;
         }
 
-        public aceLoaded(editor) {
-            editor.$blockScrolling = 'Infinity';
-            var _renderer = editor.renderer;
-            var _session = editor.getSession();
-            _session.setOptions({mode: 'ace/mode/sql'});
-            _renderer.setOptions({
-                maxLines: Infinity
-            });
-            editor.setOptions({
-                showGutter: true,
-                firstLineNumber: 1
-            });
-
+        public static aceLoaded(editor) {
+            odh.main.TransformationService.aceLoaded(editor);
         }
 
         public getJoinOperations() {

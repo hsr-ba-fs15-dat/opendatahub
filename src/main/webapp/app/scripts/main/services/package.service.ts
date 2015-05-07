@@ -45,9 +45,10 @@ module odh.main {
                 if (typeof pkg.preview === 'string') {
                     promise = this.$http.get(pkg.preview, {params: params});
                 }
-                else {
+                else if (typeof pkg.url === 'string'){
                     promise = this.$http.get(pkg.url, {params: params});
                 }
+                else promise = this.$q.reject('Dieses Dokument enthält kein gültiges Preview!');
                 return promise;
             }
         }
