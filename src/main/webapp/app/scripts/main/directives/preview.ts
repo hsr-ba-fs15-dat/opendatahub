@@ -23,7 +23,7 @@ module odh.main {
             query: '=',
             download: '&'
         };
-        link = (scope:ng.IScope, element, attrs) => {
+        link = (scope, element, attrs) => {
             this.ngTable(scope);
             scope.$watch('pkg', (oldVal, newVal) => {
                 if (oldVal !== newVal) {
@@ -59,12 +59,13 @@ module odh.main {
                                 if (!(scope.query && (pack.route !== 'transformation'))) {
                                     this.PackageService.getPreview(pack, params.url()).then(result => {
                                         var data = result.data;
-                                        console.log(data, ',===')
                                         if (result.data.length === 1) {
                                             data = result.data[0];
                                         }
                                         if (result.data.length > 1) {
-                                            throw "Only one preview excepted!! Got " + result.data.length
+                                            var error = 'Only one preview excepted!! Got ' + result.data.length;
+                                            this.ToastService.failure(error);
+                                            throw error;
                                         }
                                         scope.cols = [];
                                         angular.forEach(data.columns, (col) => {
@@ -83,10 +84,9 @@ module odh.main {
                                         this.ToastService.failure(error);
                                     });
                                 } else {
-                                    this.TransformationService.preview(scope.query, params.url()).then((result) => {
-                                        var data = result;
+                                    this.TransformationService.preview(scope.query, params.url()).then((result:any) => {
                                         scope.cols = [];
-                                        angular.forEach(data.columns, (col) => {
+                                        angular.forEach(result.columns, (col) => {
                                             scope.cols.push({
                                                 name: col,
                                                 alias: col,
@@ -95,8 +95,8 @@ module odh.main {
                                                 field: col
                                             });
                                         });
-                                        params.total(data.count);
-                                        $defer.resolve(data.data);
+                                        params.total(result.count);
+                                        $defer.resolve(result.data);
                                         scope.success = true;
                                     }).catch(error => {
                                         this.ToastService.failure(error);
@@ -116,7 +116,8 @@ module odh.main {
          $q:ng.IQService,
          ToastService:odh.utils.ToastService,
          FormatService:main.FormatService) => {
-            return new OdhPreview(TransformationService, ngTableParams, PackageService, $q, ToastService, FormatService);
+            return new OdhPreview(TransformationService, ngTableParams, PackageService, $q, ToastService,
+                FormatService);
         }
     )
     ;

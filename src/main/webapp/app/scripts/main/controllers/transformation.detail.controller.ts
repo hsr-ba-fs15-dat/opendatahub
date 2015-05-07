@@ -61,6 +61,9 @@ module odh.main {
             });
         }
 
+        public static aceLoaded(editor) {
+            odh.main.TransformationService.aceLoaded(editor);
+        }
         public isAuthenticated() {
             return this.$auth.isAuthenticated();
         }
@@ -105,12 +108,7 @@ module odh.main {
             return typeof this.loadedTables[table.unique_name] !== 'undefined';
         }
 
-        public static aceLoaded(editor) {
-            odh.main.TransformationService.aceLoaded(editor);
-        }
-
         public preview() {
-            this.previewLoading = true;
             this.TransformationService.parse(this.transformation).then((data:any) => {
                 angular.forEach(data.data.tables, table => {
                     table.isOwn = this.loadIfPackageUsed(table);

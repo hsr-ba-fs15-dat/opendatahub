@@ -66,6 +66,9 @@ module odh {
             );
         }
 
+        public static aceLoaded(editor) {
+            odh.main.TransformationService.aceLoaded(editor);
+        }
 
         public transformation(newInput:string = '') {
             if (newInput && this.manualEdit) {
@@ -76,10 +79,6 @@ module odh {
                 this.odhqlInputString = this.selection.generateTransformation();
             }
             return this.odhqlInputString;
-        }
-
-        public static aceLoaded(editor) {
-            odh.main.TransformationService.aceLoaded(editor);
         }
 
         public getJoinOperations() {

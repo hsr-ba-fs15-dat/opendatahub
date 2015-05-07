@@ -83,6 +83,20 @@ module odh.main {
             this.transformations = this.Restangular.all('transformation');
         }
 
+        public static aceLoaded(editor) {
+            editor.$blockScrolling = 'Infinity';
+            var _renderer = editor.renderer;
+            var _session = editor.getSession();
+            _session.setOptions({mode: 'ace/mode/sql'});
+            _renderer.setOptions({
+                maxLines: Infinity
+            });
+            editor.setOptions({
+                showGutter: true,
+                firstLineNumber: 1
+            });
+        }
+
         public remove(transformation) {
             return this.Restangular.one('transformation', transformation.id).remove();
         }
@@ -115,26 +129,12 @@ module odh.main {
             return this.Restangular.oneUrl('transformation', '').get(params);
         }
 
-        public static aceLoaded(editor) {
-            editor.$blockScrolling = 'Infinity';
-            var _renderer = editor.renderer;
-            var _session = editor.getSession();
-            _session.setOptions({mode: 'ace/mode/sql'});
-            _renderer.setOptions({
-                maxLines: Infinity
-            });
-            editor.setOptions({
-                showGutter: true,
-                firstLineNumber: 1
-            });
-        }
-
-        public preview(transformation:any, params) {
+        public preview(transformation:any, params = null) {
             var deferred = this.$q.defer();
             if (typeof transformation === 'object') {
                 if (transformation.type === 'transformation') {
                     this.Restangular.one('transformation', transformation.id).one('preview').get(params)
-                    .then((data => {
+                        .then((data => {
                             deferred.resolve(data);
                         }));
 
