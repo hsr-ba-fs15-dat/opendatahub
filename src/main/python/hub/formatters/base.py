@@ -134,9 +134,9 @@ class XMLFormatter(Formatter):
 
                 etree.SubElement(root, 'row', attributes)
 
-                results.append(File.from_string(df.name + '.xml',
-                                                etree.tostring(root, encoding='UTF-8', xml_declaration=True,
-                                                               pretty_print=True)).file_group)
+            results.append(File.from_string(df.name + '.xml',
+                                            etree.tostring(root, encoding='UTF-8', xml_declaration=True,
+                                                           pretty_print=True)).file_group)
         return results
 
 
