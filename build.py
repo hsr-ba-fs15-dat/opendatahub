@@ -48,7 +48,7 @@ thread.start()
 
 @init
 def initialize(project):
-    project.set_property('install_dependencies_upgrade', True)
+    # project.set_property('install_dependencies_upgrade', True)
     project.depends_on_requirements('requirements.txt')
     project.build_depends_on_requirements('requirements_dev.txt')
 
