@@ -49,4 +49,4 @@ whitenoise==1.0.6
 fastkml==0.9
 Pygments==2.0.2
 docutils==0.12
-pygdal
+pygdal==1.11.1

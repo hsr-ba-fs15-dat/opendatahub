@@ -27,10 +27,8 @@ install:
   - npm cache clean
   - npm install -g bower grunt-cli
   - npm install -g tsd@next
-  # - gem update --system
-  # - gem install compass # SASS/SCSS
   - wget -qO- https://toolbelt.heroku.com/install-ubuntu.sh | sh
-  - sudo apt-get install gdal-bin libgdal-dev libgdal1h libgdal1-dev # ogr2ogr/GDAL
+  - sudo make gdal
   - sudo apt-get install libfreetype6 libfreetype6-dev # pre-req matplotlib
   - sudo apt-get install libxml2-dev libxslt-dev python-dev # lxml
 
@@ -41,7 +39,6 @@ before_script:
   - psql -c 'ALTER USER opendatahub CREATEDB;' -U postgres
 
 script:
- - pip install pygdal==1.10.0
  - pip install -r requirements.txt --download-cache $HOME/.pip-cache
  - pip install -r requirements_dev.txt --download-cache $HOME/.pip-cache
  - pyb -v
