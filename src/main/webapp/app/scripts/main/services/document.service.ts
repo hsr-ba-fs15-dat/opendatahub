@@ -97,45 +97,6 @@ module odh.main {
             return promise;
         }
 
-        public getPreviewByUniqueName(uniqueName:string) {
-            console.log(uniqueName, 'uniqueName');
-            return this.Restangular.all('fileGroup').customGET('preview_by_unique_name', {
-                name: uniqueName
-            });
-        }
-
-        public getPreview(filegroup:any, params:any, name:string = '') {
-            var promise;
-            var d = this.$q.defer();
-            var url;
-            if (name) {
-                params.name = name;
-            }
-            console.log(filegroup, typeof filegroup);
-            if (typeof filegroup === 'number') {
-                promise = this.Restangular.one('fileGroup', filegroup).get().then(fg => {
-                    promise = this.getPreview(fg, params).then(res => {
-                        d.resolve(res);
-                    }).catch(err => console.log(err));
-                });
-                return d.promise;
-            } else if (typeof filegroup.preview === 'string') {
-                url = filegroup.preview;
-            } else {
-                url = filegroup.previewUrl;
-            }
-
-            this.$http({
-                url: url,
-                method: 'GET',
-                params: params
-            }).then(data => {
-                filegroup.preview = data.data;
-                d.resolve(data);
-            }).catch(e => d.reject(e));
-            promise = d.promise;
-            return promise;
-        }
     }
 
     angular.module('openDataHub.main')

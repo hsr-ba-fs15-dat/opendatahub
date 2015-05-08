@@ -44,10 +44,10 @@ class FileGroupViewSet(viewsets.ModelViewSet, DataDownloadMixin, PreviewMixin):
                                                                   settings.TRANSFORMATION_PREFIX)
             match = re.search(regex, name)
             if match:
-                fg_id = match.group('id')
+                pk = match.group('id')
                 name = match.group('name')
 
-                return self.preview(request, fg_id, name)
+                return self.preview(request, pk=pk, name=name)
         return JsonResponse({})
 
     def format_object(self, model, format):

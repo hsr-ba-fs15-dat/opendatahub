@@ -8,27 +8,36 @@
     </tr>
 </script>
 <div class="container">
-    <div class="btn-group pull-right" ng-if="success">
-        <a data-target="#" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
-            Herunterladen
-            <span class="caret"></span>
-        </a>
-        <ul class="dropdown-menu">
-            <li ng-repeat="format in availableFormats">
-                <a ng-click="download({group: group, format: format.name})">{{ format.label }}</a>
-            </li>
-        </ul>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="btn-group pull-right" ng-if="success && showDownload">
+                <a data-target="#" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+                    Herunterladen
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li ng-repeat="format in availableFormats">
+                        <a ng-click="download({group: group, format: format.name})">{{ format.label }}</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
-</div>
-<div class="table-responsive">
-    <table ng-table="ngTableParams" template-header="sample_ng_header"
-           class="table table-striped">
-        <tr ng-repeat="row in $data">
-            <td ng-repeat="col in cols">
-                {{row[col.field] | characters:50}}
-                <i ng-if="row[col.field].length>50" class="fa fa-question-circle" popover="{{row[col.field]}}"
-                   popover-trigger="mouseenter"></i>
-            </td>
-        </tr>
-    </table>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table ng-table="ngTableParams" template-header="sample_ng_header"
+                       class="table table-striped ng-table-responsive">
+                    <tr ng-repeat="row in $data">
+                        <td ng-repeat="col in cols">
+                            {{row[col.field] | characters:50}}
+                            <i ng-if="row[col.field].length>50" class="fa fa-question-circle"
+                               popover="{{row[col.field]}}"
+                               popover-trigger="mouseenter"></i>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>

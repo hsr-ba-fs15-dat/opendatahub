@@ -10,16 +10,14 @@ module odh.main {
         public items:main.ITable[];
         public fields:{};
         public expression:{[name:string]: IExpression} = {};
-        public unionTargets:main.ITable[];
         public joinTargets:main.ITable[];
         public master:string;
-        public joinOperations:any;
         private useQuotes:boolean = true;
         private privateCount:number = 0;
         private itemCounter:number = 1;
 
         constructor(private JOIN_OPERATIONS:main.IOperations, private ngTableParams:any,
-                    private FileGroupService:main.FileGroupService) {
+                    private FileGroupService:main.FileGroupService, private PackageService:main.PackageService) {
             this.items = [];
             this.expression = {};
             this.fields = {};
@@ -33,6 +31,7 @@ module odh.main {
 
         public addTable(item:main.ITable) {
             if (this.items.indexOf(item) === -1) {
+                console.log(item);
                 item.uniqueIdAlias = 't' + this.itemCounter++;
                 item.ngTableParams = new this.ngTableParams({
                         page: 1,            // show first page
@@ -42,16 +41,16 @@ module odh.main {
                         counts: [3, 10, 25, 100],
                         total: 0, // length of data
                         getData: ($defer, params) => {
-                            this.FileGroupService.getPreview(item.parent, params.url(), item.name).then(result => {
-                                params.total(result.data[0].count);
-                                $defer.resolve(result.data[0].data);
+                            this.PackageService.getPreview(item, params.url()).then(result => {
+                                params.total(result.count);
+                                $defer.resolve(result.data);
 
                             }).catch(err => console.error(err));
                         }
                     });
-                this.expression[item.uniqueId] = {operation: this.JOIN_OPERATIONS.none};
+                this.expression[item.unique_name] = {operation: this.JOIN_OPERATIONS.none};
                 this.items.push(item);
-                this.fields[item.uniqueId] = {};
+                this.fields[item.unique_name] = [];
                 this.fileGroups.push(item.parent);
                 if (item.private) {
                     this.privateCount += 1;
@@ -64,8 +63,8 @@ module odh.main {
             if (index > -1) {
                 this.items.splice(index, 1);
             }
-            delete this.fields[item.uniqueId];
-            delete this.expression[item.uniqueId];
+            delete this.fields[item.unique_name];
+            delete this.expression[item.unique_name];
             if (item.private) {
                 this.privateCount -= 1;
             }
@@ -91,7 +90,7 @@ module odh.main {
 
         public getTableByName(tableName:string) {
             for (var i = 0; i < this.items.length; i++) {
-                if (this.items[i].uniqueId === tableName) {
+                if (this.items[i].unique_name === tableName) {
                     return this.items[i];
                 }
             }
@@ -102,7 +101,7 @@ module odh.main {
         }
 
         public getSelectedFields(table:main.ITable) {
-            return this.fields[table.uniqueId];
+            return this.fields[table.unique_name];
         }
 
         public tableSelected(table) {
@@ -176,12 +175,12 @@ module odh.main {
         }
 
         public addRemoveField(col, table:main.ITable) {
-            this.fields[table.uniqueId] = this.fields[table.uniqueId] || [];
-            var index = this.fields[table.uniqueId].indexOf(col);
+            this.fields[table.unique_name] = this.fields[table.unique_name] || [];
+            var index = this.fields[table.unique_name].indexOf(col);
             if (index > -1) {
-                this.fields[table.uniqueId].splice(index, 1);
+                this.fields[table.unique_name].splice(index, 1);
             } else {
-                this.fields[table.uniqueId].push(col);
+                this.fields[table.unique_name].push(col);
             }
         }
 
@@ -190,14 +189,14 @@ module odh.main {
         }
 
         public getJoinOperation(table:main.ITable) {
-            return this.expression[table.uniqueId].operation;
+            return this.expression[table.unique_name].operation;
         }
 
         private aliasedTable(table:ITable):string {
-            if (table.uniqueId === table.uniqueIdAlias) {
-                return this.quote(table.uniqueId);
+            if (table.unique_name === table.uniqueIdAlias) {
+                return this.quote(table.unique_name);
             } else {
-                return [this.quote(table.uniqueId), this.quote(table.uniqueIdAlias)].join(' as ');
+                return [this.quote(table.unique_name), this.quote(table.uniqueIdAlias)].join(' as ');
             }
         }
 
