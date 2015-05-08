@@ -141,6 +141,11 @@ DATABASES = {
     # Heroku compliance
     'default': dj_database_url.config(default='postgres://opendatahub:opendatahub@localhost:5432/opendatahub')
 }
+DATABASES['default'].update({
+    'TEST_CHARSET': 'utf8',
+})
+
+
 CACHES = {
     # very short-lived basically for inter-request purposes only
     'L1': {

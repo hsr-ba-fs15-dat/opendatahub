@@ -16,6 +16,10 @@ from hub.odhql.exceptions import OdhQLExecutionException
 
 from opendatahub.utils.plugins import RegistrationMixin
 
+import shapely.speedups
+
+shapely.speedups.available and shapely.speedups.enable()
+
 
 class OdhType(RegistrationMixin):
     dtypes = ()
@@ -337,6 +341,7 @@ def monkey_patch_geopandas():
 
     original_mapping = geodataframe.mapping
 
+    # https://github.com/Toblerity/Shapely/issues/250
     def mapping(geometry, *a, **kw):
         if geometry.__class__ == EmptyGeometryMarker:
             return None

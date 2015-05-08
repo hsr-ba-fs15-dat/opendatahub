@@ -9,9 +9,9 @@ from hub.management.commands.loadfixtures import Command as LoadFixtures
 class FixtureTest(APITestCase):
     @classmethod
     def setUpClass(cls):
-        print "Loading fixtures (2/2) ..."
+        print 'Loading fixtures (2/2) ...'
         LoadFixtures(parse=False).handle()
-        print "Done."
+        print 'Done.'
 
 
 EXCLUDED_DOCUMENTS = [
@@ -41,7 +41,7 @@ def find_fixtures(client):
 def get_fixture_test(id, url, fmt):
     def fixture_test(self):
         data_url = '{}?fmt={}'.format(url, fmt)
-        print "Testing {}".format(data_url)
+        print 'Testing {}'.format(data_url)
         response = self.client.get(data_url)
 
         self.assertEqual(200, response.status_code)
@@ -51,10 +51,10 @@ def get_fixture_test(id, url, fmt):
 
 from rest_framework.test import APIClient
 
-print "Loading fixtures (1/2) ..."
+print 'Loading fixtures (1/2) ...'
 LoadFixtures(parse=False).handle()
 
-print "Creating test cases..."
+print 'Creating test cases...'
 client = APIClient()
 fixtures = find_fixtures(client)
 format_list = [fmt['name'] for fmt in client.get('/api/v1/format/').data]
@@ -65,4 +65,4 @@ for (id, url) in fixtures:
         test_name = 'test_{}_{}'.format(id.lower(), fmt.lower())
 
         setattr(FixtureTest, test_name, test)
-print "Preparations done."
+print 'Preparations done.'

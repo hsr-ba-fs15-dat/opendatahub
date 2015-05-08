@@ -49,13 +49,13 @@ def auth_by_token(request, backend, auth_token):
 
 
 def get_access_token(request, backend):
-    access_token_url = ""
-    secret = ""
+    access_token_url = ''
+    secret = ''
 
-    if backend == "facebook":
+    if backend == 'facebook':
         access_token_url = 'https://graph.facebook.com/oauth/access_token'
         secret = config.FACEBOOK_SECRET
-    if backend == "github":
+    if backend == 'github':
         access_token_url = 'https://github.com/login/oauth/access_token'
         secret = config.GITHUB_SECRET
 
@@ -71,7 +71,7 @@ def get_access_token(request, backend):
     try:
         access_token = dict(parse_qsl(r.text))['access_token']
     except KeyError:
-        access_token = "FAILED"
+        access_token = 'FAILED'
     return access_token
 
 

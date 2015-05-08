@@ -79,6 +79,9 @@ class FileGroup(object):
         file = self.get_main_file() or self.files[0]
         return file.to_format(format)
 
+    def __contains__(self, item):
+        return item in self.names
+
     def __iter__(self):
         return iter(self.files)
 
@@ -101,6 +104,9 @@ class File(object):
     def __init__(self, name, stream, file_group=None, format=None, cache_timeout=None):
         if not file_group:
             file_group = FileGroup([self])
+
+        if type(name) == str:
+            name = unicode(name, 'UTF-8')
 
         self.name = name
         self._stream = stream
@@ -200,7 +206,7 @@ class File(object):
         from hub import formatters
         from hub.formats.base import Format
 
-        return formatters.Formatter.format(self.to_serializable_df(), self.basename, Format.from_string(format))
+        return formatters.Formatter.format(self.to_df(), self.basename, Format.from_string(format))
 
     def __contains__(self, string):
         return string in self.ustream.read()
@@ -222,7 +228,6 @@ class WfsUrl(File):
 class Url(File):
     def __init__(self, name, url, *args, **kwargs):
         super(Url, self).__init__(name, None, *args, **kwargs)
-
         self.url = url
 
     @property
