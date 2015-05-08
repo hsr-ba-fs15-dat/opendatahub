@@ -80,7 +80,7 @@ module odh.main {
 
         public loadIfPackageUsed(table:main.ITable) {
             if (this.checkIfOurTable(table)) {
-                this.FileGroupService.getPreviewByUniqueName(table.name).then(result => {
+                this.PackageService.getPreviewByUniqueName(table.name, {}).then(result => {
                     if (result[0]) {
                         this.loadedTables[result[0].unique_name] = result[0];
                         this.selected[table.name] = result[0];

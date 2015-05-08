@@ -17,7 +17,6 @@ module odh {
     export class TransformationCreateController {
         public name:string;
         public description:string;
-        public query:string;
         public columns:string[];
         public rows:{};
         public types:string[];
@@ -34,6 +33,7 @@ module odh {
         public useAsTemplate:boolean = false;
         public fileGroupTable;
         public forceManualEdit:boolean = false;
+        public transformationPreview:string = ' ';
         constructor(private $state:ng.ui.IStateService, private $scope:any,
                     private ToastService:odh.utils.ToastService,
                     private FileGroupService:main.FileGroupService,
@@ -66,7 +66,7 @@ module odh {
             );
         }
 
-        public static aceLoaded(editor) {
+        public aceLoaded(editor) {
             odh.main.TransformationService.aceLoaded(editor);
         }
 
@@ -135,45 +135,7 @@ module odh {
         }
 
         public preview() {
-            var defer;
-            if (this.useAsTemplate) {
-                defer = this.TransformationService.parse(this.transformation());
-            } else {
-                defer = this.TransformationService.preview(this.transformation());
-            }
-            defer.then((data:any) => {
-                if (this.useAsTemplate) {
-                    this.ToastService.success('Query ist in Ordnung');
-                } else {
-                    this.columns = data.data.columns;
-                    this.rows = data.data.data;
-                    this.types = data.data.types;
-                }
-            }).catch((data:any) => {
-                if (typeof data === 'object') {
-                    data = data.data;
-                    this.alerts.pop();
-                    if (data.type === 'parse') {
-                        this.alerts.push({
-                            msg: 'Parse Fehler (' + data.lineno + ':' + data.col + ') Line: ' + data.line,
-                            type: 'danger',
-                            title: 'Fehler:'
-                        });
-
-                    }
-
-                    if (data.type === 'execution') {
-                        this.alerts.push({
-                            msg: 'Ausführungs Fehler: ' + data.error,
-                            type: 'danger',
-                            title: 'Fehler:'
-                        });
-                    }
-                }
-
-                this.ToastService.failure(
-                    'Es ist ein Fehler aufgetreten!');
-            });
+            this.transformationPreview = this.transformation();
         }
 
         public cancel() {

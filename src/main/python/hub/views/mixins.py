@@ -3,8 +3,8 @@ from __future__ import unicode_literals
 
 import zipfile
 import json
-import abc
 
+import abc
 import re
 from django.db.models import Q
 from rest_framework import mixins, viewsets
@@ -126,7 +126,7 @@ class DataDownloadMixin(viewsets.GenericViewSet):
 
 class PreviewMixin(viewsets.GenericViewSet):
     @detail_route()
-    def preview(self, request, pk=None):
+    def preview(self, request, pk=None, name=None):
         count = int(request.GET.get('count', 3))
         page = int(request.GET.get('page', 1))
         start = count * (page - 1)
@@ -141,9 +141,10 @@ class PreviewMixin(viewsets.GenericViewSet):
                           'data': slice_.to_dict(orient='records'),
                           'count': len(df),
                           'parent': pk,
-                          'url': self.get_preview_view_name(pk, request)
+                          'url': self.get_preview_view_name(pk, request),
+                          'type': 'preview'
                           }])
-
+        print data
         return JsonResponse(data, encoder=json.JSONEncoder, safe=False)
 
     def get_preview_view_name(self, pk, request):

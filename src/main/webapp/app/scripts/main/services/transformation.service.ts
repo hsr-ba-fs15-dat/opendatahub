@@ -50,7 +50,6 @@ module odh.main {
         items: ITable[];
         fields: {};
         expression: {[name:string]: IExpression};
-        unionTargets: ITable[];
         joinTargets: ITable[];
         master: string;
         removeTable (item:ITable):void;
@@ -78,7 +77,8 @@ module odh.main {
 
         constructor(private $log:ng.ILogService, private Restangular:restangular.IService,
                     private $http:ng.IHttpService,
-                    private UrlService:odh.utils.UrlService, private $q:ng.IQService) {
+                    private UrlService:odh.utils.UrlService, private $q:ng.IQService,
+                    private ToastService:odh.utils.ToastService) {
 
             this.transformations = this.Restangular.all('transformation');
         }
@@ -141,8 +141,6 @@ module odh.main {
                 }
             }
             if (typeof transformation === 'string') {
-                console.log('http-post');
-
                 this.$http.post(this.UrlService.get('transformation/adhoc'), {
                     params: {
                         query: transformation
@@ -150,6 +148,9 @@ module odh.main {
                     }
                 }, {params: params}).then(data => {
                     deferred.resolve(data.data[0]);
+                }).catch(data => {
+                    console.error(data);
+                    this.ToastService.failure(data.msg);
                 });
             }
 
