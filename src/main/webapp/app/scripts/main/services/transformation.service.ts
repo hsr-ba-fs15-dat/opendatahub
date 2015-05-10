@@ -149,8 +149,7 @@ module odh.main {
                 }, {params: params}).then(data => {
                     deferred.resolve(data.data[0]);
                 }).catch(data => {
-                    console.error(data);
-                    this.ToastService.failure(data.msg);
+                    deferred.reject(data);
                 });
             }
 

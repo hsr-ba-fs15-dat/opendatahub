@@ -14,6 +14,7 @@ module odh.main {
                     private FormatService:main.FormatService) {
         }
 
+        alerts = [];
         success = false;
         showDownload = false;
         availableFormats = [];
@@ -52,17 +53,21 @@ module odh.main {
                 results.push({name: null, label: 'Original', description: 'Unveränderte Daten', example: null});
                 scope.availableFormats = results;
             });
+
+            scope.closeAlert = (index) => {
+                scope.alerts.splice(index, 1);
+            };
         };
+
 
         public ngTable(scope) {
             scope.pkgNew = this.$q.when(scope.pkg);
             scope.cols = [];
-
+            scope.alerts = [];
             scope.pkgNew.then(pack => {
                 var name = '';
                 if (pack) {
                     name = pack.unique_name;
-
                 }
                 scope.ngTableParams = new this.NgTableParams({
                         page: 1,            // show first page
@@ -93,7 +98,8 @@ module odh.main {
                                     $defer.resolve(data.data);
                                     scope.success = true;
                                 }).catch(error => {
-                                    this.ToastService.failure(error.msg);
+                                    console.log(error, 'error');
+                                    this.ToastService.failure('Fehler beim erstellen der Vorschau');
                                 });
                             } else if (scope.query.length > 5) {
                                 this.TransformationService.preview(scope.query, params.url()).then((result:any) => {
@@ -111,13 +117,39 @@ module odh.main {
                                     $defer.resolve(result.data);
                                     scope.success = true;
                                 }).catch(error => {
-                                    this.ToastService.failure(error.msg);
+                                    console.log('error');
+                                    scope.alerts.push({
+                                        title: error.data.type,
+                                        msg: error.data.error
+
+                                    });
+                                    this.ToastService.failure('Es ist ein Fehler aufgetreten');
                                 });
                             }
                         }
-
                     });
-            });
+            }).catch(error => {
+                    this.ToastService.failure('Die Vorschau konnte nicht erstellt werden.');
+                    console.error(error);
+                    if (error.data.type === 'execution') {
+                        scope.alerts.push({
+                            title: 'Fehler ( ' + error.data.type + ')',
+                            msg: error.data.error,
+                            type: 'danger'
+                        });
+                    }
+                    if (error.data.type === 'parse') {
+                        scope.alerts.push({
+                            title: 'Fehler (' + error.data.type + ')',
+                            msg: error.data.error + '(Line: ' + error.data.lineno +
+                            ', Col: ' + error.data.col +
+                            ') at ' + error.data.line,
+                            type: 'danger'
+                        });
+                    }
+
+                }
+            );
         }
     }
 

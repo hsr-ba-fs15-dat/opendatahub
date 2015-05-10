@@ -61,10 +61,8 @@ module odh.main {
             };
 
             scope.getFileGroup = (pkg, count = 3) => {
-                console.log(pkg);
                 if (pkg.type === 'transformation') {
                     this.TransformationService.preview(pkg).then(data => {
-                        console.log(data);
                         if (!pkg.$showRows) {
                             var filegroups = [{
                                 preview: [

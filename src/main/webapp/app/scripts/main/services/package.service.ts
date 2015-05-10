@@ -55,18 +55,13 @@ module odh.main {
             var result = re.exec(uniquename);
             var defer = this.$q.defer();
             var pkg;
-            console.log(uniquename, result);
             if (result) {
                 if (result[1] === packagePrefix) {
                     pkg = 'document';
                 }
-                console.log(result[2]);
                 this.Restangular.one(pkg, result[2]).one('preview').get(params).then(data => {
-                    console.log(data);
                     angular.forEach(data, (each, key) => {
-                        console.log(each.name, key, result[3], data[key]);
                         if (each.name === result[3]) {
-                            console.log(data[key]);
                             defer.resolve(data[key]);
                         }
                     });
