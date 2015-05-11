@@ -1,9 +1,9 @@
 <div ng-controller="TransformationDetailController as vm">
-    <odh-spinner show-while="doc.loading">
+    <odh-spinner show-while="vm.loading">
         <form name="form" class="form" ng-submit="vm.submit()">
-            <h1>{{ vm.name }}</h1>
+            <h1>{{ vm.name }}<i class="fa fa-eye" ng-show="vm.private" tooltip="Dieses Dokument ist privat"></i></h1>
 
-            <p>{{ vm.description }}</p>
+            <p>{{ vm.description }}</p> {{vm.private}}
 
             <p ng-show="vm.previewError">{{ vm.previewError }}</p>
 

@@ -60,7 +60,6 @@ module odh.main {
                 this.templateTransformation = data.transformation;
                 this.allowDelete = $auth.isAuthenticated() && data.owner.id === $auth.getPayload().user_id;
                 this.selected = {};
-                console.log(data);
                 this.parse();
             }).catch(
                 () => {

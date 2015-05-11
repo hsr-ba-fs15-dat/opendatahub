@@ -148,7 +148,9 @@ module odh {
         }
 
         public isPrivate(priv:boolean):boolean {
-            this.transformationPrivate = priv;
+            if (priv !== undefined) {
+                this.transformationPrivate = priv;
+            }
             return this.selection.isPrivate() || this.transformationPrivate;
         }
 
