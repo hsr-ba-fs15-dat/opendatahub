@@ -27,6 +27,7 @@ from hub.structures.frame import OdhSeries, OdhType, OdhFrame
 from osgeo import osr
 import fiona.crs
 import shapely.wkt
+import re
 
 
 logger = logging.getLogger(__name__)
@@ -243,6 +244,8 @@ class GenericXMLParser(Parser):
 class GeoCSVParser(Parser):
     accepts = formats.GeoCSV,
 
+    CSVT_RE = re.compile('\s*(\w+)\s*\(.*\)\s*', re.IGNORECASE)
+
     @classmethod
     def _parse_prj(cls, fg):
         prjs = fg.get_by_extension('prj')
@@ -260,7 +263,12 @@ class GeoCSVParser(Parser):
         csvts = fg.get_by_extension('csvt')
         if csvts:
             csvt = csvts[0]
-            return csvt.stream.readline().split(';')
+            fields = csvt.stream.readline().split(';')
+            try:
+                return [cls.CSVT_RE.match(f).group(1).lower() for f in fields]
+            except (AttributeError, IndexError) as e:
+                logger.warn('Could not parse CSVT file "%s": %s', csvt.stream.read(), e.message)
+
         return ()
 
     @classmethod
@@ -282,15 +290,15 @@ class GeoCSVParser(Parser):
 
     @classmethod
     def _parse_date(cls, i, s, df, types):
-        return pd.to_datetime(s, format='%Y-%m-%s', infer_datetime_format=True, coerce=True)
+        return pd.to_datetime(s, infer_datetime_format=True)  # format='%Y-%m-%d'
 
     @classmethod
     def _parse_time(cls, i, s, df, types):
-        return pd.to_datetime(s, format='%H:%M:%S', infer_datetime_format=True, coerce=True)
+        return pd.to_datetime(s, infer_datetime_format=True)  # format='%H:%M:%S'
 
     @classmethod
     def _parse_datetime(cls, i, s, df, types):
-        return pd.to_datetime(s, format='%Y-%m-%s %H:%M:%S', infer_datetime_format=True, coerce=True)
+        return pd.to_datetime(s, infer_datetime_format=True)  # format='%Y-%m-%d %H:%M:%S'
 
     @classmethod
     def _parse_wkt(cls, i, s, df, types):
