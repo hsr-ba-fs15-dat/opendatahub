@@ -15,26 +15,20 @@ module odh.main {
         }
 
         alerts = [];
-        success = false;
-        showDownload = false;
-        availableFormats = [];
         restrict = 'AE';
         templateUrl = 'views/directives/preview.html';
 
         scope = {
             pkg: '=',
             query: '=',
-            download: '&'
+            success: '='
         };
         link = (scope, element, attrs) => {
-            if (scope.download) {
-                scope.showDownload = true;
-            }
-            this.ngTable(scope);
+            this.ngTable(scope, attrs);
             if (scope.pkg) {
                 scope.$watch('pkg', (oldVal, newVal) => {
                     if (oldVal !== newVal) {
-                        this.ngTable(scope);
+                        this.ngTable(scope, attrs);
                     }
                 });
 
@@ -42,17 +36,10 @@ module odh.main {
             if (scope.query) {
                 scope.$watch('query', (oldVal, newVal) => {
                     if (oldVal !== newVal) {
-                        this.ngTable(scope);
+                        this.ngTable(scope, attrs);
                     }
                 });
             }
-
-
-            this.FormatService.getAvailableFormats().then(data => {
-                var results = this.FormatService.sortByLabel(data.data);
-                results.push({name: null, label: 'Original', description: 'Unveränderte Daten', example: null});
-                scope.availableFormats = results;
-            });
 
             scope.closeAlert = (index) => {
                 scope.alerts.splice(index, 1);
@@ -60,7 +47,7 @@ module odh.main {
         };
 
 
-        public ngTable(scope) {
+        public ngTable(scope, attr) {
             scope.pkgNew = this.$q.when(scope.pkg);
             scope.cols = [];
             scope.alerts = [];
@@ -80,7 +67,6 @@ module odh.main {
                         total: 0, // length of data
 
                         getData: ($defer, params) => {
-                            scope.success = false;
                             if (typeof pack === 'object' && !(scope.query && (pack.route !== 'transformation'))) {
                                 this.PackageService.getPreview(pack, params.url()).then(data => {
                                     console.log(data);

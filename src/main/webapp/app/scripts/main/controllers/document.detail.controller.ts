@@ -10,13 +10,18 @@ module odh.main {
         public loading = true;
 
         public availableFormats;
-
+        public previewSuccess:boolean = false;
         constructor(private $log:ng.ILogService, private $stateParams:any, private $window:ng.IWindowService,
                     private DocumentService:odh.main.DocumentService, private ToastService:odh.utils.ToastService,
                     private FormatService:odh.main.FormatService, private FileGroupService:odh.main.FileGroupService,
                     private PackageService:main.PackageService) {
             this.documentId = $stateParams.id;
             this.retrieveData();
+            this.FormatService.getAvailableFormats().then(data => {
+                var results = this.FormatService.sortByLabel(data.data);
+                results.push({name: null, label: 'Original', description: 'Unveränderte Daten', example: null});
+                this.availableFormats = results;
+            });
         }
 
         public downloadAs(group, formatName) {
@@ -28,19 +33,14 @@ module odh.main {
             });
         }
 
+
         private retrieveData() {
-
-            this.FormatService.getAvailableFormats().then(data => {
-                var results = this.FormatService.sortByLabel(data.data);
-                results.push({name: null, label: 'Original', description: 'Unveränderte Daten', example: null});
-                this.availableFormats = results;
-            });
-
             if (typeof(this.documentId) !== 'undefined') {
                 this.pkg = this.DocumentService.get(this.documentId)
                     .then(data => {
                         this.$log.debug('Document ' + this.documentId, data);
                         this.pkg = data;
+                        console.log(data);
                     })
                     .catch(error => {
                         this.ToastService.failure('Dokument wurde nicht gefunden');

@@ -12,8 +12,18 @@
                     Vorschau
                 </div>
                 <div class="panel-body">
-
-                    <odh-preview pkg="vm.pkg" query="vm.transformation" download="vm.downloadAs(format)"></odh-preview>
+                    <div class="btn-group pull-right" ng-if="vm.previewSuccess">
+                        <a data-target="#" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+                            Herunterladen
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li ng-repeat="format in vm.availableFormats">
+                                <a ng-click="vm.downloadAs(vm.transformationObject, format.name)">{{ format.label }}</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <odh-preview pkg="vm.pkg" query="vm.transformation" success="vm.previewSuccess"></odh-preview>
 
                 </div>
             </div>
@@ -58,6 +68,10 @@
                             <button ng-show="vm.allowDelete" id="add" name="add" class="btn btn-primary pull-right"
                                     ng-click="vm.saveTransformation()">
                                 Speichern
+                            </button>
+                            <button id="add" name="add" class="btn btn-primary pull-right"
+                                    ng-click="vm.generateNewTransformation()">
+                                Generieren
                             </button>
                             <button ng-click="vm.preview()" type='button' class="btn btn-info pull-right">
                                 Vorschau
@@ -111,7 +125,10 @@
                                     <td><select ng-options="v.unique_name for v in vm.loadedTablesArray
                                 | filterAlreadyAdded:{tables: vm.chosenTables, selected: vm.selected[table.name].unique_name}"
                                                 ng-model="vm.selected[table.name]"
-                                                ng-change="vm.generateNewTransformation()"></select></td>
+                                                ng-change="vm.generateNewTransformation()"
+                                            >
+                                        <option value="">--</option>
+                                    </select></td>
                                 </tr>
                             </table>
                         </div>
