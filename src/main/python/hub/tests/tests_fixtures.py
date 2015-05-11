@@ -2,11 +2,10 @@
 from __future__ import unicode_literals
 
 from rest_framework.test import APITestCase
+import os
 
 from hub.management.commands.loadfixtures import Command as LoadFixtures
 
-
-import os
 if not os.getenv('CI'):
 
     class FixtureTest(APITestCase):
@@ -16,13 +15,11 @@ if not os.getenv('CI'):
             LoadFixtures(parse=False).handle()
             print 'Done.'
 
-
     EXCLUDED_DOCUMENTS = [
         'Dummy',  # those are for paging tests and just repeat
         'employee',  # excessive amounts of data, actually segfaults for interlis1
         'children'  # same
     ]
-
 
     def find_fixtures(client):
         documents = client.get('/api/v1/document/?count=50&page=1')
@@ -40,7 +37,6 @@ if not os.getenv('CI'):
 
         return fixtures
 
-
     def get_fixture_test(id, url, fmt):
         def fixture_test(self):
             data_url = '{}?fmt={}'.format(url, fmt)
@@ -50,7 +46,6 @@ if not os.getenv('CI'):
             self.assertEqual(200, response.status_code)
 
         return fixture_test
-
 
     from rest_framework.test import APIClient
 
