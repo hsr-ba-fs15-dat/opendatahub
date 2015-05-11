@@ -4,16 +4,13 @@ from __future__ import unicode_literals
 from rest_framework.test import APITestCase
 import os
 
-from hub.management.commands.loadfixtures import Command as LoadFixtures
+
+class FixtureTest(APITestCase):
+    pass
 
 if not os.getenv('CI'):
-
     class FixtureTest(APITestCase):
-        @classmethod
-        def setUpClass(cls):
-            print 'Loading fixtures (2/2) ...'
-            LoadFixtures(parse=False).handle()
-            print 'Done.'
+        pass
 
     EXCLUDED_DOCUMENTS = [
         'Dummy',  # those are for paging tests and just repeat
@@ -49,9 +46,6 @@ if not os.getenv('CI'):
 
     from rest_framework.test import APIClient
 
-    print 'Loading fixtures (1/2) ...'
-    LoadFixtures(parse=False).handle()
-
     print 'Creating test cases...'
     client = APIClient()
     fixtures = find_fixtures(client)
@@ -59,6 +53,7 @@ if not os.getenv('CI'):
 
     for (id, url) in fixtures:
         for fmt in format_list:
+
             test = get_fixture_test(id, url, fmt)
             test_name = 'test_{}_{}'.format(id.lower(), fmt.lower())
 

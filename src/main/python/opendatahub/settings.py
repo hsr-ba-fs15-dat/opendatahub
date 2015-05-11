@@ -264,3 +264,5 @@ if not PRODUCTION:
 # ODHQL Table naming prefixes
 PACKAGE_PREFIX = 'ODH'
 TRANSFORMATION_PREFIX = 'TRF'
+
+TEST_RUNNER='hub.tests.runner.ParameterizedTestRunner'
