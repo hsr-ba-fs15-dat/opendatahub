@@ -20,6 +20,7 @@ class InterlisModelFormatter(Formatter):
 
         return [File.from_string(name + '.ili', model.get_model_definition()).file_group]
 
+
 class Model(object):
     def __init__(self, name, topics):
         self.name = slugify(name)

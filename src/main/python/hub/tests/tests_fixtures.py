@@ -9,8 +9,6 @@ class FixtureTest(APITestCase):
     pass
 
 if not os.getenv('CI'):
-    class FixtureTest(APITestCase):
-        pass
 
     EXCLUDED_DOCUMENTS = [
         'Dummy',  # those are for paging tests and just repeat
