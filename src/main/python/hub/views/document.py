@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from urllib import unquote
+
 from rest_framework import viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
@@ -56,7 +58,7 @@ class DocumentViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet, Previ
         return Response(serializer.data)
 
     def get_preview_view_name(self, pk, request):
-        reverse('documentmodel-preview', kwargs={'pk': pk}, request=request)
+        return reverse('documentmodel-preview', kwargs={'pk': pk}, request=request)
 
     def get_dfs_for_preview(self, pk, request):
         file_groups = FileGroupModel.objects.filter(
@@ -69,6 +71,7 @@ class DocumentViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet, Previ
 
         name = request.GET.get('name', None)
         if name:
+            name = unquote(name)
             dfs = [(unique_name, df) for (unique_name, df) in dfs if unique_name == name]
 
         return dfs

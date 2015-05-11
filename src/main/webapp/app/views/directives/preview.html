@@ -8,7 +8,6 @@
     </tr>
 </script>
 <div class="container">
-
     <div class="row">
         <div class="col-md-12">
             <alert ng-repeat="alert in alerts" type="{{ alert.type }}" close="closeAlert($index)">
@@ -16,17 +15,6 @@
 
                 <p>{{ alert.msg }}</p>
             </alert>
-            <div class="btn-group pull-right" ng-if="success && showDownload">
-                <a data-target="#" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
-                    Herunterladen
-                    <span class="caret"></span>
-                </a>
-                <ul class="dropdown-menu">
-                    <li ng-repeat="format in availableFormats">
-                        <a ng-click="download({group: group, format: format.name})">{{ format.label }}</a>
-                    </li>
-                </ul>
-            </div>
         </div>
     </div>
     <div class="row">

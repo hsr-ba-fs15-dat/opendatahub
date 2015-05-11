@@ -13,7 +13,7 @@ module odh.main {
         public file_groups;
         public 'private';
         public loadedTablesArray:any[] = [];
-        public usedTables:{};
+        public usedTables:any[];
         public selected;
         public transformationType:transType = transType.Template;
         public availableFormats;
@@ -27,6 +27,7 @@ module odh.main {
         public modifiedTransformation:string;
         public templateTransformation:string;
         public chosenTables:string[] = [];
+        public previewSuccess:boolean = false;
 
         constructor(private $stateParams:any,
                     private TransformationService:main.TransformationService,
@@ -41,7 +42,8 @@ module odh.main {
                     private $window:ng.IWindowService,
                     private PackageService:main.PackageService,
                     private $q:ng.IQService,
-                    private $filter:ng.IFilterService) {
+                    private $filter:ng.IFilterService,
+                    private $log:ng.ILogService) {
             // controller init
             AppConfig.then(config => {
                 this.transformationPrefix = config.TRANSFORMATION_PREFIX;
@@ -58,6 +60,7 @@ module odh.main {
                 this.templateTransformation = data.transformation;
                 this.allowDelete = $auth.isAuthenticated() && data.owner.id === $auth.getPayload().user_id;
                 this.selected = {};
+                console.log(data);
                 this.parse();
             }).catch(
                 () => {
@@ -66,8 +69,10 @@ module odh.main {
                 }
             );
 
-            FormatService.getAvailableFormats().then(data => {
-                this.availableFormats = this.FormatService.sortByLabel(data.data);
+            this.FormatService.getAvailableFormats().then(data => {
+                var results = this.FormatService.sortByLabel(data.data);
+                results.push({name: null, label: 'Original', description: 'Unveränderte Daten', example: null});
+                this.availableFormats = results;
             });
 
         }
@@ -82,34 +87,51 @@ module odh.main {
 
 
         public generateNewTransformation() {
-            this.modifiedTransformation = this.templateTransformation;
+            var modifiedTransformation = '';
             this.chosenTables = [];
+            var selectedTables = [];
+            var tableEx = /(?:FROM|JOIN)\s("[^"]*"|\b\w+\b)|("[^"]*"|\b[A-z0-9_]+\b)(?=\.)/ig;
             angular.forEach(this.selected, (table, tablename) => {
                 if (table) {
                     this.chosenTables.push(table.unique_name);
                 }
-                var i = 0;
-                var n = 0;
-                do {
-                    n = this.modifiedTransformation.search(tablename);
-                    if (n !== -1) {
-                        var charBefore = this.modifiedTransformation.substr(n - 1, 1);
-                        var charAfter = this.modifiedTransformation.substr(n + tablename.length, 1);
-                        var quotesUsed = charBefore.match(/['"]/) && charAfter.match(/['"]/);
-                        var replacementQuote = quotesUsed ?
-                            ('iWillReplaceThis_' + ++i) :
-                            this.quote(('iWillReplaceThis_' + ++i));
-                        this.modifiedTransformation = this.modifiedTransformation.replace(tablename, replacementQuote);
-                    }
-                } while (n !== -1);
-                for (i; i !== 0; i--) {
-                    replacementQuote = 'iWillReplaceThis_' + i;
-                    this.modifiedTransformation = this.modifiedTransformation
-                        .replace(replacementQuote, table.unique_name);
-                }
-                this.transformation = this.modifiedTransformation;
-
+                selectedTables.push(tablename);
             });
+            var lastIndex = 0;
+            var myArray;
+            while ((myArray = tableEx.exec(this.templateTransformation)) !== null) {
+                var expr = myArray[1] || myArray[2];
+                var removedQuotes = 0;
+                if (expr.charAt(0) === '"' && expr.charAt(expr.length - 1) === '"') {
+                    expr = expr.substr(1, expr.length - 2);
+                    removedQuotes += 2;
+                }
+                var qExpr = expr;
+                var getFiltered = (name) => {
+                    return this.usedTables.filter((element) => {
+                        return element.name === name;
+                    });
+                };
+
+                if (getFiltered(expr).length > 0) {
+                    if (!this.selected[expr]) {
+                        qExpr = '{not defined: ' + expr + '}';
+                    } else {
+
+                        qExpr = this.selected[expr].unique_name;
+
+                    }
+                }
+                modifiedTransformation += this.templateTransformation.substr(
+                    lastIndex, tableEx.lastIndex - lastIndex - expr.length - removedQuotes
+                );
+                modifiedTransformation += this.quote(qExpr);
+                lastIndex = tableEx.lastIndex;
+            }
+            modifiedTransformation += this.templateTransformation.substr(lastIndex);
+
+            this.transformation = modifiedTransformation;
+
 
         }
 
@@ -122,12 +144,10 @@ module odh.main {
         public loadIfPackageUsed(table:main.ITable) {
             if (this.checkIfOurTable(table)) {
                 this.PackageService.getPreviewByUniqueName(table.name, {}).then(result => {
-                    console.log(result);
                     if (result) {
                         this.loadedTablesArray.push(result);
                         this.selected[table.name] = result;
                         this.chosenTables.push(table.unique_name);
-                        this.generateNewTransformation();
                     }
                 });
             }
@@ -186,9 +206,13 @@ module odh.main {
             });
         }
 
-        public downloadAs(formatName) {
-            this.$window.location.href = this.UrlService.get('transformation/{{id}}/data',
-                {id: this.transformationId}) + '?fmt=' + formatName;
+        public downloadAs(group, formatName) {
+            this.$log.debug('Triggered download of ', group, 'as', formatName);
+            group.canDownload(formatName).then(() => {
+                this.$window.location.href = group.data + ( formatName ? '?fmt=' + formatName : '');
+            }).catch(() => {
+                this.ToastService.failure('Die Datei konnte nicht ins gewünschte Format konvertiert werden.');
+            });
         }
 
         public remove() {
@@ -211,7 +235,12 @@ module odh.main {
         }
 
         private quote(field:string) {
-            return '"' + field + '"';
+            var regEx = new RegExp('^[A-z_][A-z0-9_]*$');
+            if (!regEx.test(field)) {
+
+                return '"' + field + '"';
+            }
+            return field;
         }
     }
 

@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 import logging
+from urllib import unquote
 
 import re
 from rest_framework import viewsets
@@ -63,14 +64,16 @@ class FileGroupViewSet(viewsets.ModelViewSet, DataDownloadMixin, PreviewMixin):
         return model.document.name
 
     def get_preview_view_name(self, pk, request):
-        reverse('filegroupmodel-preview', kwargs={'pk': pk}, request=request)
+        return reverse('filegroupmodel-preview', kwargs={'pk': pk}, request=request)
 
     def get_dfs_for_preview(self, pk, request):
         model = self.get_object()
-        dfs = [('{}{}_{}'.format(settings.PACKAGE_PREFIX, pk, df.name), df) for df in model.to_file_group().to_df()]
+        dfs = [('{}{}_{}'.format(settings.PACKAGE_PREFIX, pk, df.name), df)
+               for df in model.to_file_group().to_df()]
 
         name = request.GET.get('name', None)
         if name:
+            name = unquote(name)
             dfs = [(unique_name, df) for (unique_name, df) in dfs if unique_name == name]
 
         return dfs

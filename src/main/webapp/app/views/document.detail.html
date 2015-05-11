@@ -14,10 +14,21 @@
                 <div class="col-md-4 col-full-height col-xs-height" style="vertical-align:middle">
                     <span ng-repeat="file in group.files">{{ file.file_name }}{{ $last ? '' : ', ' }}</span>
                 </div>
+                <div class="btn-group pull-right" ng-if="doc.previewSuccess">
+                    <a data-target="#" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+                        Herunterladen
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li ng-repeat="format in doc.availableFormats">
+                            <a ng-click="doc.downloadAs(group, format.name)">{{ format.label }}</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
 
             <div class="row" ng-repeat="preview in group.preview">
-                <odh-preview pkg="preview" download="doc.downloadAs(group, format)"></odh-preview>
+                <odh-preview pkg="preview" success="doc.previewSuccess"></odh-preview>
             </div>
         </div>
     </div>

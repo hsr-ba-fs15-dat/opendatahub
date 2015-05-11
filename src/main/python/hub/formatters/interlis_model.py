@@ -1,3 +1,6 @@
+# encoding=utf-8
+from __future__ import unicode_literals
+
 import math
 
 from django.utils.text import slugify
@@ -78,7 +81,7 @@ class Table(object):
         result = "\tTABLE {} = \n".format(self.name)
 
         for field in self.fields:
-            result += "\t\t{}: {};\n".format(slugify(field[0]), field[1])
+            result += "\t\t{}: {};\n".format(slugify(unicode(field[0])), field[1])
 
         result += "\tNO IDENT\n"
         result += "\tEND {}.\n".format(self.name)
