@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from urllib import unquote
+
 from rest_framework import viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
@@ -9,7 +11,6 @@ from django.http.response import HttpResponseNotFound, JsonResponse, HttpRespons
 from django.db import transaction
 from django.db.models import Q
 from rest_framework.reverse import reverse
-from django.utils.text import slugify
 
 from opendatahub import settings
 from hub.serializers import DocumentSerializer, FileGroupSerializer
@@ -66,10 +67,11 @@ class DocumentViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet, Previ
         dfs = []
         for fg in file_groups:
             for df in fg.to_file_group().to_df():
-                dfs.append(('{}{}_{}'.format(settings.PACKAGE_PREFIX, fg.id, unicode(slugify(df.name))), df))
+                dfs.append(('{}{}_{}'.format(settings.PACKAGE_PREFIX, fg.id, df.name), df))
 
         name = request.GET.get('name', None)
         if name:
+            name = unquote(name)
             dfs = [(unique_name, df) for (unique_name, df) in dfs if unique_name == name]
 
         return dfs

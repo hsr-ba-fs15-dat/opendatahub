@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 import logging
+from urllib import unquote
 
 import re
 from rest_framework import viewsets
@@ -9,7 +10,6 @@ from rest_framework.response import Response
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.reverse import reverse
 from django.http.response import JsonResponse
-from django.utils.text import slugify
 
 from hub.models import FileGroupModel, FileModel
 from hub.serializers import FileGroupSerializer, FileSerializer
@@ -68,11 +68,12 @@ class FileGroupViewSet(viewsets.ModelViewSet, DataDownloadMixin, PreviewMixin):
 
     def get_dfs_for_preview(self, pk, request):
         model = self.get_object()
-        dfs = [('{}{}_{}'.format(settings.PACKAGE_PREFIX, pk, slugify(unicode(df.name))), df)
+        dfs = [('{}{}_{}'.format(settings.PACKAGE_PREFIX, pk, df.name), df)
                for df in model.to_file_group().to_df()]
 
         name = request.GET.get('name', None)
         if name:
+            name = unquote(name)
             dfs = [(unique_name, df) for (unique_name, df) in dfs if unique_name == name]
 
         return dfs
