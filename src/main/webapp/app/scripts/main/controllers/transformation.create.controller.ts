@@ -34,7 +34,10 @@ module odh {
         public fileGroupTable;
         public forceManualEdit:boolean = false;
         public transformationPreview:string = ' ';
+        public errorMessage = 'errorStringTester';
+        public transformationDebounced;
         private transformationPrivate:boolean = false;
+
         constructor(private $state:ng.ui.IStateService, private $scope:any,
                     private ToastService:odh.utils.ToastService,
                     private FileGroupService:main.FileGroupService,
@@ -71,15 +74,8 @@ module odh {
             odh.main.TransformationService.aceLoaded(editor);
         }
 
-        public transformation(newInput:string = '') {
-            if (newInput && this.manualEdit) {
-                this.forceManualEdit = true;
-                this.odhqlInputString = newInput;
-            }
-            if (!this.manualEdit) {
-                this.odhqlInputString = this.selection.generateTransformation();
-            }
-            return this.odhqlInputString;
+        public lockAssistant() {
+            this.forceManualEdit = true;
         }
 
         public getJoinOperations() {
@@ -89,6 +85,7 @@ module odh {
         public addRemoveField(col, table:main.ITable) {
             if (!this.manualEdit) {
                 this.selection.addRemoveField(col, table);
+                this.odhqlInputString = this.selection.generateTransformation();
             }
         }
 
@@ -136,7 +133,7 @@ module odh {
         }
 
         public preview() {
-            this.transformationPreview = this.transformation();
+            this.transformationPreview = this.odhqlInputString;
         }
 
         public cancel() {
@@ -162,9 +159,9 @@ module odh {
             this.submitted = true;
             var defer;
             if (this.useAsTemplate) {
-                defer = this.TransformationService.parse(this.transformation());
+                defer = this.TransformationService.parse(this.odhqlInputString);
             } else {
-                defer = this.TransformationService.preview(this.transformation());
+                defer = this.TransformationService.preview(this.odhqlInputString);
             }
             defer.then(() => {
                 var transformation:main.ITransformation;

@@ -132,8 +132,8 @@
                     Anführungszeichen verwenden.
                 </label>
 
-                <div class="col-sm-12" ui-ace="{onLoad: vm.aceLoaded}" ng-model="vm.transformation"
-                     ng-model-options="{ getterSetter: true }" ng-readonly="true"></div>
+                <div class="col-sm-12" ui-ace="{onLoad: vm.aceLoaded}" ng-model="vm.odhqlInputString"
+                     ng-readonly="true"></div>
 
                 <button ng-click="" type='button' class="btn btn-primary pull-right">
                     Speichern
@@ -144,7 +144,7 @@
             </div>
         </tab>
 
-        <tab select="vm.manualEdit = true" id="manualEditTab">
+        <tab>
             <tab-heading>
                 <i class="fa fa-pencil"></i> Manuelles bearbeiten
             </tab-heading>
@@ -160,8 +160,8 @@
                     Als Template verwenden.
                 </label>
 
-                <div class="col-sm-12" ui-ace="{onLoad: vm.aceLoaded}" ng-model="vm.transformation"
-                     ng-model-options="{ getterSetter: true }" ng-readonly="!vm.manualEdit"></div>
+                <div class="col-sm-12" ui-ace="{onLoad: vm.aceLoaded}" ng-model="vm.odhqlInputString"
+                     ng-model-options="{ debounce: 500 }" ng-change="vm.lockAssistant()"></div>
 
                 <button ng-click="vm.preview()" type='button' class="btn btn-info pull-right">
                     {{ vm.useAsTemplate ? 'Überprüfen' : 'Vorschau' }}
@@ -170,8 +170,7 @@
         </tab>
 
     </tabset>
-    <p ng-show="vm.previewError">{{ vm.previewError }}</p>
-    <odh-preview query="vm.transformationPreview"></odh-preview>
+    <odh-preview query="vm.odhqlInpuString"></odh-preview>
     <div ng-show="vm.progress" class="col-md-offset-3 col-md-6">
         <progressbar class="progress-striped active" max="100"
                      value="offer.progress" type="info">
@@ -227,20 +226,26 @@
                     </div>
                 </div>
                 <div class="form-group" ng-class="{'has-error': form.description.$invalid && vm.submitted}">
-
-                    <label for="odhqlinputText">Query: </label>
-                    <input type="hidden" ng-model="vm.transformation" ng-model-options="{ getterSetter: true }"
-                           class="form-control" id="odhqlinputText" name="odhqlinput"/>
+                    <label for="odhqlinput">Query: </label>
+                    <input type="hidden" ng-model="vm.odhqlInputString"
+                           class="form-control" name="odhqlinput"
+                           odh-validate-transformation="vm.errorMessage"/>
 
                     <p>{{vm.odhqlInputString}}</p>
-                    <span ng-show="form.odhqlinputText.$pending.odhValidateTransformation">Checking if this name is available...</span>
-                    <span ng-show="form.odhqlinputText.$error.odhValidateTransformation">This username is already taken!</span>
+                    <span ng-show="form.odhqlinput.$pending">Überprüfe Abfrage...</span>
+                    <alert ng-show="form.odhqlinput.$invalid" type="warning">
+                        <strong>Das Query enthält keine gültige Syntax.</strong>
+
+                        <p>{{vm.errorMessage.error}} (Line: {{vm.errorMessage.lineno}},
+                            Col: {{vm.errorMessage.col}}) at {{vm.errorMessage.line}}</p>
+                    </alert>
                 </div>
                 <div class="form-group">
                     <label class="col-md-4 control-label" for="add"></label>
 
                     <div class="col-md-8">
-                        <button id="add" name="add" class="btn btn-primary pull-right">
+                        <button id="add" name="add" class="btn btn-primary pull-right"
+                                ng-disabled="form.$invalid || form.$pending">
                             Speichern
                         </button>
 

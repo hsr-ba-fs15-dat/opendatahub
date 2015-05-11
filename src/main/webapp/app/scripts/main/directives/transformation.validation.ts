@@ -11,17 +11,18 @@ module odh.main {
         }
 
         require = 'ngModel';
-        link = (scope, elm, attrs, ctrl) => {
-            ctrl.$asyncValidators.odhValidateTransformation = function (modelValue, viewValue) {
+        scope = {
+            errorMessage: '=odhValidateTransformation'
+        };
+        link = (scope, elm, attrs, ngModel) => {
+            ngModel.$asyncValidators.transformation = (modelValue, viewValue) => {
 
                 var def = this.$q.defer();
-                console.log(modelValue);
-
-                this.TransformationService.parse(modelValue).then((res) => {
-                    console.log(res);
+                this.TransformationService.parse(viewValue).then((res) => {
+                    scope.errorMessage = undefined;
                     def.resolve();
                 }).catch((res) => {
-                    console.log(res);
+                    scope.errorMessage = res.data;
                     def.reject();
                 });
 
