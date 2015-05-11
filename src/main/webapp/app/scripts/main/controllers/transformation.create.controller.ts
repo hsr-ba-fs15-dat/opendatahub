@@ -34,6 +34,7 @@ module odh {
         public fileGroupTable;
         public forceManualEdit:boolean = false;
         public transformationPreview:string = ' ';
+        private transformationPrivate:boolean = false;
         constructor(private $state:ng.ui.IStateService, private $scope:any,
                     private ToastService:odh.utils.ToastService,
                     private FileGroupService:main.FileGroupService,
@@ -146,8 +147,9 @@ module odh {
             return this.$auth.isAuthenticated();
         }
 
-        public isPrivate():boolean {
-            return this.selection.isPrivate();
+        public isPrivate(priv:boolean):boolean {
+            this.transformationPrivate = priv;
+            return this.selection.isPrivate() || this.transformationPrivate;
         }
 
         public joinOperation(table) {
@@ -168,8 +170,8 @@ module odh {
                     name: this.name,
                     description: this.description,
                     transformation: this.odhqlInputString,
-                    'private': this.isPrivate(),
-                    file_groups: this.selection.getFileGroups()
+                    'private': this.isPrivate(this.transformationPrivate),
+                    file_groups: null
                 };
                 var promise = this.TransformationService.post(transformation);
                 promise.then(data => this.createSuccess(data))

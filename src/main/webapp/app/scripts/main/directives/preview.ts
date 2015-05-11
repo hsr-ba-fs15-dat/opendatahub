@@ -21,7 +21,8 @@ module odh.main {
         scope = {
             pkg: '=',
             query: '=',
-            success: '='
+            success: '=',
+            alerts: '='
         };
         link = (scope, element, attrs) => {
             this.ngTable(scope, attrs);
@@ -84,7 +85,7 @@ module odh.main {
                                     $defer.resolve(data.data);
                                     scope.success = true;
                                 }).catch(error => {
-                                    console.log(error, 'error');
+                                    this.displayError(error, scope);
                                     this.ToastService.failure('Fehler beim erstellen der Vorschau');
                                 });
                             } else if (scope.query.length > 5) {
@@ -103,12 +104,7 @@ module odh.main {
                                     $defer.resolve(result.data);
                                     scope.success = true;
                                 }).catch(error => {
-                                    console.log('error');
-                                    scope.alerts.push({
-                                        title: error.data.type,
-                                        msg: error.data.error
-
-                                    });
+                                    this.displayError(error, scope);
                                     this.ToastService.failure('Es ist ein Fehler aufgetreten');
                                 });
                             }
@@ -116,26 +112,30 @@ module odh.main {
                     });
             }).catch(error => {
                     this.ToastService.failure('Die Vorschau konnte nicht erstellt werden.');
-                    console.error(error);
-                    if (error.data.type === 'execution') {
-                        scope.alerts.push({
-                            title: 'Fehler ( ' + error.data.type + ')',
-                            msg: error.data.error,
-                            type: 'danger'
-                        });
-                    }
-                    if (error.data.type === 'parse') {
-                        scope.alerts.push({
-                            title: 'Fehler (' + error.data.type + ')',
-                            msg: error.data.error + '(Line: ' + error.data.lineno +
-                            ', Col: ' + error.data.col +
-                            ') at ' + error.data.line,
-                            type: 'danger'
-                        });
-                    }
+                    this.displayError(error, scope);
 
                 }
             );
+        }
+
+        public displayError(error, scope = null) {
+            console.error(error);
+            if (error.data.type === 'execution') {
+                scope.alerts.push({
+                    title: 'Fehler ( ' + error.data.type + ')',
+                    msg: error.data.error || 'Es ist ein Fehler Aufgetreten',
+                    type: 'warning'
+                });
+            }
+            if (error.data.type === 'parse') {
+                scope.alerts.push({
+                    title: 'Fehler (' + error.data.type + ')',
+                    msg: error.data.error + '(Line: ' + error.data.lineno +
+                    ', Col: ' + error.data.col +
+                    ') at ' + error.data.line,
+                    type: 'danger'
+                });
+            }
         }
     }
 
