@@ -11,6 +11,7 @@ import pandas as pd
 import geopandas as gp
 import numpy as np
 import shapely.geometry
+import os
 
 from hub.odhql.exceptions import OdhQLExecutionException
 
@@ -217,12 +218,23 @@ class OdhFrame(pd.DataFrame):
         df.crs = geometry.crs
         geom_type = geometry.first_valid_entry.geom_type
         geometry = gp.GeoSeries(geometry, crs=geometry.crs).fillna(EmptyGeometryMarker(geom_type))
+
+        from shapely.geometry.base import GEOMETRY_TYPES
+
+        geom_types = geometry.geom_type
+        unique_geom_types = geom_types.unique()
+        if len(unique_geom_types) > 1:
+            common_type = os.path.commonprefix([gt[::-1] for gt in geom_types.unique()])[::-1]
+            if common_type in GEOMETRY_TYPES:
+                constructor = getattr(shapely.geometry, 'Multi' + common_type)
+                mask = geom_types == common_type
+            else:
+                constructor = shapely.geometry.GeometryCollection
+                mask = Ellipsis
+
+            geometry[mask] = geometry[mask].apply(lambda g: constructor([g]))
+
         df['geometry'] = geometry
-
-        # putmask/fillna does not work as the shapely objects seem to be recognized as array for some reason
-        # for i in np.where(df.geometry.isnull())[0]:
-        # df.geometry.iat[i] = empty_geometry
-
         return df
 
     @property
