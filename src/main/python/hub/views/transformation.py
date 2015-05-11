@@ -62,9 +62,9 @@ class TransformationViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet,
             transformation.save()
 
             if not is_template:
-                transformation.referenced_file_groups.add(FileGroupModel.objects.filter(id_in=file_group_ids))
+                transformation.referenced_file_groups.add(FileGroupModel.objects.filter(id__in=file_group_ids))
                 transformation.referenced_transformations.add(
-                    TransformationModel.objects.filter(id_in=transformation_ids))
+                    TransformationModel.objects.filter(id__in=transformation_ids))
                 transformation.save()
 
         serializer = TransformationSerializer(TransformationModel.objects.get(id=transformation.id),
