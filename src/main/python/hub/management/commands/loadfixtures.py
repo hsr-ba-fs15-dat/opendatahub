@@ -111,9 +111,6 @@ class Command(BaseCommand):
 
             file_groups, transformations = OdhQLInterpreter.parse_sources(transformation.transformation)
 
-            print file_groups
-            print transformations
-
             if file_groups and len(file_groups) > 0:
                 transformation.referenced_file_groups = FileGroupModel.objects.filter(id__in=file_groups.values())
 
