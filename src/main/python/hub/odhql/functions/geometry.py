@@ -37,6 +37,7 @@ class GeomFromText(VectorizedGeometryFunction):
 
     Parameter
         - `wkts`: Spalte oder Wert mit WKTs.
+        - `srid`: Optional die SRID der Geometrien.
 
     Siehe auch: `PostGIS ST_GeomFromText <http://postgis.net/docs/ST_GeomFromText.html>`_
 
@@ -47,12 +48,13 @@ class GeomFromText(VectorizedGeometryFunction):
     """
     name = 'ST_GeomFromText'
 
-    def apply(self, wkts):
+    def apply(self, wkts, srid=None):
         wkts = self.expand(wkts)
         # todo figure better assertions
         self.assert_str('wkt', wkts)
+        crs = self.get_crs(srid) if srid else {}
         try:
-            return gp.GeoSeries([wkt.loads(text) for text in wkts])
+            return gp.GeoSeries([wkt.loads(text) for text in wkts], crs=crs)
         except Exception as e:
             raise OdhQLExecutionException('Error loading WKT "{}": "{}"'.format(text, e.message))
 
@@ -63,19 +65,19 @@ class SetSRID(VectorizedGeometryFunction):
 
     Parameter
         - `geoms`: Spalte mit Geometrien.
+        - `srid`: SRID der Geometrien.
 
     Siehe auch: `PostGIS ST_SetSRID <http://postgis.net/docs/ST_SetSRID.html>`_
 
     Beispiel
         .. code:: sql
 
-            ST_SetSRID(ODH12.latlng), 4326) AS geometry
+            ST_SetSRID(ODH12.latlng, 4326) AS geometry
     """
     name = 'ST_SetSRID'
 
     def apply(self, geoms, srid):
-        self.assert_geometry('geometry', geoms)
-        self.assert_int('srid', srid)
+        self.assert_geometry('geoms', geoms)
         geoms.crs = self.get_crs(srid)
         return geoms
 
@@ -198,7 +200,7 @@ class GetY(VectorizedGeometryFunction):
 
 class Area(VectorizedGeometryFunction):
     """
-    Berechnet die Fläche der Geometrien in Quadratfuss (ft²).
+    Berechnet die Fläche der Geometrien in der Einheit des Koordinatensystems.
 
     Parameter
         - `geoms`: Spalte mit Geometrien.
@@ -215,3 +217,28 @@ class Area(VectorizedGeometryFunction):
     def apply(self, geoms):
         self.assert_geometry('geometry', geoms)
         return gp.GeoSeries(geoms).area
+
+
+class Transform(VectorizedGeometryFunction):
+    """
+    Transformiert die Geometrien in ein anderes Koordinatensystem. Auf den Geometrien muss bereits eine SRID gesetzt
+    sein.
+
+    Parameter
+        - `geoms`: Spalte mit Geometrien.
+        - `srid`: SRID der Geometrien.
+
+    Siehe auch: `PostGIS ST_Transform <http://postgis.net/docs/ST_Transform.html>`_
+
+    Beispiel
+        .. code:: sql
+
+            ST_Transform(ODH12.mercator, 4326) AS latlng
+    """
+    name = 'ST_Transform'
+
+    def apply(self, geoms, srid):
+        self.assert_geometry('geoms', geoms)
+        crs = self.get_crs(srid)
+        with self.errorhandler():
+            return geoms.to_crs(crs)

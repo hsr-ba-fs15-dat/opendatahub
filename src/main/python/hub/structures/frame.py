@@ -317,6 +317,8 @@ class OdhSeries(pd.Series):
 
     def to_crs(self, crs):
         assert self.odh_type == OdhType.GEOMETRY, 'Cannot convert CRS of non-geometry column'
+        if not self.crs:
+            raise OdhQLExecutionException('Missing SRID on source column')
         return self._constructor(gp.GeoSeries.to_crs.__func__(self, crs), index=self.index).__finalize__(self)
 
     def as_safe_serializable(self):

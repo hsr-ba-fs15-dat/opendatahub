@@ -8,12 +8,10 @@ from __future__ import unicode_literals
 import unittest
 
 import os
-from opendatahub.utils import cache
-
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'opendatahub.settings')
 
+from opendatahub.utils import cache
 from authentication.models import UserProfile
-
 from django.core.exceptions import ObjectDoesNotExist
 
 

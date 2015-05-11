@@ -14,9 +14,9 @@ import random
 import string
 
 import os
-import types
 
 from hub.structures.file import FileGroup, WfsUrl
+import hub.utils.common as com
 
 
 logger = logging.getLogger(__name__)
@@ -29,11 +29,12 @@ class Ogr2OgrException(Exception):
 class OgrFormat(object):
     formats = []
 
-    def __init__(self, extension, identifier, list_all, addtl_args=()):
-        self.extension = extension if isinstance(extension, types.ListType) else [extension]
+    def __init__(self, extension, identifier, list_all, addtl_args=(), allowed_return_codes=()):
+        self.extension = com.ensure_tuple(extension)
         self.identifier = identifier
         self.list_all = list_all
-        self.addtl_args = addtl_args
+        self.addtl_args = com.ensure_tuple(addtl_args)
+        self.allowed_return_codes = com.ensure_tuple(allowed_return_codes)
         self.formats.append(self)
 
     @classmethod
@@ -59,26 +60,28 @@ GEO_JSON = OgrFormat('json', 'GeoJSON', False)
 KML = OgrFormat('kml', 'KML', False)
 WFS = OgrFormat('wfs', 'WFS', False)
 
-INTERLIS_1 = OgrFormat(['itf', 'ili', 'imd'], 'Interlis 1', True)
+INTERLIS_1 = OgrFormat(['itf', 'ili', 'imd'], 'Interlis 1', True, allowed_return_codes=-11)
 
 
 def _rand_string(n):
     return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(n))
 
 
-def _ogr2ogr_cli(arguments, log_on_error=True, *args, **kwargs):
+def _ogr2ogr_cli(arguments, log_on_error=True, allowed_return_codes=(), *args, **kwargs):
     cmd = ['ogr2ogr'] + arguments
     logger.debug('Running ogr2ogr: %s', ' '.join(cmd))
     try:
         output = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
         logger.debug(output)
     except subprocess.CalledProcessError as e:
-        if log_on_error:
-            logger.error('%s: %s\n%s', e.returncode, e.cmd, e.output)
-        raise Ogr2OgrException(e.returncode)
+        if e.returncode not in allowed_return_codes:
+            if log_on_error:
+                logger.error('%s: %s\n%s', e.returncode, e.cmd, e.output)
+            raise Ogr2OgrException(e.returncode)
 
 
 def ogr2ogr(file_group, to_type, addtl_args=(), *args, **kwargs):
+    kwargs.setdefault('allowed_return_codes', to_type.allowed_return_codes)
     assert (isinstance(file_group, FileGroup))
 
     from_format = OgrFormat.get_format(file_group)
