@@ -136,6 +136,6 @@ class Table(object):
                         fields.append((name, 'AREA WITH (\'STRAIGHTS\') '
                                              'VERTEX COORD2 480000.000 70000.000 850000.000 310000.000'))
                     else:
-                        raise RuntimeError('Unable to generate interlis model for data type {}'.format(type(value)))
+                        fields.append((name, '!! Geometrie-Feld'))
 
         return fields, domain
