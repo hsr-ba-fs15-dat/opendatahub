@@ -57,9 +57,7 @@ module odh.main {
                 this.description = data.description;
                 this.transformation = data.transformation;
                 this.private = data.private;
-                this.templateTransformation = (() => {
-                    return data.transformation
-                })();
+                this.templateTransformation = data.transformation;
                 this.allowDelete = $auth.isAuthenticated() && data.owner.id === $auth.getPayload().user_id;
                 this.selected = {};
                 console.log(data);
@@ -110,9 +108,9 @@ module odh.main {
                 }
                 var qExpr = expr;
                 var getFiltered = (name) => {
-                    return this.usedTables.filter((element)=> {
+                    return this.usedTables.filter((element) => {
                         return element.name === name;
-                    })
+                    });
                 };
 
                 if (getFiltered(expr).length > 0) {
@@ -123,9 +121,6 @@ module odh.main {
                         qExpr = this.selected[expr].unique_name;
 
                     }
-
-                } else {
-
                 }
                 modifiedTransformation += this.templateTransformation.substr(
                     lastIndex, tableEx.lastIndex - lastIndex - expr.length - removedQuotes
