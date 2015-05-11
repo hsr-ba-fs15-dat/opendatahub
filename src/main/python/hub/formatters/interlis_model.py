@@ -23,7 +23,7 @@ class InterlisModelFormatter(Formatter):
 
 class Model(object):
     def __init__(self, name, topics):
-        self.name = slugify(name)
+        self.name = slugify(unicode(name))
         self.topics = topics
 
     def get_model_definition(self):
@@ -55,7 +55,7 @@ class Model(object):
 
 class Topic(object):
     def __init__(self, name, tables):
-        self.name = slugify(name)
+        self.name = slugify(unicode(name))
         self.tables = tables
 
     def get_topic_definition(self):
@@ -70,7 +70,7 @@ class Topic(object):
 
 class Table(object):
     def __init__(self, name, df):
-        self.name = slugify(name)
+        self.name = slugify(unicode(name))
         self.df = df
         self.fields, self.domain = self.get_fields()
 
