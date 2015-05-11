@@ -1,0 +1,20 @@
+-- TROBDB: Baustellen Februar 2015
+select t.userid, t.title, t.description, t.trob_start, t.trob_end, t.trob_interval, t.direction, t.diversion_advice,
+       t.country, t.reason, t.object_name, t.object_type, t.trob_type, t.geometry as trobdb_point from trf19 t
+union
+-- TROBDB: Tiefbaustellen ZH (aus GeoJSON)
+select t.userid, t.title, t.description, t.trob_start, t.trob_end, t.trob_interval, t.direction, t.diversion_advice,
+       t.country, t.reason, t.object_name, t.object_type, t.trob_type, t.trobdb_point from trf20 t
+union
+-- TROBDB: TruckInfo
+select t.userid, t.title, t.description, t.trob_start, t.trob_end, t.trob_interval, t.direction, t.diversion_advice,
+       t.country, t.reason, t.object_name, t.object_type, t.trob_type, t.trobdb_point from trf21 t
+union
+-- TROBDB: Baustellen Zürich (WFS)
+select t.userid, t.title, t.description, t.trob_start, t.trob_end, t.trob_interval, t.direction, t.diversion_advice,
+       t.country, t.reason, t.object_name, t.object_type, t.trob_type, t.trobdb_point from trf22 t
+union
+-- TROBDB: Baustellen.kml
+select t.userid, t.title, t.description, t.trob_start, t.trob_end, t.trob_interval, t.direction, t.diversion_advice,
+       t.country, t.reason, t.object_name, t.object_type, t.trob_type, t.geometry as trobdb_point from trf24 t
+order by 4
