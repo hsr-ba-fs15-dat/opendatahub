@@ -22,15 +22,15 @@ env:
     - secure: "RC8P0y4q2g8ErB7MnTz4w5q1PK79rYeLN7YHfqaLZ4QeL+FF5cIVw9YP4iCI3I4mq7zm++jSQFoZj75G3iX8VZgJSqJjsriZKi6jXBqkF2q9CUWTJI935sNrRfaTC+Dxgcve5xK7ddIGuCmusN2foYSaon5Zlrq1xSTCcnMjV/M="
 
 install:
-  - pip install pybuilder
-  - npm install -g npm@latest
-  - npm cache clean
-  - npm install -g bower grunt-cli
-  - npm install -g tsd@next
+  - pip install pybuilder > /dev/null
+  - npm install -g npm@latest  > /dev/null
+  - npm cache clean  > /dev/null
+  - npm install -g bower grunt-cli  > /dev/null
+  - npm install -g tsd@next  > /dev/null
   - wget -qO- https://toolbelt.heroku.com/install-ubuntu.sh | sh
-  - sudo make gdal
-  - sudo apt-get install libfreetype6 libfreetype6-dev # pre-req matplotlib
-  - sudo apt-get install libxml2-dev libxslt-dev python-dev # lxml
+  - sudo make gdal > /dev/null
+  - sudo apt-get install libfreetype6 libfreetype6-dev > /dev/null # pre-req matplotlib
+  - sudo apt-get install libxml2-dev libxslt-dev python-dev > /dev/null # lxml
 
 before_script:
   - psql -c "CREATE USER opendatahub WITH PASSWORD 'opendatahub';" -U postgres
@@ -39,8 +39,8 @@ before_script:
   - psql -c 'ALTER USER opendatahub CREATEDB;' -U postgres
 
 script:
- - pip install -r requirements.txt --download-cache $HOME/.pip-cache
- - pip install -r requirements_dev.txt --download-cache $HOME/.pip-cache
+ - pip install -r requirements.txt --download-cache $HOME/.pip-cache > /dev/null
+ - pip install -r requirements_dev.txt --download-cache $HOME/.pip-cache > /dev/null
  - pyb -v
  - unset DJANGO_DEBUG
  - export DJANGO_CONFIG=PRODUCTION
