@@ -1,24 +1,24 @@
-from django.utils.text import slugify
-
 import math
 
+from django.utils.text import slugify
+
 from hub.structures.frame import OdhType
+from hub.structures.file import File
 from .base import Formatter
 from hub.formats import InterlisModelFormat
 
 
 class InterlisModelFormatter(Formatter):
-    targets = InterlisModelFormat
+    targets = InterlisModelFormat,
 
     @classmethod
     def format(cls, dfs, name, format, *args, **kwargs):
         tables = []
         for df in dfs:
             tables.append(Table(df.name, df))
-        model = Model(name, Topic(name, tables))
+        model = Model(name, [Topic(name, tables)])
 
-        return model.get_model_definition()
-
+        return [File.from_string(name + '.ili', model.get_model_definition()).file_group]
 
 class Model(object):
     def __init__(self, name, topics):
@@ -26,9 +26,11 @@ class Model(object):
         self.topics = topics
 
     def get_model_definition(self):
-        result = 'TRANSFER {}; \n\nDOMAIN'.format(self.name)
-        result += '!! ACHTUNG: Dies ist ein automatisch generiertes Modell und sollte nicht ohne Anpassungen'
-        result += '!! verwendet werden.'
+        result = 'TRANSFER {}; \n\n'.format(self.name)
+        result += '!! ACHTUNG: Dies ist ein automatisch generiertes Modell und sollte nicht ohne Anpassungen \n'
+        result += '!! verwendet werden.\n\n'
+
+        result += 'DOMAIN\n\n'
 
         domain = {}
         for topic in self.topics:
