@@ -13,7 +13,7 @@ module odh.main {
         public file_groups;
         public 'private';
         public loadedTablesArray:any[] = [];
-        public usedTables:{};
+        public usedTables:any[];
         public selected;
         public transformationType:transType = transType.Template;
         public availableFormats;
@@ -57,7 +57,9 @@ module odh.main {
                 this.description = data.description;
                 this.transformation = data.transformation;
                 this.private = data.private;
-                this.templateTransformation = data.transformation;
+                this.templateTransformation = (() => {
+                    return data.transformation
+                })();
                 this.allowDelete = $auth.isAuthenticated() && data.owner.id === $auth.getPayload().user_id;
                 this.selected = {};
                 console.log(data);
@@ -87,35 +89,54 @@ module odh.main {
 
 
         public generateNewTransformation() {
-            this.modifiedTransformation = this.templateTransformation;
+            var modifiedTransformation = '';
             this.chosenTables = [];
+            var selectedTables = [];
+            var tableEx = /(?:FROM|JOIN)\s("[^"]*"|\b\w+\b)|("[^"]*"|\b[A-z0-9_]+\b)(?=\.)/ig;
             angular.forEach(this.selected, (table, tablename) => {
                 if (table) {
                     this.chosenTables.push(table.unique_name);
                 }
-                var i = 0;
-                var n = 0;
-                do {
-                    n = this.modifiedTransformation.search(tablename);
-                    if (n !== -1) {
-                        var charBefore = this.modifiedTransformation.substr(n - 1, 1);
-                        var charAfter = this.modifiedTransformation.substr(n + tablename.length, 1);
-                        var quotesUsed = charBefore === '"' && charAfter === '"';
-                        var replacementQuote = quotesUsed ?
-                            ('iWillReplaceThis_' + ++i) : this.quote(('iWillReplaceThis_' + ++i));
-                        var tableEx = new RegExp(tablename + '\b');
-                        console.log(tableEx);
-                        this.modifiedTransformation = this.modifiedTransformation.replace(tableEx, replacementQuote);
-                    }
-                } while (n !== -1);
-                for (i; i !== 0; i--) {
-                    replacementQuote = 'iWillReplaceThis_' + i;
-                    this.modifiedTransformation = this.modifiedTransformation
-                        .replace(replacementQuote, table.unique_name);
-                }
-                this.transformation = this.modifiedTransformation;
-
+                selectedTables.push(tablename);
             });
+            var lastIndex = 0;
+            var myArray;
+            while ((myArray = tableEx.exec(this.templateTransformation)) !== null) {
+                var expr = myArray[1] || myArray[2];
+                var removedQuotes = 0;
+                if (expr.charAt(0) === '"' && expr.charAt(expr.length - 1) === '"') {
+                    expr = expr.substr(1, expr.length - 2);
+                    removedQuotes += 2;
+                }
+                var qExpr = expr;
+                var getFiltered = (name) => {
+                    return this.usedTables.filter((element)=> {
+                        return element.name === name;
+                    })
+                };
+
+                if (getFiltered(expr).length > 0) {
+                    if (!this.selected[expr]) {
+                        qExpr = '{not defined: ' + expr + '}';
+                    } else {
+
+                        qExpr = this.selected[expr].unique_name;
+
+                    }
+
+                } else {
+
+                }
+                modifiedTransformation += this.templateTransformation.substr(
+                    lastIndex, tableEx.lastIndex - lastIndex - expr.length - removedQuotes
+                );
+                modifiedTransformation += this.quote(qExpr);
+                lastIndex = tableEx.lastIndex;
+            }
+            modifiedTransformation += this.templateTransformation.substr(lastIndex);
+
+            this.transformation = modifiedTransformation;
+
 
         }
 
@@ -128,12 +149,10 @@ module odh.main {
         public loadIfPackageUsed(table:main.ITable) {
             if (this.checkIfOurTable(table)) {
                 this.PackageService.getPreviewByUniqueName(table.name, {}).then(result => {
-                    console.log(result);
                     if (result) {
                         this.loadedTablesArray.push(result);
                         this.selected[table.name] = result;
                         this.chosenTables.push(table.unique_name);
-                        this.generateNewTransformation();
                     }
                 });
             }
@@ -221,8 +240,8 @@ module odh.main {
         }
 
         private quote(field:string) {
-            var regEx = new RegExp('^[a-zA-Z_][a-zA-Z0-9_]*$');
-            if (regEx.test(field)) {
+            var regEx = new RegExp('^[A-z_][A-z0-9_]*$');
+            if (!regEx.test(field)) {
 
                 return '"' + field + '"';
             }

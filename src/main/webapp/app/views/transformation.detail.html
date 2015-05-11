@@ -69,6 +69,10 @@
                                     ng-click="vm.saveTransformation()">
                                 Speichern
                             </button>
+                            <button id="add" name="add" class="btn btn-primary pull-right"
+                                    ng-click="vm.generateNewTransformation()">
+                                Generieren
+                            </button>
                             <button ng-click="vm.preview()" type='button' class="btn btn-info pull-right">
                                 Vorschau
                             </button>
@@ -121,7 +125,10 @@
                                     <td><select ng-options="v.unique_name for v in vm.loadedTablesArray
                                 | filterAlreadyAdded:{tables: vm.chosenTables, selected: vm.selected[table.name].unique_name}"
                                                 ng-model="vm.selected[table.name]"
-                                                ng-change="vm.generateNewTransformation()"></select></td>
+                                                ng-change="vm.generateNewTransformation()"
+                                            >
+                                        <option value="">--</option>
+                                    </select></td>
                                 </tr>
                             </table>
                         </div>
