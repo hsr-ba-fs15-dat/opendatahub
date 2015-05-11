@@ -5,7 +5,7 @@ dev: gdal
 	scripts/install_dev.sh
 
 gdal:
-	apt-get install libxerces-c-dev libxerces-c3.1 -y && \
+	sudo apt-get install libxerces-c-dev libxerces-c3.1 -y && \
 	sudo apt-get remove gdal-bin libgdal-dev libgdal1h libgdal1-dev -y && \
 	curl -L http://download.osgeo.org/gdal/1.11.1/gdal-1.11.1.tar.gz -s -o - | tar xz -C . -f - && \
 	cd gdal-1.11.1 && \

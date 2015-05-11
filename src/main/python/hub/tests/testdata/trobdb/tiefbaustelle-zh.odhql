@@ -11,5 +11,5 @@ SELECT null as userid,
        t.Name as object_name,
        'street' as object_type,
        'closed' as trob_type,
-       ST_Centroid(t.geometry) as trobdb_point
+       ST_SetSRID(ST_Centroid(t.geometry), 4326) as trobdb_point
   from ODH10 as t

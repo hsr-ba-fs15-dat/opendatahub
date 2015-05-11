@@ -193,6 +193,11 @@ class TestGeometryFunctions(TestInterpreterBase):
                           'FROM child AS c')
         self.assertTrue(df.hsr.crs['init'], 'epsg:4326')
 
+    def test_geom_from_text_with_srid(self):
+        df = self.execute('SELECT c.prename, ST_GeomFromText(\'POINT(7.2234283 48.8183157)\', 4326) AS hsr '
+                          'FROM child AS c')
+        self.assertTrue(df.hsr.crs['init'], 'epsg:4326')
+
     def test_srid(self):
         self.execute('SELECT c.prename, '
                      'ST_SRID(ST_SetSRID(ST_GeomFromText(\'POINT(7.2234283 48.8183157)\'), 4326)) AS hsr '
@@ -201,6 +206,12 @@ class TestGeometryFunctions(TestInterpreterBase):
     def test_astext(self):
         self.execute('SELECT c.prename, ST_AsText(ST_GeomFromText(\'POINT(7.2234283 48.8183157)\')) AS hsr '
                      'FROM child AS c')
+
+    def test_transform(self):
+        df = self.execute('SELECT ST_Transform(ST_GeomFromText(\'POINT(7.2234283 48.8183157)\', 4326), 3857) AS hsr '
+                     'FROM child AS c')
+        self.assertAlmostEqual(df.hsr[0].x, 804108.360138, 4)
+        self.assertAlmostEqual(df.hsr[0].y, 6244089.40913, 4)
 
     def test_union(self):
         self.execute('SELECT ST_SetSRID(ST_GeomFromText(\'POINT(7.2234283 48.8183157)\'), 4326) AS hsr '
@@ -235,6 +246,8 @@ class TestGeometryFunctions(TestInterpreterBase):
         statements = (
             ('SELECT c.prename, ST_SetSRID(ST_GeomFromText(\'POINT(7.2234283 48.8183157)\'), 99999) AS hsr '
              'FROM child AS c', 'Unknown SRID'),
+            ('SELECT ST_Transform(ST_GeomFromText(\'POINT(7.2234283 48.8183157)\'), 3857) AS hsr FROM child AS c',
+             'Unknown source SRID')
 
             # todo different/no crs
         )

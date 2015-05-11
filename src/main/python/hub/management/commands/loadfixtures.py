@@ -17,6 +17,9 @@ from hub import formats
 from hub.structures.file import FileGroup
 from hub.utils.odhql import TransformationUtil
 
+from hub.odhql.interpreter import OdhQLInterpreter
+
+
 logging.getLogger('django.db.backends').setLevel(logging.WARN)
 
 
@@ -55,12 +58,13 @@ class Command(BaseCommand):
     ]
 
     TRANSFORMATIONS = [
-        ('trobdb/BaustellenExcel.odhql', 'TROBDB: Baustellen Februar 2015', 8),
-        ('trobdb/tiefbaustelle-zh.odhql', 'TROBDB: Tiefbaustellen ZH (aus GeoJSON)', 10),
-        ('trobdb/TruckInfo.odhql', 'TROBDB: TruckInfo', 11),
-        ('trobdb/WFS-Baustellen-ZH.odhql', 'TROBDB: Baustellen Zürich (WFS)', 18),
-        ('trobdb/Sanitize-Baustellen-kml.odhql', 'Sanitize Baustellen.kml', 12),
-        ('trobdb/Baustellen-kml.odhql', 'TROBDB: Baustellen.kml', None)
+        ('trobdb/BaustellenExcel.odhql', 'TROBDB: Baustellen Februar 2015'),
+        ('trobdb/tiefbaustelle-zh.odhql', 'TROBDB: Tiefbaustellen ZH (aus GeoJSON)'),
+        ('trobdb/TruckInfo.odhql', 'TROBDB: TruckInfo'),
+        ('trobdb/WFS-Baustellen-ZH.odhql', 'TROBDB: Baustellen Zürich (WFS)'),
+        ('trobdb/Sanitize-Baustellen-kml.odhql', 'Sanitize Baustellen.kml'),
+        ('trobdb/Baustellen-kml.odhql', 'TROBDB: Baustellen.kml'),
+        # ('trobdb/trobdb-union.odhql', 'TROBDB: Alle Daten'),
     ]
 
     def add_document(self, desc, format, name):
@@ -98,16 +102,21 @@ class Command(BaseCommand):
                              refresh_after=3600)
         url_model.save()
 
-    def add_transformation(self, file, name, group=None, desc=None):
+    def add_transformation(self, file, name, desc=None):
 
         with codecs.open(file, 'r', 'utf-8') as f:
             transformation = TransformationModel(name=name, description=desc or name, transformation=f.read(),
                                                  owner=self.user)
             transformation.save()
 
-            if group:
-                transformation.referenced_file_groups = FileGroupModel.objects.filter(id=group)
-                transformation.save()
+            file_groups, transformations = OdhQLInterpreter.parse_sources(transformation.transformation)
+
+            if file_groups and len(file_groups) > 0:
+                transformation.referenced_file_groups = FileGroupModel.objects.filter(id__in=file_groups.values())
+
+            if transformations and len(transformations) > 0:
+                transformation.referenced_transformations = TransformationModel.objects.filter(
+                    id__in=transformations.values())
 
         if self.parse:
             TransformationUtil.df_for_transformation(transformation, self.user.id)
@@ -124,8 +133,8 @@ class Command(BaseCommand):
         for (url, name, format) in self.URLS:
             self.add_url(url, format, name=name)
 
-        for (file, name, group) in self.TRANSFORMATIONS:
-            self.add_transformation(TestBase.get_test_file_path(file), name, group)
+        for (file, name) in self.TRANSFORMATIONS:
+            self.add_transformation(TestBase.get_test_file_path(file), name)
 
         # self.add_multiple(FileGroup.from_files(TestBase.get_test_file_path('perf/employees.csv')), formats.CSV, 5)
         self.add_multiple(FileGroup.from_files(TestBase.get_test_file_path('mockaroo.com.json')), formats.JSON, 10)

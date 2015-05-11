@@ -145,7 +145,6 @@ DATABASES['default'].update({
     'TEST_CHARSET': 'utf8',
 })
 
-
 CACHES = {
     # very short-lived basically for inter-request purposes only
     'L1': {
@@ -264,3 +263,5 @@ if not PRODUCTION:
 # ODHQL Table naming prefixes
 PACKAGE_PREFIX = 'ODH'
 TRANSFORMATION_PREFIX = 'TRF'
+
+TEST_RUNNER = 'hub.tests.runner.ParameterizedTestRunner'

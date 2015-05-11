@@ -9,6 +9,7 @@ from django.http.response import HttpResponseNotFound, JsonResponse, HttpRespons
 from django.db import transaction
 from django.db.models import Q
 from rest_framework.reverse import reverse
+from django.utils.text import slugify
 
 from opendatahub import settings
 from hub.serializers import DocumentSerializer, FileGroupSerializer
@@ -56,7 +57,7 @@ class DocumentViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet, Previ
         return Response(serializer.data)
 
     def get_preview_view_name(self, pk, request):
-        reverse('documentmodel-preview', kwargs={'pk': pk}, request=request)
+        return reverse('documentmodel-preview', kwargs={'pk': pk}, request=request)
 
     def get_dfs_for_preview(self, pk, request):
         file_groups = FileGroupModel.objects.filter(
@@ -65,7 +66,7 @@ class DocumentViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet, Previ
         dfs = []
         for fg in file_groups:
             for df in fg.to_file_group().to_df():
-                dfs.append(('{}{}_{}'.format(settings.PACKAGE_PREFIX, fg.id, df.name), df))
+                dfs.append(('{}{}_{}'.format(settings.PACKAGE_PREFIX, fg.id, unicode(slugify(df.name))), df))
 
         name = request.GET.get('name', None)
         if name:
