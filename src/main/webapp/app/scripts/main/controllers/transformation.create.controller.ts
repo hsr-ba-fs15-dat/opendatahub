@@ -171,7 +171,7 @@ module odh {
                     description: this.description,
                     transformation: this.odhqlInputString,
                     'private': this.isPrivate(this.transformationPrivate),
-                    file_groups: null
+                    file_groups: this.selection.getFileGroups()
                 };
                 var promise = this.TransformationService.post(transformation);
                 promise.then(data => this.createSuccess(data))
