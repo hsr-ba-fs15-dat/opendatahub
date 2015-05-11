@@ -39,8 +39,6 @@ before_script:
   - psql -c 'ALTER USER opendatahub CREATEDB;' -U postgres
 
 script:
- - pip install -r requirements.txt --download-cache $HOME/.pip-cache > /dev/null
- - pip install -r requirements_dev.txt --download-cache $HOME/.pip-cache > /dev/null
  - pyb -v
  - unset DJANGO_DEBUG
  - export DJANGO_CONFIG=PRODUCTION
