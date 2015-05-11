@@ -62,7 +62,8 @@ class TransformationViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet,
             transformation.save()
 
             if not is_template:
-                transformation.referenced_file_groups.add(*FileGroupModel.objects.filter(id__in=file_group_ids.values()))
+                transformation.referenced_file_groups.add(
+                    *FileGroupModel.objects.filter(id__in=file_group_ids.values()))
                 transformation.referenced_transformations.add(
                     *TransformationModel.objects.filter(id__in=transformation_ids.values()))
                 transformation.save()
