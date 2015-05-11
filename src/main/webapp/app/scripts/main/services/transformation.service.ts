@@ -79,8 +79,14 @@ module odh.main {
                     private $http:ng.IHttpService,
                     private UrlService:odh.utils.UrlService, private $q:ng.IQService,
                     private ToastService:odh.utils.ToastService) {
-
+            (<any>Restangular).extendModel('transformation', function (transformation) {
+                transformation.canDownload = function (formatName) {
+                    return $http.get(this.data, {params: {fmt: formatName}});
+                };
+                return transformation;
+            });
             this.transformations = this.Restangular.all('transformation');
+
         }
 
         public static aceLoaded(editor) {

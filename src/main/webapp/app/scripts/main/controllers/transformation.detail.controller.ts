@@ -27,6 +27,7 @@ module odh.main {
         public modifiedTransformation:string;
         public templateTransformation:string;
         public chosenTables:string[] = [];
+        public previewSuccess:boolean = false;
 
         constructor(private $stateParams:any,
                     private TransformationService:main.TransformationService,
@@ -41,7 +42,8 @@ module odh.main {
                     private $window:ng.IWindowService,
                     private PackageService:main.PackageService,
                     private $q:ng.IQService,
-                    private $filter:ng.IFilterService) {
+                    private $filter:ng.IFilterService,
+                    private $log:ng.ILogService) {
             // controller init
             AppConfig.then(config => {
                 this.transformationPrefix = config.TRANSFORMATION_PREFIX;
@@ -58,6 +60,7 @@ module odh.main {
                 this.templateTransformation = data.transformation;
                 this.allowDelete = $auth.isAuthenticated() && data.owner.id === $auth.getPayload().user_id;
                 this.selected = {};
+                console.log(data);
                 this.parse();
             }).catch(
                 () => {
@@ -66,8 +69,10 @@ module odh.main {
                 }
             );
 
-            FormatService.getAvailableFormats().then(data => {
-                this.availableFormats = this.FormatService.sortByLabel(data.data);
+            this.FormatService.getAvailableFormats().then(data => {
+                var results = this.FormatService.sortByLabel(data.data);
+                results.push({name: null, label: 'Original', description: 'Unveränderte Daten', example: null});
+                this.availableFormats = results;
             });
 
         }
@@ -95,11 +100,12 @@ module odh.main {
                     if (n !== -1) {
                         var charBefore = this.modifiedTransformation.substr(n - 1, 1);
                         var charAfter = this.modifiedTransformation.substr(n + tablename.length, 1);
-                        var quotesUsed = charBefore.match(/['"]/) && charAfter.match(/['"]/);
+                        var quotesUsed = charBefore === '"' && charAfter === '"';
                         var replacementQuote = quotesUsed ?
-                            ('iWillReplaceThis_' + ++i) :
-                            this.quote(('iWillReplaceThis_' + ++i));
-                        this.modifiedTransformation = this.modifiedTransformation.replace(tablename, replacementQuote);
+                            ('iWillReplaceThis_' + ++i) : this.quote(('iWillReplaceThis_' + ++i));
+                        var tableEx = new RegExp(tablename + '\b');
+                        console.log(tableEx);
+                        this.modifiedTransformation = this.modifiedTransformation.replace(tableEx, replacementQuote);
                     }
                 } while (n !== -1);
                 for (i; i !== 0; i--) {
@@ -186,9 +192,13 @@ module odh.main {
             });
         }
 
-        public downloadAs(formatName) {
-            this.$window.location.href = this.UrlService.get('transformation/{{id}}/data',
-                {id: this.transformationId}) + '?fmt=' + formatName;
+        public downloadAs(group, formatName) {
+            this.$log.debug('Triggered download of ', group, 'as', formatName);
+            group.canDownload(formatName).then(() => {
+                this.$window.location.href = group.data + ( formatName ? '?fmt=' + formatName : '');
+            }).catch(() => {
+                this.ToastService.failure('Die Datei konnte nicht ins gewünschte Format konvertiert werden.');
+            });
         }
 
         public remove() {
@@ -211,7 +221,12 @@ module odh.main {
         }
 
         private quote(field:string) {
-            return '"' + field + '"';
+            var regEx = new RegExp('^[a-zA-Z_][a-zA-Z0-9_]*$');
+            if (regEx.test(field)) {
+
+                return '"' + field + '"';
+            }
+            return field;
         }
     }
 
