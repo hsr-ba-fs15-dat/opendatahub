@@ -53,6 +53,7 @@
                                     ng-class="vm.getFields(table.uniqueId).indexOf(col) > -1 ? 'selected': ''">
                                     <label>
                                         <small>[{{ table.types[col.name] }}]</small>
+                                        <br/>
                                         <span class="clearer fa fa-times" ng-click="col.alias = col.name"
                                               ng-show="col.name != col.alias"></span>
                                         <input type="text" ng-model="col.alias" class="hasclear"/>
@@ -133,13 +134,17 @@
 
                 <div class="col-sm-12" ui-ace="{onLoad: vm.aceLoaded}" ng-model="vm.transformation"
                      ng-model-options="{ getterSetter: true }" ng-readonly="true"></div>
+
+                <button ng-click="" type='button' class="btn btn-primary pull-right">
+                    Speichern
+                </button>
                 <button ng-click="vm.preview()" type='button' class="btn btn-info pull-right">
                     {{ vm.useAsTemplate ? 'Überprüfen' : 'Vorschau' }}
                 </button>
             </div>
         </tab>
 
-        <tab select="vm.manualEdit = true">
+        <tab select="vm.manualEdit = true" id="manualEditTab">
             <tab-heading>
                 <i class="fa fa-pencil"></i> Manuelles bearbeiten
             </tab-heading>
@@ -164,31 +169,37 @@
             </div>
         </tab>
 
-        <tab>
-            <tab-heading>
-                <i class="fa fa-floppy-o"></i> Speichern
-            </tab-heading>
-            <form name="form" class="form" ng-submit="vm.submit()">
-                <fieldset>
-                    <div class="form-group" ng-class="{'has-error': form.TransformationName.$invalid && vm.submitted}">
-                        <label for="TransformationName">Name/Titel</label>
+    </tabset>
+    <p ng-show="vm.previewError">{{ vm.previewError }}</p>
+    <odh-preview query="vm.transformationPreview"></odh-preview>
+    <div ng-show="vm.progress" class="col-md-offset-3 col-md-6">
+        <progressbar class="progress-striped active" max="100"
+                     value="offer.progress" type="info">
+        </progressbar>
+    </div>
 
-                        <input id="TransformationName" name="TransformationName" type="text"
-                               placeholder="Name der Transformation"
-                               class="form-control"
-                               ng-model="vm.name"
-                               required>
+    <div ng-if="vm.odhqlInputString" class="well">
+        <form name="form" class="form" ng-submit="vm.submit()">
+            <fieldset>
+                <div class="form-group" ng-class="{'has-error': form.TransformationName.$invalid && vm.submitted}">
+                    <label for="TransformationName">Name/Titel</label>
 
-                        <div ng-messages="form.TransformationName.$error" ng-show="vm.submitted">
+                    <input id="TransformationName" name="TransformationName" type="text"
+                           placeholder="Name der Transformation"
+                           class="form-control"
+                           ng-model="vm.name"
+                           required>
+
+                    <div ng-messages="form.TransformationName.$error" ng-show="vm.submitted">
                     <span class="help-block">
                         <div ng-message="required">Bitte geben Sie einen Namen an</div>
                     </span>
-                        </div>
                     </div>
+                </div>
 
-                    <!-- Textarea -->
-                    <div class="form-group" ng-class="{'has-error': form.description.$invalid && vm.submitted}">
-                        <label class="control-label" for="description">Beschreibung</label>
+                <!-- Textarea -->
+                <div class="form-group" ng-class="{'has-error': form.description.$invalid && vm.submitted}">
+                    <label class="control-label" for="description">Beschreibung</label>
 
                 <textarea class="form-control" id="description" name="description"
                           ng-model="vm.description"
@@ -198,46 +209,55 @@
                         ></textarea>
 
 
-                        <div ng-messages="form.description.$error" ng-show="vm.submitted">
+                    <div ng-messages="form.description.$error" ng-show="vm.submitted">
                     <span class="help-block">
                         <div ng-message="required">Bitte geben Sie eine Beschreibung an</div>
                     </span>
-                            <label for="odhqlinputText"></label>
-                    <textarea ng-model="vm.transformation" ng-model-options="{ getterSetter: true }"
-                              class="form-control" id="odhqlinputText" name="odhqlinput"></textarea>
-                        </div>
-                        <span ng-show="form.odhqlinputText.$pending.odhValidateTransformation">Checking if this name is available...</span>
-                        <span ng-show="form.odhqlinputText.$error.odhValidateTransformation">This username is already taken!</span>
                     </div>
-                    <div class="form-group">
-                        <label class="col-md-4 control-label" for="add"></label>
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="name">Privat</label>
 
-                        <div class="col-md-8">
-                            <button id="add" name="add" class="btn btn-primary pull-right">
-                                Speichern
-                            </button>
 
-                        </div>
+                    <div class="checkbox">
+                        <label>
+                            <input id="name" name="name" type="checkbox" value="true"
+                                   ng-model="vm.isPrivate" ng-model-options="{ getterSetter: true }">
+                        </label>
                     </div>
-                    <div class="row">
+                </div>
+                <div class="form-group" ng-class="{'has-error': form.description.$invalid && vm.submitted}">
 
-                        <div class="col-md-12" ng-messages="form.odhqlinput.$error" ng-show="vm.submitted">
+                    <label for="odhqlinputText">Query: </label>
+                    <input type="hidden" ng-model="vm.transformation" ng-model-options="{ getterSetter: true }"
+                           class="form-control" id="odhqlinputText" name="odhqlinput"/>
+
+                    <p>{{vm.odhqlInputString}}</p>
+                    <span ng-show="form.odhqlinputText.$pending.odhValidateTransformation">Checking if this name is available...</span>
+                    <span ng-show="form.odhqlinputText.$error.odhValidateTransformation">This username is already taken!</span>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-4 control-label" for="add"></label>
+
+                    <div class="col-md-8">
+                        <button id="add" name="add" class="btn btn-primary pull-right">
+                            Speichern
+                        </button>
+
+                    </div>
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-12" ng-messages="form.odhqlinput.$error" ng-show="vm.submitted">
                     <span class="help-block">
                         <div ng-message="required">Bitte geben Sie eine gültige OdhQL Abfrage vor dem Speichern an.
                         </div>
                     </span>
-                        </div>
                     </div>
-                </fieldset>
-            </form>
-        </tab>
-    </tabset>
-    <p ng-show="vm.previewError">{{ vm.previewError }}</p>
-    <odh-preview query="vm.transformationPreview"></odh-preview>
-    <div ng-show="vm.progress" class="col-md-offset-3 col-md-6">
-        <progressbar class="progress-striped active" max="100"
-                     value="offer.progress" type="info">
-        </progressbar>
+                </div>
+            </fieldset>
+        </form>
     </div>
 
 
