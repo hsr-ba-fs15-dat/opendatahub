@@ -308,14 +308,14 @@ class GeoCSVParser(Parser):
 
     @classmethod
     def _parse_easting(cls, ix, s, df, types):
-        if ix > 0 and types[ix - 1] != 'Northing':
-            iy = types[ix:].index('Northing')
+        if ix > 0 and types[ix - 1] != 'northing':
+            iy = types[ix:].index('northing')
             return cls._parse_point(df, ix, iy)
 
     @classmethod
     def _parse_northing(cls, iy, s, df, types):
-        if iy > 0 and types[iy - 1] != 'Easting':
-            ix = types[iy:].index('Easting')
+        if iy > 0 and types[iy - 1] != 'nasting':
+            ix = types[iy:].index('nasting')
             return cls._parse_point(df, ix, iy)
 
     @classmethod
@@ -339,7 +339,7 @@ class GeoCSVParser(Parser):
             series = []
             for i, (c, s) in enumerate(df.iteritems()):
                 type_ = types[i]
-                parse_method = getattr(cls, '_parse_' + type_.lower(), None)
+                parse_method = getattr(cls, '_parse_' + type_, None)
                 if not parse_method:
                     raise ParsingException('Unknown GeoCSV type "{}"'.format(type_))
                 series.append(parse_method(i, s, df, types))
