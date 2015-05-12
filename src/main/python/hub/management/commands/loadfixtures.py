@@ -10,7 +10,7 @@ import logging
 from django.core.management.base import BaseCommand
 from django import db
 from django.utils import timezone
-
+import django.db.utils
 import codecs
 
 from hub.tests.testutils import TestBase
@@ -156,6 +156,12 @@ class Command(BaseCommand):
         # self.add_multiple(id, FileGroup.from_files(TestBase.get_test_file_path('perf/employees.csv')), formats.CSV, 5)
         # id += 5
         self.add_multiple(id, FileGroup.from_files(TestBase.get_test_file_path('mockaroo.com.json')), formats.JSON, 10)
+
+        from django.db import connection
+        from hub.models import PackageModel
+        cursor = connection.cursor()
+
+        cursor.execute('select setval(\'' + PackageModel._meta.db_table + '_id_seq\', 4000)')
 
     def add_multiple(self, id, fg, format, n=100):
         for i in xrange(n):
