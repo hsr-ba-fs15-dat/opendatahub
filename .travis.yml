@@ -31,6 +31,7 @@ install:
   - sudo make gdal > /dev/null
   - sudo apt-get install libfreetype6 libfreetype6-dev > /dev/null # pre-req matplotlib
   - sudo apt-get install libxml2-dev libxslt-dev python-dev > /dev/null # lxml
+  - sudo make gdal-travis
 
 before_script:
   - psql -c "CREATE USER opendatahub WITH PASSWORD 'opendatahub';" -U postgres
