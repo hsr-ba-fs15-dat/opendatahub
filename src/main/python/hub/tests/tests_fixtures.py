@@ -35,7 +35,6 @@ def find_fixtures(client):
 def get_fixture_test(id, url, fmt):
     def fixture_test(self):
         data_url = '{}?fmt={}'.format(url, fmt)
-        print 'Testing {}'.format(data_url)
         response = self.client.get(data_url)
 
         self.assertEqual(200, response.status_code)
