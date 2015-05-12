@@ -158,7 +158,6 @@ class Command(BaseCommand):
         for i in xrange(n):
             self.add_fg(fg, format, name='Dummy', desc='Filler data')
 
-
     def update_ids(self, new_value):
         cursor = connection.cursor()
 
