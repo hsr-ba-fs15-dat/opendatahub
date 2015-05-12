@@ -29,14 +29,12 @@ module odh.main {
         link = (scope, element, attrs) => {
             this.ngTable(scope, attrs);
             scope.$watch('preview', (oldVal, newVal) => {
-                console.log('watcher initiated->table');
                 if (oldVal !== newVal) {
                     this.tableDirect(scope, attrs);
                 }
             });
             if (scope.pkg) {
                 scope.$watch('pkg', (oldVal, newVal) => {
-                    console.log('watcher initiated->pkg');
 
                     if (oldVal !== newVal) {
                         this.ngTable(scope, attrs);
@@ -109,7 +107,6 @@ module odh.main {
                                             field: col
                                         });
                                     });
-                                    console.log(data);
                                     params.total(data.count);
                                     $defer.resolve(data.data);
                                     scope.success = true;
@@ -117,7 +114,7 @@ module odh.main {
                                     this.displayError(error, scope);
                                     this.ToastService.failure('Fehler beim erstellen der Vorschau');
                                 });
-                            } else if (scope.query && scope.query.length > 5) {
+                            } else if (!!scope.query && scope.query.length > 5) {
                                 this.TransformationService.preview(scope.query, params.url()).then((result:any) => {
                                     scope.cols = [];
                                     angular.forEach(result.columns, (col) => {

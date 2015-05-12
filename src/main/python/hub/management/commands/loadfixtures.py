@@ -11,6 +11,9 @@ from django.core.management.base import BaseCommand
 from django import db
 import codecs
 
+from django.db import connection
+from hub.models import PackageModel
+
 from hub.tests.testutils import TestBase
 from hub.models import DocumentModel, FileGroupModel, FileModel, UrlModel, TransformationModel
 from hub import formats
@@ -49,6 +52,8 @@ class Command(BaseCommand):
         (formats.CSV, 'perf/children.csv',),
         (formats.INTERLIS1, 'interlis1/Bahnhoefe.ili', 'interlis1/Bahnhoefe.itf'),
         (formats.Excel, 'trobdb/Baustellen Mai 2015.xls',),
+        (formats.Shapefile,) + tuple(
+            'mopub/GEB_Gebaeudeeingang.{}'.format(ext) for ext in ['dbf', 'prj', 'shp', 'shx']),
         # ('interlis1/Bahnhoefe.ili', 'interlis1/Bahnhoefe.xml'): formats.INTERLIS2
     ]
 
@@ -64,7 +69,7 @@ class Command(BaseCommand):
         ('trobdb/WFS-Baustellen-ZH.odhql', 'TROBDB: Baustellen Zürich (WFS)'),
         ('trobdb/Sanitize-Baustellen-kml.odhql', 'Sanitize Baustellen.kml'),
         ('trobdb/Baustellen-kml.odhql', 'TROBDB: Baustellen.kml'),
-        # ('trobdb/trobdb-union.odhql', 'TROBDB: Alle Daten'),
+        ('trobdb/trobdb-union.odhql', 'TROBDB: Alle Daten'),
     ]
 
     def add_document(self, desc, format, name):
@@ -105,7 +110,8 @@ class Command(BaseCommand):
     def add_transformation(self, file, name, desc=None):
 
         with codecs.open(file, 'r', 'utf-8') as f:
-            transformation = TransformationModel(name=name, description=desc or name, transformation=f.read(),
+            transformation = TransformationModel(name=name, description=desc or name,
+                                                 transformation=unicode(f.read()),
                                                  owner=self.user)
             transformation.save()
 
@@ -128,17 +134,33 @@ class Command(BaseCommand):
             it = iter(args)
             format = next(it)
             fg = FileGroup.from_files(*[TestBase.get_test_file_path(f) for f in it])
+
             self.add_fg(fg, format)
+
+        self.update_ids(1000)
 
         for (url, name, format) in self.URLS:
             self.add_url(url, format, name=name)
 
+        self.update_ids(2000)
+
         for (file, name) in self.TRANSFORMATIONS:
             self.add_transformation(TestBase.get_test_file_path(file), name)
+
+        self.update_ids(3000)
 
         # self.add_multiple(FileGroup.from_files(TestBase.get_test_file_path('perf/employees.csv')), formats.CSV, 5)
         self.add_multiple(FileGroup.from_files(TestBase.get_test_file_path('mockaroo.com.json')), formats.JSON, 10)
 
+        self.update_ids(4000)
+
     def add_multiple(self, fg, format, n=100):
         for i in xrange(n):
             self.add_fg(fg, format, name='Dummy', desc='Filler data')
+
+
+    def update_ids(self, new_value):
+        cursor = connection.cursor()
+
+        cursor.execute('select setval(\'{}_id_seq\', {})'.format(PackageModel._meta.db_table, new_value))
+        cursor.execute('select setval(\'{}_id_seq\', {})'.format(FileGroupModel._meta.db_table, new_value))

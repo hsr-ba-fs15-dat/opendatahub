@@ -12,4 +12,4 @@ SELECT t.projektleiter as userid,
        'street' as object_type,
        'closed' as trob_type,
        t.geometry as geometry
-  from TRF23 as t
+  from TRF2005 as t
