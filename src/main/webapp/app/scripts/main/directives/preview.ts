@@ -85,7 +85,7 @@ module odh.main {
                 }
                 scope.ngTableParams = new this.NgTableParams({
                         page: 1,            // show first page
-                        //name: name || '',
+                        // name: name || '',
                         query: scope.query || '',
                         count: 3           // count per page
                     },
