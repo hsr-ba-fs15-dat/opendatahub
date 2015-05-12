@@ -4,6 +4,10 @@
     <p>{{ doc.pkg.description }}</p>
 
     <p><em>Hinzugefügt: {{ doc.pkg.created_at | amCalendar }}</em></p>
+
+    <div class="btn-toolbar">
+        <button class="btn btn-danger" ng-click="doc.remove()" ng-show="doc.allowDelete">Löschen</button>
+    </div>
 </div>
 
 <h3>Dateien</h3>

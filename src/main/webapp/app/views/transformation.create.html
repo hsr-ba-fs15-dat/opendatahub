@@ -53,9 +53,10 @@
                                     ng-class="vm.getFields(table.uniqueId).indexOf(col) > -1 ? 'selected': ''">
                                     <label>
                                         <small>[{{ table.types[col.name] }}]</small>
-                                        <br/>
+
                                         <span class="clearer fa fa-times" ng-click="col.alias = col.name"
                                               ng-show="col.name != col.alias"></span>
+                                        <br/>
                                         <input type="text" ng-model="col.alias" class="hasclear"/>
 
                                     </label>
