@@ -88,7 +88,7 @@ module odh.main {
                                     this.displayError(error, scope);
                                     this.ToastService.failure('Fehler beim erstellen der Vorschau');
                                 });
-                            } else if (scope.query.length > 5) {
+                            } else if (!!scope.query && scope.query.length > 5) {
                                 this.TransformationService.preview(scope.query, params.url()).then((result:any) => {
                                     scope.cols = [];
                                     angular.forEach(result.columns, (col) => {
