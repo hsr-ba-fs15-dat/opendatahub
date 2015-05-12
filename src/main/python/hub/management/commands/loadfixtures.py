@@ -69,7 +69,7 @@ class Command(BaseCommand):
         ('trobdb/WFS-Baustellen-ZH.odhql', 'TROBDB: Baustellen Zürich (WFS)'),
         ('trobdb/Sanitize-Baustellen-kml.odhql', 'Sanitize Baustellen.kml'),
         ('trobdb/Baustellen-kml.odhql', 'TROBDB: Baustellen.kml'),
-        ('trobdb/trobdb-union.odhql', 'TROBDB: Alle Daten'),
+        # ('trobdb/trobdb-union.odhql', 'TROBDB: Alle Daten'),
     ]
 
     def add_document(self, desc, format, name):
