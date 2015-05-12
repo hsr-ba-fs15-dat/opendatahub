@@ -52,8 +52,8 @@ class Command(BaseCommand):
         (formats.CSV, 'perf/children.csv',),
         (formats.INTERLIS1, 'interlis1/Bahnhoefe.ili', 'interlis1/Bahnhoefe.itf'),
         (formats.Excel, 'trobdb/Baustellen Mai 2015.xls',),
-        (formats.Shapefile,) + tuple(
-            'mopub/GEB_Gebaeudeeingang.{}'.format(ext) for ext in ['dbf', 'prj', 'shp', 'shx']),
+        # (formats.Shapefile,) + tuple(
+        #     'mopub/GEB_Gebaeudeeingang.{}'.format(ext) for ext in ['dbf', 'prj', 'shp', 'shx']),
         # ('interlis1/Bahnhoefe.ili', 'interlis1/Bahnhoefe.xml'): formats.INTERLIS2
     ]
 
