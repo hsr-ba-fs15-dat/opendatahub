@@ -17,6 +17,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 TEMP_DIR = os.path.join(BASE_DIR, 'temp')
+IS_CI = 'CI' in os.environ
 
 
 class TestBase(unittest.TestCase):
@@ -27,6 +28,7 @@ class TestBase(unittest.TestCase):
     username = 'testuser'
     email = username + '@opendatahub.ch'
     password = 'secret'
+    is_ci = IS_CI
 
     @classmethod
     def setUpClass(cls):
