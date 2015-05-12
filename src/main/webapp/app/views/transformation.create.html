@@ -53,9 +53,10 @@
                                     ng-class="vm.getFields(table.uniqueId).indexOf(col) > -1 ? 'selected': ''">
                                     <label>
                                         <small>[{{ table.types[col.name] }}]</small>
-                                        <br/>
+
                                         <span class="clearer fa fa-times" ng-click="col.alias = col.name"
                                               ng-show="col.name != col.alias"></span>
+                                        <br/>
                                         <input type="text" ng-model="col.alias" class="hasclear"/>
 
                                     </label>
@@ -147,12 +148,6 @@
                     {{ alert.msg }}
                 </alert>
                 <a ui-sref="transformation/help" target="_blank"><i class="fa fa-question-circle"></i></a>
-
-                <label class="control-label" for="isTemplate">
-                    <input id=useQuotes" type="checkbox" ng-model="vm.useAsTemplate"/>
-                    Als Template verwenden.
-                </label>
-
                 <div class="col-sm-12" ui-ace="{onLoad: vm.aceLoaded}" ng-model="vm.odhqlInputString"
                      ng-model-options="{ debounce: 500 }" ng-change="vm.lockAssistant()"></div>
             </div>
@@ -172,7 +167,7 @@
 
             <form name="form" class="form" ng-submit="vm.submit()">
                 <alert ng-show="form.odhqlinput.$invalid" type="warning">
-                    <strong>Das Query enthält keine gültige Syntax.</strong>
+                    <strong>Das Query enthält ungültigen Syntax.</strong>
 
                     <p>{{vm.errorMessage.error}} (Line: {{vm.errorMessage.lineno}},
                         Col: {{vm.errorMessage.col}}) at {{vm.errorMessage.line}}</p>

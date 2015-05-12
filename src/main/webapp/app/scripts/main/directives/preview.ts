@@ -59,6 +59,10 @@ module odh.main {
             if (!scope.preview) {
                 return false;
             }
+            if (scope.preview.error) {
+                scope.preview.alerts = [];
+                this.displayError(scope.preview.error, scope.preview);
+            }
             scope.adHocCols = [];
             scope.adHocPreview = scope.preview;
             angular.forEach(scope.preview.columns, (col) => {

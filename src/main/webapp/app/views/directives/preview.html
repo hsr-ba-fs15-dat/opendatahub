@@ -54,6 +54,7 @@
                 </div>
                 <alert type="info" ng-if="adHocPreview && adHocPreview.msg">{{ adHocPreview.msg }}
                     Beim Speichern wird ein Template gespeichert!
+                    <p ng-repeat="alert in adHocPreview.alerts">({{alert.msg}})</p>
                 </alert>
             </div>
 
