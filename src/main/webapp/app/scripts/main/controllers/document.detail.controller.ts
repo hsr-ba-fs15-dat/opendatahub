@@ -36,6 +36,23 @@ module odh.main {
             });
         }
 
+        public remove() {
+            var instance = this.$modal.open({
+                templateUrl: 'views/transformation.deleteconfirmation.html',
+                controller: 'DeleteTransformationController as vm',
+                resolve: {
+                    docId: this.documentId
+                }
+            });
+            instance.result.then(() => {
+                    this.DocumentService.remove({id: this.documentId}).then(() =>
+                            this.$state.go('packages')
+                    ).catch((err) =>
+                            this.ToastService.failure('Beim Löschen des Dokumentes ist ein Fehler aufgetreten.')
+                    );
+                }
+            );
+        }
 
         private retrieveData() {
             if (typeof(this.documentId) !== 'undefined') {
@@ -43,7 +60,8 @@ module odh.main {
                     .then(data => {
                         this.$log.debug('Document ' + this.documentId, data);
                         this.pkg = data;
-                        this.allowDelete = this.$auth.isAuthenticated() && data.owner.id === this.$auth.getPayload().user_id;
+                        this.allowDelete = this.$auth.isAuthenticated() &&
+                        data.owner.id === this.$auth.getPayload().user_id;
 
                         console.log(data);
                     })
@@ -66,23 +84,7 @@ module odh.main {
 
         }
 
-        public remove() {
-            var instance = this.$modal.open({
-                templateUrl: 'views/transformation.deleteconfirmation.html',
-                controller: 'DeleteTransformationController as vm',
-                resolve: {
-                    docId: this.documentId
-                }
-            });
-            instance.result.then(() => {
-                    this.DocumentService.remove({id: this.documentId}).then(() =>
-                            this.$state.go('packages')
-                    ).catch((err) =>
-                            this.ToastService.failure('Beim Löschen des Dokumentes ist ein Fehler aufgetreten.')
-                    );
-                }
-            );
-        }
+
     }
 
     angular.module('openDataHub.main')
