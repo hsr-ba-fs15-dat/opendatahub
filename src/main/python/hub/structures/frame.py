@@ -168,7 +168,7 @@ class GeometryType(OdhType):
         shapely.geometry.MultiLineString, shapely.geometry.MultiPoint, shapely.geometry.MultiPolygon
     )
 
-
+from shapely.geometry.base import GEOMETRY_TYPES
 class OdhFrame(pd.DataFrame):
     _metadata = ['name']
 
@@ -204,7 +204,9 @@ class OdhFrame(pd.DataFrame):
     def has_geoms(self):
         return OdhType.GEOMETRY in [s.odh_type for c, s in self.iteritems()]
 
-    def to_gdf(self):
+    def to_gdf(self, supported_geoms=set(GEOMETRY_TYPES)):
+        supported_geom_types = set(supported_geoms)
+
         # if we have multiple geometry columns and none of them is called "geometry" we pick the first
         # the formatters require a single geometry column as most file formats only support one
         df = self.copy()
@@ -217,23 +219,30 @@ class OdhFrame(pd.DataFrame):
         df.drop(set(geoseries.keys()) - {geometry.name}, axis=1, inplace=True)
 
         df.crs = geometry.crs
-        geom_type = geometry.first_valid_entry.geom_type
-        geometry = gp.GeoSeries(geometry, crs=geometry.crs).fillna(EmptyGeometryMarker(geom_type))
 
-        from shapely.geometry.base import GEOMETRY_TYPES
+        geom_type = geometry.first_valid_entry.geom_type if geometry.first_valid_entry else 'Point'
+        geometry = gp.GeoSeries(geometry, crs=geometry.crs)
+        geometry.iloc[~np.in1d(geometry[~pd.isnull(geometry)].geom_type, list(supported_geom_types))] = None
+        geometry.fillna(EmptyGeometryMarker(geom_type), inplace=True)
 
         geom_types = geometry.geom_type
         unique_geom_types = geom_types.unique()
+
         if len(unique_geom_types) > 1:
             common_type = os.path.commonprefix([gt[::-1] for gt in geom_types.unique()])[::-1]
-            if common_type in GEOMETRY_TYPES:
+            multi_type = 'Multi' + common_type
+            mask = None
+            if common_type in supported_geom_types and multi_type in supported_geom_types:
                 constructor = getattr(shapely.geometry, 'Multi' + common_type)
                 mask = geom_types == common_type
-            else:
+            elif shapely.geometry.GeometryCollection.__name__ in supported_geom_types:
                 constructor = shapely.geometry.GeometryCollection
                 mask = Ellipsis
+            else:
+                geometry[geometry.geom_type != geom_type] = EmptyGeometryMarker(geom_type)
 
-            geometry[mask] = geometry[mask].apply(lambda g: constructor([g]))
+            if mask is not None:
+                geometry[mask] = geometry[mask].apply(lambda g: constructor([g]))
 
         df['geometry'] = geometry
         return df
