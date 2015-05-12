@@ -12,7 +12,8 @@ module odh.main {
 
         require = 'ngModel';
         scope = {
-            errorMessage: '=odhValidateTransformation'
+            errorMessage: '=odhValidateTransformation',
+            previewObject: '='
         };
         link = (scope, elm, attrs, ngModel) => {
             ngModel.$asyncValidators.transformation = (modelValue, viewValue) => {
@@ -20,6 +21,11 @@ module odh.main {
                 var def = this.$q.defer();
                 this.TransformationService.parse(viewValue).then((res) => {
                     scope.errorMessage = undefined;
+                    this.TransformationService.preview(viewValue).then(res => {
+                        scope.previewObject = res;
+                    }).catch(res => {
+                        scope.previewObject = {msg: 'Vorschau nicht verfügbar.', res: res};
+                    });
                     def.resolve();
                 }).catch((res) => {
                     scope.errorMessage = res.data;

@@ -134,13 +134,6 @@
 
                 <div class="col-sm-12" ui-ace="{onLoad: vm.aceLoaded}" ng-model="vm.odhqlInputString"
                      ng-readonly="true"></div>
-
-                <button ng-click="" type='button' class="btn btn-primary pull-right">
-                    Speichern
-                </button>
-                <button ng-click="vm.preview()" type='button' class="btn btn-info pull-right">
-                    {{ vm.useAsTemplate ? 'Überprüfen' : 'Vorschau' }}
-                </button>
             </div>
         </tab>
 
@@ -162,43 +155,48 @@
 
                 <div class="col-sm-12" ui-ace="{onLoad: vm.aceLoaded}" ng-model="vm.odhqlInputString"
                      ng-model-options="{ debounce: 500 }" ng-change="vm.lockAssistant()"></div>
-
-                <button ng-click="vm.preview()" type='button' class="btn btn-info pull-right">
-                    {{ vm.useAsTemplate ? 'Überprüfen' : 'Vorschau' }}
-                </button>
             </div>
         </tab>
 
     </tabset>
-    <odh-preview query="vm.odhqlInpuString"></odh-preview>
     <div ng-show="vm.progress" class="col-md-offset-3 col-md-6">
         <progressbar class="progress-striped active" max="100"
                      value="offer.progress" type="info">
         </progressbar>
     </div>
+    <odh-preview preview="vm.previewObject"></odh-preview>
+    <div class="container">
 
-    <div ng-if="vm.odhqlInputString" class="well">
-        <form name="form" class="form" ng-submit="vm.submit()">
-            <fieldset>
-                <div class="form-group" ng-class="{'has-error': form.TransformationName.$invalid && vm.submitted}">
-                    <label for="TransformationName">Name/Titel</label>
 
-                    <input id="TransformationName" name="TransformationName" type="text"
-                           placeholder="Name der Transformation"
-                           class="form-control"
-                           ng-model="vm.name"
-                           required>
+        <div ng-if="vm.odhqlInputString" class="well">
 
-                    <div ng-messages="form.TransformationName.$error" ng-show="vm.submitted">
+            <form name="form" class="form" ng-submit="vm.submit()">
+                <alert ng-show="form.odhqlinput.$invalid" type="warning">
+                    <strong>Das Query enthält keine gültige Syntax.</strong>
+
+                    <p>{{vm.errorMessage.error}} (Line: {{vm.errorMessage.lineno}},
+                        Col: {{vm.errorMessage.col}}) at {{vm.errorMessage.line}}</p>
+                </alert>
+                <fieldset>
+                    <div class="form-group" ng-class="{'has-error': form.TransformationName.$invalid && vm.submitted}">
+                        <label for="TransformationName">Name/Titel</label>
+
+                        <input id="TransformationName" name="TransformationName" type="text"
+                               placeholder="Name der Transformation"
+                               class="form-control"
+                               ng-model="vm.name"
+                               required>
+
+                        <div ng-messages="form.TransformationName.$error" ng-show="vm.submitted">
                     <span class="help-block">
                         <div ng-message="required">Bitte geben Sie einen Namen an</div>
                     </span>
+                        </div>
                     </div>
-                </div>
 
-                <!-- Textarea -->
-                <div class="form-group" ng-class="{'has-error': form.description.$invalid && vm.submitted}">
-                    <label class="control-label" for="description">Beschreibung</label>
+                    <!-- Textarea -->
+                    <div class="form-group" ng-class="{'has-error': form.description.$invalid && vm.submitted}">
+                        <label class="control-label" for="description">Beschreibung</label>
 
                 <textarea class="form-control" id="description" name="description"
                           ng-model="vm.description"
@@ -208,63 +206,59 @@
                         ></textarea>
 
 
-                    <div ng-messages="form.description.$error" ng-show="vm.submitted">
+                        <div ng-messages="form.description.$error" ng-show="vm.submitted">
                     <span class="help-block">
                         <div ng-message="required">Bitte geben Sie eine Beschreibung an</div>
                     </span>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label class="control-label" for="name">Privat</label>
+                    <div class="form-group">
+                        <label class="control-label" for="name">Privat</label>
 
 
-                    <div class="checkbox">
-                        <label>
-                            <input id="name" name="name" type="checkbox" value="true"
-                                   ng-model="vm.isPrivate" ng-model-options="{ getterSetter: true }">
-                        </label>
+                        <div class="checkbox">
+                            <label>
+                                <input id="name" name="name" type="checkbox" value="true"
+                                       ng-model="vm.isPrivate" ng-model-options="{ getterSetter: true }">
+                            </label>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group" ng-class="{'has-error': form.description.$invalid && vm.submitted}">
-                    <label for="odhqlinput">Query: </label>
-                    <input type="hidden" ng-model="vm.odhqlInputString"
-                           class="form-control" name="odhqlinput"
-                           odh-validate-transformation="vm.errorMessage"/>
+                    <div class="form-group" ng-class="{'has-error': form.description.$invalid && vm.submitted}">
+                        <label for="odhqlinput">Query: </label>
+                        <input type="hidden" ng-model="vm.odhqlInputString"
+                               class="form-control" name="odhqlinput"
+                               odh-validate-transformation="vm.errorMessage"
+                               preview-object="vm.previewObject"/>
 
-                    <p>{{vm.odhqlInputString}}</p>
-                    <span ng-show="form.odhqlinput.$pending">Überprüfe Abfrage...</span>
-                    <alert ng-show="form.odhqlinput.$invalid" type="warning">
-                        <strong>Das Query enthält keine gültige Syntax.</strong>
-
-                        <p>{{vm.errorMessage.error}} (Line: {{vm.errorMessage.lineno}},
-                            Col: {{vm.errorMessage.col}}) at {{vm.errorMessage.line}}</p>
-                    </alert>
-                </div>
-                <div class="form-group">
-                    <label class="col-md-4 control-label" for="add"></label>
-
-                    <div class="col-md-8">
-                        <button id="add" name="add" class="btn btn-primary pull-right"
-                                ng-disabled="form.$invalid || form.$pending">
-                            Speichern
-                        </button>
+                        <p>{{vm.odhqlInputString}}</p>
+                        <span ng-show="form.odhqlinput.$pending">Überprüfe Abfrage...</span>
 
                     </div>
-                </div>
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="add"></label>
 
-                <div class="row">
+                        <div class="col-md-8">
+                            <button id="add" name="add" class="btn btn-primary pull-right"
+                                    ng-disabled="form.$invalid || form.$pending">
+                                Speichern
+                            </button>
 
-                    <div class="col-md-12" ng-messages="form.odhqlinput.$error" ng-show="vm.submitted">
+                        </div>
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-md-12" ng-messages="form.odhqlinput.$error" ng-show="vm.submitted">
                     <span class="help-block">
                         <div ng-message="required">Bitte geben Sie eine gültige OdhQL Abfrage vor dem Speichern an.
                         </div>
                     </span>
+                        </div>
                     </div>
-                </div>
-            </fieldset>
-        </form>
+                </fieldset>
+            </form>
+        </div>
     </div>
-
 
 </div>
 

@@ -36,6 +36,7 @@ module odh {
         public transformationPreview:string = ' ';
         public errorMessage = 'errorStringTester';
         public transformationDebounced;
+        public previewObject:any = {};
         private transformationPrivate:boolean = false;
 
         constructor(private $state:ng.ui.IStateService, private $scope:any,
