@@ -30,7 +30,15 @@ install:
   - wget -qO- https://toolbelt.heroku.com/install-ubuntu.sh | sh
   - sudo apt-get install libfreetype6 libfreetype6-dev > /dev/null # pre-req matplotlib
   - sudo apt-get install libxml2-dev libxslt-dev python-dev > /dev/null # lxml
-  - sudo make gdal-travis
+  - sudo apt-get install libxerces-c-dev libxerces-c3.1 -y
+  - mkdir -p /home/travis/build/gdal
+  - curl -L https://www.dropbox.com/s/qxnl7fftyj80zde/gdal-1.11.1-precise64.tar.gz?dl=1 -s -o - | tar xz -C /home/travis/build/gdal -f -
+  - export PATH="/home/travis/build/gdal/bin:$PATH"
+  - export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/home/travis/build/gdal/lib"
+  - export LIBRARY_PATH="$LIBRARY_PATH:/home/travis/build/gdal/lib"
+  - export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/home/travis/build/gdal/pkgconfig"
+  - export CPPPATH="$CPPPATH:/home/travis/build/gdal/include"
+  - export CPATH="$CPATH:/home/travis/build/gdal/include"
 
 before_script:
   - psql -c "CREATE USER opendatahub WITH PASSWORD 'opendatahub';" -U postgres
