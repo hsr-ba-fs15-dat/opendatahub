@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from types import NoneType
 
 """
 
@@ -149,7 +150,7 @@ class BooleanType(OdhType):
 class TextType(OdhType):
     name = 'TEXT'
     dtypes = np.object_,
-    ptypes = unicode, str
+    ptypes = unicode, str, NoneType
 
     def convert(self, series):
         try:
