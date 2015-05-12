@@ -168,7 +168,10 @@ class GeometryType(OdhType):
         shapely.geometry.MultiLineString, shapely.geometry.MultiPoint, shapely.geometry.MultiPolygon
     )
 
+
 from shapely.geometry.base import GEOMETRY_TYPES
+
+
 class OdhFrame(pd.DataFrame):
     _metadata = ['name']
 

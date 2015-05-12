@@ -27,6 +27,7 @@ from hub.utils import ogr2ogr
 from hub.structures.frame import OdhType
 import hub.utils.common as com
 import pyproj
+from shapely.geometry.base import GEOMETRY_TYPES
 from osgeo import osr
 
 
@@ -141,7 +142,7 @@ class XMLFormatter(Formatter):
                                                            pretty_print=True)).file_group)
         return results
 
-from shapely.geometry.base import GEOMETRY_TYPES
+
 class GeoFormatterBase(Formatter):
     _is_abstract = True
 
