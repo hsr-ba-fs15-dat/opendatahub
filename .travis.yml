@@ -30,7 +30,8 @@ install:
   - wget -qO- https://toolbelt.heroku.com/install-ubuntu.sh | sh
   - sudo apt-get install libfreetype6 libfreetype6-dev > /dev/null # pre-req matplotlib
   - sudo apt-get install libxml2-dev libxslt-dev python-dev > /dev/null # lxml
-  - sudo apt-get install libxerces-c-dev libxerces-c3.1 -y
+
+  # Pre-compiled GDAL 1.11.1 because it takes too long otherwise
   - mkdir -p /home/travis/build/gdal
   - curl -L https://www.dropbox.com/s/qxnl7fftyj80zde/gdal-1.11.1-precise64.tar.gz?dl=1 -s -o - | tar xz -C /home/travis/build/gdal -f -
   - export PATH="/home/travis/build/gdal/bin:$PATH"
