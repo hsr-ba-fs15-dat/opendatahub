@@ -9,6 +9,8 @@ import logging
 
 from django.core.management.base import BaseCommand
 from django import db
+from django.utils import timezone
+
 import codecs
 
 from hub.tests.testutils import TestBase
@@ -48,7 +50,7 @@ class Command(BaseCommand):
         (formats.CSV, 'perf/employees.csv',),
         (formats.CSV, 'perf/children.csv',),
         (formats.INTERLIS1, 'interlis1/Bahnhoefe.ili', 'interlis1/Bahnhoefe.itf'),
-        (formats.Excel, 'trobdb/Baustellen Mai 2015.xls',),
+        (formats.Excel, 'trobdb/Baustellen Mai 2015.xls',)
         # ('interlis1/Bahnhoefe.ili', 'interlis1/Bahnhoefe.xml'): formats.INTERLIS2
     ]
 
@@ -64,22 +66,22 @@ class Command(BaseCommand):
         ('trobdb/WFS-Baustellen-ZH.odhql', 'TROBDB: Baustellen Zürich (WFS)'),
         ('trobdb/Sanitize-Baustellen-kml.odhql', 'Sanitize Baustellen.kml'),
         ('trobdb/Baustellen-kml.odhql', 'TROBDB: Baustellen.kml'),
-        # ('trobdb/trobdb-union.odhql', 'TROBDB: Alle Daten'),
+        ('trobdb/trobdb-union.odhql', 'TROBDB: Alle Daten'),
     ]
 
-    def add_document(self, desc, format, name):
+    def add_document(self, id, desc, format, name):
         if len(name) > 200:
             name = name[:197] + '...'
 
         desc = desc or 'Testdaten'
-        doc = DocumentModel(name=name,
+        doc = DocumentModel(id=id, name=name,
                             description=desc + ' (Originalformat: {})'.format(format.name),
-                            private=False, owner=self.user)
+                            private=False, created_at=timezone.now(), owner=self.user)
         doc.save()
         return doc
 
-    def add_fg(self, fg, format, name=None, desc=None):
-        doc = self.add_document(desc, format, name or 'Test {}'.format(', '.join(fg.names)))
+    def add_fg(self, id, fg, format, name=None, desc=None):
+        doc = self.add_document(id, desc, format, name or 'Test {}'.format(', '.join(fg.names)))
 
         file_group = FileGroupModel(document=doc)
         file_group.save()
@@ -92,8 +94,8 @@ class Command(BaseCommand):
 
         db.reset_queries()
 
-    def add_url(self, url, format, name=None, desc=None):
-        doc = self.add_document(desc, format, name or 'Test {}'.format(url))
+    def add_url(self, id, url, format, name=None, desc=None):
+        doc = self.add_document(id, desc, format, name or 'Test {}'.format(url))
 
         file_group = FileGroupModel(document=doc)
         file_group.save()
@@ -102,11 +104,11 @@ class Command(BaseCommand):
                              refresh_after=3600)
         url_model.save()
 
-    def add_transformation(self, file, name, desc=None):
+    def add_transformation(self, id, file, name, desc=None):
 
         with codecs.open(file, 'r', 'utf-8') as f:
-            transformation = TransformationModel(name=name, description=desc or name, transformation=f.read(),
-                                                 owner=self.user)
+            transformation = TransformationModel(id=id, name=name, description=desc or name, transformation=f.read(),
+                                                 owner=self.user, created_at=timezone.now())
             transformation.save()
 
             file_groups, transformations = OdhQLInterpreter.parse_sources(transformation.transformation)
@@ -124,21 +126,38 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.user = TestBase.get_test_user()
 
+        id = 0
+
         for args in self.IMPORT:
             it = iter(args)
             format = next(it)
             fg = FileGroup.from_files(*[TestBase.get_test_file_path(f) for f in it])
-            self.add_fg(fg, format)
+
+            id += 1
+
+            self.add_fg(id, fg, format)
+
+        id = 999
 
         for (url, name, format) in self.URLS:
-            self.add_url(url, format, name=name)
+            id += 1
+
+            self.add_url(id, url, format, name=name)
+
+        id = 1999
 
         for (file, name) in self.TRANSFORMATIONS:
-            self.add_transformation(TestBase.get_test_file_path(file), name)
+            id += 1
 
-        # self.add_multiple(FileGroup.from_files(TestBase.get_test_file_path('perf/employees.csv')), formats.CSV, 5)
-        self.add_multiple(FileGroup.from_files(TestBase.get_test_file_path('mockaroo.com.json')), formats.JSON, 10)
+            self.add_transformation(id, TestBase.get_test_file_path(file), name)
 
-    def add_multiple(self, fg, format, n=100):
+        id = 2999
+
+        # self.add_multiple(id, FileGroup.from_files(TestBase.get_test_file_path('perf/employees.csv')), formats.CSV, 5)
+        # id += 5
+        self.add_multiple(id, FileGroup.from_files(TestBase.get_test_file_path('mockaroo.com.json')), formats.JSON, 10)
+
+    def add_multiple(self, id, fg, format, n=100):
         for i in xrange(n):
-            self.add_fg(fg, format, name='Dummy', desc='Filler data')
+            id += 1
+            self.add_fg(id, fg, format, name='Dummy', desc='Filler data')
