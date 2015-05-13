@@ -350,7 +350,7 @@ class GeoCSVFormatter(Formatter):
             geometry = next(s for c, s in df.iteritems() if s.odh_type == OdhType.GEOMETRY and s.crs)
             proj = pyproj.Proj(geometry.crs)
             srs = osr.SpatialReference()
-            srs.ImportFromProj4(proj.srs)
+            srs.ImportFromProj4(str(proj.srs))  # char * -> no unicode
             return File.from_string(df.name + '.prj', srs.ExportToPrettyWkt())
         except StopIteration:
             return None
