@@ -538,9 +538,9 @@ class TestParser(TestBase):
             self.assertEqual(type, join_ds.join_type, msg=str(type))
 
         assert_join_type(types.inner, 'select a.a from a join b on a.x = b.x')
-        assert_join_type(types.left_outer, 'select a.a from a left join b on a.x = b.x')
-        assert_join_type(types.right_outer, 'select a.a from a right join b on a.x = b.x')
-        assert_join_type(types.full_outer, 'select a.a from a full join b on a.x = b.x')
+        assert_join_type(types.left, 'select a.a from a left join b on a.x = b.x')
+        assert_join_type(types.right, 'select a.a from a right join b on a.x = b.x')
+        assert_join_type(types.outer, 'select a.a from a full join b on a.x = b.x')
 
     def test_malformed_expressions(self):
         p = odhql.OdhQLParser()
