@@ -36,6 +36,10 @@ module odh.main {
         public getList(params:any) {
             return this.Restangular.oneUrl('document', '').get(params);
         }
+
+        public remove(transformation) {
+            return this.Restangular.one('document', transformation.id).remove();
+        }
     }
 
     export class FileGroupService {

@@ -24,7 +24,7 @@ module odh.main {
                     this.TransformationService.preview(viewValue).then(res => {
                         scope.previewObject = res;
                     }).catch(res => {
-                        scope.previewObject = {msg: 'Vorschau nicht verfügbar.', res: res};
+                        scope.previewObject = {msg: 'Vorschau nicht verfügbar.', error: res};
                     });
                     def.resolve();
                 }).catch((res) => {

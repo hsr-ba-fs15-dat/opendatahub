@@ -5,6 +5,9 @@
 
             <p>{{ vm.description }}</p>
 
+            <div class="btn-toolbar">
+                <button class="btn btn-danger" ng-click="vm.remove()" ng-show="vm.allowDelete">Löschen</button>
+            </div>
             <p ng-show="vm.previewError">{{ vm.previewError }}</p>
 
             <div class="panel panel-default">
