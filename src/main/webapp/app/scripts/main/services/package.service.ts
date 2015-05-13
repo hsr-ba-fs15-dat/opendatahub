@@ -93,8 +93,7 @@ module odh.main {
                                 defer.resolve(result);
                             }
                         });
-                    }
-                    else if (isUrl(pkg.url)) {
+                    } else if (isUrl(pkg.url)) {
                         this.$log.debug('There is a URL Field. Will fetch it from there!');
                         fromPreviewUrl(pkg.url).then(result => {
                             if (result) {
@@ -102,13 +101,11 @@ module odh.main {
                                 defer.resolve(result.data[0]);
                             }
                         }).catch(console.error);
-                    }
-                    else if (typeof pkg.unique_name === 'string') {
+                    } else if (typeof pkg.unique_name === 'string') {
                         this.$log.debug('There is a Unique Name ({0}). Fetching preview with this one'
                             .format(pkg.unique_name));
                         return this.getPreviewByUniqueName(pkg.unique_name, params);
-                    }
-                    else {
+                    } else {
                         console.error('Could not fetch the Preview. Here is the Package:', pkg);
                     }
 
