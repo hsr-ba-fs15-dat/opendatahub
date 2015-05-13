@@ -81,14 +81,55 @@ class Formatter(RegistrationMixin):
 class CSVFormatter(Formatter):
     targets = formats.CSV,
 
+    FALLBACK_TYPE = 'String'
+
+    TYPE_MAP = {
+        OdhType.INTEGER: 'Integer',
+        OdhType.SMALLINT: 'Integer',
+        OdhType.BIGINT: 'Integer',
+        OdhType.FLOAT: 'Real',
+        OdhType.TEXT: 'String',
+        OdhType.DATETIME: 'DateTime',
+        OdhType.GEOMETRY: 'WKT',
+        # boolean? interval?
+    }
+
+    @classmethod
+    def _create_csvt(cls, df):
+        # http://www.gdal.org/drv_csv.html
+        # http://giswiki.hsr.ch/GeoCSV
+        csvt_line = ';'.join('"{}"'.format(cls.TYPE_MAP.get(s.odh_type, cls.FALLBACK_TYPE)) for i, s in df.iteritems())
+        return File.from_string(df.name + '.csvt', csvt_line)
+
+    @classmethod
+    def _create_csv(cls, df):
+        return File.from_string(df.name + '.csv',
+                                df.as_safe_serializable().to_csv(index=False, encoding='UTF-8', sep=str(';')))
+
+    @classmethod
+    def _create_prj(cls, df):
+        try:
+            geometry = next(s for c, s in df.iteritems() if s.odh_type == OdhType.GEOMETRY and s.crs)
+            proj = pyproj.Proj(geometry.crs)
+            srs = osr.SpatialReference()
+            srs.ImportFromProj4(str(proj.srs))  # char * -> no unicode
+            return File.from_string(df.name + '.prj', srs.ExportToPrettyWkt())
+        except StopIteration:
+            return None
+
     @classmethod
     def format(cls, dfs, name, format, *args, **kwargs):
-        results = []
+        file_groups = []
 
         for df in dfs:
-            results.append(File.from_string(df.name + '.csv',
-                                            df.as_safe_serializable().to_csv(index=False, encoding='UTF-8')).file_group)
-        return results
+            files = [cls._create_csv(df), cls._create_csvt(df)]
+            prj = cls._create_prj(df)
+            if prj:
+                files.append(prj)
+
+            file_groups.append(FileGroup(files))
+
+        return file_groups
 
 
 class JSONFormatter(Formatter):
@@ -198,7 +239,7 @@ class GeoPackageFormatter(GeoFormatterBase):
     The GPKG speec does not allow non-spatial tables, and GDAL does not support them before version 2.0
     (http://www.gdal.org/drv_geopackage.html).
     '''
-#   targets = formats.GeoPackage,
+    # targets = formats.GeoPackage,
 
     @classmethod
     def format(cls, dfs, name, format, *args, **kwargs):
@@ -315,56 +356,3 @@ class GenericOGRFormatter(Formatter):
             formatted.extend(ogr2ogr.ogr2ogr(fg, cls.FORMAT_TO_OGR[format]))
 
         return formatted
-
-
-class GeoCSVFormatter(Formatter):
-    targets = formats.GeoCSV,
-    FALLBACK_TYPE = 'String'
-
-    TYPE_MAP = {
-        OdhType.INTEGER: 'Integer',
-        OdhType.SMALLINT: 'Integer',
-        OdhType.BIGINT: 'Integer',
-        OdhType.FLOAT: 'Real',
-        OdhType.TEXT: 'String',
-        OdhType.DATETIME: 'DateTime',
-        OdhType.GEOMETRY: 'WKT',
-        # boolean? interval?
-    }
-
-    @classmethod
-    def _create_csvt(cls, df):
-        # http://www.gdal.org/drv_csv.html
-        # http://giswiki.hsr.ch/GeoCSV
-        csvt_line = ';'.join('"{}"'.format(cls.TYPE_MAP.get(s.odh_type, cls.FALLBACK_TYPE)) for i, s in df.iteritems())
-        return File.from_string(df.name + '.csvt', csvt_line)
-
-    @classmethod
-    def _create_csv(cls, df):
-        return File.from_string(df.name + '.csv',
-                                df.as_safe_serializable().to_csv(index=False, encoding='UTF-8', sep=str(';')))
-
-    @classmethod
-    def _create_prj(cls, df):
-        try:
-            geometry = next(s for c, s in df.iteritems() if s.odh_type == OdhType.GEOMETRY and s.crs)
-            proj = pyproj.Proj(geometry.crs)
-            srs = osr.SpatialReference()
-            srs.ImportFromProj4(proj.srs)
-            return File.from_string(df.name + '.prj', srs.ExportToPrettyWkt())
-        except StopIteration:
-            return None
-
-    @classmethod
-    def format(cls, dfs, name, format, *args, **kwargs):
-        file_groups = []
-
-        for df in dfs:
-            files = [cls._create_csv(df), cls._create_csvt(df)]
-            prj = cls._create_prj(df)
-            if prj:
-                files.append(prj)
-
-            file_groups.append(FileGroup(files))
-
-        return file_groups

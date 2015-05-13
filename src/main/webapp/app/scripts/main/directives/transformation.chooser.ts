@@ -11,7 +11,8 @@ module odh.main {
 
         constructor(private TransformationService:main.TransformationService, private ngTableParams:any,
                     private $auth:any, private FileGroupService:main.FileGroupService,
-                    private ToastService:odh.utils.ToastService, private PackageService:main.PackageService) {
+                    private ToastService:odh.utils.ToastService, private PackageService:main.PackageService,
+                    private $filter:ng.IFilterService) {
         }
 
 
@@ -51,8 +52,15 @@ module odh.main {
                 total: 0, // length of data
                 getData: ($defer, params) => {
                     this.PackageService.getList(params.url()).then(result => {
+                        var data = result.results;
+                        var data_hidden = this.$filter('filter')(result.results, {template: true});
+                        data = this.$filter('filter')(data, {template: false});
+
+                        if (data_hidden.length > 0) {
+                            scope.data_hidden = data_hidden;
+                        }
                         params.total(result.count);
-                        $defer.resolve(result.results);
+                        $defer.resolve(data);
                     });
                 }
             });
@@ -133,10 +141,8 @@ module odh.main {
          ngTableParams:any,
          $auth:any,
          FileGroupService:main.FileGroupService,
-         ToastService:odh.utils.ToastService, PackageService:main.PackageService) => {
+         ToastService:odh.utils.ToastService, PackageService:main.PackageService, $filter:ng.IFilterService) => {
             return new OdhChooseTransformation(
-                TransformationService, ngTableParams, $auth, FileGroupService, ToastService, PackageService);
-        }
-    )
-    ;
+                TransformationService, ngTableParams, $auth, FileGroupService, ToastService, PackageService, $filter);
+        });
 }

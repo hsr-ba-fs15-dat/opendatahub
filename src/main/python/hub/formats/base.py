@@ -65,7 +65,7 @@ class CSV(Format):
     label = 'CSV'
 
     description = """
-    Ein Datensatz pro Zeile und die Spalten durch Kommas getrennt.
+    Ein Datensatz pro Zeile und die Spalten durch Kommas oder Semikolon getrennt.
     Die erste Zeile enthält die Namen der einzelnen Felder.
     """
 
@@ -78,8 +78,7 @@ class CSV(Format):
 
     @classmethod
     def is_format(cls, file, *args, **kwargs):
-        extensions = [f.extension for f in file.file_group]
-        return file.extension == 'csv' and not ('csvt' in extensions or 'prj' in extensions)
+        return file.extension == 'csv'
 
 
 class JSON(Format):
@@ -212,19 +211,6 @@ class WFS(Format):
 #     @classmethod
 #     def is_format(cls, file, *args, **kwargs):
 #         return file.extension == 'gpkg'
-
-
-class GeoCSV(Format):
-    label = 'GeoCSV'
-    description = """
-    Ist ein von dem HSR GeometaLab spezifiziertes, CSV-ähnliches Format für Geo-Daten.
-    """
-
-    @classmethod
-    def is_format(cls, file, *args, **kwargs):
-        return (file.extension == 'csv' and
-                (file.basename + '.csvt' in file.file_group or file.basename + '.prj' in file.file_group)) or \
-               (file.extension == 'geocsv')
 
 
 class GeoPackage(Format):

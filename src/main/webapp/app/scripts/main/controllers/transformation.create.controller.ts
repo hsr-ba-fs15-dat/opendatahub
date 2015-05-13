@@ -29,7 +29,7 @@ module odh {
         public tableParams:any;
         public alerts:Object[] = [];
         public selection:main.ITransformationSelection;
-        public quotes = true;
+        public quotes = false;
         public useAsTemplate:boolean = false;
         public fileGroupTable;
         public forceManualEdit:boolean = false;
@@ -41,7 +41,6 @@ module odh {
 
         constructor(private $state:ng.ui.IStateService, private $scope:any,
                     private ToastService:odh.utils.ToastService,
-                    private FileGroupService:main.FileGroupService,
                     private $log:ng.ILogService, private ngTableParams,
                     private $auth:any, private TransformationService:main.TransformationService,
                     private TransformationSelection:main.TransformationSelection, private JOIN_OPERATIONS,
@@ -86,8 +85,12 @@ module odh {
         public addRemoveField(col, table:main.ITable) {
             if (!this.manualEdit) {
                 this.selection.addRemoveField(col, table);
-                this.odhqlInputString = this.selection.generateTransformation();
+                this.generate();
             }
+        }
+
+        public generate() {
+            this.odhqlInputString = this.selection.generateTransformation();
         }
 
         public getTableByName(tableName:string) {
@@ -117,20 +120,12 @@ module odh {
             this.alerts.splice(index, 1);
         }
 
-        public toggleManualEdit() {
-            this.manualEdit = !this.manualEdit;
-        }
-
         public addRemoveTable(table) {
             this.selection.addRemoveTable(table);
         }
 
         public checkTableSelected(table) {
             return this.selection.tableSelected(table);
-        }
-
-        public useQuotes(checkbox) {
-            this.selection.toggleQuotes();
         }
 
         public preview() {
@@ -150,10 +145,6 @@ module odh {
                 this.transformationPrivate = priv;
             }
             return this.selection.isPrivate() || this.transformationPrivate;
-        }
-
-        public joinOperation(table) {
-            return this.selection.getJoinOperation(table);
         }
 
         public submit() {
