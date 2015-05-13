@@ -50,7 +50,7 @@ module odh.main {
             if (!this.packagePrefix) {
                 console.warn('AppConfig not loaded successfully. Falling back to default!');
             }
-            var regex = '^({0}|{1})(\\d+)_(.*)$'.format(packagePrefix, transformationPrefix);
+            var regex = '^({0}|{1})(\\d+)_?(.*)$'.format(packagePrefix, transformationPrefix);
             var re = new RegExp(regex);
             var result = re.exec(uniquename);
             var defer = this.$q.defer();
@@ -58,6 +58,9 @@ module odh.main {
             if (result) {
                 if (result[1] === packagePrefix) {
                     pkg = 'document';
+                }
+                if (result[1] === transformationPrefix) {
+                    pkg = 'transformation';
                 }
                 this.Restangular.one(pkg, result[2]).one('preview').get(params).then(data => {
                     angular.forEach(data, (each, key) => {
@@ -86,8 +89,18 @@ module odh.main {
                     if (isUrl(pkg.preview)) {
                         this.$log.debug('preview field is a URL. Will fetch it from there!');
                         fromPreviewUrl(pkg.preview).then(result => {
-                            defer.resolve(result);
+                            if (result) {
+                                defer.resolve(result);
+                            }
                         });
+                    } else if (isUrl(pkg.url)) {
+                        this.$log.debug('There is a URL Field. Will fetch it from there!');
+                        fromPreviewUrl(pkg.url).then(result => {
+                            if (result) {
+                                console.log(result, 'url');
+                                defer.resolve(result.data[0]);
+                            }
+                        }).catch(console.error);
                     } else if (typeof pkg.unique_name === 'string') {
                         this.$log.debug('There is a Unique Name ({0}). Fetching preview with this one'
                             .format(pkg.unique_name));

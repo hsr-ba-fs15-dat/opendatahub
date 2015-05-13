@@ -105,7 +105,7 @@ class File(object):
         if not file_group:
             file_group = FileGroup([self])
 
-        if type(name) == str:
+        if isinstance(name, str):
             name = unicode(name, 'UTF-8')
 
         self.name = name
