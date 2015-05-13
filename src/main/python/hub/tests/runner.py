@@ -4,11 +4,14 @@ from hub.management.commands.loadfixtures import Command as LoadFixtures
 
 
 class ParameterizedTestRunner(DiscoverRunner):
+
     def load_fixtures(self):
         print 'Loading fixtures'
         LoadFixtures(parse=False).handle()
 
     def run_tests(self, test_labels, extra_tests=None, **kwargs):
+        self.interactive = False
+
         self.setup_test_environment()
         old_config = self.setup_databases()
 

@@ -11,7 +11,7 @@ from authentication.models import UserProfile
 class UserSocialAuthSerializer(ModelSerializer):
     login = serializers.SerializerMethodField('get_the_login')
 
-    class Meta:
+    class Meta(object):
         model = UserSocialAuth
         fields = ('provider', 'uid', 'login')
 
@@ -29,7 +29,7 @@ class UserSerializer(ModelSerializer):
         read_only=True,
     )
 
-    class Meta:
+    class Meta(object):
         model = UserProfile
         fields = (
             'id', 'username', 'email', 'first_name', 'last_name', 'profile_photo', 'description', 'social_auth'
@@ -37,7 +37,7 @@ class UserSerializer(ModelSerializer):
 
 
 class UserDisplaySerializer(ModelSerializer):
-    class Meta:
+    class Meta(object):
         model = UserProfile
         fields = (
             'id', 'username', 'first_name', 'last_name'

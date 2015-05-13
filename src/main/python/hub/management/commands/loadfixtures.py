@@ -163,3 +163,5 @@ class Command(BaseCommand):
 
         cursor.execute('select setval(\'{}_id_seq\', {})'.format(PackageModel._meta.db_table, new_value))
         cursor.execute('select setval(\'{}_id_seq\', {})'.format(FileGroupModel._meta.db_table, new_value))
+
+        cursor.close()

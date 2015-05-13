@@ -206,7 +206,7 @@ class WFS(Format):
 # class GeoPackage(Format):
 # label = 'GeoPackage'
 # description = """
-#     GeoPackage ist ein Datenformat zum Austausch von Geodaten.
+# GeoPackage ist ein Datenformat zum Austausch von Geodaten.
 #     """
 #
 #     @classmethod
@@ -223,8 +223,19 @@ class GeoCSV(Format):
     @classmethod
     def is_format(cls, file, *args, **kwargs):
         return (file.extension == 'csv' and
-               (file.basename + '.csvt' in file.file_group or file.basename + '.prj' in file.file_group)) or \
+                (file.basename + '.csvt' in file.file_group or file.basename + '.prj' in file.file_group)) or \
                (file.extension == 'geocsv')
+
+
+class GeoPackage(Format):
+    label = 'GeoPackage'
+    description = '''
+    Universelles Format für Vektor- und Raster-basierte Geo-Daten.
+    '''
+
+    @classmethod
+    def is_format(cls, file, *args, **kwargs):
+        return file.extension == 'gpkg'
 
 
 class Other(Format):
