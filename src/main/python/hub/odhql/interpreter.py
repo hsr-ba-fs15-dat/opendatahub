@@ -6,7 +6,6 @@ Core OdhQL interpreter. Meant to be compact and fast. All extended functionality
 separately.
 """
 
-from __future__ import unicode_literals
 import collections
 import itertools
 
