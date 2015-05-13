@@ -394,8 +394,7 @@ class OdhQLInterpreter(object):
                 except IndexError:
                     raise OdhQLExecutionException(
                         'ORDER BY: Column "{}" does not exist. The resulting table has '
-                        '{} columns'
-                            .format(field.position, len(colnames)))
+                        '{} columns'.format(field.position, len(colnames)))
 
             elif isinstance(field, parser.Field):
                 cols.append(self._make_name(field.prefix, field.name))
