@@ -186,6 +186,20 @@ class ShapefileFormatter(GeoFormatterBase):
         return super(ShapefileFormatter, cls).format(dfs, name, format, 'ESRI Shapefile', 'shp', *args, **kwargs)
 
 
+class GeoPackageFormatter(GeoFormatterBase):
+    '''
+    Formatter for GeoPackage files, a format based on sqlite.
+
+    The GPKG speec does not allow non-spatial tables, and GDAL does not support them before version 2.0
+    (http://www.gdal.org/drv_geopackage.html).
+    '''
+#   targets = formats.GeoPackage,
+
+    @classmethod
+    def format(cls, dfs, name, format, *args, **kwargs):
+        return super(GeoPackageFormatter, cls).format(dfs, name, format, 'GPKG', 'gpkg', *args, **kwargs)
+
+
 class KMLFormatter(Formatter):
     targets = formats.KML,
 
