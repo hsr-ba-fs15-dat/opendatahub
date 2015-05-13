@@ -28,6 +28,7 @@ from osgeo import osr
 import fiona.crs
 import shapely.wkt
 import re
+import csv
 
 
 logger = logging.getLogger(__name__)
@@ -61,7 +62,7 @@ class Parser(RegistrationMixin):
         for parser in cls.parsers_by_format[format]:
             try:
                 dfs = com.ensure_tuple(parser.parse(file, format=format, *args, **kwargs))
-                dfs = [OdhFrame.from_df(df, getattr(df, 'name', file.basename)) for df in dfs]
+                dfs = [OdhFrame.from_df(df, getattr(df, 'name', None) or file.basename) for df in dfs]
                 if not dfs:
                     raise ParsingException('Parser did not return DataFrames')
 
@@ -82,9 +83,112 @@ class Parser(RegistrationMixin):
 class CSVParser(Parser):
     accepts = formats.CSV,
 
+    CSVT_RE = re.compile('\s*(\w+)\s*\(.*\)\s*', re.IGNORECASE)
+
+    @classmethod
+    def _parse_prj(cls, fg):
+        prjs = fg.get_by_extension('prj')
+        if prjs:
+            prj = prjs[0]
+            srs = osr.SpatialReference()
+
+            srs.ImportFromWkt([prj.ustream.read()])
+            return fiona.crs.from_string(srs.ExportToProj4())
+
+        return {}
+
+    @classmethod
+    def _parse_csvt(cls, fg):
+        csvts = fg.get_by_extension('csvt')
+        if csvts:
+            csvt = csvts[0]
+            fields = csvt.stream.readline().split(';')
+            try:
+                return [cls.CSVT_RE.match(f).group(1).lower() for f in fields]
+            except (AttributeError, IndexError) as e:
+                logger.warn('Could not parse CSVT file "%s": %s', csvt.stream.read(), e.message)
+
+        return ()
+
+    @classmethod
+    def _parse_csv(cls, fg):
+        csv_file = fg.get_by_extension('csv')[0]
+        line = next(l for l in csv_file.stream if l.strip() != '')  # first non-empty line
+        delimiter = csv.Sniffer().sniff(line).delimiter
+        # sep=None works for auto-detection but falls-back to Python instead of C engine
+        return OdhFrame.from_df(pd.read_csv(csv_file.stream, encoding='UTF-8', sep=delimiter))
+
+    @classmethod
+    def _parse_integer(cls, i, s, df, types):
+        return OdhType.INTEGER.convert(s)
+
+    @classmethod
+    def _parse_string(cls, i, s, df, types):
+        return OdhType.TEXT.convert(s)
+
+    @classmethod
+    def _parse_real(cls, i, s, df, types):
+        return OdhType.FLOAT.convert(s)
+
+    @classmethod
+    def _parse_date(cls, i, s, df, types):
+        return pd.to_datetime(s, infer_datetime_format=True)  # format='%Y-%m-%d'
+
+    @classmethod
+    def _parse_time(cls, i, s, df, types):
+        return pd.to_datetime(s, infer_datetime_format=True)  # format='%H:%M:%S'
+
+    @classmethod
+    def _parse_datetime(cls, i, s, df, types):
+        return pd.to_datetime(s, infer_datetime_format=True)  # format='%Y-%m-%d %H:%M:%S'
+
+    @classmethod
+    def _parse_wkt(cls, i, s, df, types):
+        s = s.apply(shapely.wkt.loads, convert_dtype=False)
+        s.crs = df.crs
+        return s
+
+    @classmethod
+    def _parse_easting(cls, ix, s, df, types):
+        if ix > 0 and types[ix - 1] != 'northing':
+            iy = types[ix:].index('northing')
+            return cls._parse_point(df, ix, iy)
+
+    @classmethod
+    def _parse_northing(cls, iy, s, df, types):
+        if iy > 0 and types[iy - 1] != 'easting':
+            ix = types[iy:].index('easting')
+            return cls._parse_point(df, ix, iy)
+
+    @classmethod
+    def _parse_point(cls, df, ix, iy):
+        s = OdhType.FLOAT.convert(df.iloc[:, [ix, iy]]).apply(shapely.geometry.Point, axis=1)
+        s.crs = df.crs
+        return s
+
     @classmethod
     def parse(cls, file, format, *args, **kwargs):
-        return pd.read_csv(file.stream, encoding='UTF-8')
+        fg = file.file_group
+
+        crs = cls._parse_prj(fg)
+        types = cls._parse_csvt(fg)
+        df = cls._parse_csv(fg)
+        df.crs = crs
+
+        if types:
+            assert len(df.columns) == len(types)
+
+            series = []
+            for i, (c, s) in enumerate(df.iteritems()):
+                type_ = types[i]
+                parse_method = getattr(cls, '_parse_' + type_, None)
+                if not parse_method:
+                    raise ParsingException('Unknown GeoCSV type "{}"'.format(type_))
+                series.append(parse_method(i, s, df, types))
+
+            df = OdhSeries.concat([s for s in series if s is not None], axis=1)
+
+        return df
 
 
 class JSONParser(Parser):
@@ -239,111 +343,3 @@ class GenericXMLParser(Parser):
 
         et = etree.parse(file.stream)
         return pd.DataFrame([dict(text=e.text, **e.attrib) for e in et.getroot()])
-
-
-class GeoCSVParser(Parser):
-    accepts = formats.GeoCSV,
-
-    CSVT_RE = re.compile('\s*(\w+)\s*\(.*\)\s*', re.IGNORECASE)
-
-    @classmethod
-    def _parse_prj(cls, fg):
-        prjs = fg.get_by_extension('prj')
-        if prjs:
-            prj = prjs[0]
-            srs = osr.SpatialReference()
-
-            srs.ImportFromWkt([prj.ustream.read()])
-            return fiona.crs.from_string(srs.ExportToProj4())
-
-        return {}
-
-    @classmethod
-    def _parse_csvt(cls, fg):
-        csvts = fg.get_by_extension('csvt')
-        if csvts:
-            csvt = csvts[0]
-            fields = csvt.stream.readline().split(';')
-            try:
-                return [cls.CSVT_RE.match(f).group(1).lower() for f in fields]
-            except (AttributeError, IndexError) as e:
-                logger.warn('Could not parse CSVT file "%s": %s', csvt.stream.read(), e.message)
-
-        return ()
-
-    @classmethod
-    def _parse_csv(cls, fg):
-        csv = fg.get_by_extension('csv')[0]
-        return OdhFrame.from_df(pd.read_csv(csv.ustream, encoding='UTF-8', sep=';'))
-
-    @classmethod
-    def _parse_integer(cls, i, s, df, types):
-        return OdhType.INTEGER.convert(s)
-
-    @classmethod
-    def _parse_string(cls, i, s, df, types):
-        return OdhType.TEXT.convert(s)
-
-    @classmethod
-    def _parse_real(cls, i, s, df, types):
-        return OdhType.FLOAT.convert(s)
-
-    @classmethod
-    def _parse_date(cls, i, s, df, types):
-        return pd.to_datetime(s, infer_datetime_format=True)  # format='%Y-%m-%d'
-
-    @classmethod
-    def _parse_time(cls, i, s, df, types):
-        return pd.to_datetime(s, infer_datetime_format=True)  # format='%H:%M:%S'
-
-    @classmethod
-    def _parse_datetime(cls, i, s, df, types):
-        return pd.to_datetime(s, infer_datetime_format=True)  # format='%Y-%m-%d %H:%M:%S'
-
-    @classmethod
-    def _parse_wkt(cls, i, s, df, types):
-        s = s.apply(shapely.wkt.loads, convert_dtype=False)
-        s.crs = df.crs
-        return s
-
-    @classmethod
-    def _parse_easting(cls, ix, s, df, types):
-        if ix > 0 and types[ix - 1] != 'northing':
-            iy = types[ix:].index('northing')
-            return cls._parse_point(df, ix, iy)
-
-    @classmethod
-    def _parse_northing(cls, iy, s, df, types):
-        if iy > 0 and types[iy - 1] != 'nasting':
-            ix = types[iy:].index('nasting')
-            return cls._parse_point(df, ix, iy)
-
-    @classmethod
-    def _parse_point(cls, df, ix, iy):
-        s = OdhType.FLOAT.convert(df.iloc[:, [ix, iy]]).apply(shapely.geometry.Point, axis=1)
-        s.crs = df.crs
-        return s
-
-    @classmethod
-    def parse(cls, file, format, *args, **kwargs):
-        fg = file.file_group
-
-        crs = cls._parse_prj(fg)
-        types = cls._parse_csvt(fg)
-        df = cls._parse_csv(fg)
-        df.crs = crs
-
-        if types:
-            assert len(df.columns) == len(types)
-
-            series = []
-            for i, (c, s) in enumerate(df.iteritems()):
-                type_ = types[i]
-                parse_method = getattr(cls, '_parse_' + type_, None)
-                if not parse_method:
-                    raise ParsingException('Unknown GeoCSV type "{}"'.format(type_))
-                series.append(parse_method(i, s, df, types))
-
-            df = OdhSeries.concat([s for s in series if s is not None], axis=1)
-
-        return df
