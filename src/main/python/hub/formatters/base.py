@@ -334,7 +334,9 @@ class GeoCSVFormatter(Formatter):
 
     @classmethod
     def _create_csvt(cls, df):
-        csvt_line = ';'.join(cls.TYPE_MAP.get(s.odh_type, cls.FALLBACK_TYPE) for i, s in df.iteritems())
+        # http://www.gdal.org/drv_csv.html
+        # http://giswiki.hsr.ch/GeoCSV
+        csvt_line = ';'.join('"{}"'.format(cls.TYPE_MAP.get(s.odh_type, cls.FALLBACK_TYPE)) for i, s in df.iteritems())
         return File.from_string(df.name + '.csvt', csvt_line)
 
     @classmethod

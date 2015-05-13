@@ -253,7 +253,7 @@ class GeoCSVParser(Parser):
             prj = prjs[0]
             srs = osr.SpatialReference()
 
-            srs.ImportFromESRI([prj.ustream.read()])
+            srs.ImportFromWkt([prj.ustream.read()])
             return fiona.crs.from_string(srs.ExportToProj4())
 
         return {}
