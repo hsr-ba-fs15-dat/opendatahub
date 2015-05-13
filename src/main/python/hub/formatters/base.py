@@ -27,6 +27,7 @@ from hub.utils import ogr2ogr
 from hub.structures.frame import OdhType
 import hub.utils.common as com
 import pyproj
+from shapely.geometry.base import GEOMETRY_TYPES
 from osgeo import osr
 
 
@@ -145,13 +146,15 @@ class XMLFormatter(Formatter):
 class GeoFormatterBase(Formatter):
     _is_abstract = True
 
+    supported_types = set(GEOMETRY_TYPES)
+
     @classmethod
     def format(cls, dfs, name, format, driver, extension, *args, **kwargs):
         formatted = []
 
         for df in dfs:
             if df.has_geoms:
-                gdf = df.to_gdf()
+                gdf = df.to_gdf(supported_geoms=cls.supported_types)
                 temp_dir = tempfile.mkdtemp()
                 try:
                     gdf.to_file(os.path.join(temp_dir, df.name + '.{}'.format(extension)), driver=driver)
@@ -180,6 +183,8 @@ class GeoJSONFormatter(GeoFormatterBase):
 
 class ShapefileFormatter(GeoFormatterBase):
     targets = formats.Shapefile,
+
+    supported_types = {'Point', 'LineString', 'LinearRing', 'Polygon', 'MultiPoint'}
 
     @classmethod
     def format(cls, dfs, name, format, *args, **kwargs):

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-
 import logging
 import traceback
 import time
@@ -282,6 +281,10 @@ class TestInterpreterPerformance(TestInterpreterBase):
             'child': cls.children
         }
 
+    @classmethod
+    def get_time(cls, seconds):
+        return (cls.is_ci + 1) * seconds  # double on travis
+
     def assert_time(self, statement, sec):
         df = self.execute(statement)
         if self.time > sec:
@@ -289,23 +292,23 @@ class TestInterpreterPerformance(TestInterpreterBase):
         return df
 
     def test_select(self):
-        self.assert_time('SELECT e.prename FROM employee AS e', 2)
+        self.assert_time('SELECT e.prename FROM employee AS e', self.get_time(2))
 
     def test_where(self):
-        self.assert_time('SELECT e.prename FROM employee AS e WHERE e.prename = \'Julia\'', 2)
+        self.assert_time('SELECT e.prename FROM employee AS e WHERE e.prename = \'Julia\'', self.get_time(2))
 
     def test_like(self):
-        self.assert_time('SELECT e.prename FROM employee AS e WHERE e.prename LIKE \'^E.+a\'', 3)
+        self.assert_time('SELECT e.prename FROM employee AS e WHERE e.prename LIKE \'^E.+a\'', self.get_time(3))
 
     def test_join(self):
         self.assert_time('SELECT c.prename, e.prename AS parent FROM child AS c JOIN employee AS e ON c.parent = e.id',
-                         5)
+                         self.get_time(5))
 
     def test_union(self):
-        self.assert_time('SELECT e.prename FROM employee AS e UNION SELECT c.prename FROM child AS c', 3)
+        self.assert_time('SELECT e.prename FROM employee AS e UNION SELECT c.prename FROM child AS c', self.get_time(3))
 
     def test_cast(self):
-        self.assert_time('SELECT CAST(c.age, \'TEXT\') AS text FROM child AS c', 10)
+        self.assert_time('SELECT CAST(c.age, \'TEXT\') AS text FROM child AS c', self.get_time(10))
 
 
 if __name__ == '__main__':
