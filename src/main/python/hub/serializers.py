@@ -13,16 +13,22 @@ class PackageSerializer(serializers.HyperlinkedModelSerializer):
 
     type = serializers.SerializerMethodField()
     preview = serializers.SerializerMethodField()
-
+    template = serializers.SerializerMethodField()
     class Meta(object):
         model = PackageModel
-        fields = ('id', 'url', 'name', 'description', 'private', 'owner', 'created_at', 'type', 'preview')
+        fields = ('id', 'url', 'name', 'description', 'private', 'owner', 'created_at', 'type', 'preview', 'template')
+
+    def get_template(self, obj):
+        if isinstance(obj, TransformationModel):
+            return obj.is_template
+        return False
 
     def get_type(self, obj):
         if isinstance(obj, DocumentModel):
             return 'document'
         elif isinstance(obj, TransformationModel):
             return 'transformation'
+
         return 'unknown'
 
     def get_preview(self, obj):

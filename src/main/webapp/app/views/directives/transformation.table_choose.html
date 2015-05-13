@@ -16,9 +16,11 @@
 <table class="table table-hover" ng-table="tableParams">
     <tbody ng-repeat="document in $data">
     <tr>
-        <td data-title="'ID'" class="col-sm-1 col-md-1 col-lg-1">doc{{ document.id}}</td>
+        <td data-title="''" class="col-sm-1 col-md-1 col-lg-1">
+            <i ng-class="document.type === 'transformation' ? 'fa-filter': 'fa-table'" class="fa"></i>
+        </td>
         <td data-title="'Name'" sortable="name" filter="{ 'name': 'text' }" class="col-sm-4 col-md-4 col-lg-4">
-            <a ng-click="getFileGroup(document)">
+            <a ng-if="!document.template" ng-click="getFileGroup(document)">
                             <span class="glyphicon"
                                   ng-class="{ 'fa fa-chevron-right': !document.$showRows, 'fa fa-chevron-down': document.$showRows }">
 
@@ -27,6 +29,7 @@
                                                         tooltip="Dieses Dokument ist Privat"></i>
                 <small>(<i>{{document.owner.username}}</i>)</small>
             </a>
+            <span ng-if="document.template">{{ document.name }} (Template)</span>
         </td>
         <td data-title="'Beschreibung'" class="col-sm-7 col-md-7 col-lg-7" colspan="2">
             {{document.description}}
