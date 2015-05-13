@@ -57,7 +57,8 @@
                                         <span class="clearer fa fa-times" ng-click="col.alias = col.name"
                                               ng-show="col.name != col.alias"></span>
                                         <br/>
-                                        <input type="text" ng-model="col.alias" class="hasclear"/>
+                                        <input type="text" ng-model="col.alias" ng-model-options="{ debounce: 1000 }"
+                                               ng-change="vm.generate()" class="hasclear"/>
 
                                     </label>
                                 </th>
@@ -129,8 +130,8 @@
                     </div>
                 </div>
                 <label class="control-label" for="useQuotes">
-                    <input id=useQuotes" type="checkbox" ng-model="vm.quotes" ng-change="vm.useQuotes()"/>
-                    Anführungszeichen verwenden.
+                    <input id=useQuotes" type="checkbox" ng-model="vm.quotes" ng-change="vm.quotes = !vm.quotes"/>
+                    Anführungszeichen immer verwenden.
                 </label>
 
                 <div class="col-sm-12" ui-ace="{onLoad: vm.aceLoaded}" ng-model="vm.odhqlInputString"
@@ -148,6 +149,7 @@
                     {{ alert.msg }}
                 </alert>
                 <a ui-sref="transformation/help" target="_blank"><i class="fa fa-question-circle"></i></a>
+
                 <div class="col-sm-12" ui-ace="{onLoad: vm.aceLoaded}" ng-model="vm.odhqlInputString"
                      ng-model-options="{ debounce: 500 }" ng-change="vm.lockAssistant()"></div>
             </div>
