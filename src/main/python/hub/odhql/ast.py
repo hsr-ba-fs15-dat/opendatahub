@@ -360,9 +360,9 @@ class JoinConditionList(ASTBase, Sequence):
 class JoinedDataSource(DataSource):
     class JoinType(Enum):
         inner = 1
-        left_outer = 2
-        right_outer = 3
-        full_outer = 4
+        left = 2
+        right = 3
+        outer = 4
 
     def __init__(self, name, alias, join_type, condition):
         super(JoinedDataSource, self).__init__(name, alias)
@@ -387,11 +387,11 @@ class JoinedDataSource(DataSource):
     def parse_join_type(cls, tokens):
         lower_tokens = [token.lower() for token in tokens if isinstance(token, basestring)]
         if 'left' in lower_tokens:
-            return cls.JoinType.left_outer
+            return cls.JoinType.left
         elif 'right' in lower_tokens:
-            return cls.JoinType.right_outer
+            return cls.JoinType.right
         elif 'full' in lower_tokens or 'outer' in lower_tokens:
-            return cls.JoinType.full_outer
+            return cls.JoinType.outer
         return cls.JoinType.inner
 
     def __repr__(self):

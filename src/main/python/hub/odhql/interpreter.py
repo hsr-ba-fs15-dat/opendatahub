@@ -21,7 +21,6 @@ from hub.odhql.exceptions import OdhQLExecutionException
 
 
 class OdhQLInterpreter(object):
-
     FILE_GROUP_RE = re.compile(r'ODH([1-9]\d*)(_"?.+?"?)?', re.IGNORECASE)
     TRANSFORMATION_RE = re.compile(r'TRF([1-9]\d*)', re.IGNORECASE)
 
@@ -238,7 +237,8 @@ class OdhQLInterpreter(object):
 
                 df_right = dfs[right.prefix]
                 try:
-                    df = df.merge(df_right, left_on=names_left, right_on=names_right, suffixes=('', 'r'), copy=False)
+                    df = df.merge(df_right, how=ds.join_type.name, left_on=names_left, right_on=names_right,
+                                  suffixes=('', 'r'), copy=False)
                 except KeyError as e:
                     raise OdhQLExecutionException('JOIN: Column "{}" does not exist'.format(e.message))
                 aliases_left.append(right.prefix)
@@ -395,7 +395,7 @@ class OdhQLInterpreter(object):
                     raise OdhQLExecutionException(
                         'ORDER BY: Column "{}" does not exist. The resulting table has '
                         '{} columns'
-                        .format(field.position, len(colnames)))
+                            .format(field.position, len(colnames)))
 
             elif isinstance(field, parser.Field):
                 cols.append(self._make_name(field.prefix, field.name))
