@@ -14,6 +14,7 @@ class PackageSerializer(serializers.HyperlinkedModelSerializer):
     type = serializers.SerializerMethodField()
     preview = serializers.SerializerMethodField()
     template = serializers.SerializerMethodField()
+
     class Meta(object):
         model = PackageModel
         fields = ('id', 'url', 'name', 'description', 'private', 'owner', 'created_at', 'type', 'preview', 'template')
