@@ -151,7 +151,7 @@ class Centroid(VectorizedGeometryFunction):
 
     def apply(self, geoms):
         self.assert_geometry('geometry', geoms)
-        return gp.GeoSeries(geoms).centroid
+        return geoms.geom_op('centroid')
 
 
 class GetX(VectorizedGeometryFunction):
@@ -173,7 +173,7 @@ class GetX(VectorizedGeometryFunction):
 
     def apply(self, geoms):
         self.assert_geometry('geometry', geoms)
-        return gp.GeoSeries(geoms).bounds.minx
+        return geoms.geom_op('bounds').minx
 
 
 class GetY(VectorizedGeometryFunction):
@@ -195,7 +195,7 @@ class GetY(VectorizedGeometryFunction):
 
     def apply(self, geoms):
         self.assert_geometry('geometry', geoms)
-        return gp.GeoSeries(geoms).bounds.miny
+        return geoms.geom_op('bounds').miny
 
 
 class Area(VectorizedGeometryFunction):
@@ -216,7 +216,7 @@ class Area(VectorizedGeometryFunction):
 
     def apply(self, geoms):
         self.assert_geometry('geometry', geoms)
-        return gp.GeoSeries(geoms).area
+        return geoms.geom_op('area')
 
 
 class Transform(VectorizedGeometryFunction):
@@ -241,4 +241,4 @@ class Transform(VectorizedGeometryFunction):
         self.assert_geometry('geoms', geoms)
         crs = self.get_crs(srid)
         with self.errorhandler():
-            return geoms.to_crs(crs)
+            return geoms.geom_op('to_crs', crs)

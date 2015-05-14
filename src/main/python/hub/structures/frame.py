@@ -341,10 +341,25 @@ class OdhSeries(pd.Series):
         return df
 
     def to_crs(self, crs):
-        assert self.odh_type == OdhType.GEOMETRY, 'Cannot convert CRS of non-geometry column'
         if not self.crs:
             raise OdhQLExecutionException('Missing SRID on source column')
-        return self._constructor(gp.GeoSeries.to_crs.__func__(self, crs), index=self.index).__finalize__(self)
+        return self.geom_op('to_crs', crs)
+
+    def geom_op(self, op, *args, **kwargs):
+        assert self.odh_type == OdhType.GEOMETRY, 'Cannot execute geometry function on non-geometry column'
+        s = self.copy()
+        mask = ~pd.isnull(s)
+        gs = gp.GeoSeries(s[mask], crs=self.crs)
+        attr = getattr(gs, op)
+        result = attr(*args, **kwargs) if callable(attr) else attr
+        if isinstance(result, pd.Series):
+            s[mask] = result
+            s.crs = getattr(result, 'crs', self.crs)
+            result = s
+        elif isinstance(result, pd.DataFrame):
+            result = result.reindex(self.index)
+
+        return result
 
     def as_safe_serializable(self):
         s = self
