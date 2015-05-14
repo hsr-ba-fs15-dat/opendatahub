@@ -3,8 +3,8 @@ from __future__ import unicode_literals
 
 import zipfile
 import json
-
 import abc
+
 import re
 from django.db.models import Q
 from rest_framework import mixins, viewsets
@@ -14,7 +14,6 @@ from django.http.response import HttpResponse, HttpResponseServerError, HttpResp
 from django.utils.text import slugify
 
 from opendatahub.utils.cache import cache
-from hub.formats.base import Format
 
 
 class FilterablePackageListViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
@@ -68,6 +67,8 @@ class DataDownloadMixin(viewsets.GenericViewSet):
 
     @detail_route()
     def data(self, request, pk, *args, **kwargs):
+        from hub.formats import Format
+
         format_name = request.query_params.get('fmt').lower() if 'fmt' in request.query_params else None
 
         cache_key = self.get_cache_key(pk, format_name)

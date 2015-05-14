@@ -1,10 +1,21 @@
-"""
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 
-"""
+from .core import *  # noqa
 
-from .base import Format, CSV, JSON, Excel, GML, GeoJSON, GeoPackage  # noqa
-from .base import KML, Shapefile, XML, INTERLIS1, INTERLIS2, WFS, Other  # noqa
+from opendatahub.utils.plugins import import_submodules
+import plugins
 
-from .interlis_model import InterlisModelFormat  # noqa
+
+# import everything into this module for backward compatibility (loadfixtures, etc.)
+for name, module in import_submodules('hub.formats').iteritems():
+    self = globals()
+    for key in (k for k in dir(module) if not k.startswith('__')):
+        self[key] = module.__dict__[key]
+
+import_submodules(plugins)
+
 
 identify = Format.identify
+format = Formatter.format
+parse = Parser.parse

@@ -18,7 +18,6 @@ from hub.models import DocumentModel, FileGroupModel
 from authentication.permissions import IsOwnerOrPublic, IsOwnerOrReadOnly
 from hub.utils.upload import UploadHandler
 from hub.views.mixins import FilterablePackageListViewSet, PreviewMixin
-from hub.parsers.base import NoParserException
 
 
 class DocumentViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet, PreviewMixin):
@@ -33,6 +32,8 @@ class DocumentViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet, Previ
         Create a document.
         Expected parameters: One of: url, file. Always: description
         """
+        from hub.formats import NoParserException
+
         if not ('name' in request.data and 'description' in request.data):
             raise ValidationError('Insufficient information')
 

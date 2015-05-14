@@ -13,8 +13,6 @@ import codecs
 import os
 from django.utils.encoding import force_bytes
 
-from hub import formats
-
 
 class FileGroup(object):
     """ Container/group for multiple in-memory files
@@ -180,12 +178,12 @@ class File(object):
                     self.dfs = cached
 
             if self.dfs is None:
-                from hub import parsers
+                from hub.formats import identify, parse
 
-                format = self.format or formats.identify(self)
+                format = self.format or identify(self)
                 if not format:
                     return None
-                self.dfs = parsers.parse(self, format)
+                self.dfs = parse(self, format)
 
                 invalidate = True
 
@@ -203,10 +201,8 @@ class File(object):
         return [df.as_safe_serializable() for df in self.to_df()]
 
     def to_format(self, format):
-        from hub import formatters
-        from hub.formats.base import Format
 
-        return formatters.Formatter.format(self.to_df(), self.basename, Format.from_string(format))
+        return formats.format(self.to_df(), self.basename, formats.Format.from_string(format))
 
     def __contains__(self, string):
         return string in self.ustream.read()
@@ -237,3 +233,6 @@ class Url(File):
         data = UrlHelper().fetch_url(self.url, self.cache_timeout)
 
         return StringIO(data)
+
+
+from hub import formats

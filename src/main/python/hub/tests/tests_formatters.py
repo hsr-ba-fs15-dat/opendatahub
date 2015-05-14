@@ -7,7 +7,7 @@ Tests for formatters
 
 from hub.tests.testutils import TestBase
 from hub.structures.file import FileGroup
-from hub.formatters import Formatter
+from hub.formats import Formatter
 
 
 class FormatsTests(TestBase):

@@ -295,7 +295,8 @@ class OdhSeries(pd.Series):
         super(OdhSeries, self).__init__(data, *args, **kwargs)
         self._odh_type = None
         self._first_valid_entry = None
-        self.crs = kwargs.get('crs', {})
+        if not getattr(self, 'crs', None):
+            self.crs = kwargs.get('crs', {})
 
     @property
     def odh_type(self):

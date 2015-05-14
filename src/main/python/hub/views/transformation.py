@@ -21,8 +21,6 @@ from hub.models import FileGroupModel, TransformationModel
 from authentication.permissions import IsOwnerOrPublic, IsOwnerOrReadOnly
 from hub.views.mixins import FilterablePackageListViewSet, DataDownloadMixin, PreviewMixin
 from hub.utils.odhql import TransformationUtil
-from hub import formatters
-from hub.formats import CSV
 from opendatahub.utils.cache import cache
 from opendatahub import settings
 
@@ -80,6 +78,9 @@ class TransformationViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet,
         return super(TransformationViewSet, self).update(request, *args, **kwargs)
 
     def format_object(self, model, format):
+        import hub.formats as formats
+        from hub.formats.csv import CSV
+
         try:
             df = TransformationUtil.df_for_transformation(model, user_id=self.request.user.id)
         except:
@@ -89,8 +90,8 @@ class TransformationViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet,
             return JsonResponse({'error': 'Transformation returned no data'},
                                 status=HttpResponseServerError.status_code)
 
-        result_list = formatters.Formatter.format([df], slugify(unicode(model.name)),
-                                                  format or CSV)
+        result_list = formats.format([df], slugify(unicode(model.name)),
+                             format or CSV)
 
         return result_list
 
