@@ -3,6 +3,10 @@ from __future__ import unicode_literals
 
 from rest_framework.test import APITestCase
 
+'''
+This test tries to format all fixtures with all available formats.
+'''
+
 
 class FixtureTest(APITestCase):
     pass

@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from hub.formats import Format
+
+import geopandas as gp
+import os
+
+from hub.formats.core import Format, Parser
 from hub.formats.geobase import GeoFormatterBase
 
 
@@ -28,10 +32,11 @@ class GeoPackageFormatter(GeoFormatterBase):
     def format(cls, dfs, name, format, *args, **kwargs):
         return super(GeoPackageFormatter, cls).format(dfs, name, format, 'GPKG', 'gpkg', *args, **kwargs)
 
-# class GeoPackageParser(Parser):
-# accepts = formats.GeoPackage,
-#
-# @classmethod
-# def parse(cls, file, format, *args, **kwargs):
-# with file.file_group.on_filesystem() as temp_dir:
-#             return gp.read_file(os.path.join(temp_dir, file.name), driver='GPKG')
+
+class GeoPackageParser(Parser):
+    accepts = GeoPackage,
+
+    @classmethod
+    def parse(cls, file, format, *args, **kwargs):
+        with file.file_group.on_filesystem() as temp_dir:
+            return gp.read_file(os.path.join(temp_dir, file.name), driver='GPKG')
