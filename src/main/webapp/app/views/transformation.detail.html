@@ -5,9 +5,6 @@
 
             <p>{{ vm.description }}</p>
 
-            <div class="btn-toolbar">
-                <button class="btn btn-danger" ng-click="vm.remove()" ng-show="vm.allowDelete">Löschen</button>
-            </div>
             <p ng-show="vm.previewError">{{ vm.previewError }}</p>
 
             <div class="panel panel-default">
@@ -26,7 +23,8 @@
                             </li>
                         </ul>
                     </div>
-                    <odh-preview pkg="vm.pkg" query="vm.transformation" success="vm.previewSuccess"></odh-preview>
+                    <odh-preview pkg="vm.pkg" query="vm.previewTransformation"
+                                 success="vm.previewSuccess"></odh-preview>
 
                 </div>
             </div>
@@ -49,8 +47,9 @@
                     mode: 'sql',
                     firstLineNumber: 5,
                     onLoad: vm.aceLoaded,
-
-                    }" ng-model="vm.transformation"></div>
+                    }" ng-model="vm.transformation"
+                                ></div>
+                        {{ vm.errorMessage }}
                         <div ng-messages="form.description.$error" ng-show="vm.submitted">
                         <span class="help-block">
                             <div ng-message="required">Bitte geben Sie die OdhQL Abfrage an.</div>
@@ -73,12 +72,13 @@
                                 Speichern
                             </button>
                             <button id="add" name="add" class="btn btn-primary pull-right"
-                                    ng-click="vm.generateNewTransformation()">
-                                Generieren
-                            </button>
-                            <button ng-click="vm.preview()" type='button' class="btn btn-info pull-right">
+                                    ng-click="vm.preview()">
                                 Vorschau
                             </button>
+                            <button class="btn btn-danger pull-right" ng-click="vm.remove()" ng-show="vm.allowDelete">
+                                Löschen
+                            </button>
+
                         </div>
                     </div>
 
@@ -113,7 +113,9 @@
                                 </div>
                             </div>
                         </div>
-
+                        <input type="hidden" ng-model="vm.previewTransformation"
+                               odh-validate-transformation="vm.errorMessage"
+                               preview-object="vm.pkg">
                         <div class="col-md-6 table-responsive">
                             <h2>Benutzte Tabellen</h2>
                             <table class="table table-striped">
@@ -136,11 +138,20 @@
                             </table>
                         </div>
                     </div>
-                </div>
+                    <div ng-if="vm.loadedTablesArray.length > 0">
+                        Spalten-Namen pro geladene Tabelle:
 
+                        <div class="row" ng-repeat="table in vm.loadedTablesArray">
+                            <div class="col-sm-12"><strong>{{table.unique_name}}</strong></div>
+                            <div class="col-sm-1" ng-repeat="col in table.columns">{{col}}</div>
+                        </div>
+
+                    </div>
+                </div>
             </div>
         </form>
-        <div ng-if="vm.templateTransformation">
+
+        <div ng-if="vm.templateTransformation !== vm.transformation">
             <h3>Template: </h3>
             <pre>{{ vm.templateTransformation }}</pre>
         </div>

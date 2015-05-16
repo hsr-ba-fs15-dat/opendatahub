@@ -35,15 +35,16 @@ module odh {
         public forceManualEdit:boolean = false;
         public transformationPreview:string = ' ';
         public errorMessage = 'errorStringTester';
-        public transformationDebounced;
-        public previewObject:any = {};
         private transformationPrivate:boolean = false;
 
-        constructor(private $state:ng.ui.IStateService, private $scope:any,
+        constructor(private $state:ng.ui.IStateService,
                     private ToastService:odh.utils.ToastService,
-                    private $log:ng.ILogService, private ngTableParams,
-                    private $auth:any, private TransformationService:main.TransformationService,
-                    private TransformationSelection:main.TransformationSelection, private JOIN_OPERATIONS,
+                    private $log:ng.ILogService,
+                    private ngTableParams,
+                    private $auth:any,
+                    private TransformationService:main.TransformationService,
+                    private TransformationSelection:main.TransformationSelection,
+                    private JOIN_OPERATIONS,
                     private $stateParams:{loadTransformation:boolean}) {
 
             if ($stateParams.loadTransformation) {
@@ -74,8 +75,8 @@ module odh {
             odh.main.TransformationService.aceLoaded(editor);
         }
 
-        public lockAssistant() {
-            this.forceManualEdit = true;
+        public lockAssistant(lock = true) {
+            this.forceManualEdit = lock;
         }
 
         public getJoinOperations() {

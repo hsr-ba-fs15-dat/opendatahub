@@ -25,6 +25,7 @@ module odh.main {
         public isOwn:boolean;
         public transformationObject:any;
         public modifiedTransformation:string;
+        public previewTransformation:string;
         public templateTransformation:string;
         public chosenTables:string[] = [];
         public previewSuccess:boolean = false;
@@ -56,6 +57,7 @@ module odh.main {
                 this.name = data.name;
                 this.description = data.description;
                 this.transformation = data.transformation;
+                this.previewTransformation = data.transformation;
                 this.private = data.private;
                 this.templateTransformation = data.transformation;
                 this.allowDelete = $auth.isAuthenticated() && data.owner.id === $auth.getPayload().user_id;
@@ -152,6 +154,9 @@ module odh.main {
             }
         }
 
+        public preview() {
+            this.previewTransformation = this.transformation;
+        }
         public addRemoveTable(table:main.ITable) {
             var index = this.loadedTablesArray.indexOf(table);
 
@@ -170,8 +175,10 @@ module odh.main {
             return this.loadedTablesArray.indexOf(table) !== -1;
         }
 
-        public preview() {
-            this.pkg = this.TransformationService.preview(this.transformation);
+        public aceBlurred(editor) {
+            console.log(editor);
+            var val = editor.getEditor().getSession();
+            console.log(val);
         }
 
         public parse() {

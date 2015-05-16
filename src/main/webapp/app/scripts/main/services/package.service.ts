@@ -46,7 +46,7 @@ module odh.main {
 
         public getPreviewByUniqueName(uniquename:string, params) {
             var packagePrefix = this.packagePrefix || 'ODH';
-            var transformationPrefix = this.packagePrefix || 'TRF';
+            var transformationPrefix = this.transformationPrefix || 'TRF';
             if (!this.packagePrefix) {
                 console.warn('AppConfig not loaded successfully. Falling back to default!');
             }
