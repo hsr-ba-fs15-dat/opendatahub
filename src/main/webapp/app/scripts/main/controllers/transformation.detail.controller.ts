@@ -57,7 +57,12 @@ module odh.main {
                 this.name = data.name;
                 this.description = data.description;
                 this.transformation = data.transformation;
-                this.previewTransformation = data.transformation;
+                console.log(data);
+                if (!data.is_template) {
+                    this.previewTransformation = data.transformation;
+                } else {
+                    this.showExpertPanel = true;
+                }
                 this.private = data.private;
                 this.templateTransformation = data.transformation;
                 this.allowDelete = $auth.isAuthenticated() && data.owner.id === $auth.getPayload().user_id;

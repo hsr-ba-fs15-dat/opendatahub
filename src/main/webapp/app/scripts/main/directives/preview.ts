@@ -14,6 +14,7 @@ module odh.main {
                     private FormatService:main.FormatService) {
         }
 
+        loading = true;
         alerts = [];
         restrict = 'AE';
         templateUrl = 'views/directives/preview.html';
@@ -75,6 +76,7 @@ module odh.main {
                 });
             });
             scope.success = true;
+            scope.loading = false;
         }
 
         public ngTable(scope, attr) {
@@ -117,6 +119,8 @@ module odh.main {
                                 }).catch(error => {
                                     this.displayError(error, scope);
                                     this.ToastService.failure('Fehler beim erstellen der Vorschau');
+                                }).finally(() => {
+                                    scope.loading = false;
                                 });
                             } else if (!!scope.query && scope.query.length > 5) {
                                 this.TransformationService.preview(scope.query, params.url()).then((result:any) => {
@@ -136,8 +140,11 @@ module odh.main {
                                 }).catch(error => {
                                     this.displayError(error, scope);
                                     this.ToastService.failure('Es ist ein Fehler aufgetreten');
+                                }).finally(() => {
+                                    scope.loading = false;
                                 });
                             }
+
                         }
                     });
             }).catch(error => {
@@ -149,7 +156,6 @@ module odh.main {
         }
 
         public displayError(error, scope = null) {
-            console.error(error);
             if (error.data.type === 'execution') {
                 scope.alerts.push({
                     title: 'Fehler ( ' + error.data.type + ')',
