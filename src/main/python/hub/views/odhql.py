@@ -7,7 +7,6 @@ import logging
 import itertools
 
 from django.utils.datastructures import MultiValueDictKeyError
-from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 from django.http.response import JsonResponse, HttpResponseBadRequest, HttpResponse
 from pyparsing import ParseException
@@ -24,7 +23,6 @@ logger = logging.getLogger(__name__)
 
 
 class ParseView(View):
-    @csrf_exempt
     def post(self, request):
         try:
             body = json.loads(request.body, encoding=request.encoding)
