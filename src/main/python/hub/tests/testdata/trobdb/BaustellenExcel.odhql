@@ -15,4 +15,4 @@ SELECT t."Federführende_Stelle" as userid,
        'closed' as trob_type,
        ST_SetSRID(ST_GeomFromText(CONCAT('POINT(', CAST(t."Zentroid X [m]", 'text'), ' ',
           CAST(t."Zentroid Y [m]", 'text'), ')')), 21781) as geometry
-  from ODH8 as t
+  from "ODH8_Baustellen Februar 2015" as t

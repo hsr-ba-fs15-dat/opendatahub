@@ -18,4 +18,4 @@ SELECT null as userid,
             else 'other'
        end as trob_type,
        st_setsrid(st_geomfromtext(concat('POINT(', t.x, ' ', t.y, ')')), 3395) as trobdb_point
-  from ODH11 as t
+  from ODH11_truckinfo as t
