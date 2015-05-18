@@ -43,7 +43,7 @@
 
                     <div class="well" ng-repeat="table in vm.allTables()">
                         <h2>{{ table.uniqueId }}</h2>
-                        Alias: <input type="text" ng-model="table.uniqueIdAlias"/><br/><br/>
+                        Alias: <input type="text" ng-model="table.uniqueIdAlias" ng-change="vm.generate()"/><br/><br/>
                         Wählen Sie die benötigten Felder aus (Klick) und wählen Sie die Spaltennamen:
 
                         <div class="table-responsive">
@@ -176,7 +176,9 @@
                          value="offer.progress" type="info">
             </progressbar>
         </div>
-        <div class="container"><odh-preview preview="vm.previewObject"></odh-preview></div>
+        <div class="container">
+            <odh-preview preview="vm.previewObject"></odh-preview>
+        </div>
         <div class="container">
 
 
@@ -231,7 +233,7 @@
                     </div>
                     <div class="form-group" ng-class="{'has-error': form.description.$invalid && vm.submitted}">
 
-                    <input type="hidden" ng-model="vm.odhqlInputString"
+                        <input type="hidden" ng-model="vm.odhqlInputString"
                                class="form-control" name="odhqlinput"
                                odh-validate-transformation="vm.errorMessage"
                                preview-object="vm.previewObject"/>
