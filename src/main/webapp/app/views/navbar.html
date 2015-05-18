@@ -46,7 +46,7 @@
                     <a ui-sref="login">Anmelden / Registrieren</a>
                 </li>
                 <li ng-show="vm.isAuthenticated()">
-                    <a ui-sref="userProfile">Profil</a>
+                    <a ui-sref="userProfile"><i class="fa fa-user"></i> {{ vm.loginName() }}</a>
                 </li>
             </ul>
         </div>
