@@ -59,34 +59,40 @@
 
                     </div>
                     <!-- /Textarea -->
-                    <div class="form-group">
-                        <label class="col-md-1 control-label" for="add"></label>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="col-md-1 control-label" for="add"></label>
 
-                        <div class="col-md-11">
-                            <button ng-show="vm.isAuthenticated()" id="add" name="add"
-                                    class="btn btn-primary pull-right"
-                                    ng-click="vm.duplicateTransformation()">
-                                Klonen
-                            </button>
-                            <button ng-show="vm.allowDelete" id="add" name="add" class="btn btn-primary pull-right"
-                                    ng-click="vm.saveTransformation()">
-                                Speichern
-                            </button>
-                            <button id="add" name="add" class="btn btn-primary pull-right"
-                                    ng-click="vm.preview()">
-                                Vorschau
-                            </button>
-                            <button class="btn btn-danger pull-right" ng-click="vm.remove()" ng-show="vm.allowDelete">
-                                Löschen
-                            </button>
+                                <div class="col-md-11">
+                                    <button ng-show="vm.isAuthenticated()" id="add" name="add"
+                                            class="btn btn-primary pull-right"
+                                            ng-click="vm.duplicateTransformation()">
+                                        Klonen
+                                    </button>
+                                    <button ng-show="vm.allowDelete" id="add" name="add"
+                                            class="btn btn-primary pull-right"
+                                            ng-click="vm.saveTransformation()">
+                                        Speichern
+                                    </button>
+                                    <button id="add" name="add" class="btn btn-primary pull-right"
+                                            ng-click="vm.preview()">
+                                        Vorschau
+                                    </button>
+                                    <button class="btn btn-danger pull-right" ng-click="vm.remove()"
+                                            ng-show="vm.allowDelete">
+                                        Löschen
+                                    </button>
 
+                                </div>
+                            </div>
+
+                            <div ng-show="vm.progress" class="col-md-offset-3 col-md-6">
+                                <progressbar class="progress-striped active" max="100"
+                                             value="offer.progress" type="info">
+                                </progressbar>
+                            </div>
                         </div>
-                    </div>
-
-                    <div ng-show="vm.progress" class="col-md-offset-3 col-md-6">
-                        <progressbar class="progress-striped active" max="100"
-                                     value="offer.progress" type="info">
-                        </progressbar>
                     </div>
                     <div class="row">
                         <div class="col-md-6 table-responsive">
@@ -117,6 +123,7 @@
                         <input type="hidden" ng-model="vm.previewTransformation"
                                odh-validate-transformation="vm.errorMessage"
                                preview-object="vm.pkg">
+
                         <div class="col-md-6 table-responsive">
                             <h2>Benutzte Tabellen</h2>
                             <table class="table table-striped">
@@ -142,9 +149,11 @@
                     <div ng-if="vm.loadedTablesArray.length > 0">
                         Spalten-Namen pro geladene Tabelle:
 
-                        <div class="row" ng-repeat="table in vm.loadedTablesArray">
-                            <div class="col-sm-12"><strong>{{table.unique_name}}</strong></div>
-                            <div class="col-sm-1" ng-repeat="col in table.columns">{{col}}</div>
+                        <div class="row">
+                            <div class="col-sm-12" ng-repeat="table in vm.loadedTablesArray">
+                                <strong>{{table.unique_name}}: </strong>
+                                {{table.columns.join(', ') }}
+                            </div>
                         </div>
 
                     </div>
@@ -153,7 +162,7 @@
         </form>
 
         <div ng-if="vm.templateTransformation !== vm.transformation">
-            <h3>Template: </h3>
+            <h3>Originale Abfrage: </h3>
             <pre>{{ vm.templateTransformation }}</pre>
         </div>
     </odh-spinner>

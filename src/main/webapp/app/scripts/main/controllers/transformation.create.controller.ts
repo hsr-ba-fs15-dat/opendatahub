@@ -84,10 +84,14 @@ module odh {
         }
 
         public addRemoveField(col, table:main.ITable) {
-            if (!this.manualEdit) {
                 this.selection.addRemoveField(col, table);
                 this.generate();
-            }
+
+        }
+
+        public addField(col, table:main.ITable) {
+            this.selection.addField(col, table);
+            this.generate();
         }
 
         public generate() {
