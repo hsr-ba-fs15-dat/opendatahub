@@ -13,6 +13,7 @@ class GeoPackage(Format):
     description = """
     Universelles Format für Vektor- und Raster-basierte Geo-Daten.
     """
+    extension = 'gpkg'
 
     @classmethod
     def is_format(cls, file, *args, **kwargs):

@@ -17,6 +17,8 @@ class Shapefile(Format):
     Ist ein ursprünglich für die Firma ESRI entwickeltes Format für Geodaten.
     """
 
+    extension = 'shp'
+
     @classmethod
     def is_format(cls, file, *args, **kwargs):
         return file.extension == 'shp'

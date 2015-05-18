@@ -17,9 +17,11 @@ class GeoJSON(Format):
     GeoJSON ist ein Dateiformat zum Austausch von Geodaten mittels JSON.
     """
 
+    extension = 'geojson'
+
     @classmethod
     def is_format(cls, file, *args, **kwargs):
-        return file.extension == 'geojson' or (
+        return file.extension == cls.extension or (
             file.extension == 'json' and '"geometry"' in file)  # todo figure out a better way
 
 

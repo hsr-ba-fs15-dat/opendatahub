@@ -22,7 +22,8 @@ module odh.main {
             this.retrieveData();
             this.FormatService.getAvailableFormats().then(data => {
                 var results = this.FormatService.sortByLabel(data.data);
-                results.push({name: null, label: 'Original', description: 'Unveränderte Daten', example: null});
+                results.push({name: null, label: 'Original', description: 'Unveränderte Daten', example: null,
+                    extension: null});
                 this.availableFormats = results;
             });
         }
