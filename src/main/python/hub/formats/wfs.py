@@ -10,6 +10,8 @@ class WFS(Format):
     Web Feature Service ist ein Web Service-Protokoll fúr Geo-Daten.
     """
 
+    is_export_format = False
+
     @classmethod
     def is_format(cls, file, *args, **kwargs):
         return False
