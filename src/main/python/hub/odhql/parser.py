@@ -189,6 +189,7 @@ class OdhQLParser(DocMixin):
     Unterstützt werden folgende Join-Typen:
         Inner
             Standard. Verlangt, dass beide Seiten vorhanden sind
+
             .. code:: sql
 
                 FROM ODH12 AS employees
@@ -256,7 +257,7 @@ class OdhQLParser(DocMixin):
 
     .. code:: sql
 
-        ORDER BY 1, ODH4.name desc, surname ASC
+        ORDER BY 1, ODH4.name DESC, surname ASC
 
     Union
     -----
