@@ -50,7 +50,8 @@
                             <tr>
                                 <th ng-repeat="col in $columns"
                                     class="text-center"
-                                    ng-class="vm.getFields(table.uniqueId).indexOf(col) > -1 ? 'selected': ''">
+                                    ng-class="vm.getFields(table.uniqueId).indexOf(col) > -1 ? 'selected': ''"
+                                    ng-click="vm.addField(col, table)">
                                     <label>
                                         <small>[{{ table.types[col.name] }}]</small>
 
@@ -72,7 +73,7 @@
                             <tr ng-repeat="row in $data">
                                 <td ng-repeat="col in $columns"
                                     ng-class="vm.getFields(table.uniqueId).indexOf(col) > -1 ? 'selected': ''"
-                                    ng-click="vm.addRemoveField(col, table)">
+                                    ng-click="vm.addField(col, table)">
                                     <span ng-if="row[col.field].length <= 50">{{ row[col.field] }}</span>
                                     <span ng-if="row[col.field].length > 50 " ng-click="col.showAll = true">
                                         {{row[col.field] | limitTo : 50}}...</span>
