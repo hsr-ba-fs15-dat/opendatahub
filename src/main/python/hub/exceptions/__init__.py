@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 import contextlib
+import logging
 
 import warnings
 
@@ -28,3 +29,13 @@ def odh_warnings():
     with warnings.catch_warnings(record=True) as all_warnings:
         yield filtered_warnings
         filtered_warnings.extend([w for w in all_warnings if isinstance(w.message, OdhWarning)])
+
+
+class OdhLoggingHandler(logging.Handler):
+    def emit(self, record):
+        try:
+            frontend = record.frontend
+            if frontend:
+                warn(record.getMessage())
+        except Exception:
+            pass

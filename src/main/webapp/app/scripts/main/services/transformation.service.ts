@@ -55,6 +55,7 @@ module odh.main {
         removeTable (item:ITable):void;
         addTable (item:ITable):void;
         addRemoveField(col:any, table:main.ITable):void;
+        addField(col:any, table:main.ITable):void;
         generateTransformation():string;
         toggleQuotes():void;
         addRemoveTable(item:main.ITable):void;
@@ -66,6 +67,7 @@ module odh.main {
         getSelectedFields(table:main.ITable):main.IField[];
         isPrivate():boolean;
         getFileGroups():main.IFileGroup[];
+
     }
     export class TransformationService {
 

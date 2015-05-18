@@ -50,11 +50,15 @@ LOGGING = {
         'mail_admins': {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler',
+        },
+        'warnings': {
+            'level': 'WARN',
+            'class': 'hub.exceptions.OdhLoggingHandler'
         }
     },
     'loggers': {
         '': {
-            'handlers': ['console', 'mail_admins'],
+            'handlers': ['console', 'mail_admins', 'warnings'],
             'propagate': True,
             'level': 'INFO' if not DEBUG else 'DEBUG',
         },
@@ -116,6 +120,7 @@ except:  # noqa
 
 MIDDLEWARE_CLASSES = (
     'sslify.middleware.SSLifyMiddleware',
+    'opendatahub.middleware.error.WarningMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     # 'django.middleware.csrf.CsrfViewMiddleware', # disabled - makes no sense in our API

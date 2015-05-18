@@ -13,6 +13,7 @@ import geopandas as gp
 import numpy as np
 import shapely.geometry
 import os
+from hub.exceptions import warn
 
 from hub.odhql.exceptions import OdhQLExecutionException
 
@@ -216,10 +217,15 @@ class OdhFrame(pd.DataFrame):
         df.__class__ = gp.GeoDataFrame
         geoseries = collections.OrderedDict([(c, s) for c, s in df.iteritems() if s.odh_type == OdhType.GEOMETRY])
         geometry = geoseries.get('geometry', geoseries.values()[0]).copy()
-        df.rename(columns={geometry.name: 'geometry'}, inplace=True)
+        if geometry.name != 'geometry':
+            warn('Column "{}" containing geometry was renamed to "geometry".'.format(geometry.name))
+            df.rename(columns={geometry.name: 'geometry'}, inplace=True)
 
         # remove additional geometry series, not supported
-        df.drop(set(geoseries.keys()) - {geometry.name}, axis=1, inplace=True)
+        other_geoms = set(geoseries.keys()) - {geometry.name}
+        if other_geoms:
+            warn('Multiple geometries not supported. Dropped column(s): {}.'.format(', '.join(other_geoms)))
+            df.drop(other_geoms, axis=1, inplace=True)
 
         df.crs = geometry.crs
 

@@ -184,6 +184,14 @@ module odh.main {
             }
         }
 
+
+        public addField(col, table:main.ITable) {
+            this.fields[table.unique_name] = this.fields[table.unique_name] || [];
+            var index = this.fields[table.unique_name].indexOf(col);
+            if (index === -1) {
+                this.fields[table.unique_name].push(col);
+            }
+        }
         public getFileGroups() {
             return this.fileGroups;
         }

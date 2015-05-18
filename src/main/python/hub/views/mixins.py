@@ -14,6 +14,9 @@ from django.http.response import HttpResponse, HttpResponseServerError, HttpResp
 from django.utils.text import slugify
 
 from opendatahub.utils.cache import cache
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class FilterablePackageListViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):

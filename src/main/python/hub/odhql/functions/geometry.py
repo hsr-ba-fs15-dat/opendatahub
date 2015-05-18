@@ -44,7 +44,7 @@ class GeomFromText(VectorizedGeometryFunction):
     Beispiel
         .. code:: sql
 
-            ST_GeomFromText(\'POINT(7.2234283 48.8183157)\') AS hsr
+            ST_GeomFromText(\'POINT(7.2234283 48.8183157)\', 4326) AS hsr
     """
     name = 'ST_GeomFromText'
 
