@@ -16,9 +16,11 @@ class Excel(Format):
     Microsoft Office Excel Datei (xls bzw. xlsx)
     """
 
+    extension = 'xlsx'
+
     @classmethod
     def is_format(cls, file, *args, **kwargs):
-        return file.extension in {'xls', 'xlsx'}
+        return file.extension in {cls.extension, 'xls'}
 
 
 class ExcelFormatter(Formatter):

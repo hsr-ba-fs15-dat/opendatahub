@@ -58,7 +58,8 @@
                 <ui-select ng-model="offer.format">
                     <ui-select-match placeholder="Automatische Erkennung">{{ $select.selected.name }}</ui-select-match>
                     <ui-select-choices repeat="item.label as item in offer.formatChoices">
-                        {{ item.label }} <br/><small>{{ item.description }}</small>
+                        {{ item.label }} <span ng-if="format.extension">({{ format.extension }})</span>
+                        <br/><small>{{ item.description }}</small>
                     </ui-select-choices>
                 </ui-select>
             </div>

@@ -29,6 +29,8 @@ class KML(Format):
     Google Earth bekannt.
     """
 
+    extension = 'kml'
+
     @classmethod
     def is_format(cls, file, *args, **kwargs):
         return file.extension == 'kml'

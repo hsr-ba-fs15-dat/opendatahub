@@ -94,6 +94,7 @@ class FormatSerializer(serializers.Serializer):
     label = serializers.CharField(read_only=True)
     description = serializers.CharField(read_only=True)
     example = serializers.CharField(read_only=True)
+    extension = serializers.CharField(read_only=True)
 
 
 class TransformationSerializer(serializers.HyperlinkedModelSerializer):

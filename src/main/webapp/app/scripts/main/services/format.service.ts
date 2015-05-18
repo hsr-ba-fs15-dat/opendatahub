@@ -9,6 +9,7 @@ module odh.main {
         label:string;
         description:string;
         example:string;
+        extension:string;
     }
 
     export class FormatService {

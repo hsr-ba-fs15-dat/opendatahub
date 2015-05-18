@@ -12,6 +12,8 @@ class GML(Format):
     Geometry Markup Language (GML) ist ein Dateiformat zum Austausch von Geodaten.
     """
 
+    extension = 'gml'
+
     @classmethod
     def is_format(cls, file, *args, **kwargs):
         return file.extension == 'gml'

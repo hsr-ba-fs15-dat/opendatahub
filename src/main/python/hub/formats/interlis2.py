@@ -12,6 +12,8 @@ class INTERLIS2(Format):
     INTERLIS ist ein Dateiformat zum Austausch von Geodaten.
     """
 
+    extension = 'xtf'
+
     is_export_format = False
 
     @classmethod

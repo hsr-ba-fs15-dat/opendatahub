@@ -14,9 +14,11 @@ class JSON(Format):
     JavaScript Objekt-Notation. Nützlich zur Wiederverwendung in Webapplikationen.
     """
 
+    extension = 'json'
+
     @classmethod
     def is_format(cls, file, *args, **kwargs):
-        return file.extension == 'json' and '"geometry"' not in file  # todo figure out a better way
+        return file.extension == cls.extension and '"geometry"' not in file  # todo figure out a better way
 
 
 class JSONFormatter(Formatter):

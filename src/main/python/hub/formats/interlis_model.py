@@ -11,14 +11,16 @@ from hub.structures.frame import OdhType
 
 class InterlisModelFormat(Format):
     name = 'INTERLIS1Model'
-    label = 'INTERLIS 1 Modell (ili)'
+    label = 'INTERLIS 1 Modell'
     description = """
     Modell für INTERLIS 1. Dies wird automatisch generiert aus den vorhandenen Daten und sollte von Hand korrigiert
     werden
     """
 
+    extension = 'ili'
+
     @classmethod
-    def is_format(cls, file, *args, **kwargs):
+    def is_format(cls, input_file, *args, **kwargs):
         # ILI is a write-only format for the moment, so identifying it doesn't help us, really.
         return False
 
@@ -27,7 +29,7 @@ class InterlisModelFormatter(Formatter):
     targets = InterlisModelFormat,
 
     @classmethod
-    def format(cls, dfs, name, format, *args, **kwargs):
+    def format(cls, dfs, name, fmt, *args, **kwargs):
         tables = []
         for df in dfs:
             tables.append(Table(df.name, df))
@@ -108,6 +110,13 @@ class Table(object):
         '''
         return int(10 ** (math.floor(math.log10(x) + 1)) - 1)
 
+    def get_bounds(self, name):
+        bounds = self.df[name].geom_op('bounds')
+        min = bounds.min()
+        max = bounds.max()
+
+        return [min.minx, min.miny, max.maxx, max.maxy]
+
     def get_fields(self):
         domain = {}
         fields = []
@@ -148,15 +157,16 @@ class Table(object):
 
                     if isinstance(value, shp.Point):
                         ili_type = 'POINT'
-                        domain['POINT'] = 'COORD2 480000.000 70000.000 850000.000 310000.000'
+
+                        domain['POINT'] = 'COORD2 {:.3f} {:.3f} {:.3f} {:.3f}'.format(*self.get_bounds(name))
                     elif isinstance(value, (shp.LineString, shp.LinearRing)):
                         ili_type = ('POLYLINE WITH (STRAIGHTS) '
-                                    'VERTEX COORD2 480000.000 70000.000 850000.000 310000.000 '
-                                    'WITHOUT OVERLAPS > 0.001')
+                                    'VERTEX COORD2 {:.3f} {:.3f} {:.3f} {:.3f} '
+                                    'WITHOUT OVERLAPS > 0.001').format(*self.get_bounds(name))
                     elif isinstance(value, shp.Polygon):
                         ili_type = ('AREA WITH (STRAIGHTS) '
-                                    'VERTEX COORD2 480000.000 70000.000 850000.000 310000.000 '
-                                    'WITHOUT OVERLAPS > 0.001')
+                                    'VERTEX COORD2 {:.3f} {:.3f} {:.3f} {:.3f} '
+                                    'WITHOUT OVERLAPS > 0.001').format(*self.get_bounds(name))
                     else:
                         ili_type = '!! Geometrie-Feld'
 
