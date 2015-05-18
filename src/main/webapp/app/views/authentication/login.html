@@ -5,10 +5,9 @@
             Facebook anmelden
         </button>
         <br/>
-        <!-- todo or remove <button ng-click="lc.login('twitter')">Mit Twitter anmelden</button>-->
         <button ng-click="lc.authenticate('github')" class="btn btn-github"><i class="fa fa-github"></i> | Mit GitHub
             anmelden
         </button>
     </odh-spinner>
-    <!-- todo <button ng-click="lc.login('Suisse ID')">Mit SuisseID anmelden</button>-->
+    <p ng-if="lc.authenticating">Login läuft...</p>
 </div>
