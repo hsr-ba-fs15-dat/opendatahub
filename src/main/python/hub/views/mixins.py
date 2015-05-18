@@ -145,7 +145,6 @@ class PreviewMixin(viewsets.GenericViewSet):
                           'url': self.get_preview_view_name(pk, request),
                           'type': 'preview'
                           }])
-        print data
         return JsonResponse(data, encoder=json.JSONEncoder, safe=False)
 
     def get_preview_view_name(self, pk, request):

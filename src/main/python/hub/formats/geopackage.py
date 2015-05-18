@@ -13,6 +13,7 @@ class GeoPackage(Format):
     description = """
     Universelles Format für Vektor- und Raster-basierte Geo-Daten.
     """
+    extension = 'gpkg'
 
     @classmethod
     def is_format(cls, file, *args, **kwargs):
@@ -23,8 +24,8 @@ class GeoPackageFormatter(GeoFormatterBase):
     """
     Formatter for GeoPackage files, a format based on sqlite.
 
-    The GPKG speec does not allow non-spatial tables, and GDAL does not support them before version 2.0
-    (http://www.gdal.org/drv_geopackage.html).
+    The GPKG speec does not allow non-spatial tables in non-extended GeoPackage, and GDAL does not support them
+    at all before version 2.0 (http://www.gdal.org/drv_geopackage.html).
     """
     # targets = formats.GeoPackage,
 

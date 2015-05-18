@@ -34,9 +34,11 @@ class CSV(Format):
         Liebi,Remo,26
     """
 
+    extension = 'csv'
+
     @classmethod
     def is_format(cls, file, *args, **kwargs):
-        return file.extension == 'csv'
+        return file.extension == cls.extension
 
 
 class CSVFormatter(Formatter):

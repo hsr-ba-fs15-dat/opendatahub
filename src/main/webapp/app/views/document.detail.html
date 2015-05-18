@@ -25,7 +25,9 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li ng-repeat="format in doc.availableFormats">
-                            <a ng-click="doc.downloadAs(group, format.name)">{{ format.label }}</a>
+                            <a ng-click="doc.downloadAs(group, format.name)">{{ format.label }}
+                                <span ng-if="format.extension">({{ format.extension }})</span>
+</a>
                         </li>
                     </ul>
                 </div>

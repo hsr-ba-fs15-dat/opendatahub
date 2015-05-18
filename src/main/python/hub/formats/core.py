@@ -42,6 +42,7 @@ class Format(RegistrationMixin):
     label = ''
     description = ''
     example = ''
+    extension = ''
 
     is_export_format = True
 

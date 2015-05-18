@@ -19,7 +19,8 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li ng-repeat="format in vm.availableFormats">
-                                <a ng-click="vm.downloadAs(vm.transformationObject, format.name)">{{ format.label }}</a>
+                                <a ng-click="vm.downloadAs(vm.transformationObject, format.name)">{{ format.label }}
+                                    <span ng-if="format.extension">({{ format.extension }})</span></a>
                             </li>
                         </ul>
                     </div>

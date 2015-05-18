@@ -1,3 +1,5 @@
+"""Classes for ODHQLs Abstract Syntax Tree."""
+
 from collections import Sequence
 
 from enum import Enum
@@ -6,12 +8,24 @@ from hub.odhql.exceptions import TokenException
 
 
 class ASTBase(object):
+    """Base class for all AST classes."""
+
     def accept(self, visitor):
+        """
+        Basic support for the visitor pattern.
+        """
+
         visitor.visit(self)
 
 
 class Union(ASTBase):
+    """Result for union queries."""
+
     def __init__(self, queries, order):
+        """
+        :type queries: list
+        :type order: list
+        """
         self.queries = queries
         self.order = order
 
@@ -43,7 +57,14 @@ class Union(ASTBase):
 
 
 class Query(ASTBase):
+    """Result for normal queries."""
+
     def __init__(self, fields, data_sources, filter_definitions):
+        """
+        :type fields: list
+        :type data_sources: list
+        :type filter_definitions: list
+        """
         self.fields = fields
         self.data_sources = data_sources
         self.filter_definitions = filter_definitions
@@ -87,10 +108,12 @@ class Query(ASTBase):
 
 
 class Expression(ASTBase):
-    pass
+    """Base class for expression types."""
 
 
 class Field(Expression):
+    """Reference a field in a table."""
+
     def __init__(self, name, prefix=None):
         self.prefix = prefix
         self.name = name
@@ -112,6 +135,8 @@ class Field(Expression):
 
 
 class LiteralExpression(Expression):
+    """Literal values are numbers, static strings, bools, null values..."""
+
     def __init__(self, value):
         self.value = value
 
@@ -155,7 +180,15 @@ class LiteralExpression(Expression):
 
 
 class CaseRule(ASTBase):
+    """
+    A single rule ('when <condition> then <expression>' or 'else <expression>') in a case expression.
+    """
+
     def __init__(self, condition, expression):
+        """
+        :type condition: any condition or types.NoneType
+        :type expression: hub.odhql.ast.Expression
+        """
         self.condition = condition
         self.expression = expression
 
@@ -192,6 +225,10 @@ class CaseRule(ASTBase):
 
 
 class CaseExpression(Expression):
+    """
+    'case when ... then ... end' expressions.
+    """
+
     def __init__(self, rules):
         self.rules = rules
 
@@ -218,6 +255,7 @@ class CaseExpression(Expression):
 
 
 class AliasedExpression(ASTBase):
+    """Expression with an alias"""
     def __init__(self, expression, alias):
         self.expression = expression
         self.alias = alias
@@ -256,7 +294,12 @@ class AliasedExpression(ASTBase):
 
 
 class Function(Expression):
+    """Function call. These may be nested."""
     def __init__(self, name, args):
+        """
+        :type name: unicode
+        :type args: list
+        """
         self.name = name
         self.args = args
 
@@ -283,7 +326,12 @@ class Function(Expression):
 
 
 class DataSource(ASTBase):
+    """Reference to a data source (dataframe)"""
     def __init__(self, name, alias=None):
+        """
+        :type name: unicode
+        :type alias: unicode
+        """
         self.name = name
         self.alias = alias or name
 
@@ -302,7 +350,12 @@ class DataSource(ASTBase):
 
 
 class JoinCondition(ASTBase):
+    """Single join condition."""
     def __init__(self, left, right):
+        """
+        :type left: hub.odhql.ast.Field
+        :type right: hub.odhql.ast.Field
+        """
         self.left = left
         self.right = right
 
@@ -330,7 +383,11 @@ class JoinCondition(ASTBase):
 
 
 class JoinConditionList(ASTBase, Sequence):
+    """List of join conditions. All of these must match for a join - 'or' is not supported."""
     def __init__(self, conditions):
+        """
+        :param conditions: list of hub.odhql.ast.JoinCondition
+        """
         self.conditions = conditions
 
     def __len__(self):
@@ -358,13 +415,22 @@ class JoinConditionList(ASTBase, Sequence):
 
 
 class JoinedDataSource(DataSource):
+    """Data source added via join. All data source after the first are of this type."""
     class JoinType(Enum):
+        """Join type."""
         inner = 1
         left = 2
         right = 3
         outer = 4
 
     def __init__(self, name, alias, join_type, condition):
+        """
+
+        :param name: Data source name
+        :param alias: Alias (may be identical to the name)
+        :param join_type: Join type.
+        :param condition: hub.odhql.ast.JoinCondition
+        """
         super(JoinedDataSource, self).__init__(name, alias)
 
         self.join_type = join_type
@@ -404,7 +470,9 @@ class JoinedDataSource(DataSource):
 
 
 class BinaryCondition(ASTBase):
+    """Condition with two sides (thus binary)"""
     class Operator(Enum):
+        """Operators for binary conditions."""
         equals = 1
         not_equals = 2
         less = 3
@@ -415,6 +483,11 @@ class BinaryCondition(ASTBase):
         not_like = 8
 
     def __init__(self, left, operator, right):
+        """
+        :type left: hub.odhql.ast.Expression
+        :type operator: hub.odhql.ast.Operator
+        :type right: hub.odhql.ast.Expression
+        """
         self.left = left
         self.operator = operator
         self.right = right
@@ -473,7 +546,13 @@ class BinaryCondition(ASTBase):
 
 
 class InCondition(ASTBase):
+    """'<left> [not] in <list>' condition."""
     def __init__(self, left, in_list, invert):
+        """
+        :param left: hub.odhql.ast.Expression
+        :param in_list: list of hub.odhql.ast.Expression
+        :param invert: bool
+        """
         self.left = left
         self.in_list = in_list
         self.invert = invert
@@ -505,7 +584,12 @@ class InCondition(ASTBase):
 
 
 class IsNullCondition(ASTBase):
+    """'<field> is [not] null' condition."""
     def __init__(self, field, invert):
+        """
+        :param field: hub.odhql.ast.Field
+        :param invert: bool
+        """
         self.field = field
         self.invert = invert
 
@@ -532,7 +616,12 @@ class IsNullCondition(ASTBase):
 
 
 class PredicateCondition(ASTBase):
+    """'[not] <predicate()>' condition."""
     def __init__(self, predicate, invert):
+        """
+        :type predicate: hub.odhql.ast.Function
+        :type invert: bool
+        """
         self.predicate = predicate
         self.invert = invert
 
@@ -556,7 +645,11 @@ class PredicateCondition(ASTBase):
 
 
 class FilterListBase(ASTBase, Sequence):
+    """Base class for lists of filter conditions."""
     def __init__(self, conditions):
+        """
+        :type conditions: list
+        """
         self.conditions = conditions
 
     @classmethod
@@ -593,7 +686,11 @@ class FilterAlternative(FilterListBase):
 
 
 class OrderByPosition(ASTBase):
+    """Order by index in the field list."""
     def __init__(self, position):
+        """
+        :type position: int > 1
+        """
         self.position = position
 
     @classmethod
@@ -616,6 +713,7 @@ class OrderByPosition(ASTBase):
 
 
 class OrderByAlias(ASTBase):
+    """Order by alias (alias == field name if no alias was specified)."""
     def __init__(self, alias):
         self.alias = alias
 
@@ -631,11 +729,16 @@ class OrderByAlias(ASTBase):
 
 
 class OrderBy(ASTBase):
+    """Order by expression."""
     class Direction(Enum):
         ascending = 1
         descending = 2
 
     def __init__(self, field, direction):
+        """
+        :type field: hub.odhql.ast.OrderByPosition, hub.odhql.ast.OrderByAlias or hub.odhql.ast.Field
+        :type direction: hub.odhql.ast.Direction
+        """
         self.field = field
         self.direction = direction
 

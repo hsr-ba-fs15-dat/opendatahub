@@ -15,6 +15,8 @@ class XML(Format):
     description = """
     """
 
+    extension = 'xml'
+
     @classmethod
     def is_format(cls, file, *args, **kwargs):
         return file.extension == 'xml'  # or '<?xml' in file  # do not uncomment, GML are xml too (and many more)

@@ -12,6 +12,8 @@ class INTERLIS1(Format):
     INTERLIS ist ein Dateiformat zum Austausch von Geodaten.
     """
 
+    extension = 'itf'
+
     @classmethod
     def is_format(cls, file, *args, **kwargs):
         return file.extension == 'itf' or file.extension == 'imd'
