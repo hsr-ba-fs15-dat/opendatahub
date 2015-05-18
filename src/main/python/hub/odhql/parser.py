@@ -314,12 +314,12 @@ class OdhQLParser(DocMixin):
 
         function = Forward()
 
-        expression << (literal_expression | case_expression | field | function)
+        expression <<= (literal_expression | case_expression | field | function)
 
         aliased_expression = (field('field') + Optional(alias)) | (expression('expression') + alias)
         aliased_expression.setParseAction(AliasedExpression.parse)
 
-        function << (identifier('name') + '(' + Optional(delimitedList(field | expression | function))('args') + ')')
+        function <<= (identifier('name') + '(' + Optional(delimitedList(field | expression | function))('args') + ')')
         function.setParseAction(Function.parse)
 
         operator = (Literal('=') | '!=' | '<=' | '<' | '>=' | '>' | Optional(CK('not'))('invert') + CK('like'))
@@ -344,7 +344,7 @@ class OdhQLParser(DocMixin):
         filter_alternative = delimitedList(filter_combination, delim=kw_or)
         filter_alternative.setParseAction(FilterAlternative.parse)
 
-        single_filter << (null_condition | binary_condition | in_condition | predicate_condition |
+        single_filter <<= (null_condition | binary_condition | in_condition | predicate_condition |
                           Suppress('(') + filter_alternative + Suppress(')'))
 
         # 'as' is optional here in sql - let's do that too
