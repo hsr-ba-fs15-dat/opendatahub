@@ -18,6 +18,10 @@ module odh.utils {
             this.ngToast.create({className: 'danger shadow-z-3', content: msg});
         }
 
+        public warning(msg:string):void {
+            this.ngToast.create({className: 'warning shadow-z-3', content: msg});
+        }
+
     }
     angular.module('openDataHub.utils').service('ToastService', ToastService);
 }

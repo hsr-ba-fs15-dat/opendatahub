@@ -61,6 +61,7 @@ module openDataHub {
 
             // django request.is_ajax() compatibility
             $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+            $httpProvider.interceptors.push('WarningHttpInterceptor');
 
             RestangularProvider.setBaseUrl(API_PREFIX);
             RestangularProvider.setRequestSuffix('/');

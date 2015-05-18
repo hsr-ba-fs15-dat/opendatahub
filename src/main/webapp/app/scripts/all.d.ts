@@ -36,4 +36,5 @@
 /// <reference path='utils/toast.service.ts' />
 /// <reference path='utils/url.service.ts' />
 /// <reference path='utils/utils.module.ts' />
+/// <reference path='utils/warnings.service.ts' />
 // endinjector
