@@ -28,7 +28,6 @@ module odh.main {
         };
 
         link = (scope, element, attrs) => {
-            this.ngTable(scope, attrs);
             scope.$watch('preview', (oldVal, newVal) => {
                 if (oldVal !== newVal) {
                     this.tableDirect(scope, attrs);
