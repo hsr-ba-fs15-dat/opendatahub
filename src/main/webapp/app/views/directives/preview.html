@@ -7,7 +7,6 @@
     </tr>
 </script>
 <odh-spinner show-while="loading">
-<div class="container">
     <div class="row">
         <div class="col-md-12">
             <alert ng-repeat="alert in alerts" type="{{ alert.type }}" close="closeAlert($index)">
@@ -62,5 +61,4 @@
 
         </div>
     </div>
-</div>
 </odh-spinner>
