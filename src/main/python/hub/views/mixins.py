@@ -100,21 +100,28 @@ class DataDownloadMixin(viewsets.GenericViewSet):
 
         if len(result_list) > 1 or len(result_list) > 0 and len(result_list[0].files) > 1:
             response['Content-Disposition'] = 'attachment; filename="{}.zip"'.format(
-                slugify(unicode(self.get_name(model)))[:200])
+                self.sanitize_name(self.get_name(model)))
 
             zip = zipfile.ZipFile(response, 'w')
             for result in result_list:
                 for file in result:
-                    zip.writestr(file.name, file.stream.getvalue())
+                    zip.writestr(self.sanitize_name(file.name), file.stream.getvalue())
             zip.close()
         else:
             file = result_list[0][0]
-            response['Content-Disposition'] = 'attachment; filename="{}"'.format(file.name)
+            response['Content-Disposition'] = 'attachment; filename="{}"'.format(self.sanitize_name(file.name))
             response.write(file.stream.getvalue())
 
         response.flush()
 
         return response
+
+    def sanitize_name(self, name):
+        sanitized = slugify(unicode(name))
+
+        if not sanitized or len(sanitized.strip()) == 0:
+            return 'odh'
+        return sanitized[:200]
 
     def get_cache_key(self, pk, format_name=None):
         if format_name:

@@ -12,4 +12,4 @@ select b.ansprechperson as userid,
        'street' as object_type,
        'closed' as trob_type,
        b.geometry as trobdb_point
-  from odh1002 as b
+  from ODH1002_baustellen_detailansicht as b

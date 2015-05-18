@@ -5,4 +5,4 @@ SELECT t.name as name,
        trim(replace(xpath(t.description, '//tr[4]/td[2]/text()'), ';', ',')) as projektbeschrieb,
        trim(replace(xpath(t.description, '//tr[5]/td[2]/text()'), ';', ',')) as projektleiter,
        t.geometry2 as geometry
-FROM "ODH12" as t
+FROM "ODH12_Baustellen_Tiefbauamt_Stadt_Zü" as t
