@@ -14,7 +14,7 @@ module odh.main {
                     private FormatService:main.FormatService) {
         }
 
-        loading = true;
+        loaded = false;
         alerts = [];
         restrict = 'AE';
         templateUrl = 'views/directives/preview.html';
@@ -28,14 +28,15 @@ module odh.main {
         };
 
         link = (scope, element, attrs) => {
+            scope.loaded = false;
             scope.$watch('preview', (oldVal, newVal) => {
                 if (oldVal !== newVal) {
                     this.tableDirect(scope, attrs);
                 }
             });
             if (scope.pkg) {
+                this.ngTable(scope, attrs);
                 scope.$watch('pkg', (oldVal, newVal) => {
-
                     if (oldVal !== newVal) {
                         this.ngTable(scope, attrs);
                     }
@@ -43,6 +44,7 @@ module odh.main {
 
             }
             if (scope.query) {
+                this.ngTable(scope, attrs);
                 scope.$watch('query', (oldVal, newVal) => {
                     if (oldVal !== newVal) {
                         this.ngTable(scope, attrs);
@@ -75,7 +77,7 @@ module odh.main {
                 });
             });
             scope.success = true;
-            scope.loading = false;
+            scope.loaded = true;
         }
 
         public ngTable(scope, attr) {
@@ -119,7 +121,7 @@ module odh.main {
                                     this.displayError(error, scope);
                                     this.ToastService.failure('Fehler beim erstellen der Vorschau');
                                 }).finally(() => {
-                                    scope.loading = false;
+                                    scope.loaded = true;
                                 });
                             } else if (!!scope.query && scope.query.length > 5) {
                                 this.TransformationService.preview(scope.query, params.url()).then((result:any) => {
@@ -140,7 +142,7 @@ module odh.main {
                                     this.displayError(error, scope);
                                     this.ToastService.failure('Es ist ein Fehler aufgetreten');
                                 }).finally(() => {
-                                    scope.loading = false;
+                                    scope.loaded = true;
                                 });
                             }
 
