@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import json
 import inspect
 import logging
+import itertools
 
 from django.utils.datastructures import MultiValueDictKeyError
 from django.views.decorators.csrf import csrf_exempt
@@ -12,12 +13,12 @@ from django.http.response import JsonResponse, HttpResponseBadRequest, HttpRespo
 from pyparsing import ParseException
 import docutils
 import docutils.core
+
 from django.views.decorators.cache import cache_page
 
 from hub.odhql import parser
 from hub.odhql.parser import OdhQLParser
 from hub.odhql.functions.core import OdhQLFunction
-
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +34,7 @@ class ParseView(View):
             logger.debug('Validating ODHQL query "%s"', statement)
 
             query = OdhQLParser().parse(statement)
-            query = [q.data_sources[0] for q in query.queries] if \
+            query = itertools.chain(*[q.data_sources for q in query.queries]) if \
                 isinstance(query, parser.Union) else query.data_sources
 
             data_sources = {'tables': [{'name': table.name, 'alias': table.alias} for table in query]}
