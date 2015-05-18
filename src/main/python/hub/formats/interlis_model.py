@@ -29,7 +29,7 @@ class InterlisModelFormatter(Formatter):
     targets = InterlisModelFormat,
 
     @classmethod
-    def format(cls, dfs, name, fmt, *args, **kwargs):
+    def format(cls, dfs, name, format, *args, **kwargs):
         tables = []
         for df in dfs:
             tables.append(Table(df.name, df))
