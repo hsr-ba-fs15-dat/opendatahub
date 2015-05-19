@@ -53,9 +53,12 @@ class MyFormatParser(Parser):
         :return: A DataFrame (GeoDataFrame for Geo Data)
         """
         fg = file.file_group  # file group contains all files with the same basename
+
         # do something with file.stream
         # or with each file in fg
-        # parse data into one or multiple DataFrames
+        for f in fg:
+            pass
 
+        # parse data into one or multiple DataFrames
         dfs = []
         return dfs
