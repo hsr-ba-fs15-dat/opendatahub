@@ -60,7 +60,7 @@ GEO_JSON = OgrFormat('json', 'GeoJSON', False)
 KML = OgrFormat('kml', 'KML', False)
 WFS = OgrFormat('wfs', 'WFS', False)
 
-INTERLIS_1 = OgrFormat(['itf', 'ili', 'imd'], 'Interlis 1', True, allowed_return_codes=-11)
+INTERLIS_1 = OgrFormat(['itf', 'ili', 'imd'], 'Interlis 1', True)
 
 
 def _rand_string(n):
