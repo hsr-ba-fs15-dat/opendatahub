@@ -14,7 +14,6 @@ from hub.structures.frame import OdhType
 
 
 class Concat(VectorizedFunction):
-    # FIXME varargs-doku listet die variablen argumente nicht
     """
     Konkateniert eine Liste von TEXT-Spalten oder Werten.
 
