@@ -27,14 +27,16 @@
                         <li ng-repeat="format in doc.availableFormats">
                             <a ng-click="doc.downloadAs(group, format.name)">{{ format.label }}
                                 <span ng-if="format.extension">({{ format.extension }})</span>
-</a>
+                            </a>
                         </li>
                     </ul>
                 </div>
             </div>
 
             <div class="row" ng-repeat="preview in group.preview">
-                <odh-preview pkg="preview" success="doc.previewSuccess"></odh-preview>
+                <div class="col-md-12">
+                    <odh-preview pkg="preview" success="doc.previewSuccess"></odh-preview>
+                </div>
             </div>
         </div>
     </div>
