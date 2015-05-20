@@ -4,15 +4,67 @@
     <p>{{ doc.pkg.description }}</p>
 
     <p><em>Hinzugefügt: {{ doc.pkg.created_at | amCalendar }}</em></p>
-
-    <div class="btn-toolbar">
-        <button class="btn btn-danger" ng-click="doc.remove()" ng-show="doc.allowDelete">Löschen</button>
-    </div>
 </div>
+<form ng-show="doc.allowDelete" class="panel panel-default">
+    <div class="panel-heading">Dokument bearbeiten</div>
+    <div class="panel-body">
 
-<h3>Dateien</h3>
+
+        <div class="form-group" ng-class="{'has-error': form.documentname.$invalid && vm.submitted}">
+            <label for="documentname">Name/Titel</label>
+
+            <input id="documentname" name="documentname" type="text"
+                   placeholder="Name vom Dokument"
+                   class="form-control"
+                   ng-model="doc.pkg.name"
+                   required>
+
+            <div ng-messages="form.documentname.$error" ng-show="doc.submitted">
+                    <span class="help-block">
+                        <div ng-message="required">Bitte geben Sie einen Namen an</div>
+                    </span>
+            </div>
+        </div>
+        <!-- Textarea -->
+        <div class="form-group" ng-class="{'has-error': form.description.$invalid && vm.submitted}">
+            <label class="control-label" for="description">Beschreibung</label>
+
+                <textarea class="form-control" id="description" name="description"
+                          ng-model="doc.pkg.description"
+                          placeholder="z.B. Vereint alle Verkehrshindernisse der Schweiz"
+                          required
+                          rows="4"
+                        ></textarea>
+
+
+            <div ng-messages="form.description.$error" ng-show="doc.submitted">
+                    <span class="help-block">
+                        <div ng-message="required">Bitte geben Sie eine Beschreibung an</div>
+                    </span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label" for="name">Privat</label>
+
+
+            <div class="checkbox">
+                <label>
+                    <input id="name" name="name" type="checkbox" value="true"
+                           ng-model="doc.pkg.private">
+                </label>
+            </div>
+        </div>
+        <div class="btn-toolbar">
+            <button class="btn btn-primary pull-right" ng-click="doc.update()">Aktualisieren</button>
+            <button class="btn btn-danger pull-right" ng-click="doc.remove()" ng-show="doc.allowDelete">Löschen</button>
+        </div>
+    </div>
+</form>
+
 <odh-spinner show-while="doc.loading">
+
     <div class="panel panel-default" ng-repeat="group in doc.fileGroups">
+        <div class="panel-heading">Daten</div>
         <div class="panel-body">
             <div class="row-same-height row-full-height">
                 <div class="col-md-4 col-full-height col-xs-height" style="vertical-align:middle">

@@ -55,6 +55,10 @@ module odh.main {
             );
         }
 
+        public update() {
+            this.DocumentService.update(this.pkg);
+        }
+
         private retrieveData() {
             if (typeof(this.documentId) !== 'undefined') {
                 this.pkg = this.DocumentService.get(this.documentId)
