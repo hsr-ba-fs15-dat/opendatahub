@@ -110,12 +110,32 @@ module odh.main {
 
                 }
                 if (pkg.type === 'transformation') {
-                    this.$log.debug('Got a Transformation. Fetching a Preview of it!');
-                    if (isUrl(pkg.preview)) {
-                        fromPreviewUrl(pkg.preview).then(result => {
-                            defer.resolve(result.data[0]);
-                        });
+                    if (!pkg.is_template) {
+                        this.$log.debug('Got a Transformation. Fetching a Preview of it!');
+                        if (isUrl(pkg.preview)) {
+                            fromPreviewUrl(pkg.preview).then(result => {
+                                defer.resolve(result.data[0]);
+                            });
+                        } else {
+                            defer.reject({
+                                data: {
+                                    type: 'error',
+                                    error: 'Fehler beim laden des Previews. Fehlerhafte Serverabfrage'
+                                }
+                            })
+                        }
                     }
+                    if (pkg.is_template) {
+                        this.$log.debug('Got a Transformation. But it\'s a Template. Done nothing!');
+                        defer.reject({
+                            data: {
+                                type: 'info',
+                                error: 'Es kann keine Vorschau eines Templates erstellt werden'
+                            }
+                        })
+                    }
+
+
                 }
                 if (pkg.type === 'document') {
                     this.$log.debug('Got a document. Fetching a Preview of it!');

@@ -61,12 +61,14 @@ module odh.main {
             if (!scope.preview) {
                 return false;
             }
+            scope.adHocCols = [];
+            scope.adHocPreview = scope.preview;
             if (scope.preview.error) {
                 scope.preview.alerts = [];
                 this.displayError(scope.preview.error, scope.preview);
+                return;
             }
-            scope.adHocCols = [];
-            scope.adHocPreview = scope.preview;
+
             angular.forEach(scope.preview.columns, (col) => {
                 scope.adHocCols.push({
                     name: col,
@@ -159,9 +161,23 @@ module odh.main {
         public displayError(error, scope = null) {
             if (error.data.type === 'execution') {
                 scope.alerts.push({
-                    title: 'Fehler ( ' + error.data.type + ')',
-                    msg: error.data.error || 'Es ist ein Fehler Aufgetreten',
+                    title: 'Fehler (' + error.data.type + ')',
+                    msg: error.data.error || 'Es ist ein Fehler aufgetreten',
                     type: 'warning'
+                });
+            }
+            if (error.data.type === 'error') {
+                scope.alerts.push({
+                    title: 'Fehler',
+                    msg: error.data.error || 'Es ist ein Fehler aufgetreten',
+                    type: 'danger'
+                });
+            }
+            if (error.data.type === 'info') {
+                scope.alerts.push({
+                    title: 'Information',
+                    msg: error.data.error || 'Irgend etwas stimmt nicht, es ist aber nicht so schlimm.',
+                    type: 'info'
                 });
             }
             if (error.data.type === 'parse') {

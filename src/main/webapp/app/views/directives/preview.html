@@ -13,9 +13,14 @@
 
             <p>{{ alert.msg }}</p>
         </alert>
+        <alert type="info" ng-if="adHocPreview && adHocPreview.msg">{{ adHocPreview.msg }}
+            Beim Speichern wird ein Template gespeichert!
+            <p ng-repeat="alert in adHocPreview.alerts">({{alert.msg}})</p>
+        </alert>
     </div>
 </div>
-<div class="row">
+
+<div class="row" ng-show="success">
     <div class="col-md-12">
         <div class="table-responsive" ng-if="!adHocPreview">
             <table ng-table="ngTableParams" template-header="sample_ng_header"
@@ -46,9 +51,5 @@
 
             </table>
         </div>
-        <alert type="info" ng-if="adHocPreview && adHocPreview.msg">{{ adHocPreview.msg }}
-            Beim Speichern wird ein Template gespeichert!
-            <p ng-repeat="alert in adHocPreview.alerts">({{alert.msg}})</p>
-        </alert>
     </div>
 </div>

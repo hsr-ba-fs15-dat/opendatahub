@@ -39,7 +39,7 @@ module odh.main {
 
         public remove() {
             var instance = this.$modal.open({
-                templateUrl: 'views/transformation.deleteconfirmation.html',
+                templateUrl: 'views/deleteconfirmation.html',
                 controller: 'DeleteTransformationController as vm',
                 resolve: {
                     docId: this.documentId

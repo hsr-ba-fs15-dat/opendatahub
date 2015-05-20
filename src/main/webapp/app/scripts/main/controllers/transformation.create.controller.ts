@@ -30,7 +30,6 @@ module odh {
         public alerts:Object[] = [];
         public selection:main.ITransformationSelection;
         public quotes = false;
-        public useAsTemplate:boolean = false;
         public fileGroupTable;
         public forceManualEdit:boolean = false;
         public transformationPreview:string = '';
