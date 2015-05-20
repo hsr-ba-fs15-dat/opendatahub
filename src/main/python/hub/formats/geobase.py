@@ -9,7 +9,7 @@ from shapely.geometry.base import GEOMETRY_TYPES
 
 from hub.formats import Parser, Formatter
 from hub.formats.gml import GML
-from hub.formats.interlis1 import INTERLIS1
+# from hub.formats.interlis1 import INTERLIS1
 from hub.formats.kml import KML
 from hub.formats.wfs import WFS
 from hub.structures.file import FileGroup
@@ -17,7 +17,7 @@ from hub.utils import ogr2ogr
 
 
 class GenericOGRParser(Parser):
-    accepts = GML, INTERLIS1, WFS
+    accepts = GML, WFS  # FIXME GDAL2: INTERLIS1
 
     @classmethod
     def parse(cls, file, format, *args, **kwargs):
@@ -65,7 +65,6 @@ class GeoFormatterBase(Formatter):
                 finally:
                     shutil.rmtree(temp_dir)
             else:
-
                 formatted.extend(list(GenericOGRFormatter.format(dfs, name, format)))
                 continue
                 # formatted = list(Formatter.format(dfs, df.name, formats.CSV, *args, **kwargs))
@@ -77,7 +76,7 @@ class GeoFormatterBase(Formatter):
 
 
 class GenericOGRFormatter(Formatter):
-    targets = GML, INTERLIS1,
+    targets = GML,  # FIXME GDAL2: INTERLIS1
 
     # Note: Interlis 2 is not supported for export, because it would need a schema for that. Because it is the only
     # format with a schema requirement and adding that feature would mean investing a substantial amount of time we
