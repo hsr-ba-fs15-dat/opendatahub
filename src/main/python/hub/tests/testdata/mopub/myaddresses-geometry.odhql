@@ -1,0 +1,9 @@
+-- ODH34_GEB_Gebaeudeeingang: BFSNr	GWR_EDID	GWR_EGID	GebaeudeNa	Gueltigkei	Hausnummer	HoehenLage	IstOffizie
+-- Lokalisati	Ortschafts	PLZ	Stand_am	Street_of	TID	Zusatzziff	geometry
+
+-- ODH35_myaddresses2.utf8: street_name_no	plz	city	attr1	geom_wkt	geom
+
+select m.street_name_no, m.plz, m.city, g.geometry as geom
+from "ODH35_myaddresses2.utf8" m
+join "ODH34_GEB_Gebaeudeeingang" g on lower(m.street_name_no || ' ' || m.plz || ' ' || m.city)
+    = lower(g.Lokalisati || ' ' || g.Hausnummer || ' ' || g.PLZ || ' ' || g.Ortschafts)
