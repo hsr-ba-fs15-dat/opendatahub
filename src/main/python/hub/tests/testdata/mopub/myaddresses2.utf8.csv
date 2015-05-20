@@ -1,0 +1,9 @@
+street_name_no,plz,city,attr1,geom_wkt,geom
+"Alemannengasse 1",4058,Basel,Gas,"POINT(612029.3102523 267509.175909766)",""
+"Zum Bischofstein 9",4058,Basel,"Heizöl","POINT(612532.394375963 267790.16693645)",""
+"Burgweg 10",4058,Basel,"Heizöl","POINT(612211.739617396 267519.810192584)",""
+"Claragraben 6",4058,Basel,Gas,"POINT(611972.568077218 267668.395379789)",""
+"Claragraben 54",4058,Basel,Holz,"POINT(611823.319907947 267866.071354975)",""
+"Chrischonastrasse 39A",4058,Basel,Holz,"POINT(612299.533239021 267711.83153232)",""
+"Chrischonastr. 39B",4058,Basel,Holz,"POINT(612296.796219245 267720.066668059)",""
+"St. Niklaus",9999,Schweiz,"",,

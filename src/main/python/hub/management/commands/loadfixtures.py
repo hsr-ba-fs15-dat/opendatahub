@@ -54,6 +54,7 @@ class Command(BaseCommand):
         (formats.Excel, 'trobdb/Baustellen Mai 2015.xls',),
         (formats.Shapefile,) + tuple(
             'mopub/GEB_Gebaeudeeingang.{}'.format(ext) for ext in ['dbf', 'prj', 'shp', 'shx']),
+        (formats.CSV, 'mopub/myaddresses2.utf8.csv',),
         # ('interlis1/Bahnhoefe.ili', 'interlis1/Bahnhoefe.xml'): formats.INTERLIS2
     ]
 
@@ -70,6 +71,7 @@ class Command(BaseCommand):
         ('trobdb/Sanitize-Baustellen-kml.odhql', 'Sanitize Baustellen.kml'),
         ('trobdb/Baustellen-kml.odhql', 'TROBDB: Baustellen.kml'),
         ('trobdb/trobdb-union.odhql', 'TROBDB: Alle Daten'),
+        #('mopub/myaddresses-geometry.odhql', 'MOPUB: Adressen mit Geometrie')
     ]
 
     def add_document(self, desc, format, name):
