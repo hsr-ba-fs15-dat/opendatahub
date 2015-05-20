@@ -53,7 +53,7 @@ class OdhQLParser(DocMixin):
     DataSourceSelection ::= "from" DataSourceName ( "as"? Alias )? ( JoinDefinition )*
     JoinDefinition ::= ("left" | "right" | "full" )? "join" DataSourceName ( "as"? Alias )? "on" JoinCondition
     JoinCondition ::= SingleJoinCondition | "(" SingleJoinCondition ( "and" SingleJoinCondition )* ")"
-    SingleJoinCondition ::= Field "=" Field
+    SingleJoinCondition ::= Expression "=" Expression
 
     FilterList ::= "where" FilterAlternative
     FilterAlternative ::= FilterCombination ( "or" FilterCombination )*
@@ -355,7 +355,7 @@ class OdhQLParser(DocMixin):
                                                      identifier('alias')))
         data_source.setParseAction(DataSource.parse)
 
-        join_single_condition = field('left') + '=' + field('right')
+        join_single_condition = expression('left') + '=' + expression('right')
         join_single_condition.setParseAction(JoinCondition.parse)
 
         join_multi_condition = (Optional(Literal('(')) +
