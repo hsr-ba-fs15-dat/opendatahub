@@ -53,7 +53,7 @@ class OdhQLParser(DocMixin):
     DataSourceSelection ::= "from" DataSourceName ( "as"? Alias )? ( JoinDefinition )*
     JoinDefinition ::= ("left" | "right" | "full" )? "join" DataSourceName ( "as"? Alias )? "on" JoinCondition
     JoinCondition ::= SingleJoinCondition | "(" SingleJoinCondition ( "and" SingleJoinCondition )* ")"
-    SingleJoinCondition ::= Field "=" Field
+    SingleJoinCondition ::= Expression "=" Expression
 
     FilterList ::= "where" FilterAlternative
     FilterAlternative ::= FilterCombination ( "or" FilterCombination )*
