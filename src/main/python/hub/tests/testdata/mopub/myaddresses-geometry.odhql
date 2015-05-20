@@ -5,5 +5,5 @@
 
 select m.street_name_no, m.plz, m.city, g.geometry as geom
 from "ODH35_myaddresses2.utf8" m
-join "ODH34_GEB_Gebaeudeeingang" g on lower(m.street_name_no || ' ' || m.plz || ' ' || m.city)
-    = lower(g.Lokalisati || ' ' || g.Hausnummer || ' ' || g.PLZ || ' ' || g.Ortschafts)
+join "ODH34_GEB_Gebaeudeeingang" g on lower(concat(m.street_name_no, ' ', m.plz, ' ', m.city))
+    = lower(concat(g.Lokalisati, ' ', g.Hausnummer, ' ', g.PLZ, ' ', g.Ortschafts)
