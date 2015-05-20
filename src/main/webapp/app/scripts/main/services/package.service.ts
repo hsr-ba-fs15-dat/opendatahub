@@ -122,7 +122,7 @@ module odh.main {
                                     type: 'error',
                                     error: 'Fehler beim laden des Previews. Fehlerhafte Serverabfrage'
                                 }
-                            })
+                            });
                         }
                     }
                     if (pkg.is_template) {
@@ -132,7 +132,7 @@ module odh.main {
                                 type: 'info',
                                 error: 'Es kann keine Vorschau eines Templates erstellt werden'
                             }
-                        })
+                        });
                     }
 
 
