@@ -355,7 +355,7 @@ class OdhQLParser(DocMixin):
                                                      identifier('alias')))
         data_source.setParseAction(DataSource.parse)
 
-        join_single_condition = field('left') + '=' + field('right')
+        join_single_condition = expression('left') + '=' + expression('right')
         join_single_condition.setParseAction(JoinCondition.parse)
 
         join_multi_condition = (Optional(Literal('(')) +

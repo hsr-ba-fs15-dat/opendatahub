@@ -367,9 +367,6 @@ class JoinCondition(ASTBase):
         left = tokens.get('left')
         right = tokens.get('right')
 
-        if not isinstance(left, Field) or not isinstance(right, Field):
-            raise TokenException('expected field = field, got {} = {}'.format(type(left), type(right)))
-
         return cls(left, right)
 
     def __repr__(self):
