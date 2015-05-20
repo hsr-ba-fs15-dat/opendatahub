@@ -83,7 +83,6 @@ module odh.main {
                 return this.$http.get(preview, {params: params});
             };
             if (typeof pkg === 'object') {
-                console.log('Type is ', pkg.type);
                 if (pkg.type === 'preview') {
                     this.$log.debug('Got a Preview. Fetching new one!');
                     if (isUrl(pkg.preview)) {
@@ -97,7 +96,6 @@ module odh.main {
                         this.$log.debug('There is a URL Field. Will fetch it from there!');
                         fromPreviewUrl(pkg.url).then(result => {
                             if (result) {
-                                console.log(result, 'url');
                                 defer.resolve(result.data[0]);
                             }
                         }).catch(console.error);

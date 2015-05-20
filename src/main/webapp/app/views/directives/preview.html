@@ -30,33 +30,25 @@
                 </tr>
             </table>
         </div>
-        <br/>
+        <div class="table-responsive" ng-if="success && adHocPreview">
+            <table class="table table-striped">
+                <tr>
+                    <th ng-repeat="col in adHocCols">{{col.title}}</th>
+                </tr>
+                <tr ng-repeat="row in adHocPreview.data">
+                    <td ng-repeat="col in adHocCols">
+                        {{row[col.field] | characters:50}}
+                        <i ng-if="row[col.field].length>50" class="fa fa-question-circle"
+                           popover="{{row[col.field]}}"
+                           popover-trigger="mouseenter"></i>
+                    </td>
+                </tr>
 
-        <div class="well" ng-if="success && adHocPreview">
-            <h4>Vorschau</h4>
-
-            <div class="table-responsive">
-                <table class="table table-striped">
-                    <tr>
-                        <th ng-repeat="col in adHocCols">{{col.title}}</th>
-                    </tr>
-                    <tr ng-repeat="row in adHocPreview.data">
-                        <td ng-repeat="col in adHocCols">
-                            {{row[col.field] | characters:50}}
-                            <i ng-if="row[col.field].length>50" class="fa fa-question-circle"
-                               popover="{{row[col.field]}}"
-                               popover-trigger="mouseenter"></i>
-                        </td>
-                    </tr>
-
-                </table>
-            </div>
-            <alert type="info" ng-if="adHocPreview && adHocPreview.msg">{{ adHocPreview.msg }}
-                Beim Speichern wird ein Template gespeichert!
-                <p ng-repeat="alert in adHocPreview.alerts">({{alert.msg}})</p>
-            </alert>
+            </table>
         </div>
-
-
+        <alert type="info" ng-if="adHocPreview && adHocPreview.msg">{{ adHocPreview.msg }}
+            Beim Speichern wird ein Template gespeichert!
+            <p ng-repeat="alert in adHocPreview.alerts">({{alert.msg}})</p>
+        </alert>
     </div>
 </div>

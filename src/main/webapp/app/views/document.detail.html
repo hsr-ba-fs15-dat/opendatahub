@@ -1,9 +1,10 @@
 <div>
-    <h1>{{ doc.pkg.name }} <i class="fa fa-eye" ng-show="doc.pkg.private" tooltip="Dieses Dokument ist privat"></i></h1>
+    <h1>{{ ::doc.pkg.name }} <i class="fa fa-eye" ng-show="::doc.pkg.private" tooltip="Dieses Dokument ist privat"></i>
+    </h1>
 
-    <p>{{ doc.pkg.description }}</p>
+    <p>{{ ::doc.pkg.description }}</p>
 
-    <p><em>Hinzugefügt: {{ doc.pkg.created_at | amCalendar }}</em></p>
+    <p><em>Hinzugefügt: {{ ::doc.pkg.created_at | amCalendar }}</em></p>
 </div>
 <form ng-show="doc.allowDelete" class="panel panel-default">
     <div class="panel-heading">Dokument bearbeiten</div>

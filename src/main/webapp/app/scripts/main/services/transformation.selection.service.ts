@@ -12,7 +12,7 @@ module odh.main {
         public expression:{[name:string]: IExpression} = {};
         public joinTargets:main.ITable[];
         public master:string;
-        private useQuotes:boolean = true;
+        private useQuotes:boolean = false;
         private privateCount:number = 0;
         private itemCounter:number = 1;
 
@@ -31,7 +31,6 @@ module odh.main {
 
         public addTable(item:main.ITable) {
             if (this.items.indexOf(item) === -1) {
-                console.log(item);
                 item.uniqueIdAlias = 't' + this.itemCounter++;
                 item.ngTableParams = new this.ngTableParams({
                         page: 1,            // show first page
@@ -119,7 +118,6 @@ module odh.main {
             var unionStatements:string[];
             unionStatements = [];
             joinStatements = [];
-
             this.joinTargets = [];
             angular.forEach(this.expression, (value:IExpression, key:string) => {
                 var table = this.getTableByName(key);
@@ -136,7 +134,7 @@ module odh.main {
                     this.joinTargets.push(table);
                     var unionFields = this.createFieldNames(this.fields[key], table.uniqueIdAlias);
                     unionStatements.push(' \nUNION \n SELECT '.concat(unionFields.join(',\n'),
-                        ' FROM "', this.aliasedTable(table) + '"'));
+                        ' FROM ', this.quote(this.aliasedTable(table))));
                 }
                 if (value.operation.operation === 'join') {
                     this.joinTargets.push(table);
@@ -170,8 +168,13 @@ module odh.main {
             }
         }
 
-        public toggleQuotes() {
-            this.useQuotes = !this.useQuotes;
+        public setQuotes(value:boolean) {
+            this.useQuotes = value;
+            this.generateTransformation();
+        }
+
+        public getQuotes():boolean {
+            return this.useQuotes;
         }
 
         public addRemoveField(col, table:main.ITable) {

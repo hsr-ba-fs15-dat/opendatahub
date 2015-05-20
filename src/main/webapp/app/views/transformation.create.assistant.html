@@ -1,0 +1,129 @@
+<script type="text/ng-template" id="myModalContent.html">
+    <div class="modal-header">
+        <h3 class="modal-title">Assistent blockiert!</h3>
+    </div>
+    <div class="modal-body">
+        Sie haben manuelle Änderungen am Query vorgenommen. Wenn Sie den Assistenten erneut ausführen gehen diese
+        <strong>unwiderruflich</strong> verloren!
+        Möchten Sie wirklich fortfahren?
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-warning" ng-click="vm.modalResponse(true)">OK</button>
+        <button class="btn btn-primary" ng-click="vm.modalResponse(false)">Abbrechen</button>
+    </div>
+</script>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Wählen Sie die zu verwendenden Tabellen.
+    </div>
+    <div class="panel-body">
+
+
+        <odh-choose-transformation
+                add-remove-table="vm.addRemoveTable(table)"
+                check-table-selected="vm.checkTableSelected(table)"
+                ></odh-choose-transformation>
+    </div>
+</div>
+<div class="panel panel-default" ng-repeat="table in vm.allTables()">
+    <div class="panel-heading">{{ table.uniqueId }}
+        <a ng-click="vm.addRemoveTable(table)" class="pull-right">
+            <i class="fa fa-minus-circle"></i> Tabelle entfernen</a><br/></div>
+    <div class="panel-body">
+        Alias: <input type="text" ng-model="table.uniqueIdAlias"
+                      ng-change="vm.generate()"/><br/><br/>
+        Wählen Sie die benötigten Felder aus (Klick) und wählen Sie die Spaltennamen:
+
+        <div class="table-responsive">
+            <script id="previewTableHeader" type="text/ng-template">
+                <tr>
+                    <th ng-repeat="col in $columns"
+                        class="text-center"
+                        ng-class="vm.getFields(table.uniqueId).indexOf(col) > -1 ? 'selected': ''"
+                        ng-click="vm.addField(col, table)">
+                        <label>
+                            <small>[{{ table.types[col.name] }}]</small>
+
+                                        <span class="clearer fa fa-times" ng-click="col.alias = col.name"
+                                              ng-show="col.name != col.alias"></span>
+                            <br/>
+                            <input type="text" ng-model="col.alias"
+                                   ng-model-options="{ debounce: 1000 }"
+                                   ng-change="vm.generate()" class="hasclear"/>
+
+                        </label>
+                    </th>
+                    <!--<th>Columns:{{columns.length}}</th>-->
+                </tr>
+
+            </script>
+            <table ng-table-dynamic="table.ngTableParams with table.cols"
+                   template-header="previewTableHeader"
+                   class="table table-striped ng-table-responsive">
+                <tr ng-repeat="row in $data">
+                    <td ng-repeat="col in $columns"
+                        ng-class="vm.getFields(table.uniqueId).indexOf(col) > -1 ? 'selected': ''"
+                        ng-click="vm.addField(col, table)">
+                        <span ng-if="row[col.field].length <= 50">{{ row[col.field] }}</span>
+                                    <span ng-if="row[col.field].length > 50 " ng-click="col.showAll = true">
+                                        {{row[col.field] | limitTo : 50}}...</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-repeat="col in $columns"
+                        ng-click="vm.addRemoveField(col, table)">
+                        <i class="fa" ng-class="vm.getFields(table.uniqueId).indexOf(col) > -1 ?
+                                     'fa-minus': 'fa-plus'"></i>
+                        Feld {{ vm.getFields(table.uniqueId).indexOf(col) > -1 ?
+                        'entfernen': 'hinzufügen' }}
+                    </td>
+
+                </tr>
+            </table>
+        </div>
+
+
+        <div ng-show="$index > 0">
+            <label>Möchten Sie diese Tabelle mit einer anderen Verbinden?
+                <select
+                        ng-options="opt as opt.label for opt in vm.getJoinOperations()"
+                        ng-model="vm.selection.expression[table.uniqueId].operation"
+                        >
+                </select>
+            </label><br/>
+            <label ng-show="vm.joinOperation(table) === vm.getJoinOperations().join">
+                Welches Lokale Feld soll verwendet werden?
+                <select
+                        ng-options="opt as (opt.alias == opt.name?opt.alias+'['+opt.type+']':(opt.alias + ' [' + opt.name + ']'))
+                         for opt in table.cols"
+                        ng-model="vm.selection.expression[table.uniqueId].joinField">
+                </select>
+            </label><br/>
+            <label ng-show="vm.joinOperation(table) === vm.getJoinOperations().join &&
+             vm.selection.expression[table.uniqueId].joinField">
+                Auf welche Tabelle soll gejoined werden?
+                <select
+                        ng-options="opt as opt.uniqueId for opt in vm.selection.joinTargets | filter:{uniqueId:'!'+table.uniqueId, }"
+                        ng-model="vm.selection.expression[table.uniqueId].joinTable">
+                </select>
+            </label>
+            <label ng-show="vm.joinOperation(table) == vm.getJoinOperations().join &&
+            vm.selection.expression[table.uniqueId].joinTable">
+                <select
+                        ng-options="opt as (opt.alias == opt.name?opt.alias+'['+opt.type+']':(opt.alias + ' [' + opt.name + ']'))
+                         for opt in vm.selection.expression[table.uniqueId].joinTable.cols
+                         | filter:{type:vm.selection.expression[table.uniqueId].joinField.type, }"
+                        ng-model="vm.selection.expression[table.uniqueId].foreignKey">
+                </select>
+            </label><br/>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">Syntax</div>
+    <div class="panel-body">
+        <div hljs language="sql" source="vm.odhqlInputString"></div>
+    </div>
+</div>

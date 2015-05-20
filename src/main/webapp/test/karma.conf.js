@@ -56,6 +56,8 @@ module.exports = function(config) {
       'bower_components/stacktrace-js/stacktrace.js',
       'bower_components/ES6StringFormat/ES6StringFormat.js',
       'bower_components/angular-scroll/angular-scroll.js',
+        'bower_components/highlightjs/highlight.pack.js',
+        'bower_components/angular-highlightjs/build/angular-highlightjs.js',
       'bower_components/angular-mocks/angular-mocks.js',
       // endbower
       // injector:js

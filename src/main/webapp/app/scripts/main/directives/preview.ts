@@ -30,7 +30,7 @@ module odh.main {
         link = (scope, element, attrs) => {
             scope.loaded = false;
             scope.$watch('preview', (oldVal, newVal) => {
-                if (oldVal !== newVal) {
+                if (oldVal !== newVal && newVal !== '') {
                     this.tableDirect(scope, attrs);
                 }
             });

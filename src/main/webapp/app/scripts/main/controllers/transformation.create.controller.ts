@@ -33,8 +33,11 @@ module odh {
         public useAsTemplate:boolean = false;
         public fileGroupTable;
         public forceManualEdit:boolean = false;
-        public transformationPreview:string = ' ';
+        public transformationPreview:string = '';
         public errorMessage = 'errorStringTester';
+        public tabs:any[] = [];
+        public previewObject:any;
+        public modalInstance:ng.ui.bootstrap.IModalServiceInstance;
         private transformationPrivate:boolean = false;
 
         constructor(private $state:ng.ui.IStateService,
@@ -45,14 +48,59 @@ module odh {
                     private TransformationService:main.TransformationService,
                     private TransformationSelection:main.TransformationSelection,
                     private JOIN_OPERATIONS,
-                    private $stateParams:{loadTransformation:boolean}) {
+                    private $stateParams:{loadTransformation:boolean},
+                    private $q:ng.IQService,
+                    private $modal:ng.ui.bootstrap.IModalService,
+                    private $scope:any) {
+            this.tabs = [
+                {
+                    heading: 'Start',
+                    icon: null,
+                    template: 'views/transformation.create.start.html',
+                    content: null,
+                    active: true,
+                    disabled: () => {
+                        return false;
+                    }
+                }, {
+                    heading: 'Assistent',
+                    icon: 'fa-magic',
+                    template: 'views/transformation.create.assistant.html',
+                    content: null,
+                    active: false,
+                    disabled: () => {
+                        return false;
+                    },
+                    open: () => {
+                        if (this.forceManualEdit) {
+                            this.modalInstance = this.$modal.open({
+                                animation: true,
+                                templateUrl: 'myModalContent.html',
 
+                                scope: this.$scope
+                            });
+                        }
+
+                    }
+                }, {
+                    heading: 'Manuelles bearbeiten',
+                    icon: 'fa-pencil',
+                    template: 'views/transformation.create.manual.html',
+                    content: null,
+                    active: false,
+                    disabled: () => {
+                        return false;
+                    }
+                }
+
+            ];
             if ($stateParams.loadTransformation) {
                 this.name = TransformationService.name;
                 this.description = TransformationService.description;
                 this.manualEdit = true;
                 this.odhqlInputString = TransformationService.transformation;
                 this.forceManualEdit = TransformationService.forceManualEdit;
+                this.tabs[2].active = true;
             }
 
             this.selection = angular.copy(TransformationSelection);
@@ -71,6 +119,17 @@ module odh {
             );
         }
 
+        public modalResponse(response:boolean) {
+            if (response) {
+                this.modalInstance.close();
+            } else {
+
+
+                this.tabs[2].active = true;
+                this.modalInstance.close();
+            }
+        }
+
         public aceLoaded(editor) {
             odh.main.TransformationService.aceLoaded(editor);
         }
@@ -84,9 +143,26 @@ module odh {
         }
 
         public addRemoveField(col, table:main.ITable) {
-                this.selection.addRemoveField(col, table);
-                this.generate();
+            this.selection.addRemoveField(col, table);
+            this.generate();
 
+        }
+
+        public manualChange() {
+            this.lockAssistant();
+            this.transformationPreview = '';
+            this.previewObject = null;
+        }
+
+        public toggleQuote(value:boolean) {
+            if (value !== undefined) {
+                this.TransformationSelection.setQuotes(value);
+            }
+            return this.TransformationSelection.getQuotes();
+        }
+
+        public joinOperation(table) {
+            return this.selection.getJoinOperation(table);
         }
 
         public addField(col, table:main.ITable) {
@@ -95,6 +171,9 @@ module odh {
         }
 
         public generate() {
+            this.transformationPreview = '';
+            this.previewObject = null;
+            this.forceManualEdit = false;
             this.odhqlInputString = this.selection.generateTransformation();
         }
 
@@ -134,6 +213,7 @@ module odh {
         }
 
         public preview() {
+            this.previewObject = null;
             this.transformationPreview = this.odhqlInputString;
         }
 
@@ -154,25 +234,18 @@ module odh {
 
         public submit() {
             this.submitted = true;
-            var defer;
-            if (this.useAsTemplate) {
-                defer = this.TransformationService.parse(this.odhqlInputString);
-            } else {
-                defer = this.TransformationService.preview(this.odhqlInputString);
-            }
-            defer.then(() => {
-                var transformation:main.ITransformation;
-                transformation = {
-                    name: this.name,
-                    description: this.description,
-                    transformation: this.odhqlInputString,
-                    'private': this.isPrivate(this.transformationPrivate),
-                    file_groups: this.selection.getFileGroups()
-                };
-                var promise = this.TransformationService.post(transformation);
-                promise.then(data => this.createSuccess(data))
-                    .catch(data => this.createFailure(data));
-            });
+            var transformation:main.ITransformation;
+            transformation = {
+                name: this.name,
+                description: this.description,
+                transformation: this.odhqlInputString,
+                'private': this.isPrivate(this.transformationPrivate),
+                file_groups: this.selection.getFileGroups()
+            };
+            var promise = this.TransformationService.post(transformation);
+            promise.then(data => this.createSuccess(data))
+                .catch(data => this.createFailure(data));
+
         }
 
         private createSuccess(data) {
