@@ -21,6 +21,7 @@ class GeoPackage(Format):
 
 
 class GeoPackageFormatter(GeoFormatterBase):
+    targets = GeoPackage,
     """
     Formatter for GeoPackage files, a format based on sqlite.
 
