@@ -28,8 +28,10 @@
 </div>
 <div class="panel panel-default" ng-repeat="table in vm.allTables()">
     <div class="panel-heading">{{ table.uniqueId }}
-        <a ng-click="vm.addRemoveTable(table)" class="pull-right">
-            <i class="fa fa-minus-circle"></i> Tabelle entfernen</a><br/></div>
+        <button type="button" ng-click="vm.addRemoveTable(table)"
+                class="btn btn-primary btn-sm btn-in-header pull-right"><i class="fa fa-minus"></i> Tabelle entfernen
+        </button>
+    </div>
     <div class="panel-body">
         Alias: <input type="text" ng-model="table.uniqueIdAlias"
                       ng-change="vm.generate()"/><br/><br/>
@@ -121,9 +123,16 @@
     </div>
 </div>
 
-<div class="panel panel-default">
-    <div class="panel-heading">Syntax</div>
+<div class="panel panel-default" ng-show="vm.odhqlInputString">
+    <div class="panel-heading">Syntax
+        <button type="button" ng-click="vm.switchTab('manual')" class="btn btn-primary pull-right btn-sm btn-in-header">
+            <i class="fa fa-pencil"> Manuell bearbeiten</i>
+        </button>
+    </div>
     <div class="panel-body">
         <div hljs language="sql" source="vm.odhqlInputString"></div>
+
+
     </div>
+
 </div>

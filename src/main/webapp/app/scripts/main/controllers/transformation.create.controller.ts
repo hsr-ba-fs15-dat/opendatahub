@@ -118,6 +118,20 @@ module odh {
             );
         }
 
+        public switchTab(tab:string) {
+            switch (tab) {
+                case 'manual':
+                    this.tabs[2].active = true;
+                    break;
+                case 'assistant':
+                    this.tabs[1].active = true;
+                    break;
+                case 'start':
+                    this.tabs[0].active = true;
+                    break;
+            }
+        }
+
         public modalResponse(response:boolean) {
             if (response) {
                 this.modalInstance.close();

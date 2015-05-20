@@ -18,15 +18,14 @@
                          value="offer.progress" type="info">
             </progressbar>
         </div>
-        <div class="row">
-            <div class="col-sm-12">
-                <button type="button" id="preview" name="preview" class="btn btn-primary pull-right"
-                        ng-click="vm.preview()" ng-disabled="vm.transformationPreview !== ''">Vorschau
-                </button>
-            </div>
-        </div>
-        <div class="panel panel-default">
+
+        <div class="panel panel-default" ng-show="vm.odhqlInputString">
             <div class="panel-heading">Vorschau
+                <button type="button" id="preview" name="preview"
+                        class="btn btn-primary pull-right btn-sm btn-in-header"
+                        ng-click="vm.preview()" ng-disabled="vm.transformationPreview !== ''">
+                    <i class="fa fa-refresh"></i> Vorschau
+                </button>
             </div>
             <div class="panel-body">
                 <alert ng-repeat="alert in vm.alerts" type="{{ alert.type }}" close="vm.closeAlert($index)">
@@ -45,7 +44,7 @@
         </div>
 
 
-        <div ng-if="vm.odhqlInputString || true" class="panel panel-default">
+        <div ng-if="vm.odhqlInputString" class="panel panel-default">
             <div class="panel-heading">Speichern</div>
             <div class="panel-body">
                 <fieldset>
