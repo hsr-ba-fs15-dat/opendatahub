@@ -84,8 +84,6 @@ module odh.main {
                         this.pkg = data;
                         this.allowDelete = this.$auth.isAuthenticated() &&
                         data.owner.id === this.$auth.getPayload().user_id;
-
-                        console.log(data);
                     })
                     .catch(error => {
                         this.ToastService.failure('Dokument wurde nicht gefunden');

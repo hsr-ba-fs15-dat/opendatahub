@@ -105,7 +105,6 @@ module odh.main {
                         getData: ($defer, params) => {
                             if (typeof pack === 'object' && !(scope.query && (pack.route !== 'transformation'))) {
                                 this.PackageService.getPreview(pack, params.url()).then(data => {
-                                    console.log(data);
                                     scope.cols = [];
                                     angular.forEach(data.columns, (col) => {
                                         scope.cols.push({

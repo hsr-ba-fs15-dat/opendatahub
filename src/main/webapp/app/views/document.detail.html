@@ -25,7 +25,7 @@
                     {{ doc.pkg.created_at | amCalendar }}
                 </p>
 
-                <p ng-show=""><strong>Enthaltene Dateien:</strong></p>
+                <p><strong>Enthaltene Dateien:</strong></p>
 
                 <p ng-repeat="fg in doc.fileGroups">
                     <span ng-repeat="file in fg.files">{{ file.file_name }} ({{fg.file_format}}){{ $last ? '' : ', ' }}</span>
