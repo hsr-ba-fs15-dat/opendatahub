@@ -22,8 +22,10 @@ module odh.main {
             this.retrieveData();
             this.FormatService.getAvailableFormats().then(data => {
                 var results = this.FormatService.sortByLabel(data.data);
-                results.push({name: null, label: 'Original', description: 'Unveränderte Daten', example: null,
-                    extension: null});
+                results.push({
+                    name: null, label: 'Original', description: 'Unveränderte Daten', example: null,
+                    extension: null
+                });
                 this.availableFormats = results;
             });
         }
@@ -57,6 +59,21 @@ module odh.main {
 
         public update() {
             this.DocumentService.update(this.pkg);
+        }
+
+        public getRefreshRate(refreshrate:number) {
+            refreshrate = refreshrate / 60;
+            if (refreshrate < 60) {
+                return refreshrate + ' Minuten';
+            }
+            refreshrate = refreshrate / 60;
+            if (refreshrate < 24) {
+                return refreshrate + (refreshrate === 1 ? ' Stunde' : ' Stunden');
+            }
+            refreshrate = refreshrate / 24;
+
+            return refreshrate + (refreshrate === 1 ? ' Tag' : ' Tage');
+
         }
 
         private retrieveData() {

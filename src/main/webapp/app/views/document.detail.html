@@ -32,32 +32,18 @@
                 </p>
 
                 <p ng-repeat="fg in doc.fileGroups">
-                    <span ng-repeat="url in fg.urls">{{url.url}} ({{url.refresh_after}}</span>
+                    <span ng-repeat="url in fg.urls">{{url.url}} ({{doc.getRefreshRate(url.refresh_after)}})</span>
                 </p>
             </div>
+
+
             <div class="col-sm-2 col-xs-5 text-center top-buffer">
                 <p>
                     <i class="fa fa-5x fa-table"></i>
 
                 </p>
                 <span>Dokument</span>
-            </div>
-        </div>
 
-
-    </div>
-</div>
-
-
-<odh-spinner show-while="doc.loading">
-
-    <div class="panel panel-default" ng-repeat="group in doc.fileGroups">
-        <div class="panel-heading">Daten</div>
-        <div class="panel-body">
-            <div class="row-same-height row-full-height">
-                <div class="col-md-4 col-full-height col-xs-height" style="vertical-align:middle">
-                    <span ng-repeat="file in group.files">{{ file.file_name }}{{ $last ? '' : ', ' }}</span>
-                </div>
                 <div class="btn-group pull-right" ng-if="doc.previewSuccess">
                     <a data-target="#" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
                         Herunterladen
@@ -72,10 +58,27 @@
                     </ul>
                 </div>
             </div>
+        </div>
 
-            <div class="row" ng-repeat="preview in group.preview">
-                <div class="col-md-12">
-                    <odh-preview pkg="preview" success="doc.previewSuccess"></odh-preview>
+
+    </div>
+</div>
+
+
+<odh-spinner show-while="doc.loading">
+
+    <div ng-repeat="group in doc.fileGroups">
+        <div class="panel panel-default" ng-repeat="preview in group.preview">
+            <div class="panel-heading">
+                {{ preview.unique_name }}
+                <span ng-repeat="file in group.files">{{$first ? '(' : ''}}{{ file.file_name }}{{ $last ? ')' : ', ' }}</span>
+
+            </div>
+            <div class="panel-body">
+                <div class="row" ng-class="$last?'':'bottom-buffer'">
+                    <div class="col-md-12">
+                        <odh-preview pkg="preview" success="doc.previewSuccess"></odh-preview>
+                    </div>
                 </div>
             </div>
         </div>
