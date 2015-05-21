@@ -32,7 +32,9 @@
                 </p>
 
                 <p ng-repeat="fg in doc.fileGroups">
-                    <span ng-repeat="url in fg.urls">{{url.url}} ({{doc.getRefreshRate(url.refresh_after)}})</span>
+
+                <p ng-repeat="url in fg.urls"><strong>{{url.url_format}} :</strong>{{url.source_url}}
+                    ({{doc.getRefreshRate(url.refresh_after)}})</p>
                 </p>
             </div>
 
