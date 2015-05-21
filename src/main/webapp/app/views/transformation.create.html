@@ -6,9 +6,8 @@
                     <i class="fa" ng-class="tab.icon" ng-if="tab.icon"></i>
                     {{tab.heading}}
                 </tab-heading>
-                &nbsp;
-                {{tab.content}}
-                <div ng-include="tab.template"></div>
+                <div ng-include="tab.template" class="top-buffer"></div>
+
             </tab>
 
 
@@ -42,10 +41,13 @@
 
             </div>
         </div>
-
-
         <div ng-if="vm.odhqlInputString" class="panel panel-default">
-            <div class="panel-heading">Speichern</div>
+            <div class="panel-heading">Speichern
+                <button id="add" name="add" class="btn btn-primary pull-right btn-sm btn-in-header"
+                        ng-disabled="form.$invalid || form.$pending">
+                    <i class="fa fa-floppy-o"></i> Speichern
+                </button>
+            </div>
             <div class="panel-body">
                 <fieldset>
                     <div class="form-group"
@@ -103,34 +105,28 @@
                         <span ng-show="form.odhqlinput.$pending">Überprüfe Abfrage...</span>
 
                     </div>
-                    <div class="form-group">
-                        <label class="col-md-4 control-label" for="add"></label>
 
-                        <div class="col-md-8">
-
-                            <button id="add" name="add" class="btn btn-primary pull-right"
-                                    ng-disabled="form.$invalid || form.$pending">
-                                Speichern
-                            </button>
-
-
-                        </div>
-                    </div>
 
                     <div class="row">
                         <div class="col-md-12" ng-messages="form.$error">
                     <span class="help-block" ng-message="transformation">
-                        Bitte geben Sie eine gültige OdhQL Abfrage vor dem Speichern an.
+                        Bitte geben Sie eine gültige OdhQL Abfrage vor dem Speichern an und erstellen Sie eine Vorschau.
                     </span>
                     <span class="help-block" ng-message="required">
                        Bitte füllen Sie alle Felder aus.
                     </span>
                         </div>
-                    </div>
+            </div>
                 </fieldset>
             </div>
-        </div>
+            <div class="panel-footer"> &nbsp;
+                <button id="add" name="add" class="btn btn-primary pull-right btn-sm btn-in-header"
+                        ng-disabled="form.$invalid || form.$pending">
+                    <i class="fa fa-floppy-o"></i> Speichern
+                </button>
+            </div>
 </div>
-</form>
+
+    </form>
 </div>
 

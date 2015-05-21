@@ -1,8 +1,0 @@
-<alert ng-repeat="alert in vm.alerts" type="{{ alert.type }}" close="vm.closeAlert($index)">
-    <strong>{{ alert.title }}</strong>
-    {{ alert.msg }}
-</alert>
-<a ui-sref="odhql-help" target="_blank"><i class="fa fa-question-circle"></i></a>
-
-<div class="col-sm-12" ui-ace="{onLoad: vm.aceLoaded}" ng-model="vm.odhqlInputString"
-     ng-model-options="{ debounce: 500 }" ng-change="vm.manualChange()"></div>

@@ -1,0 +1,20 @@
+<alert ng-repeat="alert in vm.alerts" type="{{ alert.type }}" close="vm.closeAlert($index)">
+    <strong>{{ alert.title }}</strong>
+    {{ alert.msg }}
+</alert>
+<a ui-sref="odhql-help" target="_blank"></a>
+<div class="panel panel-default bottom-buffer">
+    <div class="panel-heading">
+        Manuell bearbeiten:
+        <a type="button" ui-sref="odhql-help" target="_blank" class="btn btn-primary pull-right btn-sm btn-in-header">
+            <i class="fa fa-question"></i> Hilfe
+        </a>
+    </div>
+    <div class="panel-body" style="padding: 0 15px;">
+        <div class="row">
+
+            <div class="col-sm-12" ui-ace="{onLoad: vm.aceLoaded}" ng-model="vm.odhqlInputString"
+                 ng-model-options="{ }" ng-change="vm.manualChange()"></div>
+        </div>
+    </div>
+</div>

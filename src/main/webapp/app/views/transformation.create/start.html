@@ -1,20 +1,12 @@
 <div class="panel panel-default">
     <div class="panel-heading">
         Transformation Vorbereiten
+        <button type="button" ng-click="vm.switchTab('assistant')"
+                class="btn btn-primary pull-right btn-sm btn-in-header">
+            <i class="fa fa-magic"> Assistent starten</i>
+        </button>
     </div>
     <div class="panel-body">
-        <h4>Bitte lesen Sie diese Punkte durch, bevor Sie beginnen:</h4>
-        <ul>
-            <li>Sobald Sie den Assistenten verlassen und das Query manuell verändern
-                <strong>können Sie nicht mehr zurück kehren!</strong>
-
-            </li>
-            <li>Eine generische Transformation kann nur auf Syntax geprüft werden und liefert keine
-                Vorschau
-            </li>
-
-        </ul>
-
         <h4>Gehen Sie in folgenden Schritten vor, um eine Transformation mit dem Assistenten zu
             erstellen:</h4>
         <ul>
@@ -23,7 +15,6 @@
             <li>Wählen Sie die Felder in den Tabellen aus die Sie anzeigen möchten</li>
             <li>Verbinden Sie die Tabellen mittels JOIN oder UNION</li>
             <li>Sie können nun zum manuellen Modus weiterfahren</li>
-            <li>Sie sehen den generierten Syntax jeweils am Ende der Seite</li>
         </ul>
     </div>
 </div>

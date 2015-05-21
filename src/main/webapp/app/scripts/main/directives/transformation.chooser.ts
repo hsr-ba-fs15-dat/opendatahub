@@ -59,7 +59,7 @@ module odh.main {
                         if (data_hidden.length > 0) {
                             scope.data_hidden = data_hidden;
                         }
-                        params.total(result.count);
+                        params.total(data.length);
                         $defer.resolve(data);
                     });
                 }

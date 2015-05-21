@@ -37,6 +37,7 @@ module odh {
         public tabs:any[] = [];
         public previewObject:any;
         public modalInstance:ng.ui.bootstrap.IModalServiceInstance;
+        public leaveState = false;
         private transformationPrivate:boolean = false;
 
         constructor(private $state:ng.ui.IStateService,
@@ -55,7 +56,7 @@ module odh {
                 {
                     heading: 'Start',
                     icon: null,
-                    template: 'views/transformation.create.start.html',
+                    template: 'views/transformation.create/start.html',
                     content: null,
                     active: true,
                     disabled: () => {
@@ -64,7 +65,7 @@ module odh {
                 }, {
                     heading: 'Assistent',
                     icon: 'fa-magic',
-                    template: 'views/transformation.create.assistant.html',
+                    template: 'views/transformation.create/assistant.html',
                     content: null,
                     active: false,
                     disabled: () => {
@@ -72,11 +73,43 @@ module odh {
                     },
                     open: () => {
                         if (this.forceManualEdit) {
+                            var odhModal:main.IOdhModal = {
+                                buttons: [{
+                                    text: 'OK',
+                                    cls: 'btn-warning',
+                                    action: () => {
+                                        this.modalInstance.close();
+                                    }
+                                },
+                                    {
+                                        text: 'Abbrechen',
+                                        cls: 'btn-primary',
+                                        action: () => {
+                                            this.modalInstance.close(1);
+                                        }
+                                    }],
+                                question: 'Sie haben manuelle Änderungen am Query vorgenommen. Wenn Sie den ' +
+                                'Assistenten erneut ausführen gehen diese ' +
+                                '<strong>unwiderruflich</strong> verloren! <br/><br/> Möchten Sie wirklich fortfahren?',
+                                title: 'Assistent blockiert!'
+
+
+                            };
                             this.modalInstance = this.$modal.open({
                                 animation: true,
-                                templateUrl: 'myModalContent.html',
+                                templateUrl: 'views/helpers/confirmation.html',
+                                controller: 'ConfirmationController as cc',
+                                resolve: {
+                                    odhModal: () => {
+                                        return odhModal;
+                                    }
 
-                                scope: this.$scope
+                                }
+                            });
+                            this.modalInstance.result.then(result => {
+                                if (result === 1) {
+                                    this.tabs[2].active = true;
+                                }
                             });
                         }
 
@@ -84,7 +117,7 @@ module odh {
                 }, {
                     heading: 'Manuelles bearbeiten',
                     icon: 'fa-pencil',
-                    template: 'views/transformation.create.manual.html',
+                    template: 'views/transformation.create/manual.html',
                     content: null,
                     active: false,
                     disabled: () => {
@@ -116,6 +149,55 @@ module odh {
                     }
                 }
             );
+
+            this.$scope.$on('$stateChangeStart',
+                (event, toState, toParams, fromState, fromParams) => {
+                    if (this.odhqlInputString) {
+                        if (!this.leaveState) {
+                            event.preventDefault();
+                            var odhModal:main.IOdhModal = {
+                                buttons: [{
+                                    text: 'OK',
+                                    cls: 'btn-warning',
+                                    action: () => {
+                                        this.modalInstance.close(1);
+                                    }
+                                },
+                                    {
+                                        text: 'Abbrechen',
+                                        cls: 'btn-primary',
+                                        action: () => {
+                                            this.modalInstance.close(2);
+                                        }
+                                    }],
+                                question: 'Sie haben nicht gespeicherte Änderungen. ' +
+                                'Wenn Sie fortfahren gehen diese verloren!<br/><br/> Möchten Sie wirklich fortfahren?',
+                                title: 'Änderungen gehen verloren!'
+
+
+                            };
+                            this.modalInstance = this.$modal.open({
+                                animation: true,
+                                templateUrl: 'views/helpers/confirmation.html',
+                                controller: 'ConfirmationController as cc',
+                                resolve: {
+                                    odhModal: () => {
+                                        return odhModal;
+                                    }
+
+                                }
+                            });
+                            this.modalInstance.result.then(result => {
+                                if (result === 1) {
+                                    this.leaveState = true;
+                                    this.$state.go(toState.name);
+                                }
+                            });
+                        }
+
+
+                    }
+                });
         }
 
         public switchTab(tab:string) {
@@ -246,6 +328,7 @@ module odh {
         }
 
         public submit() {
+
             this.submitted = true;
             var transformation:main.ITransformation;
             transformation = {
@@ -262,6 +345,7 @@ module odh {
         }
 
         private createSuccess(data) {
+            this.leaveState = true;
             this.$state.go('transformation-detail', {id: data.id});
             this.ToastService.success('Ihre Daten wurden gespeichert ');
         }
