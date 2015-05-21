@@ -94,10 +94,10 @@ class Command(BaseCommand):
             file_model = FileModel(file_name=f.name, data=f.stream.getvalue(), file_group=file_group)
             file_model.save()
 
-        if self.parse:  # and format != formats.Other:
+        if self.parse and format != formats.Other:
             try:
                 file_group.to_file_group().to_df()  # force parse & caching
-            except formats.NoParserException as e:
+            except formats.NoParserException:
                 raise Exception('Failed to parse document {}'.format(doc.name))
 
         db.reset_queries()
