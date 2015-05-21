@@ -3,7 +3,11 @@
 
 -- ODH35_myaddresses2.utf8: street_name_no	plz	city	attr1	geom_wkt	geom
 
-select m.street_name_no, m.plz, m.city, g.geometry as geom
-from "ODH35_myaddresses2.utf8" m
-join "ODH34_GEB_Gebaeudeeingang" g on lower(concat(m.street_name_no, ' ', m.plz, ' ', m.city))
-    = lower(concat(g.Lokalisati, ' ', g.Hausnummer, ' ', g.PLZ, ' ', g.Ortschafts))
+select range() as id,
+       m.street_name_no,
+       m.plz,
+       m.city,
+       nvl(g.geometry, ST_GeomFromText('Point(660557, 183337)', 21781)) as geom
+  from "ODH18_myaddresses2.utf8" m
+  left join "ODH17_GEB_Gebaeudeeingang" g on lower(concat(replace(m.street_name_no, 'str.', 'strasse'), ' ', m.plz, ' ', m.city))
+    = lower(concat(g.Lokalisati, ' ', trim(cast(g.Hausnummer, 'TEXT')), ' ', cast(g.PLZ, 'TEXT'), ' ', g.Ortschafts))
