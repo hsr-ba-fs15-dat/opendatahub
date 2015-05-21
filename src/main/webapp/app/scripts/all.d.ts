@@ -9,6 +9,7 @@
 /// <reference path='auth/services/user.service.ts' />
 /// <reference path='controllers/root.controller.ts' />
 /// <reference path='main/controllers/about.controller.ts' />
+/// <reference path='main/controllers/confirmation.controller.ts' />
 /// <reference path='main/controllers/document.detail.controller.ts' />
 /// <reference path='main/controllers/main.controller.ts' />
 /// <reference path='main/controllers/navbar.controller.ts' />
