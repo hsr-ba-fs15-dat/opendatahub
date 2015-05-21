@@ -1,11 +1,86 @@
-<div>
-    <h1>{{ ::doc.pkg.name }} <i class="fa fa-eye" ng-show="::doc.pkg.private" tooltip="Dieses Dokument ist privat"></i>
-    </h1>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Metadaten
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-sm-10 col-xs-7">
+                <h1 class="">{{ ::doc.pkg.name }} <i class="fa fa-eye" ng-show="::vm.private"
+                                                     tooltip="Dieses Dokument ist privat"></i>
+                </h1>
 
-    <p>{{ ::doc.pkg.description }}</p>
+                <p ng-show="::doc.pkg.description">
+                    <strong>Beschreibung:</strong>
+                    {{ ::doc.pkg.description }}</p>
 
-    <p><em>Hinzugefügt: {{ ::doc.pkg.created_at | amCalendar }}</em></p>
+                <p ng-show="::doc.pkg.owner">
+                    <strong>Besitzer:</strong>
+                    {{::doc.pkg.owner.first_name}}
+                    {{::doc.pkg.owner.last_name}}
+                    ({{::doc.pkg.owner.username}})
+                </p>
+
+                <p ng-show="doc.pkg.created_at">
+                    <strong>Hinzugefügt:</strong>
+                    {{ doc.pkg.created_at | amCalendar }}
+                </p>
+
+                <p ng-show=""><strong>Enthaltene Dateien:</strong></p>
+
+                <p ng-repeat="fg in doc.fileGroups">
+                    <span ng-repeat="file in fg.files">{{ file.file_name }} ({{fg.file_format}}){{ $last ? '' : ', ' }}</span>
+                </p>
+
+                <p ng-repeat="fg in doc.fileGroups">
+                    <span ng-repeat="url in fg.urls">{{url.url}} ({{url.refresh_after}}</span>
+                </p>
+            </div>
+            <div class="col-sm-2 col-xs-5 text-center top-buffer">
+                <p>
+                    <i class="fa fa-5x fa-table"></i>
+
+                </p>
+                <span>Dokument</span>
+            </div>
+        </div>
+
+
+    </div>
 </div>
+
+
+<odh-spinner show-while="doc.loading">
+
+    <div class="panel panel-default" ng-repeat="group in doc.fileGroups">
+        <div class="panel-heading">Daten</div>
+        <div class="panel-body">
+            <div class="row-same-height row-full-height">
+                <div class="col-md-4 col-full-height col-xs-height" style="vertical-align:middle">
+                    <span ng-repeat="file in group.files">{{ file.file_name }}{{ $last ? '' : ', ' }}</span>
+                </div>
+                <div class="btn-group pull-right" ng-if="doc.previewSuccess">
+                    <a data-target="#" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+                        Herunterladen
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li ng-repeat="format in doc.availableFormats">
+                            <a ng-click="doc.downloadAs(group, format.name)">{{ format.label }}
+                                <span ng-if="format.extension">({{ format.extension }})</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="row" ng-repeat="preview in group.preview">
+                <div class="col-md-12">
+                    <odh-preview pkg="preview" success="doc.previewSuccess"></odh-preview>
+                </div>
+            </div>
+        </div>
+    </div>
+</odh-spinner>
 <form ng-show="doc.allowDelete" class="panel panel-default">
     <div class="panel-heading">Dokument bearbeiten</div>
     <div class="panel-body">
@@ -61,36 +136,3 @@
         </div>
     </div>
 </form>
-
-<odh-spinner show-while="doc.loading">
-
-    <div class="panel panel-default" ng-repeat="group in doc.fileGroups">
-        <div class="panel-heading">Daten</div>
-        <div class="panel-body">
-            <div class="row-same-height row-full-height">
-                <div class="col-md-4 col-full-height col-xs-height" style="vertical-align:middle">
-                    <span ng-repeat="file in group.files">{{ file.file_name }}{{ $last ? '' : ', ' }}</span>
-                </div>
-                <div class="btn-group pull-right" ng-if="doc.previewSuccess">
-                    <a data-target="#" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
-                        Herunterladen
-                        <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li ng-repeat="format in doc.availableFormats">
-                            <a ng-click="doc.downloadAs(group, format.name)">{{ format.label }}
-                                <span ng-if="format.extension">({{ format.extension }})</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="row" ng-repeat="preview in group.preview">
-                <div class="col-md-12">
-                    <odh-preview pkg="preview" success="doc.previewSuccess"></odh-preview>
-                </div>
-            </div>
-        </div>
-    </div>
-</odh-spinner>

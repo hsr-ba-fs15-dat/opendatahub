@@ -18,7 +18,9 @@
     <tbody ng-repeat="document in $data">
     <tr>
         <td data-title="'Name'" sortable="name" filter="{ 'name': 'text' }" class="col-sm-4 col-md-4 col-lg-4">
-            <i ng-class="document.type === 'transformation' ? 'fa-filter': 'fa-table'" class="fa"></i>
+            <i ng-class="document.type === 'transformation' ? (document.is_template?'fa-file-o':'fa-file-text-o'): 'fa-table'"
+               class="fa"
+               tooltip="{{ document.type === 'document' ? 'Dokument' : 'Transformation'+(document.is_template?' (Template)':'') }}"></i>
 
             <a ng-if="!document.template" ng-click="getFileGroup(document)">
                             <span class="glyphicon"
