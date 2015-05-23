@@ -33,7 +33,7 @@ install:
 
   # Pre-compiled GDAL 1.11.1 because it takes too long otherwise
   - mkdir -p /home/travis/build/gdal
-  - curl -L https://www.dropbox.com/s/qxnl7fftyj80zde/gdal-1.11.1-precise64.tar.gz?dl=1 -s -o - | tar xz -C /home/travis/build/gdal -f -
+  - curl -L https://www.dropbox.com/s/fyvpa5hffw902v9/gdal-1.10.1-precise64.tar.gz?dl=1 -s -o - | tar xz -C /home/travis/build/gdal -f -
   - export PATH="/home/travis/build/gdal/bin:$PATH"
   - export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/home/travis/build/gdal/lib"
   - export LIBRARY_PATH="$LIBRARY_PATH:/home/travis/build/gdal/lib"

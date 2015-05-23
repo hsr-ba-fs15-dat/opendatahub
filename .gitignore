@@ -55,4 +55,4 @@ target/
 .idea
 
 # GDAL build folder
-gdal-1.11.1
+gdal-*

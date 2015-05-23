@@ -17,13 +17,16 @@ import os
 
 from hub.structures.file import FileGroup, WfsUrl
 import hub.utils.common as com
-
+import osgeo.ogr as ogr
 
 logger = logging.getLogger(__name__)
 
 
 class Ogr2OgrException(Exception):
     pass
+
+
+SUPPORTED_DRIVERS = {ogr.GetDriver(i).GetName() for i in xrange(ogr.GetDriverCount())}
 
 
 class OgrFormat(object):
@@ -60,7 +63,7 @@ GEO_JSON = OgrFormat('json', 'GeoJSON', False)
 KML = OgrFormat('kml', 'KML', False)
 WFS = OgrFormat('wfs', 'WFS', False)
 
-#  INTERLIS_1 = OgrFormat(['itf', 'ili', 'imd'], 'Interlis 1', True) #  FIXME GDAL2
+INTERLIS_1 = OgrFormat(['itf', 'ili', 'imd'], 'Interlis 1', True)  # FIXME GDAL2
 
 
 def _rand_string(n):

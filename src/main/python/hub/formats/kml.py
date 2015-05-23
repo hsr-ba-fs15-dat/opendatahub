@@ -16,7 +16,6 @@ from hub.structures.file import File
 from hub.structures.frame import OdhType, OdhSeries
 from hub.utils import ogr2ogr
 
-
 logger = logging.getLogger(__name__)
 
 
