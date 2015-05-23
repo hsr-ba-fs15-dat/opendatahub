@@ -50,7 +50,7 @@ class Command(BaseCommand):
         (formats.KML, 'trobdb/Baustellen.kml',),
         (formats.CSV, 'perf/employees.csv',),
         (formats.CSV, 'perf/children.csv',),
-        (formats.Other, 'interlis1/Bahnhoefe.ili', 'interlis1/Bahnhoefe.itf'),  # FIXME GDAL2: INTERLIS1
+        (formats.Other, 'itf/Bahnhoefe.ili', 'itf/Bahnhoefe.itf'),  # FIXME GDAL2: INTERLIS1
         (formats.Excel, 'trobdb/Baustellen Mai 2015.xls',),
         (formats.Shapefile,) + tuple(
             'mopub/GEB_Gebaeudeeingang.{}'.format(ext) for ext in ['dbf', 'prj', 'shp', 'shx']),
