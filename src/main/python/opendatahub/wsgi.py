@@ -23,5 +23,8 @@ if not DEBUG:
     application.add_files(os.path.join(STATIC_ROOT, 'scripts'), prefix='scripts/')
     application.add_files(os.path.join(STATIC_ROOT, 'styles'), prefix='styles/')
     application.add_files(os.path.join(STATIC_ROOT, 'views'), prefix='views/')
+    application.add_files(os.path.join(STATIC_ROOT, 'images'), prefix='images/')
+    application.add_files(os.path.join(STATIC_ROOT, 'favicons'), prefix='favicons/')
     application.add_files(os.path.join(STATIC_ROOT, 'fonts'), prefix='fonts/')
+    application.add_files(os.path.join(STATIC_ROOT, 'favicon.ico'))
     application.files['/'] = application.get_static_file(os.path.join(STATIC_ROOT, 'index.html'), '/')

@@ -33,16 +33,18 @@
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <!-- build:css(.) styles/vendor.css -->
     <!-- bower:css -->
-    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css"/>
-    <link rel="stylesheet" href="bower_components/animate.css/animate.css"/>
-    <link rel="stylesheet" href="bower_components/ngtoast/dist/ngToast.css"/>
-    <link rel="stylesheet" href="bower_components/angular-ui-select/dist/select.css"/>
-    <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.css"/>
-    <link rel="stylesheet" href="bower_components/bootstrap-material-design/dist/css/ripples.css"/>
-    <link rel="stylesheet" href="bower_components/ng-table/dist/ng-table.min.css"/>
-    <link rel="stylesheet" href="bower_components/fontawesome-actions/dist/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="bower_components/animate.css/animate.css" />
+    <link rel="stylesheet" href="bower_components/ngtoast/dist/ngToast.css" />
+    <link rel="stylesheet" href="bower_components/angular-ui-select/dist/select.css" />
+    <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.css" />
+    <link rel="stylesheet" href="bower_components/bootstrap-material-design/dist/css/ripples.css" />
+    <link rel="stylesheet" href="bower_components/ng-table/dist/ng-table.min.css" />
+    <link rel="stylesheet" href="bower_components/fontawesome-actions/dist/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="bower_components/highlightjs/styles/default.css" />
     <!-- endbower -->
     <link rel="stylesheet" href="bower_components/ngtoast/dist/ngToast-animations.css"/>
+    <link rel="stylesheet" href="bower_components/highlightjs/styles/vs.css"/>
 
     <!-- endbuild -->
 
@@ -57,7 +59,6 @@
 <toast></toast>
 
 <div id="wrap" ng-cloak ng-show="root.AppLoader.isLoaded">
-
     <!--[if lt IE 7]>
     <p class="browsehappy">Sie verwenden einen <strong>veralteten</strong> Browser. Bitte <a href="http://browsehappy.com/">aktualisieren
         Sie Ihren Browser</a> um OpenDataHub zu benutzen.</p>
@@ -140,6 +141,8 @@
 <script src="bower_components/stacktrace-js/stacktrace.js"></script>
 <script src="bower_components/ES6StringFormat/ES6StringFormat.js"></script>
 <script src="bower_components/angular-scroll/angular-scroll.js"></script>
+<script src="bower_components/highlightjs/highlight.pack.js"></script>
+<script src="bower_components/angular-highlightjs/build/angular-highlightjs.js"></script>
 <!-- endbower -->
 
 <!-- endbuild -->
@@ -160,21 +163,22 @@
 <script src="scripts/utils/toast.service.js"></script>
 <script src="scripts/controllers/root.controller.js"></script>
 <script src="scripts/main/services/transformation.service.js"></script>
-<script src="scripts/main/controllers/transformation.detail.controller.js"></script>
-<script src="scripts/main/directives/preview.js"></script>
 <script src="scripts/main/controllers/transformation.create.controller.js"></script>
-<script src="scripts/main/directives/transformation.validation.js"></script>
+<script src="scripts/main/directives/focus.js"></script>
+<script src="scripts/main/directives/preview.js"></script>
 <script src="scripts/main/controllers/package.controller.js"></script>
+<script src="scripts/main/directives/transformation.validation.js"></script>
+<script src="scripts/main/controllers/offer.controller.js"></script>
 <script src="scripts/main/services/document.service.js"></script>
 <script src="scripts/main/services/format.service.js"></script>
 <script src="scripts/main/services/package.service.js"></script>
 <script src="scripts/main/services/transformation.selection.service.js"></script>
-<script src="scripts/main/directives/focus.js"></script>
-<script src="scripts/main/controllers/offer.controller.js"></script>
+<script src="scripts/main/controllers/transformation.detail.controller.js"></script>
 <script src="scripts/main/controllers/odhql-console.js"></script>
 <script src="scripts/main/controllers/navbar.controller.js"></script>
 <script src="scripts/main/controllers/main.controller.js"></script>
 <script src="scripts/main/controllers/document.detail.controller.js"></script>
+<script src="scripts/main/controllers/confirmation.controller.js"></script>
 <script src="scripts/main/controllers/about.controller.js"></script>
 <script src="scripts/auth/services/user.service.js"></script>
 <script src="scripts/auth/controllers/userprofile.controller.js"></script>

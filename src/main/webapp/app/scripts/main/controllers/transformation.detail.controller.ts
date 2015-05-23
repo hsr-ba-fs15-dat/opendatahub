@@ -57,7 +57,6 @@ module odh.main {
                 this.name = data.name;
                 this.description = data.description;
                 this.transformation = data.transformation;
-                console.log(data);
                 if (!data.is_template) {
                     this.previewTransformation = data.transformation;
                 } else {
@@ -202,6 +201,7 @@ module odh.main {
             this.transformationObject.description = this.description;
             this.transformationObject.put().then(() => {
                 this.ToastService.success('Transformation gespeichert');
+                this.$state.reload();
             }).catch((error) => {
                 this.ToastService.failure('Es ist ein Fehler aufgetreten');
                 console.error(error);
@@ -229,7 +229,7 @@ module odh.main {
 
         public remove() {
             var instance = this.$modal.open({
-                templateUrl: 'views/transformation.deleteconfirmation.html',
+                templateUrl: 'views/deleteconfirmation.html',
                 controller: 'DeleteTransformationController as vm'
             });
             instance.result.then(() => {

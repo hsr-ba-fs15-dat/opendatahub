@@ -1,12 +1,46 @@
 <div ng-controller="TransformationDetailController as vm">
     <odh-spinner show-while="vm.loading">
         <form name="form" class="form" ng-submit="vm.submit()">
-            <h1>{{ vm.name }}<i class="fa fa-eye" ng-show="vm.private" tooltip="Dieses Dokument ist privat"></i></h1>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Metadaten
+                </div>
+                <div class="panel-body">
+                    <div class="row" ng-show="vm.transformationObject">
+                        <div class="col-sm-10 col-xs-7">
+                            <h1 class="">{{ ::vm.name }}<i class="fa fa-eye" ng-show="::vm.private"
+                                                           tooltip="Dieses Dokument ist privat"></i>
+                            </h1>
 
-            <p>{{ vm.description }}</p>
+                            <p class="">
+                                <strong>Beschreibung:</strong>
+                                {{ ::vm.description }}</p>
 
-            <p ng-show="vm.previewError">{{ vm.previewError }}</p>
+                            <p>
+                                <strong>Besitzer:</strong>
+                                {{::vm.transformationObject.owner.first_name}}
+                                {{::vm.transformationObject.owner.last_name}}
+                                ({{::vm.transformationObject.owner.username}})
+                            </p>
 
+
+                        </div>
+                        <div class="col-sm-2 col-xs-5 text-center top-buffer">
+                            <p>
+                                <i ng-class="!vm.transformationObject.is_template?'fa-file-text-o':'fa-file-o'"
+                                   class="fa fa-5x"></i>
+
+                            </p>
+
+                            <span class="">
+                                {{::vm.transformationObject.is_template?'Template':'Transformation'}}
+                            </span>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
             <div class="panel panel-default">
                 <div class="panel-heading">
                     Vorschau
@@ -32,9 +66,53 @@
 
             <div class="panel panel-default clearfix" style="margin-top: 2em">
                 <div class="panel-heading" ng-click="vm.showExpertPanel = !vm.showExpertPanel">
-                    Advanced
+                    Bearbeiten
                 </div>
                 <div class="panel-body" id="expertPanel" collapse="!vm.showExpertPanel">
+                    <div class="form-group" ng-class="{'has-error': form.documentname.$invalid && vm.submitted}">
+                        <label for="transformationname">Name/Titel</label>
+
+                        <input name="transformationname" type="text"
+                               placeholder="Name der Transformation"
+                               class="form-control"
+                               ng-model="vm.name"
+                               required>
+
+                        <div ng-messages="form.transformationname.$error" ng-show="vm.submitted">
+                    <span class="help-block">
+                        <div ng-message="required">Bitte geben Sie einen Namen an</div>
+                    </span>
+                        </div>
+                    </div>
+                    <!-- Textarea -->
+                    <div class="form-group" ng-class="{'has-error': form.description.$invalid && vm.submitted}">
+                        <label class="control-label" for="description">Beschreibung</label>
+
+                <textarea class="form-control" id="description" name="description"
+                          ng-model="vm.description"
+                          placeholder="z.B. Vereint alle Verkehrshindernisse der Schweiz"
+                          required
+                          rows="4"
+                        ></textarea>
+
+
+                        <div ng-messages="form.description.$error" ng-show="doc.submitted">
+                    <span class="help-block">
+                        <div ng-message="required">Bitte geben Sie eine Beschreibung an</div>
+                    </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="name">Privat</label>
+
+
+                        <div class="checkbox">
+                            <label>
+                                <input id="name" name="name" type="checkbox" value="true"
+                                       ng-model="vm.private">
+                            </label>
+                        </div>
+                    </div>
                     <a ui-sref="odhql-help" target="_blank"><i class="fa fa-question-circle"></i></a>
                     <!-- Textarea -->
                     <alert ng-repeat="alert in vm.alerts" type="{{ alert.type }}" close="vm.closeAlert($index)">
@@ -110,7 +188,8 @@
                                     <table class="table table-striped table-hover">
                                         <tr ng-repeat="table in vm.loadedTablesArray">
                                             <td data-title="'Name'">{{ table.name }}</td>
-                                            <td data-title="'Meta'">{{ table.count }} Zeilen / {{ table.columns.length
+                                            <td data-title="'Meta'">{{ table.count }} Zeilen / {{
+                                                table.columns.length
                                                 }}
                                                 Spalten
                                             </td>

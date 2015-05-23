@@ -17,10 +17,14 @@
         <odh-spinner show-while="docs.loading" class="table-responsive">
             <table class="table table-striped table-hover" ng-table="docs.tableParams">
                 <tr ng-repeat="row in $data">
+
                     <td data-title="'Titel'" sortable="'name'" header-class="'text-left'" class="col-sm-3">
-                        <i ng-class="row.type === 'transformation' ? 'fa-filter': 'fa-table'" class="fa"></i>
+                        <i ng-class="row.type === 'transformation' ? (row.template?'fa-file-o':'fa-file-text-o'): 'fa-table'"
+                           class="fa"
+                           tooltip="{{ row.type === 'document' ? 'Dokument' : 'Transformation'+(row.template?' (Template)':'') }}"></i>
                         <a ng-click="docs.detail(row)">
                             {{ row.name | characters:50 : true }}
+
                         </a>
                         <i class="fa fa-eye" ng-show="row.private" tooltip="Dieses Dokument ist privat"></i></td>
                     <td data-title="'Beschreibung'" sortable="'description'" header-class="'text-left'"
@@ -38,4 +42,3 @@
         </odh-spinner>
     </div>
 </div>
-

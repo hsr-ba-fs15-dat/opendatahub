@@ -50,7 +50,7 @@ class Command(BaseCommand):
         (formats.KML, 'trobdb/Baustellen.kml',),
         (formats.CSV, 'perf/employees.csv',),
         (formats.CSV, 'perf/children.csv',),
-        (formats.INTERLIS1, 'interlis1/Bahnhoefe.ili', 'interlis1/Bahnhoefe.itf'),
+        (formats.Other, 'interlis1/Bahnhoefe.ili', 'interlis1/Bahnhoefe.itf'),  # FIXME GDAL2: INTERLIS1
         (formats.Excel, 'trobdb/Baustellen Mai 2015.xls',),
         (formats.Shapefile,) + tuple(
             'mopub/GEB_Gebaeudeeingang.{}'.format(ext) for ext in ['dbf', 'prj', 'shp', 'shx']),
@@ -71,7 +71,7 @@ class Command(BaseCommand):
         ('trobdb/Sanitize-Baustellen-kml.odhql', 'Sanitize Baustellen.kml'),
         ('trobdb/Baustellen-kml.odhql', 'TROBDB: Baustellen.kml'),
         ('trobdb/trobdb-union.odhql', 'TROBDB: Alle Daten'),
-        #('mopub/myaddresses-geometry.odhql', 'MOPUB: Adressen mit Geometrie')
+        # ('mopub/myaddresses-geometry.odhql', 'MOPUB: Adressen mit Geometrie')
     ]
 
     def add_document(self, desc, format, name):
@@ -94,8 +94,11 @@ class Command(BaseCommand):
             file_model = FileModel(file_name=f.name, data=f.stream.getvalue(), file_group=file_group)
             file_model.save()
 
-        if self.parse:
-            file_group.to_file_group().to_df()  # force parse & caching
+        if self.parse and format != formats.Other:
+            try:
+                file_group.to_file_group().to_df()  # force parse & caching
+            except formats.NoParserException:
+                raise Exception('Failed to parse document {}'.format(doc.name))
 
         db.reset_queries()
 

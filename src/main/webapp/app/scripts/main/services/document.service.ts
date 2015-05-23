@@ -8,7 +8,8 @@ module odh.main {
         private documents:restangular.IElement;
 
 
-        constructor(private $log:ng.ILogService, private Restangular:restangular.IService) {
+        constructor(private $log:ng.ILogService, private Restangular:restangular.IService,
+                    private ToastService:utils.ToastService) {
 
             this.documents = this.Restangular.all('document');
         }
@@ -39,6 +40,15 @@ module odh.main {
 
         public remove(transformation) {
             return this.Restangular.one('document', transformation.id).remove();
+        }
+
+        public update(pkg) {
+            pkg.patch().then(() => {
+                this.ToastService.success('Dokument Aktualisiert!');
+            }).catch(data => {
+                console.error(data);
+                this.ToastService.failure('Es ist ein Fehler aufgetreten!');
+            });
         }
     }
 

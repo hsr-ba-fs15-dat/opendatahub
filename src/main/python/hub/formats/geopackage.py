@@ -6,6 +6,7 @@ import os
 
 from hub.formats.core import Format, Parser
 from hub.formats.geobase import GeoFormatterBase
+from hub.utils import ogr2ogr
 
 
 class GeoPackage(Format):
@@ -14,6 +15,7 @@ class GeoPackage(Format):
     Universelles Format für Vektor- und Raster-basierte Geo-Daten.
     """
     extension = 'gpkg'
+    ogr_format = ogr2ogr.GPKG
 
     @classmethod
     def is_format(cls, file, *args, **kwargs):
@@ -22,13 +24,13 @@ class GeoPackage(Format):
 
 class GeoPackageFormatter(GeoFormatterBase):
     targets = GeoPackage,
+
     """
     Formatter for GeoPackage files, a format based on sqlite.
 
     The GPKG speec does not allow non-spatial tables in non-extended GeoPackage, and GDAL does not support them
     at all before version 2.0 (http://www.gdal.org/drv_geopackage.html).
     """
-    # targets = formats.GeoPackage,
 
     @classmethod
     def format(cls, dfs, name, format, *args, **kwargs):

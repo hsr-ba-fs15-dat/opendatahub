@@ -8,10 +8,11 @@ Tests for formatters
 from hub.tests.testutils import TestBase
 from hub.structures.file import FileGroup
 from hub.formats import Formatter
+from hub.formats.geopackage import GeoPackage
 
 
 class FormatsTests(TestBase):
-    TO_FORMATS = set(Formatter.formatters_by_target.keys())
+    TO_FORMATS = set(Formatter.formatters_by_target.keys()) - {GeoPackage}  # FIXME GDAL2
 
     TESTS = {
         # first element in considered the main file

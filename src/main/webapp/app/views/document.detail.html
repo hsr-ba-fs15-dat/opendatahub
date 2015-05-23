@@ -1,23 +1,51 @@
-<div>
-    <h1>{{ doc.pkg.name }} <i class="fa fa-eye" ng-show="doc.pkg.private" tooltip="Dieses Dokument ist privat"></i></h1>
-
-    <p>{{ doc.pkg.description }}</p>
-
-    <p><em>Hinzugefügt: {{ doc.pkg.created_at | amCalendar }}</em></p>
-
-    <div class="btn-toolbar">
-        <button class="btn btn-danger" ng-click="doc.remove()" ng-show="doc.allowDelete">Löschen</button>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Metadaten
     </div>
-</div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-sm-10 col-xs-7">
+                <h1 class="">{{ ::doc.pkg.name }} <i class="fa fa-eye" ng-show="::vm.private"
+                                                     tooltip="Dieses Dokument ist privat"></i>
+                </h1>
 
-<h3>Dateien</h3>
-<odh-spinner show-while="doc.loading">
-    <div class="panel panel-default" ng-repeat="group in doc.fileGroups">
-        <div class="panel-body">
-            <div class="row-same-height row-full-height">
-                <div class="col-md-4 col-full-height col-xs-height" style="vertical-align:middle">
-                    <span ng-repeat="file in group.files">{{ file.file_name }}{{ $last ? '' : ', ' }}</span>
-                </div>
+                <p ng-show="::doc.pkg.description">
+                    <strong>Beschreibung:</strong>
+                    {{ ::doc.pkg.description }}</p>
+
+                <p ng-show="::doc.pkg.owner">
+                    <strong>Besitzer:</strong>
+                    {{::doc.pkg.owner.first_name}}
+                    {{::doc.pkg.owner.last_name}}
+                    ({{::doc.pkg.owner.username}})
+                </p>
+
+                <p ng-show="doc.pkg.created_at">
+                    <strong>Hinzugefügt:</strong>
+                    {{ doc.pkg.created_at | amCalendar }}
+                </p>
+
+                <p><strong>Enthaltene Dateien:</strong></p>
+
+                <p ng-repeat="fg in doc.fileGroups">
+                    <span ng-repeat="file in fg.files">{{ file.file_name }} ({{fg.file_format}}){{ $last ? '' : ', ' }}</span>
+                </p>
+
+                <p ng-repeat="fg in doc.fileGroups">
+
+                <p ng-repeat="url in fg.urls"><strong>{{url.url_format}} :</strong>{{url.source_url}}
+                    ({{doc.getRefreshRate(url.refresh_after)}})</p>
+                </p>
+            </div>
+
+
+            <div class="col-sm-2 col-xs-5 text-center top-buffer">
+                <p>
+                    <i class="fa fa-5x fa-table"></i>
+
+                </p>
+                <span>Dokument</span>
+
                 <div class="btn-group pull-right" ng-if="doc.previewSuccess">
                     <a data-target="#" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
                         Herunterladen
@@ -32,12 +60,84 @@
                     </ul>
                 </div>
             </div>
+        </div>
 
-            <div class="row" ng-repeat="preview in group.preview">
-                <div class="col-md-12">
-                    <odh-preview pkg="preview" success="doc.previewSuccess"></odh-preview>
+
+    </div>
+</div>
+
+
+<odh-spinner show-while="doc.loading">
+
+    <div ng-repeat="group in doc.fileGroups">
+        <div class="panel panel-default" ng-repeat="preview in group.preview">
+            <div class="panel-heading">
+                {{ preview.unique_name }}
+                <span ng-repeat="file in group.files">{{$first ? '(' : ''}}{{ file.file_name }}{{ $last ? ')' : ', ' }}</span>
+
+            </div>
+            <div class="panel-body">
+                <div class="row" ng-class="$last?'':'bottom-buffer'">
+                    <div class="col-md-12">
+                        <odh-preview pkg="preview" success="doc.previewSuccess"></odh-preview>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </odh-spinner>
+<form ng-show="doc.allowDelete" class="panel panel-default">
+    <div class="panel-heading">Dokument bearbeiten</div>
+    <div class="panel-body">
+
+
+        <div class="form-group" ng-class="{'has-error': form.documentname.$invalid && vm.submitted}">
+            <label for="documentname">Name/Titel</label>
+
+            <input id="documentname" name="documentname" type="text"
+                   placeholder="Name vom Dokument"
+                   class="form-control"
+                   ng-model="doc.pkg.name"
+                   required>
+
+            <div ng-messages="form.documentname.$error" ng-show="doc.submitted">
+                    <span class="help-block">
+                        <div ng-message="required">Bitte geben Sie einen Namen an</div>
+                    </span>
+            </div>
+        </div>
+        <!-- Textarea -->
+        <div class="form-group" ng-class="{'has-error': form.description.$invalid && vm.submitted}">
+            <label class="control-label" for="description">Beschreibung</label>
+
+                <textarea class="form-control" id="description" name="description"
+                          ng-model="doc.pkg.description"
+                          placeholder="z.B. Vereint alle Verkehrshindernisse der Schweiz"
+                          required
+                          rows="4"
+                        ></textarea>
+
+
+            <div ng-messages="form.description.$error" ng-show="doc.submitted">
+                    <span class="help-block">
+                        <div ng-message="required">Bitte geben Sie eine Beschreibung an</div>
+                    </span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label" for="name">Privat</label>
+
+
+            <div class="checkbox">
+                <label>
+                    <input id="name" name="name" type="checkbox" value="true"
+                           ng-model="doc.pkg.private">
+                </label>
+            </div>
+        </div>
+        <div class="btn-toolbar">
+            <button class="btn btn-primary pull-right" ng-click="doc.update()">Aktualisieren</button>
+            <button class="btn btn-danger pull-right" ng-click="doc.remove()" ng-show="doc.allowDelete">Löschen</button>
+        </div>
+    </div>
+</form>

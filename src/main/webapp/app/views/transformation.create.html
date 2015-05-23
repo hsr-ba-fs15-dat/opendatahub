@@ -1,174 +1,15 @@
 <div ng-controller="TransformationCreateController as vm">
     <form name="form" class="form" ng-submit="vm.submit()">
         <tabset>
-            <tab heading="Start">
-                <div id="well">
-                    <h2>Transformation Vorbereiten:</h2>
-                    <h4>Bitte lesen Sie diese Punkte durch, bevor Sie beginnen:</h4>
-                    <ul>
-                        <li>Sobald Sie den Assistenten verlassen und das Query manuell verändern
-                            <strong>können Sie nicht mehr zurück kehren!</strong>
-
-                        </li>
-                        <li>Eine generische Transformation kann nur auf Syntax geprüft werden und liefert keine Vorschau
-                        </li>
-
-                    </ul>
-
-                    <h4>Gehen Sie in folgenden Schritten vor, um eine Transformation mit dem Assistenten zu
-                        erstellen:</h4>
-                    <ul>
-                        <li>Starten Sie den Assistenten</li>
-                        <li>Wählen Sie die Tabellen aus, die Sie verwenden möchten</li>
-                        <li>Wählen Sie die Felder in den Tabellen aus die Sie anzeigen möchten</li>
-                        <li>Verbinden Sie die Tabellen mittels JOIN oder UNION</li>
-                        <li>Sie können nun zum manuellen Modus weiterfahren</li>
-                        <li>Sie sehen den generierten Syntax jeweils am Ende der Seite</li>
-                    </ul>
-                </div>
-            </tab>
-            <tab ng-repeat="tab in tabs" heading="{{tab.title}}" active="tab.active" disabled="tab.disabled">
-                {{tab.content}}
-            </tab>
-            <tab disabled="vm.forceManualEdit">
+            <tab ng-repeat="tab in vm.tabs" active="tab.active" disabled="tab.disabled()" select="tab.open()">
                 <tab-heading>
-                    <i class="fa fa-magic"></i> Assistent
+                    <i class="fa" ng-class="tab.icon" ng-if="tab.icon"></i>
+                    {{tab.heading}}
                 </tab-heading>
-                <div class="container">
+                <div ng-include="tab.template" class="top-buffer"></div>
 
-                    <odh-choose-transformation
-                            add-remove-table="vm.addRemoveTable(table)"
-                            check-table-selected="vm.checkTableSelected(table)"
-                            ></odh-choose-transformation>
-
-                    <div class="well" ng-repeat="table in vm.allTables()">
-                        <h2>{{ table.uniqueId }}</h2>
-                        Alias: <input type="text" ng-model="table.uniqueIdAlias" ng-change="vm.generate()"/><br/><br/>
-                        Wählen Sie die benötigten Felder aus (Klick) und wählen Sie die Spaltennamen:
-
-                        <div class="table-responsive">
-                            <script id="previewTableHeader" type="text/ng-template">
-                                <tr>
-                                    <th ng-repeat="col in $columns"
-                                        class="text-center"
-                                        ng-class="vm.getFields(table.uniqueId).indexOf(col) > -1 ? 'selected': ''"
-                                        ng-click="vm.addField(col, table)">
-                                        <label>
-                                            <small>[{{ table.types[col.name] }}]</small>
-
-                                        <span class="clearer fa fa-times" ng-click="col.alias = col.name"
-                                              ng-show="col.name != col.alias"></span>
-                                            <br/>
-                                            <input type="text" ng-model="col.alias"
-                                                   ng-model-options="{ debounce: 1000 }"
-                                                   ng-change="vm.generate()" class="hasclear"/>
-
-                                        </label>
-                                    </th>
-                                    <!--<th>Columns:{{columns.length}}</th>-->
-                                </tr>
-
-                            </script>
-                            <table ng-table-dynamic="table.ngTableParams with table.cols"
-                                   template-header="previewTableHeader"
-                                   class="table table-striped ng-table-responsive">
-                                <tr ng-repeat="row in $data">
-                                    <td ng-repeat="col in $columns"
-                                        ng-class="vm.getFields(table.uniqueId).indexOf(col) > -1 ? 'selected': ''"
-                                        ng-click="vm.addField(col, table)">
-                                        <span ng-if="row[col.field].length <= 50">{{ row[col.field] }}</span>
-                                    <span ng-if="row[col.field].length > 50 " ng-click="col.showAll = true">
-                                        {{row[col.field] | limitTo : 50}}...</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td ng-repeat="col in $columns"
-                                        ng-click="vm.addRemoveField(col, table)">
-                                        <i class="fa" ng-class="vm.getFields(table.uniqueId).indexOf(col) > -1 ?
-                                     'fa-minus': 'fa-plus'"></i>
-                                        Feld {{ vm.getFields(table.uniqueId).indexOf(col) > -1 ?
-                                        'entfernen': 'hinzufügen' }}
-                                    </td>
-
-                                </tr>
-                            </table>
-
-                        </div>
-                        <a ng-click="vm.addRemoveTable(table)">Tabelle entfernen</a><br/>
-
-
-                        <div ng-show="$index > 0">
-                            <label>Möchten Sie diese Tabelle mit einer anderen Verbinden?
-                                <select
-                                        ng-options="opt as opt.label for opt in vm.getJoinOperations()"
-                                        ng-model="vm.selection.expression[table.uniqueId].operation"
-                                        >
-                                </select>
-                            </label><br/>
-                            <label ng-show="vm.joinOperation(table) === vm.getJoinOperations().join">
-                                Welches Lokale Feld soll verwendet werden?
-                                <select
-                                        ng-options="opt as (opt.alias == opt.name?opt.alias+'['+opt.type+']':(opt.alias + ' [' + opt.name + ']'))
-                         for opt in table.cols"
-                                        ng-model="vm.selection.expression[table.uniqueId].joinField">
-                                </select>
-                            </label><br/>
-                            <label ng-show="vm.joinOperation(table) === vm.getJoinOperations().join &&
-             vm.selection.expression[table.uniqueId].joinField">
-                                Auf welche Tabelle soll gejoined werden?
-                                <select
-                                        ng-options="opt as opt.uniqueId for opt in vm.selection.joinTargets | filter:{uniqueId:'!'+table.uniqueId, }"
-                                        ng-model="vm.selection.expression[table.uniqueId].joinTable">
-                                </select>
-                            </label>
-                            <label ng-show="vm.joinOperation(table) == vm.getJoinOperations().join &&
-            vm.selection.expression[table.uniqueId].joinTable">
-                                <select
-                                        ng-options="opt as (opt.alias == opt.name?opt.alias+'['+opt.type+']':(opt.alias + ' [' + opt.name + ']'))
-                         for opt in vm.selection.expression[table.uniqueId].joinTable.cols
-                         | filter:{type:vm.selection.expression[table.uniqueId].joinField.type, }"
-                                        ng-model="vm.selection.expression[table.uniqueId].foreignKey">
-                                </select>
-                            </label><br/>
-                        </div>
-                    </div>
-                    <label class="control-label" for="useQuotes">
-                        <input id=useQuotes" type="checkbox" ng-model="vm.quotes" ng-change="vm.quotes = !vm.quotes"/>
-                        Anführungszeichen immer verwenden.
-                    </label>
-
-                    <div class="col-sm-12" ui-ace="{onLoad: vm.aceLoaded}" ng-model="vm.odhqlInputString"
-                         ng-readonly="true"></div>
-                    <alert ng-show="form.odhqlinput.$invalid" type="warning">
-                        <strong>Das Query enthält ungültigen Syntax.</strong>
-
-                        <p>{{vm.errorMessage.error}} (Line: {{vm.errorMessage.lineno}},
-                            Col: {{vm.errorMessage.col}}) at {{vm.errorMessage.line}}</p>
-                    </alert>
-                </div>
             </tab>
 
-            <tab>
-                <tab-heading>
-                    <i class="fa fa-pencil"></i> Manuelles Bearbeiten
-                </tab-heading>
-                <div class="container">
-                    <alert ng-repeat="alert in vm.alerts" type="{{ alert.type }}" close="vm.closeAlert($index)">
-                        <strong>{{ alert.title }}</strong>
-                        {{ alert.msg }}
-                    </alert>
-                    <a ui-sref="odhql-help" target="_blank"><i class="fa fa-question-circle"></i></a>
-
-                    <div class="col-sm-12" ui-ace="{onLoad: vm.aceLoaded}" ng-model="vm.odhqlInputString"
-                         ng-model-options="{ debounce: 500 }" ng-change="vm.lockAssistant()"></div>
-                    <alert ng-show="form.odhqlinput.$invalid" type="warning">
-                        <strong>Das Query enthält ungültigen Syntax.</strong>
-
-                        <p>{{vm.errorMessage.error}} (Line: {{vm.errorMessage.lineno}},
-                            Col: {{vm.errorMessage.col}}) at {{vm.errorMessage.line}}</p>
-                    </alert>
-                </div>
-            </tab>
 
         </tabset>
         <div ng-show="vm.progress" class="col-md-offset-3 col-md-6">
@@ -176,17 +17,41 @@
                          value="offer.progress" type="info">
             </progressbar>
         </div>
-        <div class="container">
-            <odh-preview preview="vm.previewObject"></odh-preview>
+
+        <div class="panel panel-default" ng-show="vm.odhqlInputString">
+            <div class="panel-heading">Vorschau
+                <button type="button" id="preview" name="preview"
+                        class="btn btn-primary pull-right btn-sm btn-in-header"
+                        ng-click="vm.preview()" ng-disabled="vm.transformationPreview !== ''">
+                    <i class="fa fa-refresh"></i> Vorschau
+                </button>
+            </div>
+            <div class="panel-body">
+                <alert ng-repeat="alert in vm.alerts" type="{{ alert.type }}" close="vm.closeAlert($index)">
+                    <strong>{{ alert.title }}</strong>
+                    {{ alert.msg }}
+                </alert>
+                <alert ng-show="form.odhqlinput.$invalid && vm.transformationPreview !== ''" type="warning">
+                    <strong>Das Query enthält ungültigen Syntax.</strong>
+
+                    <p>{{vm.errorMessage.error}} (Line: {{vm.errorMessage.lineno}},
+                        Col: {{vm.errorMessage.col}}) at {{vm.errorMessage.line}}</p>
+                </alert>
+                <odh-preview preview="vm.previewObject"></odh-preview>
+
+            </div>
         </div>
-        <div class="container">
-
-
-            <div ng-if="vm.odhqlInputString" class="well">
-
-
+        <div ng-if="vm.odhqlInputString" class="panel panel-default">
+            <div class="panel-heading">Speichern
+                <button id="add" name="add" class="btn btn-primary pull-right btn-sm btn-in-header"
+                        ng-disabled="form.$invalid || form.$pending">
+                    <i class="fa fa-floppy-o"></i> Speichern
+                </button>
+            </div>
+            <div class="panel-body">
                 <fieldset>
-                    <div class="form-group" ng-class="{'has-error': form.TransformationName.$invalid && vm.submitted}">
+                    <div class="form-group"
+                         ng-class="{'has-error': form.TransformationName.$invalid && vm.submitted}">
                         <label for="TransformationName">Name/Titel</label>
 
                         <input id="TransformationName" name="TransformationName" type="text"
@@ -233,38 +98,35 @@
                     </div>
                     <div class="form-group" ng-class="{'has-error': form.description.$invalid && vm.submitted}">
 
-                        <input type="hidden" ng-model="vm.odhqlInputString"
+                        <input type="hidden" ng-model="vm.transformationPreview"
                                class="form-control" name="odhqlinput"
                                odh-validate-transformation="vm.errorMessage"
                                preview-object="vm.previewObject"/>
                         <span ng-show="form.odhqlinput.$pending">Überprüfe Abfrage...</span>
 
                     </div>
-                    <div class="form-group">
-                        <label class="col-md-4 control-label" for="add"></label>
 
-                        <div class="col-md-8">
-                            <button id="add" name="add" class="btn btn-primary pull-right"
-                                    ng-disabled="form.$invalid || form.$pending">
-                                Speichern
-                            </button>
-
-                        </div>
-                    </div>
 
                     <div class="row">
-
-                        <div class="col-md-12" ng-messages="form.odhqlinput.$error" ng-show="vm.submitted">
-                    <span class="help-block">
-                        <div ng-message="required">Bitte geben Sie eine gültige OdhQL Abfrage vor dem Speichern an.
-                        </div>
+                        <div class="col-md-12" ng-messages="form.$error">
+                    <span class="help-block" ng-message="transformation">
+                        Bitte geben Sie eine gültige OdhQL Abfrage vor dem Speichern an und erstellen Sie eine Vorschau.
+                    </span>
+                    <span class="help-block" ng-message="required">
+                       Bitte füllen Sie alle Felder aus.
                     </span>
                         </div>
-                    </div>
-                </fieldset>
-
             </div>
-        </div>
+                </fieldset>
+            </div>
+            <div class="panel-footer"> &nbsp;
+                <button id="add" name="add" class="btn btn-primary pull-right btn-sm btn-in-header"
+                        ng-disabled="form.$invalid || form.$pending">
+                    <i class="fa fa-floppy-o"></i> Speichern
+                </button>
+            </div>
+</div>
+
     </form>
 </div>
 

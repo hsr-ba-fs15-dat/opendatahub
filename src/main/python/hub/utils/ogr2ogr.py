@@ -53,14 +53,14 @@ class OgrFormat(object):
 
 
 GML = OgrFormat('gml', 'GML', False)
-# GPKG = OgrFormat('gpkg', 'GPKG', False)
+GPKG = OgrFormat('gpkg', 'GPKG', False)
 SHP = OgrFormat('shp', 'ESRI Shapefile', False)
 CSV = OgrFormat('csv', 'CSV', False)
 GEO_JSON = OgrFormat('json', 'GeoJSON', False)
 KML = OgrFormat('kml', 'KML', False)
 WFS = OgrFormat('wfs', 'WFS', False)
 
-INTERLIS_1 = OgrFormat(['itf', 'ili', 'imd'], 'Interlis 1', True)
+#  INTERLIS_1 = OgrFormat(['itf', 'ili', 'imd'], 'Interlis 1', True) #  FIXME GDAL2
 
 
 def _rand_string(n):

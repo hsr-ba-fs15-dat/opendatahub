@@ -22,8 +22,10 @@ module odh.main {
             this.retrieveData();
             this.FormatService.getAvailableFormats().then(data => {
                 var results = this.FormatService.sortByLabel(data.data);
-                results.push({name: null, label: 'Original', description: 'Unveränderte Daten', example: null,
-                    extension: null});
+                results.push({
+                    name: null, label: 'Original', description: 'Unveränderte Daten', example: null,
+                    extension: null
+                });
                 this.availableFormats = results;
             });
         }
@@ -39,7 +41,7 @@ module odh.main {
 
         public remove() {
             var instance = this.$modal.open({
-                templateUrl: 'views/transformation.deleteconfirmation.html',
+                templateUrl: 'views/deleteconfirmation.html',
                 controller: 'DeleteTransformationController as vm',
                 resolve: {
                     docId: this.documentId
@@ -55,6 +57,25 @@ module odh.main {
             );
         }
 
+        public update() {
+            this.DocumentService.update(this.pkg);
+        }
+
+        public getRefreshRate(refreshrate:number) {
+            refreshrate = refreshrate / 60;
+            if (refreshrate < 60) {
+                return refreshrate + ' Minuten';
+            }
+            refreshrate = refreshrate / 60;
+            if (refreshrate < 24) {
+                return refreshrate + (refreshrate === 1 ? ' Stunde' : ' Stunden');
+            }
+            refreshrate = refreshrate / 24;
+
+            return refreshrate + (refreshrate === 1 ? ' Tag' : ' Tage');
+
+        }
+
         private retrieveData() {
             if (typeof(this.documentId) !== 'undefined') {
                 this.pkg = this.DocumentService.get(this.documentId)
@@ -63,8 +84,6 @@ module odh.main {
                         this.pkg = data;
                         this.allowDelete = this.$auth.isAuthenticated() &&
                         data.owner.id === this.$auth.getPayload().user_id;
-
-                        console.log(data);
                     })
                     .catch(error => {
                         this.ToastService.failure('Dokument wurde nicht gefunden');

@@ -57,7 +57,8 @@ module odh.main {
         addRemoveField(col:any, table:main.ITable):void;
         addField(col:any, table:main.ITable):void;
         generateTransformation():string;
-        toggleQuotes():void;
+        setQuotes(value:boolean):void;
+        getQuotes():boolean;
         addRemoveTable(item:main.ITable):void;
         getTableByName(tableName:string):main.ITable;
         tableSelected(table:main.ITable):boolean;
@@ -165,11 +166,16 @@ module odh.main {
         }
 
         public parse(transformation:string) {
-            return this.$http.post(this.UrlService.get('parse'), {
-                params: {
-                    query: transformation
-                }
-            });
+            if (transformation && transformation !== '') {
+                return this.$http.post(this.UrlService.get('parse'), {
+                    params: {
+                        query: transformation
+                    }
+                });
+            } else {
+                return this.$q.reject('No Transformation given! This should not happen!');
+            }
+
         }
 
     }

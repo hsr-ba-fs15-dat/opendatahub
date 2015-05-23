@@ -20,6 +20,7 @@ module openDataHub {
             'restangular',
             'truncate',
             'duScroll',
+            'hljs',
             'angularMoment',
             'openDataHub.auth',
             'openDataHub.utils',
@@ -28,10 +29,14 @@ module openDataHub {
 
         .config(($stateProvider:ng.ui.IStateProvider, $urlRouterProvider:ng.ui.IUrlRouterProvider,
                  UrlServiceProvider:odh.utils.UrlService, paginationConfig:ng.ui.bootstrap.IPaginationConfig,
-                 RestangularProvider:restangular.IProvider, $httpProvider:ng.IHttpProvider, $provide) => {
+                 RestangularProvider:restangular.IProvider, $httpProvider:ng.IHttpProvider, $provide,
+                 hljsServiceProvider:any) => {
 
             var API_PREFIX = '/api/v1/';
-
+            hljsServiceProvider.setOptions({
+                // replace tab with 4 spaces
+                tabReplace: '    '
+            });
             $provide.decorator('$exceptionHandler', ['$delegate', '$injector', function ($delegate, $injector) {
                 return function (exception, cause) {
                     var $http:ng.IHttpService = $injector.get('$http');

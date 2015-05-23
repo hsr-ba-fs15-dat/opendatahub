@@ -83,7 +83,6 @@ module odh.main {
                 return this.$http.get(preview, {params: params});
             };
             if (typeof pkg === 'object') {
-                console.log('Type is ', pkg.type);
                 if (pkg.type === 'preview') {
                     this.$log.debug('Got a Preview. Fetching new one!');
                     if (isUrl(pkg.preview)) {
@@ -97,7 +96,6 @@ module odh.main {
                         this.$log.debug('There is a URL Field. Will fetch it from there!');
                         fromPreviewUrl(pkg.url).then(result => {
                             if (result) {
-                                console.log(result, 'url');
                                 defer.resolve(result.data[0]);
                             }
                         }).catch(console.error);
@@ -112,12 +110,32 @@ module odh.main {
 
                 }
                 if (pkg.type === 'transformation') {
-                    this.$log.debug('Got a Transformation. Fetching a Preview of it!');
-                    if (isUrl(pkg.preview)) {
-                        fromPreviewUrl(pkg.preview).then(result => {
-                            defer.resolve(result.data[0]);
+                    if (!pkg.is_template) {
+                        this.$log.debug('Got a Transformation. Fetching a Preview of it!');
+                        if (isUrl(pkg.preview)) {
+                            fromPreviewUrl(pkg.preview).then(result => {
+                                defer.resolve(result.data[0]);
+                            });
+                        } else {
+                            defer.reject({
+                                data: {
+                                    type: 'error',
+                                    error: 'Fehler beim laden des Previews. Fehlerhafte Serverabfrage'
+                                }
+                            });
+                        }
+                    }
+                    if (pkg.is_template) {
+                        this.$log.debug('Got a Transformation. But it\'s a Template. Done nothing!');
+                        defer.reject({
+                            data: {
+                                type: 'info',
+                                error: 'Es kann keine Vorschau eines Templates erstellt werden'
+                            }
                         });
                     }
+
+
                 }
                 if (pkg.type === 'document') {
                     this.$log.debug('Got a document. Fetching a Preview of it!');
