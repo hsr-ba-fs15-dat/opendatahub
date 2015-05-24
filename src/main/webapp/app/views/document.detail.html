@@ -46,19 +46,7 @@
                 </p>
                 <span>Dokument</span>
 
-                <div class="btn-group pull-right" ng-if="doc.previewSuccess">
-                    <a data-target="#" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
-                        Herunterladen
-                        <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li ng-repeat="format in doc.availableFormats">
-                            <a ng-click="doc.downloadAs(group, format.name)">{{ format.label }}
-                                <span ng-if="format.extension">({{ format.extension }})</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+
             </div>
         </div>
 
@@ -77,6 +65,19 @@
 
             </div>
             <div class="panel-body">
+                <div class="btn-group pull-right" ng-if="doc.previewSuccess">
+                    <a data-target="#" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+                        Herunterladen
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li ng-repeat="format in doc.availableFormats">
+                            <a ng-click="doc.downloadAs(group, format.name)">{{ format.label }}
+                                <span ng-if="format.extension">({{ format.extension }})</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
                 <div class="row" ng-class="$last?'':'bottom-buffer'">
                     <div class="col-md-12">
                         <odh-preview pkg="preview" success="doc.previewSuccess"></odh-preview>
