@@ -117,11 +117,12 @@ class DataDownloadMixin(viewsets.GenericViewSet):
         return response
 
     def sanitize_name(self, name):
-        sanitized = slugify(unicode(name))
+        import os
+        parts = [slugify(unicode(s)) for s in os.path.splitext(name)]
 
-        if not sanitized or len(sanitized.strip()) == 0:
+        if not parts or len(parts[0].strip()) == 0:
             return 'odh'
-        return sanitized[:200]
+        return '{}.{}'.format(parts[0][:196], parts[1])
 
     def get_cache_key(self, pk, format_name=None):
         if format_name:
