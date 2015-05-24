@@ -71,7 +71,7 @@ class Command(BaseCommand):
         ('trobdb/Sanitize-Baustellen-kml.odhql', 'Sanitize Baustellen.kml'),
         ('trobdb/Baustellen-kml.odhql', 'TROBDB: Baustellen.kml'),
         ('trobdb/trobdb-union.odhql', 'TROBDB: Alle Daten'),
-        # ('mopub/myaddresses-geometry.odhql', 'MOPUB: Adressen mit Geometrie')
+        ('mopub/myaddresses-geometry.odhql', 'MOPUB: Adressen mit Geometrie'),
     ]
 
     def add_document(self, desc, format, name):
