@@ -222,7 +222,17 @@ class OdhQLInterpreter(object):
         :param data_sources: Ordered list of :py:class: hub.odhql.parser.DataSource
         :return: (Joined) DataFrame
         """
-        aliases_left = []  # aliases (table prefixes) currently contained in `d`
+
+        class JoinVisitor(object):
+
+            def __init__(self):
+                self.prefixes = set()
+
+            def visit(self, o):
+                if isinstance(o, parser.Field):
+                    self.prefixes.add(o.prefix)
+
+        aliases_left = []  # aliases (table prefixes) currently contained in `df`
         df = None  # make flake8/pylint happy
         for ds in data_sources:
             if isinstance(ds, parser.JoinedDataSource):
@@ -231,17 +241,36 @@ class OdhQLInterpreter(object):
                 names_left = []
                 names_right = []
                 for c in cond.conditions if isinstance(cond, parser.JoinConditionList) else (cond,):
-                    left, right = (c.left, c.right) if c.left.prefix in aliases_left else (c.right, c.left)
-                    names_left.append(self._make_name(left.prefix, left.name))
-                    names_right.append(self._make_name(right.prefix, right.name))
+                    jvl = JoinVisitor()
+                    c.left.accept(jvl)
+                    left, right = (c.left, c.right) if jvl.prefixes.issubset(aliases_left) else (c.right, c.left)
 
-                df_right = dfs[right.prefix]
+                    jvr = JoinVisitor()
+                    right.accept(jvr)
+                    prefix_right = next(iter(jvr.prefixes))
+                    if len(jvr.prefixes) > 1 or prefix_right not in dfs:
+                        raise OdhQLExecutionException('JOIN: Table {} does not exist'.format(prefix_right))
+
+                    df_right = dfs[prefix_right]
+
+                    if isinstance(left, parser.Field):
+                        names_left.append(self._make_name(left.prefix, left.name))
+                    else:
+                        df['__temp'] = self._interpret_field(df, c.left)
+                        names_left.append('__temp')
+
+                    if isinstance(right, parser.Field):
+                        names_right.append(self._make_name(right.prefix, right.name))
+                    else:
+                        df_right['__temp'] = self._interpret_field(df_right, c.right)
+                        names_right.append('__temp')
+
                 try:
                     df = df.merge(df_right, how=ds.join_type.name, left_on=names_left, right_on=names_right,
                                   suffixes=('', 'r'), copy=False)
                 except KeyError as e:
                     raise OdhQLExecutionException('JOIN: Column "{}" does not exist'.format(e.message))
-                aliases_left.append(right.prefix)
+                aliases_left.append(prefix_right)
 
             elif isinstance(ds, parser.DataSource):
                 df = dfs[ds.alias]
