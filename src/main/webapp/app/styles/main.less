@@ -189,20 +189,6 @@ a {
   text-align: left;
 }
 
-// try to fix sorting arrows in minified build
-.ng-table th.sortable .sort-indicator:before {
-  content: "";
-  border-width: 0 4px 4px;
-  border-style: solid;
-  border-color: #000 transparent;
-  visibility: visible;
-  right: 5px;
-  top: 50%;
-  position: absolute;
-  opacity: .3;
-  margin-top: -4px
-}
-
 .ace_editor {
   min-height: 200px;
 }
@@ -233,4 +219,26 @@ div[hljs] pre {
 
 .bottom-buffer {
   margin-bottom: 20px;
+}
+
+// fixes sorting arrows in minified build
+.ng-table th.sortable .sort-indicator:after, .ng-table th.sortable .sort-indicator:before {
+  content: "";
+  border-width: 0 4px 4px;
+  border-style: solid;
+  border-color: #000 transparent;
+  visibility: visible;
+  right: 5px;
+  top: 50%;
+  position: absolute;
+  opacity: .3;
+  margin-top: -4px;
+}
+
+.ng-table th.sortable .sort-indicator:before {
+  margin-top: 2px;
+  border-bottom: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid #000;
 }
