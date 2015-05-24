@@ -12,12 +12,13 @@ from hub.formats.gml import GML
 # from hub.formats.interlis1 import INTERLIS1
 from hub.formats.kml import KML
 from hub.formats.wfs import WFS
+from hub.formats.interlis1 import INTERLIS1
 from hub.structures.file import FileGroup
 from hub.utils import ogr2ogr
 
 
 class GenericOGRParser(Parser):
-    accepts = GML, WFS  # FIXME GDAL2: INTERLIS1
+    accepts = GML, WFS, INTERLIS1
 
     @classmethod
     def parse(cls, file, format, *args, **kwargs):
@@ -76,7 +77,7 @@ class GeoFormatterBase(Formatter):
 
 
 class GenericOGRFormatter(Formatter):
-    targets = GML,  # FIXME GDAL2: INTERLIS1
+    targets = GML, INTERLIS1
 
     # Note: Interlis 2 is not supported for export, because it would need a schema for that. Because it is the only
     # format with a schema requirement and adding that feature would mean investing a substantial amount of time we

@@ -9,8 +9,8 @@ import os
 import defusedxml.ElementTree as etree
 
 from hub.models import UrlModel, DocumentModel, FileGroupModel, FileModel
-from hub import formats
 from hub.formats import Format
+from hub.structures.file import File
 
 
 class UploadHandler(object):
@@ -39,8 +39,8 @@ class UploadHandler(object):
 class FileHandler(object):
     def handle_file_upload(self, request, document):
         files = request.data.getlist('file')
-        format_name = request.data.get('format', None)
-        fmt = Format.from_string(format_name) if format_name else None
+        format_name = request.data.get('format')
+        specified_format = Format.from_string(format_name) if format_name else None
 
         groups = collections.defaultdict(list)
 
@@ -55,8 +55,11 @@ class FileHandler(object):
             file_groups.append(file_group)
 
             for file in group:
-                file_model = FileModel(file_name=file.name, data=file.read(), file_group=file_group,
-                                       format=fmt.name if fmt is not None else None)
+                file = File.from_string(file.name, file.read())
+                concrete_format = specified_format or Format.identify(file)
+
+                file_model = FileModel(file_name=file.name, data=file.stream.read(), file_group=file_group,
+                                       format=concrete_format.name)
                 file_model.save()
 
         return file_groups
@@ -79,13 +82,13 @@ class UrlHandler(object):
 
         is_wfs = self.check_wfs(url)
         type = 'wfs' if is_wfs else 'auto'
-        format = (request.data['format'] if 'format' in request.data
-                                            and request.data['format'] in formats.Format.formats else None)
+        specified_format = request.data.get('format')
 
         file_group = FileGroupModel(document=doc)
         file_group.save()
 
-        url_model = UrlModel(source_url=url, refresh_after=refresh, type=type, file_group=file_group, format=format)
+        url_model = UrlModel(source_url=url, refresh_after=refresh, type=type, file_group=file_group,
+                             format=specified_format)
         url_model.save()
 
         return [file_group]

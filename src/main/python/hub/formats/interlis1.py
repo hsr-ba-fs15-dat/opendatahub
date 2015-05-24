@@ -5,7 +5,6 @@ from hub.formats import Format
 from hub.utils import ogr2ogr
 
 if 'Interlis 1' in ogr2ogr.SUPPORTED_DRIVERS:
-
     class INTERLIS1(Format):
         label = 'INTERLIS 1'
         ogr_format = ogr2ogr.INTERLIS_1
@@ -18,4 +17,4 @@ if 'Interlis 1' in ogr2ogr.SUPPORTED_DRIVERS:
 
         @classmethod
         def is_format(cls, file, *args, **kwargs):
-            return file.extension == 'itf' or file.extension == 'imd'
+            return file.extension == cls.extension

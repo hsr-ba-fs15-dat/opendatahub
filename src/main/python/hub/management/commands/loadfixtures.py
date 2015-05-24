@@ -1,5 +1,6 @@
 # coding=utf-8
 from __future__ import unicode_literals
+from hub.formats import Format
 
 """
 
@@ -21,7 +22,6 @@ from hub.structures.file import FileGroup
 from hub.utils.odhql import TransformationUtil
 
 from hub.odhql.interpreter import OdhQLInterpreter
-
 
 logging.getLogger('django.db.backends').setLevel(logging.WARN)
 
@@ -50,7 +50,7 @@ class Command(BaseCommand):
         (formats.KML, 'trobdb/Baustellen.kml',),
         (formats.CSV, 'perf/employees.csv',),
         (formats.CSV, 'perf/children.csv',),
-        (formats.Other, 'itf/Bahnhoefe.ili', 'itf/Bahnhoefe.itf'),  # FIXME GDAL2: INTERLIS1
+        (formats.INTERLIS1, 'itf/Bahnhoefe.ili', 'itf/Bahnhoefe.itf'),
         (formats.Excel, 'trobdb/Baustellen Mai 2015.xls',),
         (formats.Shapefile,) + tuple(
             'mopub/GEB_Gebaeudeeingang.{}'.format(ext) for ext in ['dbf', 'prj', 'shp', 'shx']),
@@ -90,15 +90,16 @@ class Command(BaseCommand):
 
         file_group = FileGroupModel(document=doc)
         file_group.save()
+
         for f in fg:
-            file_model = FileModel(file_name=f.name, data=f.stream.getvalue(), file_group=file_group)
+            concrete_format = Format.identify(f)
+            assert concrete_format in (None, format, formats.Other)
+            file_model = FileModel(file_name=f.name, data=f.stream.getvalue(), file_group=file_group,
+                                   format=concrete_format.name)
             file_model.save()
 
         if self.parse and format != formats.Other:
-            try:
-                file_group.to_file_group().to_df()  # force parse & caching
-            except formats.NoParserException:
-                raise Exception('Failed to parse document {}'.format(doc.name))
+            file_group.to_file_group().to_df()  # force parse & caching
 
         db.reset_queries()
 
