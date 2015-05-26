@@ -13,7 +13,6 @@ from hub.structures.file import File
 from hub.odhql.parser import OdhQLParser
 from hub.odhql.interpreter import OdhQLInterpreter
 
-
 logger = logging.getLogger(__name__)
 
 EMPLOYEES_CSV = """
@@ -224,7 +223,7 @@ class TestInterpreter(TestInterpreterBase):
     def test_union(self):
         df = self.execute('SELECT e.prename FROM employee AS e UNION SELECT c.prename FROM child AS c')
         self.assertListEqual(df.prename.tolist(),
-            [p for p in self.employees.Prename.tolist() + self.children.Prename.tolist()])
+                             [p for p in self.employees.Prename.tolist() + self.children.Prename.tolist()])
 
     def test_order_desc(self):
         df = self.execute('SELECT e.prename FROM employee AS e ORDER BY e.prename DESC')

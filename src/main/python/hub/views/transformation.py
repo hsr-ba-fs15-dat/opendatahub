@@ -91,7 +91,7 @@ class TransformationViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet,
                                 status=HttpResponseServerError.status_code)
 
         result_list = formats.format([df], slugify(unicode(model.name)),
-                             format or CSV)
+                                     format or CSV)
 
         return result_list
 
