@@ -21,7 +21,8 @@ from opendatahub.utils.plugins import RegistrationMixin
 
 import shapely.speedups
 
-shapely.speedups.available and shapely.speedups.enable()
+if shapely.speedups.available:
+    shapely.speedups.enable()
 
 
 class OdhType(RegistrationMixin):
