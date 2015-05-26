@@ -35,7 +35,7 @@ class Command(BaseCommand):
         make_option('--no-perfdata', action='store_true', default=False, help='Do not import large dataset'),)
 
     def __init__(self, *args, **kwargs):
-        super(Command, self).__init__(*args, **kwargs)
+        super(Command, self).__init__()
         self.parse = kwargs.get('parse', True)
 
     IMPORT = [
