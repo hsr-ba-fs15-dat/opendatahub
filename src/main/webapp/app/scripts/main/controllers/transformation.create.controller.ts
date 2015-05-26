@@ -36,7 +36,6 @@ module odh {
         public errorMessage = 'errorStringTester';
         public tabs:any[] = [];
         public previewObject:any;
-        public modalInstance:ng.ui.bootstrap.IModalServiceInstance;
         public leaveState = false;
         private transformationPrivate:boolean = false;
 
@@ -73,19 +72,20 @@ module odh {
                     },
                     open: () => {
                         if (this.forceManualEdit) {
-                            var odhModal:main.IOdhModal = {
+                            var modalInstance:ng.ui.bootstrap.IModalServiceInstance;
+                            var odhModal:utils.IOdhModal = {
                                 buttons: [{
                                     text: 'OK',
                                     cls: 'btn-warning',
                                     action: () => {
-                                        this.modalInstance.close();
+                                        modalInstance.close();
                                     }
                                 },
                                     {
                                         text: 'Abbrechen',
                                         cls: 'btn-primary',
                                         action: () => {
-                                            this.modalInstance.close(1);
+                                            modalInstance.dismiss();
                                         }
                                     }],
                                 question: 'Sie haben manuelle Änderungen am Query vorgenommen. Wenn Sie den ' +
@@ -95,7 +95,7 @@ module odh {
 
 
                             };
-                            this.modalInstance = this.$modal.open({
+                            modalInstance = this.$modal.open({
                                 animation: true,
                                 templateUrl: 'views/helpers/confirmation.html',
                                 controller: 'ConfirmationController as cc',
@@ -106,7 +106,7 @@ module odh {
 
                                 }
                             });
-                            this.modalInstance.result.then(result => {
+                            modalInstance.result.then(result => {
                                 if (result === 1) {
                                     this.tabs[2].active = true;
                                 }
@@ -155,19 +155,20 @@ module odh {
                     if (this.odhqlInputString) {
                         if (!this.leaveState) {
                             event.preventDefault();
-                            var odhModal:main.IOdhModal = {
+                            var modalInstance:ng.ui.bootstrap.IModalServiceInstance;
+                            var odhModal:utils.IOdhModal = {
                                 buttons: [{
                                     text: 'OK',
                                     cls: 'btn-warning',
                                     action: () => {
-                                        this.modalInstance.close(1);
+                                        modalInstance.close(1);
                                     }
                                 },
                                     {
                                         text: 'Abbrechen',
                                         cls: 'btn-primary',
                                         action: () => {
-                                            this.modalInstance.close(2);
+                                            modalInstance.dismiss();
                                         }
                                     }],
                                 question: 'Sie haben nicht gespeicherte Änderungen. ' +
@@ -176,7 +177,7 @@ module odh {
 
 
                             };
-                            this.modalInstance = this.$modal.open({
+                            modalInstance = this.$modal.open({
                                 animation: true,
                                 templateUrl: 'views/helpers/confirmation.html',
                                 controller: 'ConfirmationController as cc',
@@ -187,7 +188,7 @@ module odh {
 
                                 }
                             });
-                            this.modalInstance.result.then(result => {
+                            modalInstance.result.then(result => {
                                 if (result === 1) {
                                     this.leaveState = true;
                                     this.$state.go(toState.name);
@@ -211,17 +212,6 @@ module odh {
                 case 'start':
                     this.tabs[0].active = true;
                     break;
-            }
-        }
-
-        public modalResponse(response:boolean) {
-            if (response) {
-                this.modalInstance.close();
-            } else {
-
-
-                this.tabs[2].active = true;
-                this.modalInstance.close();
             }
         }
 
