@@ -25,14 +25,17 @@ from hub.utils.odhql import TransformationUtil
 from hub.odhql.interpreter import OdhQLInterpreter
 
 logging.getLogger('django.db.backends').setLevel(logging.WARN)
+from optparse import make_option
 
 
 class Command(BaseCommand):
     help = 'Loads test data into the database'
 
-    def __init__(self, *args, **kwargs):
-        super(Command, self).__init__()
+    option_list = BaseCommand.option_list + (
+        make_option('--no-perfdata', action='store_true', default=False, help='Do not import large dataset'),)
 
+    def __init__(self, *args, **kwargs):
+        super(Command, self).__init__(*args, **kwargs)
         self.parse = kwargs.get('parse', True)
 
     IMPORT = [
@@ -49,8 +52,6 @@ class Command(BaseCommand):
         (formats.GeoJSON, 'trobdb/tiefbaustelle.json',),
         (formats.XML, 'trobdb/truckinfo.xml',),
         (formats.KML, 'trobdb/Baustellen.kml',),
-        (formats.CSV, 'perf/employees.csv',),
-        (formats.CSV, 'perf/children.csv',),
         (formats.INTERLIS1, 'itf/Bahnhoefe.ili', 'itf/Bahnhoefe.itf'),
         (formats.Excel, 'trobdb/Baustellen Mai 2015.xls',),
         (formats.Shapefile,) + tuple(
@@ -145,6 +146,13 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         """ Entrypoint for django-admin. """
+
+        if not options.get('no_perfdata', False):
+            self.IMPORT += (
+                (formats.CSV, 'perf/employees.csv',),
+                (formats.CSV, 'perf/children.csv',),
+            )
+
         self.user = TestBase.get_test_user()
 
         for args in self.IMPORT:
