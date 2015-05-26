@@ -2,7 +2,8 @@
 from __future__ import unicode_literals, absolute_import
 
 """
-Example skeleton/template of a custom format implementation (parser and formatter)
+Example skeleton/template of a custom format implementation (parser and formatter). Copy this file and use a valid
+Python module name (e.g. my_format.py). Your format will then be automatically loaded.
 See hub.parsers package for concrete implementation examples.
 """
 
@@ -10,6 +11,10 @@ from hub.formats import Format, Formatter, Parser
 
 
 class MyFormat(Format):
+    """
+    Example format class. Used to identify files, for format choice in the UI, etc.
+    """
+
     label = 'MyFMT'
 
     description = """
@@ -24,6 +29,9 @@ class MyFormat(Format):
 
 
 class MyFormatFormatter(Formatter):
+    """
+    Example formatter class. These convert in-memory data (dataframes) into files a user can download/use.
+    """
     targets = MyFormat,
 
     @classmethod
@@ -43,6 +51,9 @@ class MyFormatFormatter(Formatter):
 
 
 class MyFormatParser(Parser):
+    """
+    Example parser class. These convert uploaded data into dataframes for further processing.
+    """
     accepts = MyFormat,
 
     @classmethod
