@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from hub.formats import Format
+from hub.formats.geobase import GenericOGRParser
 from hub.utils import ogr2ogr
 
 if 'WFS' in ogr2ogr.SUPPORTED_DRIVERS:
@@ -16,3 +17,6 @@ if 'WFS' in ogr2ogr.SUPPORTED_DRIVERS:
         @classmethod
         def is_format(cls, file, *args, **kwargs):
             return False
+
+    class WFSParser(GenericOGRParser):
+        accepts = WFS,
