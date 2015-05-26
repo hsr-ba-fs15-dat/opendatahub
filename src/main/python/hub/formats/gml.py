@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from hub.formats import Format
+from hub.formats.geobase import GenericOGRFormatter, GenericOGRParser
 from hub.utils import ogr2ogr
 
 if 'GML' in ogr2ogr.SUPPORTED_DRIVERS:
@@ -17,3 +18,9 @@ if 'GML' in ogr2ogr.SUPPORTED_DRIVERS:
         @classmethod
         def is_format(cls, file, *args, **kwargs):
             return file.extension == 'gml'
+
+    class GMLParser(GenericOGRParser):
+        accepts = GML,
+
+    class GMLFormatter(GenericOGRFormatter):
+        targets = GML,
