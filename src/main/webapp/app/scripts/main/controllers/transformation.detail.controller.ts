@@ -17,8 +17,6 @@ module odh.main {
         'private': boolean;
         owner: main.IOwner;
         is_template: boolean;
-        //preview: string;
-        //referenced_transformations: string;
         type: string;
     }
     class TransformationDetailController implements main.ITransformation {
@@ -224,7 +222,7 @@ module odh.main {
                 });
                 this.usedTables = data.data.tables;
             }).catch(() => {
-                this.ToastService.failure("Beim parsen ist ein Fehler aufgetreten.")
+                this.ToastService.failure('Beim parsen ist ein Fehler aufgetreten.');
             });
         }
 
