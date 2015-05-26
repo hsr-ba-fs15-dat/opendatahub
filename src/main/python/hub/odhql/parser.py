@@ -30,10 +30,10 @@ class OdhQLParser(DocMixin):
 
     ---------------------------------------------------------------------------
     UnionQuery ::= Query ( "union" Query )* ( OrderByList )?
-    Query ::= FieldSelection DataSourceSelection ( FilterList )?
+    Query ::= FieldSelectionList DataSourceSelectionList ( FilterList )?
 
-    FieldDeclarationList ::= "select" FieldDeclaration ( "," FieldDeclaration )*
-    FieldDeclaration ::= FieldEquiv "as" Alias
+    FieldSelectionList ::= "select" FieldSelection ( "," FieldSelection )*
+    FieldSelection ::= Field | Expression "as" Alias
 
     CaseExpression ::= "case" ( "when" Condition "then" Expression )+  ( "else" Expression )? "end"
 
@@ -42,15 +42,11 @@ class OdhQLParser(DocMixin):
     Function ::= Identifier "(" ( FunctionArgumentList )? ")"
     FunctionArgumentList ::= Expression ( ( "," Expression )* )?
 
-    DataSourceName ::= Identifier
-    FieldName ::= Identifier
-    Alias ::= Identifier
-
     Field ::= DataSourceNameOrAlias "." FieldName
 
     DataSourceNameOrAlias ::= DataSourceName | Alias
 
-    DataSourceSelection ::= "from" DataSourceName ( "as"? Alias )? ( JoinDefinition )*
+    DataSourceSelectionList ::= "from" DataSourceName ( "as"? Alias )? ( JoinDefinition )*
     JoinDefinition ::= ("left" | "right" | "full" )? "join" DataSourceName ( "as"? Alias )? "on" JoinCondition
     JoinCondition ::= SingleJoinCondition | "(" SingleJoinCondition ( "and" SingleJoinCondition )* ")"
     SingleJoinCondition ::= Expression "=" Expression
@@ -78,6 +74,10 @@ class OdhQLParser(DocMixin):
     Null ::= "null"
     SingleQuotedString ::= "string in single quotes"
     DoubleQuotedString ::= "string in double quotes"
+
+    DataSourceName ::= Identifier
+    FieldName ::= Identifier
+    Alias ::= Identifier
 
     Identifier ::= ( "a..z" | "A..Z" | "_" ) ( "a..z" | "A..Z" | "_" | Integer )* | DoubleQuotedString
     ---------------------------------------------------------------------------
