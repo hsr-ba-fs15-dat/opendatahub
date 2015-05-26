@@ -5,6 +5,8 @@ from django.db import models
 from django.db.models.fields.related import SingleRelatedObjectDescriptor
 from django.db.models.query import QuerySet
 
+from django.utils.text import slugify
+
 from opendatahub import settings
 from hub.structures.file import File, FileGroup
 from hub.formats import Format, Other
@@ -87,10 +89,11 @@ class UrlModel(models.Model):
     def to_file(self, file_group=None):
         from hub.structures.file import WfsUrl, Url
 
+        document_name = slugify(unicode(self.file_group.document.name))
         if self.type == 'wfs':
-            return WfsUrl('url%d' % self.id, self.source_url, cache_timeout=self.refresh_after, file_group=file_group)
+            return WfsUrl(document_name, self.source_url, cache_timeout=self.refresh_after, file_group=file_group)
         else:
-            return Url('url%d' % self.id, self.source_url, format=self.format, cache_timeout=self.refresh_after,
+            return Url(document_name, self.source_url, format=self.format, cache_timeout=self.refresh_after,
                        file_group=file_group)
 
 

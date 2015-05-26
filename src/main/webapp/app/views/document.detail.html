@@ -61,22 +61,25 @@
         <div class="panel-heading">
             <span ng-repeat="file in group.files">{{ file.file_name }}{{ $last ? '' : ', ' }}</span>
             <span ng-repeat="url in group.urls">{{ url.source_url }}{{ $last ? '' : ', ' }}</span>
+
+            <div class="btn-group pull-right btn-in-header btn-primary" ng-if="doc.previewSuccess">
+                <a data-target="#" class="btn btn-primary btn-sm btn-in-header" data-toggle="dropdown">
+                    Herunterladen
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li ng-repeat="format in doc.availableFormats">
+                        <a ng-click="doc.downloadAs(group, format.name)">{{ format.label }}
+                            <span ng-if="format.extension">({{ format.extension }})</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </div>
+
         <div class="panel-body">
             <div class="row-same-height row-full-height">
-                <div class="btn-group pull-right" ng-if="doc.previewSuccess">
-                    <a data-target="#" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
-                        Herunterladen
-                        <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li ng-repeat="format in doc.availableFormats">
-                            <a ng-click="doc.downloadAs(group, format.name)">{{ format.label }}
-                                <span ng-if="format.extension">({{ format.extension }})</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+
             </div>
 
             <div class="well" ng-repeat="preview in group.preview">
