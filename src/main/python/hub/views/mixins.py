@@ -100,8 +100,8 @@ class DataDownloadMixin(viewsets.GenericViewSet):
         response['Content-Type'] = 'application/octet-stream'
 
         if len(result_list) > 1 or len(result_list) > 0 and len(result_list[0].files) > 1:
-            response['Content-Disposition'] = 'attachment; filename="{}.zip"'.format(
-                self.sanitize_name(self.get_name(model)))
+            response['Content-Disposition'] = 'attachment; filename="{}"'.format(
+                self.sanitize_name(self.get_name(model) + '.zip'))
 
             zip = zipfile.ZipFile(response, 'w')
             for result in result_list:
@@ -122,7 +122,7 @@ class DataDownloadMixin(viewsets.GenericViewSet):
 
         if not parts or len(parts[0].strip()) == 0:
             return 'odh'
-        return '{}{}'.format(parts[0][:196], parts[1])
+        return '{}.{}'.format(parts[0][:196], parts[1])
 
     def get_cache_key(self, pk, format_name=None):
         if format_name:
