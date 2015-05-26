@@ -4,7 +4,7 @@
 module odh {
     'use strict';
     angular
-        .module('odh', [
+        .module('openDataHub', [
             'ngAnimate',
             'ngAria',
             'ngCookies',
