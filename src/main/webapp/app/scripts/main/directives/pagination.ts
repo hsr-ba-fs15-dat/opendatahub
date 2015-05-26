@@ -13,9 +13,7 @@ module odh.main {
             },
             replace: false,
             link: function (scope:any, element, attrs) {
-                console.log(scope);
                 var watchRegister = scope.$watch('params.settings().$scope', function ($scope, oldValue) {
-                    console.log(scope);
                     if (scope.params) {
                         scope.pages = scope.params.generatePagesArray(
                             scope.params.page(), scope.params.total(), scope.params.count()
