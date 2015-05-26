@@ -57,7 +57,6 @@
 
 <body ng-app="openDataHub" ng-controller="RootController as root" odh-block="!root.AppLoader.isLoaded">
 <toast></toast>
-
 <div id="wrap" ng-cloak ng-show="root.AppLoader.isLoaded">
     <!--[if lt IE 7]>
     <p class="browsehappy">Sie verwenden einen <strong>veralteten</strong> Browser. Bitte <a href="http://browsehappy.com/">aktualisieren
@@ -68,6 +67,9 @@
     <div class="header">
         <div ng-include="'views/navbar.html'"></div>
     </div>
+    <alert type="warning" close="root.showAlert=false" ng-if="root.showAlert" class="visible-xs-block">Diese App ist
+        nicht für mobile Plattformen optimiert.
+    </alert>
 
     <div class="container">
         <div class="well">
@@ -162,18 +164,19 @@
 <script src="scripts/utils/url.service.js"></script>
 <script src="scripts/utils/toast.service.js"></script>
 <script src="scripts/controllers/root.controller.js"></script>
-<script src="scripts/main/services/transformation.service.js"></script>
+<script src="scripts/main/services/transformation.selection.service.js"></script>
 <script src="scripts/main/controllers/transformation.create.controller.js"></script>
 <script src="scripts/main/directives/focus.js"></script>
-<script src="scripts/main/directives/preview.js"></script>
+<script src="scripts/main/directives/pagination.js"></script>
 <script src="scripts/main/controllers/package.controller.js"></script>
+<script src="scripts/main/directives/transformation.chooser.js"></script>
 <script src="scripts/main/directives/transformation.validation.js"></script>
 <script src="scripts/main/controllers/offer.controller.js"></script>
 <script src="scripts/main/services/document.service.js"></script>
 <script src="scripts/main/services/format.service.js"></script>
 <script src="scripts/main/services/package.service.js"></script>
-<script src="scripts/main/services/transformation.selection.service.js"></script>
 <script src="scripts/main/controllers/transformation.detail.controller.js"></script>
+<script src="scripts/main/services/transformation.service.js"></script>
 <script src="scripts/main/controllers/odhql-console.js"></script>
 <script src="scripts/main/controllers/navbar.controller.js"></script>
 <script src="scripts/main/controllers/main.controller.js"></script>
@@ -183,7 +186,7 @@
 <script src="scripts/auth/services/user.service.js"></script>
 <script src="scripts/auth/controllers/userprofile.controller.js"></script>
 <script src="scripts/auth/controllers/login.controller.js"></script>
-<script src="scripts/main/directives/transformation.chooser.js"></script>
+<script src="scripts/main/directives/preview.js"></script>
 <!-- endbuild -->
 
 </body>

@@ -1,4 +1,4 @@
-<script id="sample_ng_header" type="text/ng-template">
+<script id="odh_ngtable_header" type="text/ng-template">
     <tr>
         <th ng-repeat="column in cols"
             class="text-center">
@@ -6,6 +6,7 @@
         </th>
     </tr>
 </script>
+<script id="nopager" type="text/ng-template"></script>
 <div class="row">
     <div class="col-md-12">
         <alert ng-repeat="alert in alerts" type="{{ alert.type }}" close="closeAlert($index)">
@@ -23,8 +24,8 @@
 <div class="row" ng-show="success">
     <div class="col-md-12">
         <div class="table-responsive" ng-if="!adHocPreview">
-            <table ng-table="ngTableParams" template-header="sample_ng_header"
-                   class="table table-striped ng-table-responsive">
+            <table ng-table="ngTableParams" template-header="odh_ngtable_header"
+                   class="table table-striped" template-pagination="nopager">
                 <tr ng-repeat="row in $data">
                     <td ng-repeat="col in cols">
                         {{row[col.field] | characters:50}}
@@ -35,6 +36,7 @@
                 </tr>
             </table>
         </div>
+        <div odh-table-pagination="ngTableParams" template-url="'ng-table/pager.html'"></div>
         <div class="table-responsive" ng-if="success && adHocPreview">
             <table class="table table-striped">
                 <tr>
