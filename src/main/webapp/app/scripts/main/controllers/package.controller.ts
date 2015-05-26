@@ -1,6 +1,6 @@
 /// <reference path='../../all.d.ts' />
 
-module odh {
+module odh.main {
     'use strict';
 
     class PackageListController {

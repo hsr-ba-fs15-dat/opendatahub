@@ -27,8 +27,6 @@ module odh.utils {
             this.question = odhModal.question;
             this.title = odhModal.title;
         }
-
-
     }
     angular.module('openDataHub.utils').controller('ConfirmationController', ConfirmationController);
 }

@@ -1,7 +1,7 @@
 /// <reference path='../../all.d.ts' />
 
 
-module odh {
+module odh.main {
     'use strict';
     interface IField {
         name: string;

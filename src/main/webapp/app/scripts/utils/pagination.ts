@@ -1,7 +1,7 @@
-/// <reference path='../../all.d.ts' />
+/// <reference path='../all.d.ts' />
 
 
-module odh.main {
+module odh.utils {
     'use strict';
 
     function odhTablePagination($compile:ng.ICompileService):ng.IDirective {

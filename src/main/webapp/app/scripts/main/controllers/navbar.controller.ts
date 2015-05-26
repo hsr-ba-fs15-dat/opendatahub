@@ -1,13 +1,10 @@
 /// <reference path='../../all.d.ts' />
 
 
-module odh {
+module odh.main {
     'use strict';
 
     class NavBarController {
-
-        public email:string;
-        public password:string;
 
         constructor(private $auth) {
 

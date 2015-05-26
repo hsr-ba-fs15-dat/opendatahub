@@ -1,6 +1,6 @@
-/// <reference path='../../all.d.ts' />
+/// <reference path='../all.d.ts' />
 
-module odh {
+module odh.utils {
     'use strict';
 
     function odhFocus($timeout:ng.ITimeoutService):ng.IDirective {

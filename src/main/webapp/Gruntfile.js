@@ -31,7 +31,7 @@ module.exports = function (grunt) {
                 options: {
                     module: 'commonjs',
                     out: './docs',
-                    name: 'my-project',
+                    name: 'OpenDataHub',
                     target: 'es5',
                     mode: 'file'
                 },
