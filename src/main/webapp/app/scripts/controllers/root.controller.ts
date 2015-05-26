@@ -5,7 +5,7 @@ module odh {
     'use strict';
 
     class RootController {
-
+        public showAlert:boolean = true;
         constructor(public AppLoader:odh.utils.AppLoader, private AppConfig:odh.IAppConfig,
                     private ToastService:odh.utils.ToastService, private $auth, private $window:ng.IWindowService) {
             AppLoader.acquire();

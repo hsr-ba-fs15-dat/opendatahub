@@ -6,6 +6,8 @@ import logging
 
 import warnings
 
+""" Exceptions and helper code. """
+
 
 class OdhException(Exception):
     pass

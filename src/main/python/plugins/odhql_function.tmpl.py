@@ -11,6 +11,8 @@ from hub.odhql.functions.core import VectorizedFunction
 
 
 class Concat(VectorizedFunction):
+    # __doc__ is used to generate function documentation (formatted as reStructured Text)
+    # By convention, function names and other keywords should be written in all-caps.
     """
     Konkateniert eine Liste von TEXT-Spalten oder Werten.
 

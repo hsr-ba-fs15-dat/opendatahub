@@ -154,8 +154,7 @@ class PreviewMixin(viewsets.GenericViewSet):
                           'count': len(df),
                           'parent': pk,
                           'url': self.get_preview_view_name(pk, request),
-                          'type': 'preview'
-                          }])
+                          'type': 'preview'}])
         return JsonResponse(data, encoder=json.JSONEncoder, safe=False)
 
     def get_preview_view_name(self, pk, request):

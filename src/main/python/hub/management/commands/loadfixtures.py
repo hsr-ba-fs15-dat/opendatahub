@@ -3,7 +3,8 @@ from __future__ import unicode_literals
 from hub.formats import Format
 
 """
-
+Fixture loading command. We don't use django fixtures because we want to verify that the input data are actually
+parseable.
 """
 
 import logging
@@ -55,6 +56,7 @@ class Command(BaseCommand):
         (formats.Shapefile,) + tuple(
             'mopub/GEB_Gebaeudeeingang.{}'.format(ext) for ext in ['dbf', 'prj', 'shp', 'shx']),
         (formats.CSV, 'mopub/myaddresses2.utf8.csv',),
+        # Interlis 2 support was disabled - see documentation
         # ('interlis1/Bahnhoefe.ili', 'interlis1/Bahnhoefe.xml'): formats.INTERLIS2
     ]
 
@@ -75,6 +77,7 @@ class Command(BaseCommand):
     ]
 
     def add_document(self, desc, format, name):
+        """ Adds a document to the database. """
         if len(name) > 200:
             name = name[:197] + '...'
 
@@ -86,6 +89,7 @@ class Command(BaseCommand):
         return doc
 
     def add_fg(self, fg, format, name=None, desc=None):
+        """ Adds and parses a file group. """
         doc = self.add_document(desc, format, name or 'Test {}'.format(', '.join(fg.names)))
 
         file_group = FileGroupModel(document=doc)
@@ -104,6 +108,7 @@ class Command(BaseCommand):
         db.reset_queries()
 
     def add_url(self, url, format, name=None, desc=None):
+        """ Adds and parses a url. """
         doc = self.add_document(desc, format, name or 'Test {}'.format(url))
 
         file_group = FileGroupModel(document=doc)
@@ -113,8 +118,11 @@ class Command(BaseCommand):
                              refresh_after=3600)
         url_model.save()
 
-    def add_transformation(self, file, name, desc=None):
+        if self.parse and format != formats.Other:
+            file_group.to_file_group().to_df()  # force parse & caching
 
+    def add_transformation(self, file, name, desc=None):
+        """ Adds and executes a transformation. """
         with codecs.open(file, 'r', 'utf-8') as f:
             transformation = TransformationModel(name=name, description=desc or name,
                                                  transformation=unicode(f.read()),
@@ -134,6 +142,7 @@ class Command(BaseCommand):
             TransformationUtil.df_for_transformation(transformation, self.user.id)
 
     def handle(self, *args, **options):
+        """ Entrypoint for django-admin. """
         self.user = TestBase.get_test_user()
 
         for args in self.IMPORT:
@@ -161,10 +170,12 @@ class Command(BaseCommand):
         self.update_ids(4000)
 
     def add_multiple(self, fg, format, n=100):
+        """ Adds filler data for paging tests. """
         for i in xrange(n):
             self.add_fg(fg, format, name='Dummy', desc='Filler data')
 
     def update_ids(self, new_value):
+        """ Updates sequences, so that the different groups start at fixed points each. """
         cursor = connection.cursor()
 
         cursor.execute('select setval(\'{}_id_seq\', {})'.format(PackageModel._meta.db_table, new_value))

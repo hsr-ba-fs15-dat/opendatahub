@@ -7,8 +7,16 @@ from rest_framework.reverse import reverse
 from authentication.serializers import UserDisplaySerializer
 from hub.models import PackageModel, DocumentModel, FileGroupModel, FileModel, TransformationModel, UrlModel
 
+"""
+Django serializers.
+"""
+
 
 class PackageSerializer(serializers.HyperlinkedModelSerializer):
+    """
+    Packages are either documents or transformations. Do some magic to differentiate between them (django/rest_framework
+    is really bad at this).
+    """
     owner = UserDisplaySerializer(read_only=True)
 
     type = serializers.SerializerMethodField()
@@ -16,6 +24,7 @@ class PackageSerializer(serializers.HyperlinkedModelSerializer):
     template = serializers.SerializerMethodField()
 
     class Meta(object):
+        """ Meta class for PackageSerializer. """
         model = PackageModel
         fields = ('id', 'url', 'name', 'description', 'private', 'owner', 'created_at', 'type', 'preview', 'template')
 
@@ -47,6 +56,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     preview = serializers.HyperlinkedIdentityField('documentmodel-preview')
 
     class Meta(object):
+        """ Meta class for DocumentSerializer. """
         model = DocumentModel
         fields = ('id', 'url', 'name', 'description', 'file_groups', 'private', 'owner', 'created_at', 'preview')
 
@@ -60,6 +70,7 @@ class FileSerializer(serializers.HyperlinkedModelSerializer):
     file_format = serializers.CharField(source='format')
 
     class Meta(object):
+        """ Meta class for FileSerializer. """
         model = FileModel
         fields = ('id', 'url', 'file_name', 'file_format', 'file_group')
 
@@ -69,6 +80,7 @@ class UrlSerializer(serializers.HyperlinkedModelSerializer):
     url_format = serializers.CharField(source='format')
 
     class Meta(object):
+        """ Meta class for UrlSerializer. """
         model = UrlModel
         fields = ('id', 'url', 'source_url', 'url_format', 'refresh_after', 'type', 'file_group')
 
@@ -84,6 +96,7 @@ class FileGroupSerializer(serializers.HyperlinkedModelSerializer):
     preview = serializers.HyperlinkedIdentityField('filegroupmodel-preview')
 
     class Meta(object):
+        """ Meta class for FileGroupSerializer. """
         model = FileGroupModel
         fields = ('id', 'url', 'document', 'files', 'urls', 'data', 'preview')
         depth = 1
@@ -108,6 +121,7 @@ class TransformationSerializer(serializers.HyperlinkedModelSerializer):
     preview = serializers.HyperlinkedIdentityField('transformationmodel-preview')
 
     class Meta(object):
+        """ Meta class for TransformationSerializer. """
         model = TransformationModel
         fields = ('id', 'url', 'name', 'description', 'transformation', 'private', 'owner', 'data', 'is_template',
                   'preview', 'referenced_file_groups', 'referenced_transformations')
