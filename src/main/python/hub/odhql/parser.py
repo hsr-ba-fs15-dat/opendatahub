@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+
+"""
+Parser for the OpenDataHub Query Language (ODHQL)
+"""
+
 from __future__ import unicode_literals
 
 from pyparsing import nums
@@ -15,16 +20,16 @@ from opendatahub.utils.doc import DocMixin
 
 class OdhQLParser(DocMixin):
     """
-    Parser for the OpenDataHub Query Language (OdhQL).
+    Parser for the OpenDataHub Query Language (ODHQL).
 
-    Syntax borrows heavily from ANSI SQLs SELECT statement, but there are some differences.
+    Syntax borrows heavily from ANSI SQLs SELECT statement, but there are some differences (mostly omissions).
 
     All keywords are case-insensitive.
 
     Identifiers: Everything that doesn't match r'[a-zA-Z_][a-zA-Z0-9_]*' needs to be quoted using "double quotes".
     If you need to include quote chars inside your strings, escape with a backslash ('\').
 
-    All field references must be prefixed by the name of the data source they're coming from.
+    All field references must be prefixed with the name of the data source they're coming from.
 
     Description in BNF (as used by the diagram generator at http://bottlecaps.de/rr/ui):
 
@@ -83,7 +88,7 @@ class OdhQLParser(DocMixin):
     ---------------------------------------------------------------------------
     """
 
-    UI_HELP = """
+    UI_HELP = r"""
     .. class:: language
 
     Was ist ODHQL?
@@ -273,6 +278,7 @@ class OdhQLParser(DocMixin):
 
     @classmethod
     def build_grammar(cls):
+        """ Build a grammar object for ODHQL. """
         if cls.grammar:
             return cls.grammar
 
@@ -401,6 +407,7 @@ class OdhQLParser(DocMixin):
 
     @staticmethod
     def _strip_line_comment(line):
+        """ Remove line comments from input """
         comment_chars = '--'
         comment_start = line.find(comment_chars)
         if comment_start >= 0:
@@ -413,7 +420,9 @@ class OdhQLParser(DocMixin):
         return line
 
     def strip_comments(self, query):
+        """ Remove comments from input. """
         return '\n'.join([self._strip_line_comment(l) for l in query.splitlines()])
 
     def parse(self, query):
+        """ Parse the query. """
         return self.build_grammar().parseString(self.strip_comments(query))[0]

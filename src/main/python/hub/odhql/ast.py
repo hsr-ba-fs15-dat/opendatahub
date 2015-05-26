@@ -84,6 +84,7 @@ class Query(ASTBase):
 
     @classmethod
     def parse_order_by(cls, tokens):
+        """ Convert pyparsings ParseResult into AST classes """
         if 'fields' not in tokens:
             raise TokenException('malformed OrderBy (no fields)')
 
@@ -777,6 +778,7 @@ class OrderBy(ASTBase):
     """Order by expression."""
 
     class Direction(Enum):
+        """ Sort direction for order by. """
         ascending = 1
         descending = 2
 
