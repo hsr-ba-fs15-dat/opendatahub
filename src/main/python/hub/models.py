@@ -11,11 +11,20 @@ from opendatahub import settings
 from hub.structures.file import File, FileGroup
 from hub.formats import Format, Other
 
+"""
+Django models.
+"""
+
 
 AUTH_USER_MODEL = getattr(settings, 'AUTH_USER_MODEL', 'auth.User')
 
 
 def cap(what, length):
+    """
+    Limits string to a maximum length and appends three dots if the string length exceeds that limit.
+    :param what: String to cap
+    :param length: Length to cut off at
+    """
     return what if len(what) < length else what[:length - 3] + '...'
 
 
@@ -119,6 +128,9 @@ class InheritanceQuerySet(QuerySet):
     subclasses = list()
 
     def select_subclasses(self, *subclasses):
+        """
+        Builds statement with all subclasses added to select_related.
+        """
         if not subclasses:
             subclasses = [o for o in dir(self.model)
                           if isinstance(getattr(self.model, o), SingleRelatedObjectDescriptor)
@@ -128,6 +140,9 @@ class InheritanceQuerySet(QuerySet):
         return new_qs
 
     def _clone(self, klass=None, setup=False, **kwargs):
+        """
+        Add subclasses to clones if available.
+        """
         try:
             kwargs.update({'subclasses': self.subclasses})
         except AttributeError:
@@ -135,6 +150,9 @@ class InheritanceQuerySet(QuerySet):
         return super(InheritanceQuerySet, self)._clone(klass, setup, **kwargs)
 
     def iterator(self):
+        """
+        Cast the returned objects to their actual class.
+        """
         iter = super(InheritanceQuerySet, self).iterator()
         if getattr(self, 'subclasses', False):
             for obj in iter:
