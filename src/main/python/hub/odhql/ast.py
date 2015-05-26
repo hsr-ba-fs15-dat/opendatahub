@@ -11,10 +11,7 @@ class ASTBase(object):
     """Base class for all AST classes."""
 
     def accept(self, visitor):
-        """
-        Basic support for the visitor pattern.
-        """
-
+        """ Basic support for the visitor pattern. """
         visitor.visit(self)
 
 
@@ -31,6 +28,7 @@ class Union(ASTBase):
 
     @classmethod
     def parse(cls, tokens):
+        """ Convert pyparsings ParseResult into AST classes """
         if len(tokens) < 1:
             raise TokenException('malformed Union (no queries)')
 
@@ -46,6 +44,7 @@ class Union(ASTBase):
         return '<Union queries={} order={}>'.format(self.queries, self.order)
 
     def accept(self, visitor):
+        """ Basic support for the visitor pattern. """
         visitor.visit(self)
 
         for q in self.queries:
@@ -71,6 +70,7 @@ class Query(ASTBase):
 
     @classmethod
     def parse(cls, tokens):
+        """ Convert pyparsings ParseResult into AST classes """
         if 'fields' not in tokens:
             raise TokenException('malformed Query (no fields)')
         if 'datasources' not in tokens:
@@ -94,6 +94,7 @@ class Query(ASTBase):
                                                                                 self.filter_definitions)
 
     def accept(self, visitor):
+        """ Basic support for the visitor pattern. """
         visitor.visit(self)
 
         for f in self.fields:
@@ -123,6 +124,7 @@ class Field(Expression):
 
     @classmethod
     def parse(cls, tokens):
+        """ Convert pyparsings ParseResult into AST classes """
         if 'name' not in tokens:
             raise TokenException('malformed Field (name not found)')
         if 'prefix' not in tokens:
@@ -145,6 +147,7 @@ class LiteralExpression(Expression):
 
     @classmethod
     def parse(cls, tokens):
+        """ Convert pyparsings ParseResult into AST classes """
         if 'value' not in tokens:
             raise TokenException('malformed Expression (no value)')
 
@@ -154,6 +157,7 @@ class LiteralExpression(Expression):
 
     @classmethod
     def parse_number(cls, tokens):
+        """ Parse number expressions into actual python numbers. """
         try:
             num = tokens.pop()
 
@@ -162,20 +166,22 @@ class LiteralExpression(Expression):
                 return [float(joined)]
             else:
                 return [int(num.pop())]
-        except:
+        except ValueError:
             pass
 
     @classmethod
     def parse_boolean(cls, tokens):
+        """ Parse boolean expressions into python booleans. """
         if len(tokens) < 1:
             raise TokenException('malformed boolean value (no value)')
 
         value = tokens[0]
 
-        return str(value).lower() == 'true'
+        return [str(value).lower() == 'true']
 
     @classmethod
     def parse_null(cls):
+        """ Parse null expressions into None. """
         return [None]
 
 
@@ -194,6 +200,7 @@ class CaseRule(ASTBase):
 
     @classmethod
     def parse_when(cls, tokens):
+        """ Convert pyparsings ParseResult into AST classes """
         if 'condition' not in tokens:
             raise TokenException('malformed CaseExpression (expected condition)')
         if 'expression' not in tokens:
@@ -206,6 +213,7 @@ class CaseRule(ASTBase):
 
     @classmethod
     def parse_else(cls, tokens):
+        """ Convert pyparsings ParseResult into AST classes """
         if 'expression' not in tokens:
             raise TokenException('malformed CaseExpression (expected expression)')
 
@@ -217,6 +225,7 @@ class CaseRule(ASTBase):
         return '<CaseRule condition={} expression={}>'.format(self.condition, self.expression)
 
     def accept(self, visitor):
+        """ Basic support for the visitor pattern. """
         visitor.visit(self)
 
         if self.condition:
@@ -234,6 +243,7 @@ class CaseExpression(Expression):
 
     @classmethod
     def parse(cls, tokens):
+        """ Convert pyparsings ParseResult into AST classes """
         if 'when' not in tokens:
             raise TokenException('malformed CaseExpression (expected at least one condition)')
 
@@ -245,6 +255,7 @@ class CaseExpression(Expression):
         return cls(rules)
 
     def accept(self, visitor):
+        """ Basic support for the visitor pattern. """
         visitor.visit(self)
 
         for r in self.rules:
@@ -256,6 +267,7 @@ class CaseExpression(Expression):
 
 class AliasedExpression(ASTBase):
     """Expression with an alias"""
+
     def __init__(self, expression, alias):
         self.expression = expression
         self.alias = alias
@@ -265,6 +277,7 @@ class AliasedExpression(ASTBase):
 
     @classmethod
     def parse(cls, tokens):
+        """ Convert pyparsings ParseResult into AST classes """
         if 'expression' not in tokens and 'field' not in tokens:
             raise TokenException('malformed AliasedExpression (no expression or field)')
 
@@ -288,6 +301,7 @@ class AliasedExpression(ASTBase):
         return cls(expression, alias)
 
     def accept(self, visitor):
+        """ Basic support for the visitor pattern. """
         visitor.visit(self)
 
         self.expression.accept(visitor)
@@ -295,6 +309,7 @@ class AliasedExpression(ASTBase):
 
 class Function(Expression):
     """Function call. These may be nested."""
+
     def __init__(self, name, args):
         """
         :type name: unicode
@@ -305,6 +320,7 @@ class Function(Expression):
 
     @classmethod
     def parse(cls, tokens):
+        """ Convert pyparsings ParseResult into AST classes """
         if 'name' not in tokens:
             raise TokenException('malformed Function (no name)')
 
@@ -319,6 +335,7 @@ class Function(Expression):
         return '<Function name=\'{}\' args={}>'.format(self.name, self.args or '')
 
     def accept(self, visitor):
+        """ Basic support for the visitor pattern. """
         visitor.visit(self)
 
         for arg in self.args:
@@ -327,6 +344,7 @@ class Function(Expression):
 
 class DataSource(ASTBase):
     """Reference to a data source (dataframe)"""
+
     def __init__(self, name, alias=None):
         """
         :type name: unicode
@@ -337,6 +355,7 @@ class DataSource(ASTBase):
 
     @classmethod
     def parse(cls, tokens):
+        """ Convert pyparsings ParseResult into AST classes """
         if len(tokens) < 1:
             raise TokenException()
 
@@ -351,6 +370,7 @@ class DataSource(ASTBase):
 
 class JoinCondition(ASTBase):
     """Single join condition."""
+
     def __init__(self, left, right):
         """
         :type left: hub.odhql.ast.Field
@@ -361,6 +381,7 @@ class JoinCondition(ASTBase):
 
     @classmethod
     def parse(cls, tokens):
+        """ Convert pyparsings ParseResult into AST classes """
         if 'left' not in tokens or 'right' not in tokens:
             raise TokenException('invalid join condition')
 
@@ -373,6 +394,7 @@ class JoinCondition(ASTBase):
         return '<JoinCondition left={} right={}>'.format(self.left, self.right)
 
     def accept(self, visitor):
+        """ Basic support for the visitor pattern. """
         visitor.visit(self)
 
         self.left.accept(visitor)
@@ -381,6 +403,7 @@ class JoinCondition(ASTBase):
 
 class JoinConditionList(ASTBase, Sequence):
     """List of join conditions. All of these must match for a join - 'or' is not supported."""
+
     def __init__(self, conditions):
         """
         :param conditions: list of hub.odhql.ast.JoinCondition
@@ -395,6 +418,7 @@ class JoinConditionList(ASTBase, Sequence):
 
     @classmethod
     def parse(cls, tokens):
+        """ Convert pyparsings ParseResult into AST classes """
         if len(tokens) == 0:
             raise TokenException()
 
@@ -405,6 +429,7 @@ class JoinConditionList(ASTBase, Sequence):
         return '<JoinConditionList conditions={}>'.format(self.conditions)
 
     def accept(self, visitor):
+        """ Basic support for the visitor pattern. """
         visitor.visit(self)
 
         for cond in self.conditions:
@@ -413,6 +438,7 @@ class JoinConditionList(ASTBase, Sequence):
 
 class JoinedDataSource(DataSource):
     """Data source added via join. All data source after the first are of this type."""
+
     class JoinType(Enum):
         """Join type."""
         inner = 1
@@ -422,7 +448,6 @@ class JoinedDataSource(DataSource):
 
     def __init__(self, name, alias, join_type, condition):
         """
-
         :param name: Data source name
         :param alias: Alias (may be identical to the name)
         :param join_type: Join type.
@@ -435,6 +460,7 @@ class JoinedDataSource(DataSource):
 
     @classmethod
     def parse(cls, tokens):
+        """ Convert pyparsings ParseResult into AST classes """
         if 'datasource' not in tokens:
             raise TokenException('join without datasource')
         if 'condition' not in tokens:
@@ -448,6 +474,7 @@ class JoinedDataSource(DataSource):
 
     @classmethod
     def parse_join_type(cls, tokens):
+        """ Convert join type expression into JoinType enum value. Default is inner join. """
         lower_tokens = [token.lower() for token in tokens if isinstance(token, basestring)]
         if 'left' in lower_tokens:
             return cls.JoinType.left
@@ -461,6 +488,7 @@ class JoinedDataSource(DataSource):
         return '<JoinedDataSource name=\'{}\' alias=\'{}\' condition={}>'.format(self.name, self.alias, self.condition)
 
     def accept(self, visitor):
+        """ Basic support for the visitor pattern. """
         visitor.visit(self)
 
         self.condition.accept(visitor)
@@ -468,6 +496,7 @@ class JoinedDataSource(DataSource):
 
 class BinaryCondition(ASTBase):
     """Condition with two sides (thus binary)"""
+
     class Operator(Enum):
         """Operators for binary conditions."""
         equals = 1
@@ -491,6 +520,7 @@ class BinaryCondition(ASTBase):
 
     @classmethod
     def parse(cls, tokens):
+        """ Convert pyparsings ParseResult into AST classes """
         if 'left' not in tokens:
             raise TokenException('malformed BinaryCondition (no left side)')
 
@@ -508,6 +538,7 @@ class BinaryCondition(ASTBase):
 
     @classmethod
     def parse_operator(cls, tokens):
+        """ Convert operator expressions into Operator enum values. """
         if len(tokens) < 1:
             raise TokenException('malformed operator (no operator)')
 
@@ -536,6 +567,7 @@ class BinaryCondition(ASTBase):
         return '<BinaryCondition left={} op={} right={}>'.format(self.left, self.operator, self.right)
 
     def accept(self, visitor):
+        """ Basic support for the visitor pattern. """
         visitor.visit(self)
 
         self.left.accept(visitor)
@@ -544,6 +576,7 @@ class BinaryCondition(ASTBase):
 
 class InCondition(ASTBase):
     """'<left> [not] in <list>' condition."""
+
     def __init__(self, left, in_list, invert):
         """
         :param left: hub.odhql.ast.Expression
@@ -556,6 +589,7 @@ class InCondition(ASTBase):
 
     @classmethod
     def parse(cls, tokens):
+        """ Convert pyparsings ParseResult into AST classes """
         if 'left' not in tokens:
             raise TokenException('malformed InCondition (no left side)')
 
@@ -572,6 +606,7 @@ class InCondition(ASTBase):
         return '<InCondition left={} in_list={}>'.format(self.left, self.in_list)
 
     def accept(self, visitor):
+        """ Basic support for the visitor pattern. """
         visitor.visit(self)
 
         self.left.accept(visitor)
@@ -582,6 +617,7 @@ class InCondition(ASTBase):
 
 class IsNullCondition(ASTBase):
     """'<field> is [not] null' condition."""
+
     def __init__(self, field, invert):
         """
         :param field: hub.odhql.ast.Field
@@ -592,6 +628,7 @@ class IsNullCondition(ASTBase):
 
     @classmethod
     def parse(cls, tokens):
+        """ Convert pyparsings ParseResult into AST classes """
         if 'field' not in tokens:
             raise TokenException('malformed IsNullCondition')
 
@@ -604,6 +641,7 @@ class IsNullCondition(ASTBase):
         return cls(field, invert)
 
     def accept(self, visitor):
+        """ Basic support for the visitor pattern. """
         visitor.visit(self)
 
         self.field.accept(visitor)
@@ -614,6 +652,7 @@ class IsNullCondition(ASTBase):
 
 class PredicateCondition(ASTBase):
     """'[not] <predicate()>' condition."""
+
     def __init__(self, predicate, invert):
         """
         :type predicate: hub.odhql.ast.Function
@@ -624,6 +663,7 @@ class PredicateCondition(ASTBase):
 
     @classmethod
     def parse(cls, tokens):
+        """ Convert pyparsings ParseResult into AST classes """
         if 'predicate' not in tokens:
             raise TokenException('malformed PredicateCondition (no predicate)')
 
@@ -633,6 +673,7 @@ class PredicateCondition(ASTBase):
         return cls(predicate, invert)
 
     def accept(self, visitor):
+        """ Basic support for the visitor pattern. """
         visitor.visit(self)
 
         self.predicate.accept(visitor)
@@ -643,6 +684,7 @@ class PredicateCondition(ASTBase):
 
 class FilterListBase(ASTBase, Sequence):
     """Base class for lists of filter conditions."""
+
     def __init__(self, conditions):
         """
         :type conditions: list
@@ -651,6 +693,7 @@ class FilterListBase(ASTBase, Sequence):
 
     @classmethod
     def parse(cls, tokens):
+        """ Convert pyparsings ParseResult into AST classes """
         if len(tokens) < 1:
             raise TokenException('malformed {} (no conditions)'.format(cls.__name__))
 
@@ -659,6 +702,7 @@ class FilterListBase(ASTBase, Sequence):
         return [cls(conditions)]
 
     def accept(self, visitor):
+        """ Basic support for the visitor pattern. """
         visitor.visit(self)
 
         for cond in self.conditions:
@@ -684,6 +728,7 @@ class FilterAlternative(FilterListBase):
 
 class OrderByPosition(ASTBase):
     """Order by index in the field list."""
+
     def __init__(self, position):
         """
         :type position: int > 1
@@ -692,6 +737,7 @@ class OrderByPosition(ASTBase):
 
     @classmethod
     def parse(cls, tokens):
+        """ Convert pyparsings ParseResult into AST classes """
         if len(tokens) < 1:
             raise TokenException('malformed OrderByPosition (no position)')
 
@@ -711,11 +757,13 @@ class OrderByPosition(ASTBase):
 
 class OrderByAlias(ASTBase):
     """Order by alias (alias == field name if no alias was specified)."""
+
     def __init__(self, alias):
         self.alias = alias
 
     @classmethod
     def parse(cls, tokens):
+        """ Convert pyparsings ParseResult into AST classes """
         if len(tokens) < 1:
             raise TokenException('malformed OrderByAlias (no alias)')
 
@@ -727,6 +775,7 @@ class OrderByAlias(ASTBase):
 
 class OrderBy(ASTBase):
     """Order by expression."""
+
     class Direction(Enum):
         ascending = 1
         descending = 2
@@ -741,6 +790,7 @@ class OrderBy(ASTBase):
 
     @classmethod
     def parse(cls, tokens):
+        """ Convert pyparsings ParseResult into AST classes """
         if 'field' not in tokens:
             raise TokenException('malformed OrderByField (no field)')
 
@@ -756,3 +806,9 @@ class OrderBy(ASTBase):
 
     def __repr__(self):
         return '<OrderBy field={} direction={}>'.format(self.field, self.direction)
+
+    def accept(self, visitor):
+        """ Basic support for the visitor pattern. """
+        visitor.visit(self)
+
+        self.field.accept(visitor)
