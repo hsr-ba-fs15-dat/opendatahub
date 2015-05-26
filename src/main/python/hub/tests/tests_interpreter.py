@@ -292,7 +292,7 @@ class TestInterpreterPerformance(TestInterpreterBase):
         return df
 
     def test_select(self):
-        self.assert_time('SELECT e.prename FROM employee AS e', self.get_time(2))
+        self.assert_time('SELECT e.prename FROM employee AS e', self.get_time(3))
 
     def test_where(self):
         self.assert_time('SELECT e.prename FROM employee AS e WHERE e.prename = \'Julia\'', self.get_time(2))
