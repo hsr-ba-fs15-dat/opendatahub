@@ -56,6 +56,8 @@ class Command(BaseCommand):
         (formats.Shapefile,) + tuple(
             'mopub/GEB_Gebaeudeeingang.{}'.format(ext) for ext in ['dbf', 'prj', 'shp', 'shx']),
         (formats.CSV, 'mopub/myaddresses2.utf8.csv',),
+        (formats.CSV, 'geocsv_point_xy/bahnhoefe_point_xy.csv', 'geocsv_point_xy/bahnhoefe_point_xy.csvt',
+         'geocsv_point_xy/bahnhoefe_point_xy.prj'),
         # Interlis 2 support was disabled - see documentation
         # ('interlis1/Bahnhoefe.ili', 'interlis1/Bahnhoefe.xml'): formats.INTERLIS2
     ]

@@ -1,20 +1,31 @@
 # -*- coding: utf-8 -*-
+
+""" Utilities for ODHQL query handling """
+
 from __future__ import unicode_literals
 
 import itertools
 
 from django.db.models import Q
+from django.utils.text import slugify
 
 from hub.odhql.interpreter import OdhQLInterpreter
 from hub.odhql.exceptions import OdhQLExecutionException
 from hub.models import FileGroupModel, TransformationModel
 from opendatahub.utils import cache
-from django.utils.text import slugify
 
 
 class TransformationUtil(object):
+    """Helper class for transformation handling."""
+
     @staticmethod
     def interpret(query, user_id=None):
+        """
+        Execute a given query: Fetch required data sources, check permissions, and finally interpret the statement.
+        :param query: The query to run.
+        :param user_id: Optional user id to check for. Note: If None, only public data source are available.
+        :return: Resulting data frame.
+        """
         file_group_ids, transformation_ids = OdhQLInterpreter.parse_sources(query)
 
         permission_filter = (Q(document__private=False) | Q(document__owner=user_id)
@@ -43,6 +54,12 @@ class TransformationUtil(object):
 
     @staticmethod
     def df_for_transformation(tf, user_id=None):
+        """
+        Fetches the data frame for a given transformation.
+        :param tf: Transformation model instance or id.
+        :param user_id: Optional user id to check for. Note: If None, only public data sources are available.
+        :return: Resulting data frame.
+        """
         if isinstance(tf, TransformationModel):
             id = tf.id
             model = tf

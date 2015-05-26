@@ -63,7 +63,7 @@ class FileGroupViewSet(viewsets.ModelViewSet, DataDownloadMixin, PreviewMixin):
     def get_name(self, model):
         return model.document.name
 
-    def get_preview_view_name(self, pk, request):
+    def get_preview_view(self, pk, request):
         return reverse('filegroupmodel-preview', kwargs={'pk': pk}, request=request)
 
     def get_dfs_for_preview(self, pk, request):

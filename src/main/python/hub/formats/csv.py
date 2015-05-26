@@ -2,19 +2,19 @@
 from __future__ import unicode_literals, absolute_import
 
 from osgeo import osr
+import logging
+import csv
 
 import shapely
 import fiona
 import pandas as pd
 import re
 import pyproj
-import logging
 
-import csv
 from hub.structures.file import File, FileGroup
 from hub.formats import Format, Formatter, Parser, ParsingException
 from hub.structures.frame import OdhType, OdhFrame, OdhSeries
-
+from hub.exceptions import warn
 
 logger = logging.getLogger(__name__)
 
@@ -61,7 +61,7 @@ class CSVFormatter(Formatter):
     def _create_csvt(cls, df):
         # http://www.gdal.org/drv_csv.html
         # http://giswiki.hsr.ch/GeoCSV
-        csvt_line = ';'.join('"{}"'.format(cls.TYPE_MAP.get(s.odh_type, cls.FALLBACK_TYPE)) for i, s in df.iteritems())
+        csvt_line = ','.join('"{}"'.format(cls.TYPE_MAP.get(s.odh_type, cls.FALLBACK_TYPE)) for i, s in df.iteritems())
         return File.from_string(df.name + '.csvt', csvt_line)
 
     @classmethod
@@ -98,7 +98,7 @@ class CSVFormatter(Formatter):
 class CSVParser(Parser):
     accepts = CSV,
 
-    CSVT_RE = re.compile(r'\s*(\w+)\s*\(.*\)\s*', re.IGNORECASE)
+    CSVT_RE = re.compile('\s*"?(\w+)\s*(\((.*)\))?"?\s*', re.IGNORECASE)
 
     @classmethod
     def _parse_prj(cls, fg):
@@ -107,7 +107,7 @@ class CSVParser(Parser):
             prj = prjs[0]
             srs = osr.SpatialReference()
 
-            srs.ImportFromWkt([prj.ustream.read()])
+            srs.ImportFromWkt(str(prj.stream.read()))
             return fiona.crs.from_string(srs.ExportToProj4())
 
         return {}
@@ -117,10 +117,12 @@ class CSVParser(Parser):
         csvts = fg.get_by_extension('csvt')
         if csvts:
             csvt = csvts[0]
-            fields = csvt.stream.readline().split(';')
+            fields = csvt.stream.readline().split(',')
             try:
-                return [cls.CSVT_RE.match(f).group(1).lower() for f in fields]
+                groups = [cls.CSVT_RE.match(f).groups() for f in fields]
+                return [(g[0].lower(), g[2].lower() if g[2] else None) for g in groups]
             except (AttributeError, IndexError) as e:
+                warn('Could not parse CSVT file. Types were inferred.')
                 logger.warn('Could not parse CSVT file "%s": %s', csvt.stream.read(), e.message)
 
         return ()
@@ -130,56 +132,59 @@ class CSVParser(Parser):
         csv_file = fg.get_by_extension('csv')[0]
         line = next(l for l in csv_file.stream if l.strip() != '')  # first non-empty line
         delimiter = csv.Sniffer().sniff(line).delimiter
-        # sep=None works for auto-detection but falls-back to Python instead of C engine
+        # sep=None works for auto-detection but fall-back to Python instead of C engine
         return OdhFrame.from_df(pd.read_csv(csv_file.stream, encoding='UTF-8', sep=delimiter))
 
     @classmethod
-    def _parse_integer(cls, i, s, df, types):
+    def _parse_integer(cls, i, s, df, types, type_arg):
         return OdhType.INTEGER.convert(s)
 
     @classmethod
-    def _parse_string(cls, i, s, df, types):
+    def _parse_string(cls, i, s, df, types, type_arg):
         return OdhType.TEXT.convert(s)
 
     @classmethod
-    def _parse_real(cls, i, s, df, types):
+    def _parse_real(cls, i, s, df, types, type_arg):
         return OdhType.FLOAT.convert(s)
 
     @classmethod
-    def _parse_date(cls, i, s, df, types):
+    def _parse_date(cls, i, s, df, types, type_arg):
         return pd.to_datetime(s, infer_datetime_format=True)  # format='%Y-%m-%d'
 
     @classmethod
-    def _parse_time(cls, i, s, df, types):
+    def _parse_time(cls, i, s, df, types, type_arg):
         return pd.to_datetime(s, infer_datetime_format=True)  # format='%H:%M:%S'
 
     @classmethod
-    def _parse_datetime(cls, i, s, df, types):
+    def _parse_datetime(cls, i, s, df, types, type_arg):
         return pd.to_datetime(s, infer_datetime_format=True)  # format='%Y-%m-%d %H:%M:%S'
 
     @classmethod
-    def _parse_wkt(cls, i, s, df, types):
+    def _parse_wkt(cls, i, s, df, types, type_arg):
         s = s.apply(shapely.wkt.loads, convert_dtype=False)
         s.crs = df.crs
         return s
 
     @classmethod
-    def _parse_easting(cls, ix, s, df, types):
-        if ix > 0 and types[ix - 1] != 'northing':
-            iy = types[ix:].index('northing')
-            return cls._parse_point(df, ix, iy)
+    def _parse_point(cls, i, s, df, types, type_arg):
+        type_other = 'x' if type_arg == 'y' else 'y'
+
+        i_other = types.index(('point', type_other))
+        if i_other > i:  # only generate one point object
+            loc = [i, i_other] if type_arg == 'x' else [i_other, i]
+
+            s = OdhType.FLOAT.convert(df.iloc[:, loc]).apply(shapely.geometry.Point, axis=1)
+            s.crs = df.crs
+            s.name = 'Point'
+            return s
 
     @classmethod
-    def _parse_northing(cls, iy, s, df, types):
-        if iy > 0 and types[iy - 1] != 'easting':
-            ix = types[iy:].index('easting')
-            return cls._parse_point(df, ix, iy)
+    def _parse_coordx(cls, i, s, df, types, type_arg):
+        return cls._parse_point(i, df, df, types, 'x')
 
     @classmethod
-    def _parse_point(cls, df, ix, iy):
-        s = OdhType.FLOAT.convert(df.iloc[:, [ix, iy]]).apply(shapely.geometry.Point, axis=1)
-        s.crs = df.crs
-        return s
+    def _parse_coordy(cls, i, s, df, types, type_arg):
+        return cls._parse_point(i, df, df, types, 'y')
 
     @classmethod
     def parse(cls, file, format, *args, **kwargs):
@@ -194,13 +199,19 @@ class CSVParser(Parser):
             assert len(df.columns) == len(types)
 
             series = []
-            for i, (_, s) in enumerate(df.iteritems()):
-                type_ = types[i]
+            for i, (c, s) in enumerate(df.iteritems()):
+                type_, arg = types[i]
                 parse_method = getattr(cls, '_parse_' + type_, None)
                 if not parse_method:
                     raise ParsingException('Unknown GeoCSV type "{}"'.format(type_))
-                series.append(parse_method(i, s, df, types))
 
-            df = OdhSeries.concat([s for s in series if s is not None], axis=1)
+                s_parsed = parse_method(i, s, df, types, type_arg=arg)
+
+                if s_parsed is not None:
+                    if not getattr(s_parsed, 'name', None):
+                        s_parsed.name = s.name
+                    series.append(s_parsed)
+
+            df = OdhSeries.concat(series, axis=1)
 
         return df

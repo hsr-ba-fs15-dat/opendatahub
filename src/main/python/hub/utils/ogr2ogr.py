@@ -85,7 +85,7 @@ def _ogr2ogr_cli(arguments, log_on_error=True, allowed_return_codes=(), *args, *
 
 def ogr2ogr(file_group, to_type, addtl_args=(), *args, **kwargs):
     kwargs.setdefault('allowed_return_codes', to_type.allowed_return_codes)
-    assert (isinstance(file_group, FileGroup))
+    assert isinstance(file_group, FileGroup)
 
     from_format = OgrFormat.get_format(file_group)
 

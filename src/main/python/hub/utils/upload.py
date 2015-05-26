@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+
+"""
+Utilities for upload handling.
+"""
+
 from __future__ import unicode_literals
 
 import urlparse
@@ -14,8 +19,14 @@ from hub.structures.file import File
 
 
 class UploadHandler(object):
-    def handle_upload(self, request):
+    """ Utility class for upload handling. """
 
+    def handle_upload(self, request):
+        """
+        Creates a document from the django request.
+        :param request: django request
+        :return: the new document.
+        """
         doc = DocumentModel(name=request.data['name'], description=request.data['description'],
                             private=request.data.get('private', False), owner=request.user)
         doc.save()
@@ -37,7 +48,15 @@ class UploadHandler(object):
 
 
 class FileHandler(object):
+    """ Utility class for file uploads. """
+
     def handle_file_upload(self, request, document):
+        """
+        Creates files/file groups from the django request.
+        :param request: django request
+        :param document: document to add files/file groups to.
+        :return: the newly created file groups.
+        """
         files = request.data.getlist('file')
         format_name = request.data.get('format')
         specified_format = Format.from_string(format_name) if format_name else None
@@ -66,8 +85,15 @@ class FileHandler(object):
 
 
 class UrlHandler(object):
-    def handle_url_upload(self, request, doc):
+    """ Utility class for url-based uploads. """
 
+    def handle_url_upload(self, request, doc):
+        """
+        Creates url models/file groups from the django request.
+        :param request: django request
+        :param doc: document to add url models/file groups to.
+        :return: the newly created file groups
+        """
         url = request.data.get('url').strip()
 
         try:
@@ -94,6 +120,12 @@ class UrlHandler(object):
         return [file_group]
 
     def check_wfs(self, url):
+        """
+        Checks if the given url looks like a WFS service endpoint.
+        For more information on WFS, see http://www.opengeospatial.org/standards/wfs
+        :param url: http(s) url to check.
+        :return: True if the url looks like a WFS endpoint, False otherwise.
+        """
         (scheme, host, path, _, _, _) = urlparse.urlparse(url)
 
         query = {'request': 'GetCapabilities', 'service': 'wfs'}

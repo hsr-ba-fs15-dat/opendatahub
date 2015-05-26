@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-"""
-"""
+""" Exceptions for ODHQL stuff. """
 
 
 class OdhQLExecutionException(Exception):
+    """ Thrown on errors found during query execution. """
     pass
 
 

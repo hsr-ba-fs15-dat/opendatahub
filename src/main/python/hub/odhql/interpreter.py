@@ -21,6 +21,8 @@ from hub.odhql.exceptions import OdhQLExecutionException
 
 
 class OdhQLInterpreter(object):
+    """ Interpreter for the ODQHL query language. """
+
     FILE_GROUP_RE = re.compile(r'ODH([1-9]\d*)(_"?.+?"?)?', re.IGNORECASE)
     TRANSFORMATION_RE = re.compile(r'TRF([1-9]\d*)', re.IGNORECASE)
 
