@@ -14,7 +14,6 @@ import pandas as pd
 from hub.tests.tests_interpreter import TestInterpreterBase
 from hub.odhql.exceptions import OdhQLExecutionException
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -138,7 +137,7 @@ class TestStringFunctions(TestInterpreterBase):
         )
 
         for statement in statements:
-            self.assertRaises(OdhQLExecutionException, lambda: self.execute(statement))
+            self.assertRaises(OdhQLExecutionException, lambda s=statement: self.execute(s))
 
 
 class TestMiscFunctions(TestInterpreterBase):
@@ -181,7 +180,7 @@ class TestMiscFunctions(TestInterpreterBase):
         )
 
         for statement in statements:
-            self.assertRaises(OdhQLExecutionException, lambda: self.execute(statement))
+            self.assertRaises(OdhQLExecutionException, lambda s=statement: self.execute(s))
 
 
 class TestGeometryFunctions(TestInterpreterBase):
@@ -209,7 +208,7 @@ class TestGeometryFunctions(TestInterpreterBase):
 
     def test_transform(self):
         df = self.execute('SELECT ST_Transform(ST_GeomFromText(\'POINT(7.2234283 48.8183157)\', 4326), 3857) AS hsr '
-                     'FROM child AS c')
+                          'FROM child AS c')
         self.assertAlmostEqual(df.hsr[0].x, 804108.360138, 4)
         self.assertAlmostEqual(df.hsr[0].y, 6244089.40913, 4)
 
@@ -254,7 +253,7 @@ class TestGeometryFunctions(TestInterpreterBase):
 
         for statement, message in statements:
             try:
-                self.assertRaises(OdhQLExecutionException, lambda: self.execute(statement))
+                self.assertRaises(OdhQLExecutionException, lambda s=statement: self.execute(s))
             except:
                 logger.info(traceback.format_exc())
                 self.fail(message)
