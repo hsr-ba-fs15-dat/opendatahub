@@ -18,6 +18,9 @@ def cap(what, length):
 
 
 class PackageModel(models.Model):
+    """
+    A package contains data - either a document or a transformation.
+    """
     name = models.CharField(max_length=200)
     description = models.TextField()
 
