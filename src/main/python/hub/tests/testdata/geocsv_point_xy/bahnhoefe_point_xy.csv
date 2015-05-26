@@ -1,0 +1,1782 @@
+CNTRYNAME;CONURB;DUP_NAME;LEVEL;NAME;NATION;PROV1NAME;TYPE;X;Y
+Switzerland;;N;10;Chiasso Rail;41;Tessin;3;724005.902478;76645.7742365
+Switzerland;Chiasso;N;10;Chiasso;41;Tessin;30;723619.99171;76893.6733089
+Switzerland;Balerna;N;10;Balerna;41;Tessin;30;721755.711571;78390.5682741
+Switzerland;Mendrisio;N;10;Mendrisio;41;Tessin;30;719617.513789;80827.7402055
+Switzerland;Capolago;N;10;San Nicolao;41;Tessin;30;720393.436037;82833.334447
+Switzerland;Capolago;Y;10;Capolago-Riva San Vitale;41;Tessin;30;719641.632999;84341.8062183
+Switzerland;Capolago;Y;10;Capolago-Riva San Vitale;41;Tessin;30;719508.620639;84394.7871535
+Switzerland;Capolago;Y;10;Bellavista;41;Tessin;30;721401.821502;85610.8765885
+Switzerland;Capolago;N;10;Generoso Vetta;41;Tessin;30;722569.434879;87368.8544008
+Switzerland;Maroggia;N;10;Maroggia-Melano;41;Tessin;30;719136.96003;87912.1895641
+Switzerland;Melide;N;10;Melide;41;Tessin;30;717352.521413;90323.6304867
+Switzerland;Ponte Tresa;N;10;Ponte Tresa;41;Tessin;30;710204.074161;91935.45408
+Switzerland;Caslano;N;10;Caslano;41;Tessin;30;712210.650787;93273.0431563
+Switzerland;Zermatt;N;10;Gornergrat;41;Genferseeregion;30;626624.838604;92551.2302461
+Switzerland;Zermatt;N;10;Rotenboden;41;Genferseeregion;30;625322.302493;92690.1870179
+Switzerland;Lugano;N;10;Lugano-Paradiso;41;Tessin;30;716913.72528;94184.4992957
+Switzerland;Magliaso;N;10;Magliaso;41;Tessin;30;712869.29762;94119.1360424
+Switzerland;Magliaso;N;10;Magliaso Paese;41;Tessin;30;713020.320716;94333.1967496
+Switzerland;Zermatt;N;10;Riffelberg;41;Genferseeregion;30;624590.260531;93576.5269824
+Switzerland;Agno;N;10;Agno;41;Tessin;30;713412.390497;94918.6701964
+Switzerland;Lugano;N;10;Sorengo;41;Tessin;30;715938.930937;95311.0435904
+Switzerland;Lugano;N;10;Cappella-Agnuzzo;41;Tessin;30;714528.725039;95306.5288005
+Switzerland;Zermatt;N;10;Riffelalp;41;Genferseeregion;30;624756.966986;94499.8960023
+Switzerland;Lugano;N;10;Lugano FLP;41;Tessin;30;716921.867406;95774.6323206
+Switzerland;Bióggio;N;10;Serocca;41;Tessin;30;713448.347433;95897.7776741
+Switzerland;Zermatt;N;10;Findelenbach;41;Genferseeregion;30;624422.188898;94909.8628924
+Switzerland;Lugano;N;10;Lugano;41;Tessin;30;716886.607591;95996.3277803
+Switzerland;Bióggio;N;10;Bióggio;41;Tessin;30;713604.346249;96256.4883323
+Switzerland;Zermatt;N;10;Zermatt;41;Genferseeregion;30;624244.62623;96698.9502617
+Switzerland;Orsières;N;10;Orsières;41;Genferseeregion;30;577223.259156;97327.1833528
+Switzerland;Lamone;N;10;Lamone-Cadempino;41;Tessin;30;715753.450936;99754.9660217
+Switzerland;;N;10;le Châtelard Rail;41;Genferseeregion;3;562047.760628;100149.041558
+Switzerland;Garde;N;10;la Douay;41;Genferseeregion;30;577620.659928;100093.765029
+Switzerland;Châtelard;N;10;le Châtelard-Frontières;41;Genferseeregion;30;562204.153083;100403.751756
+Switzerland;Torricella;N;10;Taverne-Torricella;41;Tessin;30;715500.96721;101629.201735
+Switzerland;Châtelard;N;10;le Châtelard;41;Genferseeregion;30;562891.022564;101344.438116
+Switzerland;Sembrancher;N;10;Sembrancher;41;Genferseeregion;30;577267.354914;102885.369642
+Switzerland;Châble;N;10;le Châble;41;Genferseeregion;30;582861.27145;103033.700182
+Switzerland;Bovernier;N;10;Bovernier;41;Genferseeregion;30;572502.885332;103160.810742
+Switzerland;Finhaut;N;10;Finhaut;41;Genferseeregion;30;564505.830887;103547.007763
+Switzerland;Etiez;N;10;Etiez;41;Genferseeregion;30;578739.657536;103558.138043
+Switzerland;Martigny;N;10;Martigny-Croix;41;Genferseeregion;30;570627.010246;103992.254224
+Switzerland;Martigny;N;10;Martigny-Bourg;41;Genferseeregion;30;571512.201134;104710.612052
+Switzerland;Mezzovico-Vira;N;10;Mezzovico;41;Tessin;30;715265.925234;105849.791762
+Switzerland;Randa;N;10;Randa;41;Genferseeregion;30;626607.013774;105457.691093
+Switzerland;;N;10;Ranzo-Sant'Abbóndio Rail;41;Tessin;3;701925.902616;106589.298805
+Switzerland;Trétien;N;10;le Trétien;41;Genferseeregion;30;565926.717078;105851.135469
+Switzerland;Martigny;Y;10;Martigny;41;Genferseeregion;30;572292.326651;106174.395848
+Switzerland;Martigny;Y;10;Martigny;41;Genferseeregion;30;572323.357207;106196.487285
+Switzerland;Marécottes;N;10;la Nedettaz;41;Genferseeregion;30;566393.143462;106293.198765
+Switzerland;Bâtiaz;N;10;la Bâtiaz;41;Genferseeregion;30;571520.045237;106378.079962
+Switzerland;Marécottes;N;10;les Marécottes;41;Genferseeregion;30;567030.805937;106956.697207
+Switzerland;Ranzo;N;10;Ranzo-Sant'Abbóndio;41;Tessin;30;703482.811837;108261.158233
+Switzerland;Vernayaz;N;10;les Fumeaux;41;Genferseeregion;30;570312.778066;107740.116451
+Switzerland;Salvan;N;10;Salvan;41;Genferseeregion;30;567770.895725;108008.800525
+Switzerland;Gambarogno;N;10;Gerra (Gambarogno);41;Tessin;30;704198.879593;108884.924476
+Switzerland;Rivera;N;10;Rivera Bironico;41;Tessin;30;715008.070834;109247.168854
+Switzerland;Charrat-les-Chênes;N;10;Charrat-Fully;41;Genferseeregion;30;575773.137347;108416.145042
+Switzerland;San Nazzaro;N;10;San Nazzaro;41;Tessin;30;705326.893086;109816.11436
+Switzerland;Vernayaz;N;10;Vernayaz MC;41;Genferseeregion;30;569275.9693;109079.293666
+Switzerland;Herbriggen;N;10;Herbriggen;41;Genferseeregion;30;627309.33072;109207.129049
+Switzerland;Vernayaz;N;10;Vernayaz;41;Genferseeregion;30;569148.608335;109869.226533
+Switzerland;Magadino;N;10;Magadino-Vira;41;Tessin;30;709262.648508;111464.598526
+Switzerland;Saxon;N;10;Saxon;41;Genferseeregion;30;579367.951447;110859.588905
+Switzerland;Quartino;N;10;Quartino;41;Tessin;30;712008.913549;112148.497832
+Switzerland;;N;10;Camedo Rail;41;Tessin;3;689836.320653;111934.776101
+Switzerland;Cadenazzo;N;10;Cadenazzo;41;Tessin;30;716393.24744;112397.929248
+Switzerland;Borgnone;N;10;Borgnone-Cadanza;41;Tessin;30;690742.859421;112281.819245
+Switzerland;Sant'Antonino;N;10;Sant'Antonino;41;Tessin;30;718747.592543;113310.878222
+Switzerland;Palagnedra;N;10;Palagnedra;41;Tessin;30;692253.903525;113005.062854
+Switzerland;Verdasio;N;10;Verdasio;41;Tessin;30;693652.875916;113460.12661
+Switzerland;Locarno;N;10;Locarno San-Antonio;41;Tessin;30;705467.98583;113698.818718
+Switzerland;Corcapolo;N;10;Corcapolo;41;Tessin;30;695600.45419;113890.797939
+Switzerland;Evionnaz;N;10;Evionnaz;41;Genferseeregion;30;568069.201511;113265.414953
+Switzerland;Locarno;N;10;Solduno;41;Tessin;30;703171.858684;114259.646883
+Switzerland;Riddes;N;10;Riddes;41;Genferseeregion;30;582844.333274;113416.653497
+Switzerland;Locarno;Y;10;Locarno;41;Tessin;30;705263.135088;114373.463639
+Switzerland;Locarno;Y;10;Locarno;41;Tessin;30;705371.046241;114386.458527
+Switzerland;Riazzino;N;10;Riazzino-Cugnasco;41;Tessin;30;712852.291563;114576.849513
+Switzerland;Bellinzona;N;10;Giubiasco;41;Tessin;30;721033.634941;114901.631302
+Switzerland;Champéry;N;10;Champéry;41;Genferseeregion;30;556211.691227;114062.219618
+Switzerland;Tenero;N;10;Tenero;41;Tessin;30;708982.519798;115006.290995
+Switzerland;;N;10;la Plaine Rail;41;Genferseeregion;3;488225.133233;115091.813246
+Switzerland;Sankt Niklaus;N;10;Sankt Niklaus;41;Genferseeregion;30;628128.815803;114146.665788
+Switzerland;Intragna;N;10;Intragna;41;Tessin;30;697700.955532;114880.46219
+Switzerland;Plaine;N;10;la Plaine;41;Genferseeregion;30;488960.85735;115200.570159
+Switzerland;Górdola;N;10;Górdola;41;Tessin;30;710338.365485;115197.621133
+Switzerland;Locarno;Y;10;San Martino;41;Tessin;30;702276.541412;115133.906354
+Switzerland;Champéry;N;10;Champéry-Village;41;Genferseeregion;30;556540.654863;114704.6216
+Switzerland;Cavigliano;N;10;Cavigliano;41;Tessin;30;699149.685594;115548.853278
+Switzerland;Vérscio;N;10;Vérscio;41;Tessin;30;699804.441133;115648.554784
+Switzerland;Locarno;N;10;Ponte Brolla;41;Tessin;30;701648.241278;115757.055525
+Switzerland;Tegna;N;10;Tegna;41;Tessin;30;700790.02596;115820.533974
+Switzerland;Chamoson;N;10;Chamoson;41;Genferseeregion;30;584733.521411;115301.397862
+Switzerland;Russin;N;10;Russin;41;Genferseeregion;30;490393.884802;116286.275015
+Switzerland;Champéry;N;10;la Cour;41;Genferseeregion;30;557187.979909;115611.581526
+Switzerland;;N;10;Chêne-Bourg Rail;41;Genferseeregion;3;505347.32731;116578.621306
+Switzerland;Bellinzona;N;10;Bellinzona;41;Tessin;30;722857.462533;117139.878583
+Switzerland;Genève;N;10;Chêne-Bourg;41;Genferseeregion;30;504085.827946;116876.438292
+Switzerland;Champéry;N;10;En Charnay;41;Genferseeregion;30;557432.940226;116410.260375
+Switzerland;Genève;N;10;Genève-Eaux-Vives;41;Genferseeregion;30;501738.353016;117325.479362
+Switzerland;Val-d'Illiez;N;10;Val-d'Illiez;41;Genferseeregion;30;557884.911097;117018.517784
+Switzerland;Ardon;Y;10;Ardon;41;Genferseeregion;30;586915.259478;117386.183209
+Switzerland;Kalpetran;N;10;Kalpetran;41;Genferseeregion;30;630550.424991;117837.997701
+Switzerland;Genève;N;10;Genève;41;Genferseeregion;30;500092.019666;118608.781916
+Switzerland;Saint-Maurice;N;10;Saint-Maurice;41;Genferseeregion;30;566380.626977;117943.569886
+Switzerland;Fayot;N;10;Fayot;41;Genferseeregion;30;558432.690097;118104.169145
+Switzerland;Satigny;N;10;Satigny;41;Genferseeregion;30;492074.835632;119180.155195
+Switzerland;Châteauneuf;N;10;Châteauneuf;41;Genferseeregion;30;589903.718807;118347.577982
+Switzerland;Genève;N;10;Bourdigny;41;Genferseeregion;30;492653.487924;119603.466234
+Switzerland;Genève;N;10;Zimeysa;41;Genferseeregion;30;493342.091928;119702.462724
+Switzerland;Genève;N;10;Vieux-Bureau;41;Genferseeregion;30;494076.571681;119778.49699
+Switzerland;Genève;N;10;Vernier-Meyrin;41;Genferseeregion;30;495081.819886;119894.388183
+Switzerland;Genève;N;10;Genève-Aéroport;41;Genferseeregion;30;496719.242266;119977.377749
+Switzerland;Sion;N;10;Sion;41;Genferseeregion;30;594087.353898;119542.600242
+Switzerland;Troistorrents;N;10;Troistorrents;41;Genferseeregion;30;559624.979758;119830.298802
+Switzerland;Stalden;N;10;Stalden-Saas;41;Genferseeregion;30;632985.375831;119951.816721
+Switzerland;;N;10;Campocologno Rail;41;Ostschweiz;3;808783.239606;123554.254428
+Switzerland;Campocologno;N;10;Campocologno;41;Ostschweiz;30;808614.046345;123759.751941
+Switzerland;Monthey;N;10;Route de Morgins;41;Genferseeregion;30;560315.978545;120492.724907
+Switzerland;Monthey;N;10;les Neys;41;Genferseeregion;30;560387.080483;120747.942908
+Switzerland;Monthey;N;10;Croix-du-Nant;41;Genferseeregion;30;560565.437402;120891.293511
+Switzerland;Genève;N;10;Chambésy;41;Genferseeregion;30;500448.42844;121971.651825
+Switzerland;Massongex;N;10;Massongex;41;Genferseeregion;30;564972.280377;121286.569648
+Switzerland;Monthey;N;10;Chemex;41;Genferseeregion;30;560770.029684;121512.497555
+Switzerland;Campascio;N;10;Campascio;41;Ostschweiz;30;807761.756221;124976.177528
+Switzerland;Bellevue;N;10;les Tuileries;41;Genferseeregion;30;500450.053708;122538.641598
+Switzerland;Bellevue;N;10;Genthod-Bellevue;41;Genferseeregion;30;500446.919839;122816.642474
+Switzerland;Bex;Y;10;Bex;41;Genferseeregion;30;566204.425416;122313.399104
+Switzerland;Bex;Y;10;Bex;41;Genferseeregion;30;566281.852152;122368.549584
+Switzerland;Monthey;N;10;Pont de Chemex;41;Genferseeregion;30;561577.945357;122418.874617
+Switzerland;Bex;N;10;Bex-Place-du-Marché;41;Genferseeregion;30;568125.799543;122525.285595
+Switzerland;Monthey;N;10;Monthey-Ville;41;Genferseeregion;30;562576.105568;122957.325325
+Switzerland;Genthod;N;10;Creux-de-Genthod;41;Genferseeregion;30;501100.940644;123661.986103
+Switzerland;Monthey;N;10;Monthey;41;Genferseeregion;30;562607.086502;122979.366802
+Switzerland;Monthey;N;10;Monthey En Place;41;Genferseeregion;30;562052.538197;123082.875884
+Switzerland;Monthey;N;10;l' Hôpital (Monthey);41;Genferseeregion;30;561690.348751;123118.51254
+Switzerland;Bévieux;N;10;Bévieux;41;Genferseeregion;30;568529.86155;123112.347516
+Switzerland;Brusio;N;10;Brusio;41;Ostschweiz;30;807228.228492;126581.812056
+Switzerland;Posses;N;10;Fontannaz-Seulaz;41;Genferseeregion;30;570493.197269;124091.811685
+Switzerland;Collombey;N;10;Collombey;41;Genferseeregion;30;562261.700045;124471.151115
+Switzerland;Collombey;N;10;Collombey-Muraz;41;Genferseeregion;30;562046.060775;124505.852779
+Switzerland;Posses;N;10;les Posses;41;Genferseeregion;30;570032.787089;124527.627192
+Switzerland;Collombey;N;10;Corbier;41;Genferseeregion;30;562524.975253;124658.494946
+Switzerland;Miralago;N;10;Miralago;41;Ostschweiz;30;805180.260197;128046.882087
+Switzerland;Gryon;N;10;Gryon;41;Genferseeregion;30;570743.237825;124779.82384
+Switzerland;Collombey;N;10;Pont du Rhône;41;Genferseeregion;30;563452.974721;125141.939874
+Switzerland;Gryon;N;10;Barboleusaz;41;Genferseeregion;30;571346.558897;125210.47679
+Switzerland;Saint-Triphon;N;10;Saint-Triphon-Gare;41;Genferseeregion;30;564170.811797;125304.386926
+Switzerland;Versoix;N;10;Versoix;41;Genferseeregion;30;501904.658865;126139.299057
+Switzerland;Villy;N;10;Villy;41;Genferseeregion;30;565849.198267;126317.38987
+Switzerland;Versoix;N;10;Pont-Céard;41;Genferseeregion;30;501696.54202;127087.706087
+Switzerland;Villars-sur-Ollon;N;10;la Clairière;41;Genferseeregion;30;571714.51218;126420.449062
+Switzerland;Ollon;N;10;les Arnoux;41;Genferseeregion;30;565981.713134;126583.440858
+Switzerland;Villars-sur-Ollon;N;10;Arveyes;41;Genferseeregion;30;570798.418726;126624.911321
+Switzerland;Sierre;N;10;Sierre;41;Genferseeregion;30;607071.494542;126602.735965
+Switzerland;Visp;N;10;Visp BVZ;41;Genferseeregion;30;634033.664274;126972.222467
+Switzerland;Visp;N;10;Visp;41;Genferseeregion;30;634040.869361;127061.196105
+Switzerland;Prese;N;10;le Prese;41;Ostschweiz;30;803369.944586;130499.405225
+Switzerland;Villars-sur-Ollon;N;10;Villars BVB;41;Genferseeregion;30;570501.57481;127382.28349
+Switzerland;Ollon;N;10;Ollon;41;Genferseeregion;30;565554.988503;127430.725915
+Switzerland;Mies;N;10;Mies;41;Genferseeregion;30;502342.624745;128433.607756
+Switzerland;Saint-Triphon;N;10;Saint-Triphon-Village;41;Genferseeregion;30;564455.907712;127903.998722
+Switzerland;Lalden;N;10;Lalden;41;Genferseeregion;30;635267.148118;128202.121595
+Switzerland;Villars-sur-Ollon;N;10;Col-de-Soud;41;Genferseeregion;30;571584.174903;128199.714794
+Switzerland;Raron;N;10;Raron;41;Genferseeregion;30;627816.257487;128374.46872
+Switzerland;Aigle;N;10;Hospital d'Aigle;41;Genferseeregion;30;563719.55002;128453.097253
+Switzerland;Tannay;N;10;Tannay;41;Genferseeregion;30;503124.780166;129154.787287
+Switzerland;Gampel;N;10;Gampel-Steg;41;Genferseeregion;30;623940.876742;128435.701611
+Switzerland;Aigle;N;10;Verchiez;41;Genferseeregion;30;564991.905118;128656.797161
+Switzerland;Salgesch;N;10;Salgesch;41;Genferseeregion;30;610820.745547;128653.698368
+Switzerland;Eggerberg;N;10;Eggerberg;41;Genferseeregion;30;634100.500499;128784.610346
+Switzerland;Turtmann;N;10;Turtmann;41;Genferseeregion;30;620126.40227;128744.186527
+Switzerland;Prada;N;10;Li Curt;41;Ostschweiz;30;802224.913107;132229.45419
+Switzerland;Ausserberg;N;10;Ausserberg;41;Genferseeregion;30;631402.983556;129025.678753
+Switzerland;Leuk;N;10;Leuk;41;Genferseeregion;30;615888.863622;128976.138383
+Switzerland;Vionnaz;N;10;Vionnaz;41;Genferseeregion;30;559811.723294;129333.844419
+Switzerland;Coppet;N;10;Coppet;41;Genferseeregion;30;503655.955351;130091.305038
+Switzerland;Aigle;N;10;Aigle-Depôt ASD;41;Genferseeregion;30;563718.197285;129509.187818
+Switzerland;Villars-sur-Ollon;N;10;Bouquetins;41;Genferseeregion;30;571759.807819;129510.646352
+Switzerland;Aigle;Y;10;Aigle;41;Genferseeregion;30;563425.908055;129577.652682
+Switzerland;Aigle;Y;10;Aigle;41;Genferseeregion;30;563456.784897;129588.582229
+Switzerland;Aigle;N;10;Aigle-Place-du-Marché;41;Genferseeregion;30;563865.875787;129730.634571
+Switzerland;Aigle;N;10;Fontanney;41;Genferseeregion;30;564851.885025;129747.042383
+Switzerland;Aigle;N;10;Aigle-Depôt;41;Genferseeregion;30;564189.895365;129817.635664
+Switzerland;Brig;N;10;Brig FO/BVZ;41;Genferseeregion;30;642250.814865;129914.406149
+Switzerland;Brig;N;10;Brig SBB;41;Genferseeregion;30;642250.737146;129925.52233
+Switzerland;Aigle;N;10;Pont-de-Drapel;41;Genferseeregion;30;565130.062461;129901.060955
+Switzerland;Villars-sur-Ollon;N;10;Col-de-Bretaye;41;Genferseeregion;30;571947.35585;130087.833035
+Switzerland;Hohtenn;N;10;Hohtenn;41;Genferseeregion;30;625381.729916;130220.225282
+Switzerland;Naters;N;10;Naters;41;Genferseeregion;30;642409.435021;130360.186261
+Switzerland;Poschiavo;N;10;Poschiavo;41;Ostschweiz;30;801477.213268;133617.025302
+Switzerland;;N;10;Brig Rail;41;Genferseeregion;3;644325.036954;130651.853238
+Switzerland;Plambuit;N;10;Plambuit;41;Genferseeregion;30;568037.889703;130674.231526
+Switzerland;Aigle;N;10;Rennaz;41;Genferseeregion;30;566274.740087;130750.532897
+Switzerland;Yvorne;N;10;Yvorne;41;Genferseeregion;30;562509.983634;130928.39183
+Switzerland;Aigle;N;10;la Roulaz;41;Genferseeregion;30;566324.173265;131328.321252
+Switzerland;Founex;N;10;Founex;41;Genferseeregion;30;504453.979365;132324.422946
+Switzerland;Leysin;N;10;Leysin-Village;41;Genferseeregion;30;566380.863172;131828.253087
+Switzerland;Leysin;N;10;Versmont;41;Genferseeregion;30;566542.614488;131838.470081
+Switzerland;Aigle;N;10;Exergillod;41;Genferseeregion;30;569214.341765;131824.237501
+Switzerland;Bitsch;N;10;Bitsch;41;Genferseeregion;30;644823.982493;131911.727514
+Switzerland;Privilasco;N;10;Privilasco;41;Ostschweiz;30;801463.032765;135195.958148
+Switzerland;Vouvry;N;10;Vouvry;41;Genferseeregion;30;558251.526243;132068.03422
+Switzerland;Leysin;N;10;Leysin-Feydey;41;Genferseeregion;30;566690.255848;132082.218387
+Switzerland;Leysin;N;10;Leysin-Grand-Hôtel;41;Genferseeregion;30;566839.352707;132592.7611
+Switzerland;Privilasco;N;10;Cadera;41;Ostschweiz;30;801176.949994;135920.503846
+Switzerland;Céligny;N;10;Céligny;41;Genferseeregion;30;504641.626789;133477.708673
+Switzerland;Diablerets;N;10;les Diablerets;41;Genferseeregion;30;578143.549712;133285.982054
+Switzerland;Mörel;N;10;Mörel;41;Genferseeregion;30;646390.146701;133513.250808
+Switzerland;Biasca;N;10;Biasca;41;Tessin;30;718337.566064;134617.173918
+Switzerland;Sépey;N;10;les Aviolats;41;Genferseeregion;30;574988.486423;133531.699049
+Switzerland;Vers-l'Église;N;10;Vers-l'Église;41;Genferseeregion;30;576535.867729;133581.05787
+Switzerland;Sépey;N;10;les Echenards;41;Genferseeregion;30;573772.840386;133659.149029
+Switzerland;Sépey;N;10;les Planches;41;Genferseeregion;30;570640.312089;133718.060984
+Switzerland;Crans-près-Céligny;N;10;Crans;41;Genferseeregion;30;505694.977311;134861.992943
+Switzerland;Sépey;N;10;le Sépey;41;Genferseeregion;30;570205.314767;134476.123452
+Switzerland;Roche;N;10;Roche VD;41;Genferseeregion;30;560508.381193;134554.088719
+Switzerland;Privilasco;N;10;Cavaglia;41;Ostschweiz;30;800567.42441;138035.739035
+Switzerland;Evouettes;N;10;les Evouettes;41;Genferseeregion;30;556924.660217;134945.482154
+Switzerland;Betten;N;10;Betten FO;41;Genferseeregion;30;648905.461885;135645.290816
+Switzerland;Privilasco;N;10;Alp Grüm;41;Ostschweiz;30;799568.846484;139125.988873
+Switzerland;Grengiols;N;10;Grengiols;41;Genferseeregion;30;650324.982844;136134.981492
+Switzerland;Bodio;N;10;Bodio;41;Tessin;30;713032.668617;137517.458132
+Switzerland;Nyon;Y;10;Nyon;41;Genferseeregion;30;507383.340518;137537.443543
+Switzerland;Nyon;Y;10;Nyon;41;Genferseeregion;30;507353.938193;137626.837346
+Switzerland;Bouveret;N;10;Bouveret;41;Genferseeregion;30;555156.339424;137248.428525
+Switzerland;Lax;N;10;Lax;41;Genferseeregion;30;652252.898272;137418.685354
+Switzerland;Nyon;N;10;les Plantaz;41;Genferseeregion;30;506982.026187;138455.278918
+Switzerland;Saint-Gingolph;N;10;Saint-Gingolph;41;Genferseeregion;30;551317.058037;138145.331204
+Switzerland;;N;10;Saint-Gingolph Rail;41;Genferseeregion;3;551248.014885;138168.123031
+Switzerland;Nyon;N;10;Prangins;41;Genferseeregion;30;508212.352493;138925.59842
+Switzerland;Fiesch;N;10;Fiesch Feriendorf;41;Genferseeregion;30;653258.184233;138572.512112
+Switzerland;Villeneuve;Y;10;Villeneuve;41;Genferseeregion;30;560666.504124;138732.929055
+Switzerland;Asse;N;10;l' Asse;41;Genferseeregion;30;505624.304268;139688.224532
+Switzerland;Fiesch;N;10;Fiesch;41;Genferseeregion;30;653398.112747;139274.112472
+Switzerland;Ospizio Bernina;N;10;Ospizio Bernina;41;Ostschweiz;30;798578.330678;142785.937371
+Switzerland;Bellwald;N;10;Fürgangen-Bellwald;41;Genferseeregion;30;654950.675573;140221.874782
+Switzerland;Trélex;N;10;Trélex;41;Genferseeregion;30;505304.135047;140849.499668
+Switzerland;Veytaux;N;10;Veytaux-Chillon;41;Genferseeregion;30;560680.729932;140911.707134
+Switzerland;Nyon;N;10;Gland;41;Genferseeregion;30;510112.749435;141531.847076
+Switzerland;Montreux;N;10;Territet;41;Genferseeregion;30;560348.171476;141780.98984
+Switzerland;Givrins;N;10;Givrins;41;Genferseeregion;30;505247.716845;142640.355502
+Switzerland;Montreux;N;10;Toveyre;41;Genferseeregion;30;560603.654679;142057.230114
+Switzerland;Montreux;N;10;Valmont;41;Genferseeregion;30;560818.947881;142066.941928
+Switzerland;Montreux;N;10;les Planches (Montreux);41;Genferseeregion;30;560182.663951;142326.800228
+Switzerland;Caux;N;10;Caux;41;Genferseeregion;30;561589.36585;142339.894668
+Switzerland;Glion;N;10;Glion;41;Genferseeregion;30;560528.830688;142368.987599
+Switzerland;Caux;N;10;Rochers-de-Naye;41;Genferseeregion;30;564602.974614;142432.587906
+Switzerland;Caux;Y;10;les Echets;41;Genferseeregion;30;562128.581657;142525.462078
+Switzerland;Montreux;N;10;Montreux MTGN;41;Genferseeregion;30;559923.038053;142584.206975
+Switzerland;Niederwald;N;10;Niederwald;41;Genferseeregion;30;657778.817941;142794.086772
+Switzerland;Glion;N;10;Glion-Hôtel-des-Alpes;41;Genferseeregion;30;560715.399766;142690.151409
+Switzerland;Caux;N;10;Haut-de-Caux;41;Genferseeregion;30;562406.383403;142701.587673
+Switzerland;Montreux;Y;10;Montreux;41;Genferseeregion;30;559478.45969;142765.050162
+Switzerland;Caux;N;10;la Perche;41;Genferseeregion;30;564481.769881;142733.451342
+Switzerland;Caux;N;10;Crêt-d'y-Bau;41;Genferseeregion;30;562829.436709;142754.543985
+Switzerland;Ospizio Bernina;N;10;Bernina Lagalb;41;Ostschweiz;30;796269.780354;145869.054391
+Switzerland;Genolier;N;10;Genolier;41;Genferseeregion;30;505936.385065;143418.925907
+Switzerland;Montreux;Y;10;Montreux;41;Genferseeregion;30;559632.767112;142852.947176
+Switzerland;Caux;N;10;le Tremblex;41;Genferseeregion;30;561216.757636;142964.817871
+Switzerland;Caux;N;10;Paccot;41;Genferseeregion;30;563399.926322;143040.081638
+Switzerland;Montreux;N;10;Collège;41;Genferseeregion;30;559503.684923;143087.264951
+Switzerland;Genolier;N;10;Sus-Châtel;41;Genferseeregion;30;505358.460644;143817.103341
+Switzerland;Montreux;N;10;Sontier;41;Genferseeregion;30;560280.691671;143204.371857
+Switzerland;Montreux;N;10;Vuarennes;41;Genferseeregion;30;559329.029532;143399.710272
+Switzerland;Caux;N;10;Jaman;41;Genferseeregion;30;564485.836479;143422.659673
+Switzerland;Ospizio Bernina;N;10;Bernina Diavolezza;41;Ostschweiz;30;795496.071787;146488.988038
+Switzerland;Montreux;N;10;Belmont-sur-Montreux;41;Genferseeregion;30;559053.512935;143568.328755
+Switzerland;Montreux;N;10;Clarens;41;Genferseeregion;30;558147.588913;143696.843132
+Switzerland;Blitzingen;N;10;Blitzingen;41;Genferseeregion;30;659151.737553;143874.63114
+Switzerland;Ospizio Bernina;N;10;Bernina Suot;41;Ostschweiz;30;794563.969219;146781.353352
+Switzerland;Bursinel;N;10;Gilly Bursinel;41;Genferseeregion;30;513122.006479;144400.51222
+Switzerland;Chernex;N;10;Chernex;41;Genferseeregion;30;559471.02257;143943.471372
+Switzerland;Genolier;N;10;la Joy-Clinique;41;Genferseeregion;30;506115.787048;144572.377844
+Switzerland;Montreux;N;10;Sendy-Sollard;41;Genferseeregion;30;560800.871413;144012.480724
+Switzerland;Montreux;N;10;Châtelard;41;Genferseeregion;30;558703.685387;144104.321047
+Switzerland;Monteret;N;10;Chèvrerie-Monteret;41;Genferseeregion;30;503630.515373;144867.349942
+Switzerland;Vevey;N;10;Burier;41;Genferseeregion;30;556791.526698;144273.378033
+Switzerland;Saint-Cergue;N;10;les Pralies;41;Genferseeregion;30;500143.062683;144957.528453
+Switzerland;Saint-Cergue;N;10;Saint-Cergue;41;Genferseeregion;30;501764.127108;144930.863483
+Switzerland;Montreux;N;10;Chamby-Musée;41;Genferseeregion;30;559811.421922;144285.806873
+Switzerland;Montreux;N;10;Fontanivent;41;Genferseeregion;30;559005.702612;144446.874737
+Switzerland;Pontresina;N;10;Morteratsch;41;Ostschweiz;30;792268.920931;147386.104552
+Switzerland;Montreux;N;10;Chamby;41;Genferseeregion;30;559582.630434;144543.023231
+Switzerland;Montreux;N;10;Planchamp;41;Genferseeregion;30;558691.674678;144593.539182
+Switzerland;Selkingen;N;10;Biel (Goms);41;Genferseeregion;30;659926.345411;144804.993424
+Switzerland;Muids;N;10;le Muids;41;Genferseeregion;30;506067.673703;145429.199072
+Switzerland;Avants;N;10;les Avants;41;Genferseeregion;30;561943.582076;144872.24822
+Switzerland;Saint-Cergue;N;10;la Givrine;41;Genferseeregion;30;497988.020723;145671.853228
+Switzerland;Avants;N;10;Jor;41;Genferseeregion;30;563580.370745;144917.703117
+Switzerland;Vevey;N;10;la Tour-de-Peilz;41;Genferseeregion;30;555506.923222;145127.610522
+Switzerland;Montbovon;N;10;les Cases;41;Espace Mittelland;30;566186.158613;145135.945492
+Switzerland;Lenk;N;10;Lenk im Simmental;41;Espace Mittelland;30;600435.23999;145196.479852
+Switzerland;Arzier;N;10;Arzier;41;Genferseeregion;30;505846.248667;146010.783909
+Switzerland;Gluringen;N;10;Gluringen;41;Genferseeregion;30;660971.148418;145582.547277
+Switzerland;Bassins;N;10;Bassins;41;Genferseeregion;30;506609.467946;146176.780504
+Switzerland;Rolle;N;10;Rolle;41;Genferseeregion;30;515322.387889;146214.68153
+Switzerland;Cure;N;10;la Cure;41;Genferseeregion;30;495300.26133;146651.915908
+Switzerland;Vevey;Y;10;Vevey;41;Genferseeregion;30;554261.344594;146015.173426
+Switzerland;Vevey;Y;10;Vevey;41;Genferseeregion;30;554284.642166;146048.346745
+Switzerland;Rossinière;N;10;Rossinière;41;Genferseeregion;30;572758.719798;145980.805017
+Switzerland;Blonay;N;10;Blonay;41;Genferseeregion;30;558349.019094;146152.242614
+Switzerland;Vevey;N;10;Clies;41;Genferseeregion;30;555307.668249;146229.646955
+Switzerland;Moulins;N;10;la Chaudanne-Les Moulins;41;Genferseeregion;30;573811.757155;146131.759675
+Switzerland;Vevey;N;10;Hauteville;41;Genferseeregion;30;555561.556256;146283.350465
+Switzerland;Vevey;N;10;Gilamont;41;Genferseeregion;30;554501.905801;146335.736454
+Switzerland;Tine;N;10;la Tine;41;Genferseeregion;30;569856.47027;146261.447646
+Switzerland;Reckingen;N;10;Reckingen;41;Genferseeregion;30;661891.301646;146503.525131
+Switzerland;Blonay;N;10;Prélaz CEV;41;Genferseeregion;30;558419.456147;146340.739854
+Switzerland;Blonay;N;10;Château-de-Blonay;41;Genferseeregion;30;557736.941024;146501.129462
+Switzerland;Vevey;N;10;Château-d'Hauteville;41;Genferseeregion;30;556024.857753;146613.449592
+Switzerland;Blonay;N;10;Tusinge;41;Genferseeregion;30;558444.495335;146629.601844
+Switzerland;Montbovon;Y;10;Allières;41;Espace Mittelland;30;566900.964572;146588.24965
+Switzerland;Blonay;N;10;Fayaux;41;Genferseeregion;30;559143.659072;146658.163636
+Switzerland;Saint-Légier;N;10;Saint-Légier-Village;41;Genferseeregion;30;557131.505245;146694.397252
+Switzerland;Matten;N;10;Boden;41;Espace Mittelland;30;599766.927162;146563.79763
+Switzerland;Saint-Légier;N;10;Saint-Légier-Gare;41;Genferseeregion;30;556494.502639;146765.670053
+Switzerland;Perroy;N;10;Perroy;41;Genferseeregion;30;517540.894484;147206.69333
+Switzerland;Saint-Saphorin;N;10;Saint-Saphorin;41;Genferseeregion;30;550575.452462;147122.650091
+Switzerland;Château-d'Oex;N;10;les Granges (Château-d'Oex);41;Genferseeregion;30;578162.628729;147014.825574
+Switzerland;Blonay;N;10;Ondallaz-l'Alliaz;41;Genferseeregion;30;559807.532087;147153.944206
+Switzerland;Rivaz;N;10;Rivaz;41;Genferseeregion;30;549854.459533;147239.784164
+Switzerland;Blonay;N;10;les Chevalleyres;41;Genferseeregion;30;558601.856054;147173.236769
+Switzerland;Gstaad;N;10;Gstaad;41;Espace Mittelland;30;588108.584118;147064.727044
+Switzerland;Etoy;N;10;Etoy;41;Genferseeregion;30;522307.902539;147565.730646
+Switzerland;Château-d'Oex;N;10;Château-d'Oex;41;Genferseeregion;30;576434.947671;147110.281623
+Switzerland;Allaman;N;10;Allaman;41;Genferseeregion;30;520150.135488;147605.090828
+Switzerland;Château-d'Oex;N;10;la Palaz;41;Genferseeregion;30;577057.53799;147241.272178
+Switzerland;Chiésaz;N;10;la Chiésaz;41;Genferseeregion;30;558342.046957;147364.014656
+Switzerland;Château-d'Oex;N;10;les Combes;41;Genferseeregion;30;579761.819542;147520.589369
+Switzerland;Blonay;N;10;Lally;41;Genferseeregion;30;559674.136829;147877.423545
+Switzerland;Saint-Prex;N;10;Saint-Prex;41;Genferseeregion;30;524482.29508;148238.445018
+Switzerland;Chexbres;N;10;Chexbres-Village;41;Genferseeregion;30;549385.042705;148044.12859
+Switzerland;Flendruz;N;10;Flendruz;41;Genferseeregion;30;580576.959503;147862.512205
+Switzerland;Blonay;N;10;les Pléaides;41;Genferseeregion;30;559299.518984;148124.514546
+Switzerland;Faido;N;10;Faido;41;Tessin;30;703855.95317;148937.554384
+Switzerland;Münster;N;10;Münster;41;Genferseeregion;30;663652.095721;148522.944552
+Switzerland;Pontresina;N;10;Surovas;41;Ostschweiz;30;789505.37295;151168.946673
+Switzerland;Montbovon;N;10;Montbovon;41;Espace Mittelland;30;569551.958782;148319.554298
+Switzerland;Montbovon;N;10;les Sciernes;41;Espace Mittelland;30;568024.594203;148449.764953
+Switzerland;Cully;N;10;Cully;41;Genferseeregion;30;545206.476279;148781.100475
+Switzerland;Saanen;N;10;Saanen;41;Espace Mittelland;30;586430.015306;148557.896573
+Switzerland;Rougemont;N;10;Rougemont;41;Genferseeregion;30;582483.505141;148590.342462
+Switzerland;Pontresina;N;10;Pontresina;41;Ostschweiz;30;788767.560856;151668.491488
+Switzerland;Epesses;N;10;Epesses;41;Genferseeregion;30;546782.213966;148967.058642
+Switzerland;Gruben;N;10;Gruben;41;Espace Mittelland;30;587827.960668;148810.57893
+Switzerland;Geschinen;N;10;Geschinen;41;Genferseeregion;30;665009.575411;149393.461291
+Switzerland;Puidoux;N;10;Puidoux Chexbres;41;Genferseeregion;30;548351.986823;149364.700397
+Switzerland;Matten;N;10;Matten;41;Espace Mittelland;30;598692.205269;149154.079045
+Switzerland;Villette;N;10;Villette VD;41;Genferseeregion;30;543932.457059;149671.078955
+Switzerland;Tolochenaz;N;10;Tolochenaz;41;Genferseeregion;30;526015.34536;149875.879547
+Switzerland;Sankt Moritz;N;10;Sankt Moritz;41;Ostschweiz;30;784192.237864;152327.488445
+Switzerland;Grandvaux;N;10;Grandvaux;41;Genferseeregion;30;545154.682625;149837.681217
+Switzerland;Ulrichen;N;10;Ulrichen;41;Genferseeregion;30;666852.742107;150736.582137
+Switzerland;Lutry;N;10;Lutry;41;Genferseeregion;30;542521.928393;150696.037757
+Switzerland;Schönried;N;10;Schönried;41;Espace Mittelland;30;588744.690159;150442.914703
+Switzerland;Sankt Stephan;N;10;Sankt Stephan;41;Espace Mittelland;30;597049.896303;150477.530372
+Switzerland;Morges;N;10;la Gottaz;41;Genferseeregion;30;527365.016206;151015.629373
+Switzerland;Morges;N;10;Prélionne;41;Genferseeregion;30;526743.60997;151045.400557
+Switzerland;Lessoc;N;10;Lessoc;41;Espace Mittelland;30;570417.236824;150949.871815
+Switzerland;Puidoux;N;10;Moreillon;41;Genferseeregion;30;549955.865861;151118.723105
+Switzerland;Pontresina;N;10;Punt Muragl;41;Ostschweiz;30;787506.724857;153920.175499
+Switzerland;Lutry;N;10;Bossière;41;Genferseeregion;30;543241.829986;151333.984951
+Switzerland;Lausanne;N;10;Pully;41;Genferseeregion;30;540394.770968;151383.765183
+Switzerland;Obergesteln;N;10;Obergesteln;41;Genferseeregion;30;668223.475349;151708.036742
+Switzerland;Lutry;N;10;la Conversion;41;Genferseeregion;30;541755.646273;151626.121209
+Switzerland;Morges;Y;10;Morges;41;Genferseeregion;30;527957.90649;151808.942285
+Switzerland;Morges;Y;10;Morges;41;Genferseeregion;30;527943.224407;151864.704577
+Switzerland;Celerina;N;10;Celerina;41;Ostschweiz;30;785781.6059;154333.770512
+Switzerland;Lausanne;N;10;Pully Nord;41;Genferseeregion;30;540169.179619;151852.920763
+Switzerland;Chigny;N;10;Chigny;41;Genferseeregion;30;525896.47647;152067.454528
+Switzerland;Sankt Stephan;N;10;Stöckli;41;Espace Mittelland;30;596152.63335;151711.972131
+Switzerland;Saanenmöser;N;10;Saanenmöser;41;Espace Mittelland;30;590305.099644;151818.635222
+Switzerland;Morges;N;10;Morges-St-Jean;41;Genferseeregion;30;528677.655479;152311.757056
+Switzerland;Albeuve;N;10;Albeuve;41;Espace Mittelland;30;570637.083021;151960.405814
+Switzerland;Lausanne;N;10;Lausanne;41;Genferseeregion;30;537288.066258;152293.610549
+Switzerland;Yens;N;10;Yens;41;Genferseeregion;30;522449.636984;152600.082586
+Switzerland;Lonay;N;10;Lonay-Préverenges;41;Genferseeregion;30;529543.32668;152835.179406
+Switzerland;Tatroz;N;10;Tatroz;41;Espace Mittelland;30;556875.031449;152699.281227
+Switzerland;Lausanne;N;10;Lausanne-Chauderon;41;Genferseeregion;30;537448.010863;152914.501312
+Switzerland;Vufflens-le-Château;N;10;Vufflens-le-Château;41;Genferseeregion;30;525878.662778;153112.702812
+Switzerland;Châtel-Saint-Denis;N;10;Châtel-Saint-Denis;41;Espace Mittelland;30;558525.623697;152821.066392
+Switzerland;Bossonnens;N;10;Bossonnens;41;Espace Mittelland;30;555134.864993;152923.237071
+Switzerland;Bussy-Chardonney;N;10;Bussy-sur-Morges;41;Genferseeregion;30;523970.780333;153336.638323
+Switzerland;Remaufens;N;10;Remaufens;41;Espace Mittelland;30;557429.841315;153028.8293
+Switzerland;Châtel-Saint-Denis;N;10;Au Moulin;41;Espace Mittelland;30;558220.182768;153034.400189
+Switzerland;Bussy-Chardonney;N;10;le Marais;41;Genferseeregion;30;524954.332419;153446.572083
+Switzerland;Lausanne;N;10;Montétan;41;Genferseeregion;30;536999.404261;153308.283887
+Switzerland;Neirivue;N;10;Neirivue;41;Espace Mittelland;30;571072.330382;153103.306369
+Switzerland;Denges;N;10;Denges-Echandens;41;Genferseeregion;30;531123.74809;153472.78311
+Switzerland;Airolo;N;10;Airolo;41;Tessin;30;689921.740402;153783.033123
+Switzerland;Mitholz;N;10;Mitholz Balmhorn;41;Espace Mittelland;30;618219.114229;153172.233656
+Switzerland;Verdan;N;10;Granges (Veveyse);41;Espace Mittelland;30;554202.535402;153419.408105
+Switzerland;Oeschseite;N;10;Oeschseite;41;Espace Mittelland;30;593376.377776;153326.295847
+Switzerland;Lausanne;N;10;Malley;41;Genferseeregion;30;535024.329575;153729.523053
+Switzerland;Samedan;N;4;Samedan;41;Ostschweiz;36;786726.446789;156298.216801
+Switzerland;Mitholz;N;10;Blausee BE;41;Espace Mittelland;30;618202.795903;153494.564078
+Switzerland;Bussy-Chardonney;N;10;Chardonney-Château;41;Genferseeregion;30;522953.266403;154172.279013
+Switzerland;Lausanne;N;10;Union-Prilly;41;Genferseeregion;30;536455.473605;154114.440614
+Switzerland;Oberwald;N;10;Oberwald;41;Genferseeregion;36;669797.583775;154294.162706
+Switzerland;Bière;N;10;Bière;41;Genferseeregion;30;515632.509724;154626.323891
+Switzerland;Lausanne;N;10;Renens;41;Genferseeregion;30;533936.337225;154564.051248
+Switzerland;Blankenburg;Y;10;Blankenburg;41;Espace Mittelland;30;595931.926023;154413.426643
+Switzerland;Palézieux-Gare;Y;10;Palézieux-Gare;41;Genferseeregion;30;553881.939956;154633.593006
+Switzerland;Reverolle;N;10;Reverolle;41;Genferseeregion;30;522748.62136;154964.241383
+Switzerland;Palézieux-Gare;Y;10;Palézieux-Gare;41;Genferseeregion;30;553866.855143;154667.059268
+Switzerland;Grandvillard;N;10;Grandvillard;41;Espace Mittelland;30;572024.368752;154888.572925
+Switzerland;Lausanne;N;10;Prilly Chasseur;41;Genferseeregion;30;536121.617419;155185.222936
+Switzerland;Bussigny-près-Lausanne;N;10;Bussigny;41;Genferseeregion;30;532052.785462;155563.362612
+Switzerland;Kleine Scheidegg;N;10;Jungfraujoch;41;Espace Mittelland;30;641781.555686;155346.21711
+Switzerland;Lausanne;N;10;Cery-Fleur-de-Lys;41;Genferseeregion;30;535919.039397;155609.830453
+Switzerland;Ballens;N;10;Froideville;41;Genferseeregion;30;519547.25583;155928.989857
+Switzerland;Bever;N;4;Bever;41;Ostschweiz;30;787937.201534;158326.74902
+Switzerland;Prayoud;N;10;Prayoud;41;Espace Mittelland;30;558697.801739;155543.486409
+Switzerland;Zweisimmen;Y;10;Zweisimmen;41;Espace Mittelland;30;595204.049153;155458.918662
+Switzerland;Zweisimmen;Y;10;Zweisimmen;41;Espace Mittelland;30;595250.065345;155458.881869
+Switzerland;Apples;N;10;Apples;41;Genferseeregion;30;522179.520153;156038.855582
+Switzerland;Ballens;N;10;Ballens;41;Genferseeregion;30;518339.822122;156256.56527
+Switzerland;Jouxtens-Mézery;N;10;Jouxtens-Mézery;41;Genferseeregion;30;535798.402806;156522.723216
+Switzerland;Palézieux-Village;N;10;Palézieux-Village;41;Genferseeregion;30;553159.967995;156484.572533
+Switzerland;Kandergrund;N;10;Kandergrund Post;41;Espace Mittelland;30;617204.901412;156370.817858
+Switzerland;Bever;N;4;Spinas;41;Ostschweiz;30;784612.763724;159391.524497
+Switzerland;Romanel-sur-Lausanne;N;10;le Lussex;41;Genferseeregion;30;535989.422459;157176.596317
+Switzerland;Enney;N;10;Enney;41;Espace Mittelland;30;572939.962391;157218.867813
+Switzerland;Pampigny;N;10;le Manège;41;Genferseeregion;30;522973.034033;158107.589932
+Switzerland;Romanel-sur-Lausanne;N;10;Romanel-sur-Lausanne;41;Genferseeregion;30;536107.049165;158142.535398
+Switzerland;Châtillens;N;10;Châtillens;41;Genferseeregion;30;552137.626235;158104.575996
+Switzerland;Oron-le-Châtel;N;10;Oron;41;Genferseeregion;30;553963.327018;158245.939698
+Switzerland;Semsales;N;10;Semsales;41;Espace Mittelland;30;560794.680635;158364.20688
+Switzerland;Estavannens;N;10;Estavannens;41;Espace Mittelland;30;572975.535761;158308.137171
+Switzerland;Kleine Scheidegg;N;10;Eigergletscher;41;Espace Mittelland;30;641170.00376;158410.230387
+Switzerland;Vernand;N;10;Vernand-Camarès;41;Genferseeregion;30;536143.030865;158642.424253
+Switzerland;Vufflens-la-Ville;N;10;Vufflens-la-Ville;41;Genferseeregion;30;530432.924935;158750.312083
+Switzerland;Kleine Scheidegg;N;4;Wengernalp;41;Espace Mittelland;30;638425.075887;158492.120194
+Switzerland;Pampigny;N;10;Pampigny;41;Genferseeregion;30;522875.557748;158875.943165
+Switzerland;Frutigen;N;10;Frutigen Amtshaus;41;Espace Mittelland;30;616539.788013;158425.517839
+Switzerland;Cheseaux-sur-Lausanne;N;10;Bel-Air LEB;41;Genferseeregion;30;536160.724431;158864.579086
+Switzerland;Punt-Chamues-ch;N;10;la Punt-Chamues-ch;41;Ostschweiz;30;790531.919008;161678.306958
+Switzerland;Grubenwald;N;10;Grubenwald;41;Espace Mittelland;30;595773.938824;158782.325996
+Switzerland;Mürren;N;3;Winteregg;41;Espace Mittelland;30;635117.347911;159138.903635
+Switzerland;Gruyères;N;10;Gruyères;41;Espace Mittelland;30;572014.06009;159257.457622
+Switzerland;Mauraz;N;10;Mauraz;41;Genferseeregion;30;522741.647579;159789.293927
+Switzerland;Brassus;N;10;le Brassus;41;Genferseeregion;30;506042.811348;160049.543806
+Switzerland;Cheseaux-sur-Lausanne;N;10;Cheseaux;41;Genferseeregion;30;536268.981043;159674.981149
+Switzerland;Frutigen;N;10;Frutigen;41;Espace Mittelland;30;616283.817679;159536.4767
+Switzerland;Madulain;N;10;Madulain;41;Ostschweiz;30;791621.775475;162613.858266
+Switzerland;Verrerie;N;10;la Verrerie;41;Espace Mittelland;30;560658.35781;159788.043992
+Switzerland;Preda;N;4;Preda;41;Ostschweiz;30;779291.78229;162377.822824
+Switzerland;Montricher;N;10;Tuilerie;41;Genferseeregion;30;521550.18857;160705.253809
+Switzerland;Pâquier;N;10;le Pâquier-Montbarry;41;Espace Mittelland;30;571015.807266;160462.794573
+Switzerland;Wengen;N;4;Allmend;41;Espace Mittelland;30;637944.433641;160556.783837
+Switzerland;Montricher;N;10;Montricher;41;Genferseeregion;30;519931.33751;161149.085999
+Switzerland;Lauterbrunnen;N;3;Grütschalp;41;Espace Mittelland;30;634732.662036;160715.243332
+Switzerland;Sentier;N;10;Chez-le-Maître;41;Genferseeregion;30;506585.717075;161441.927069
+Switzerland;Wengen;N;3;Wengwald;41;Espace Mittelland;30;636594.077803;160826.33321
+Switzerland;Realp;N;10;Realp;41;Zentralschweiz;36;681593.532468;161346.549598
+Switzerland;Lauterbrunnen;N;3;Lauterbrunnen;41;Espace Mittelland;30;636025.78591;161034.119643
+Switzerland;Zuoz;N;10;Zuoz;41;Ostschweiz;30;793375.413596;164115.941558
+Switzerland;Etagnières;N;10;Etagnières;41;Genferseeregion;30;536830.901784;161358.850185
+Switzerland;Wärgistal;Y;4;Alpiglen;41;Espace Mittelland;30;643242.720757;161203.977899
+Switzerland;Crêt;N;10;le Crêt;41;Espace Mittelland;30;561886.439964;161280.883587
+Switzerland;Broc;N;10;les Marches;41;Espace Mittelland;30;573403.137031;161385.535972
+Switzerland;Weissenbach;N;10;Weissenbach;41;Espace Mittelland;30;595116.894931;161417.44656
+Switzerland;Cossonay;N;10;Cossonay;41;Genferseeregion;30;530009.300188;161868.072179
+Switzerland;Broc;N;10;Broc-Village;41;Espace Mittelland;30;574009.142297;161549.629506
+Switzerland;Grindelwald;Y;4;Alpiglen;41;Espace Mittelland;30;643814.051445;161663.904599
+Switzerland;Epagny;N;10;Epagny;41;Espace Mittelland;30;571902.465181;161614.709829
+Switzerland;Sentier;N;10;Sentier-Orient;41;Genferseeregion;30;507510.477166;162272.568979
+Switzerland;Wengen;N;4;Wengen;41;Espace Mittelland;30;637048.622772;161673.989365
+Switzerland;Broc;N;10;Broc-Fabrique;41;Espace Mittelland;30;574837.154576;161679.49872
+Switzerland;Schwandi;N;10;Wengi;41;Espace Mittelland;30;617166.677834;161706.661936
+Switzerland;Tour-de-Trême;N;10;la Tour-de-Trême;41;Espace Mittelland;30;571114.453521;161851.902217
+Switzerland;Tour-de-Trême;N;10;la Tour-Village;41;Espace Mittelland;30;571345.086349;162017.546235
+Switzerland;Wärgistal;Y;4;Brandegg;41;Espace Mittelland;30;643955.798388;162187.430726
+Switzerland;Isle;N;10;Villars-Bozon;41;Genferseeregion;30;520648.571714;162651.545927
+Switzerland;Ecublens;N;10;Ecublens-Rue;41;Espace Mittelland;30;551995.984622;162441.291738
+Switzerland;S-chanf;N;10;S-chanf;41;Ostschweiz;30;794886.409727;165510.58491
+Switzerland;Solliat;N;10;Solliat Golisse;41;Genferseeregion;30;508161.107615;163229.833559
+Switzerland;Grindelwald;Y;10;Brandegg;41;Espace Mittelland;30;644380.862059;162724.162742
+Switzerland;Assens;N;10;Assens;41;Genferseeregion;30;537383.697696;162931.693989
+Switzerland;Vaulruz;N;10;les Colombettes;41;Espace Mittelland;30;566569.897496;162987.174632
+Switzerland;Isle;N;10;l' Isle-Mont-la-Ville;41;Genferseeregion;30;521309.888778;163421.065888
+Switzerland;Ponts;N;10;les Ponts;41;Espace Mittelland;30;564915.845055;163074.436784
+Switzerland;Bulle;Y;10;Bulle;41;Espace Mittelland;30;570599.539426;163088.355041
+Switzerland;Bulle;Y;10;Bulle;41;Espace Mittelland;30;570653.211254;163099.208889
+Switzerland;Vuadens;N;10;Vuadens-Sud;41;Espace Mittelland;30;567987.96305;163168.423978
+Switzerland;Vaulruz;N;10;Vaulruz-Sud;41;Espace Mittelland;30;565690.614531;163270.057121
+Switzerland;Rüdlen;N;10;Rüdlen;41;Espace Mittelland;30;618671.245881;163234.115889
+Switzerland;Bulle;N;10;Planchy;41;Espace Mittelland;30;570325.057594;163345.390538
+Switzerland;Hospental;N;10;Hospental;41;Zentralschweiz;30;686826.293017;164088.121436
+Switzerland;Vauderens;N;10;Vauderens;41;Espace Mittelland;30;554977.423696;163641.039535
+Switzerland;Grindelwald;N;10;Grindelwald Grunt;41;Espace Mittelland;30;644971.527914;163640.135832
+Switzerland;Vaulruz;N;10;Vaulruz-Nord;41;Espace Mittelland;30;565770.06311;163769.856355
+Switzerland;Solliat;N;10;le Rocheray;41;Genferseeregion;30;509052.813497;164439.218371
+Switzerland;Grindelwald;N;10;Grindelwald;41;Espace Mittelland;30;645451.433724;163988.369421
+Switzerland;Scharnachtal;N;10;Reichenbach im Kandertal;41;Espace Mittelland;30;619243.463923;163936.265538
+Switzerland;Boltigen;N;10;Boltigen;41;Espace Mittelland;30;596329.073108;164040.082665
+Switzerland;Grindelwald;N;10;Schwendi bei Grindelwald;41;Espace Mittelland;30;643302.568967;164595.043577
+Switzerland;Bergün;N;4;Bergün;41;Ostschweiz;30;776829.563102;167098.143002
+Switzerland;Esserts-de-Rive;N;10;Esserts-de-Rive;41;Genferseeregion;30;509838.287001;165227.849554
+Switzerland;Zweilütschinen;N;10;Zweilütschinen;41;Espace Mittelland;30;635413.846991;164754.59287
+Switzerland;Lütschental;N;10;Burglauenen;41;Espace Mittelland;30;641138.905529;165191.265795
+Switzerland;Lütschental;N;10;Lütschental;41;Espace Mittelland;30;639147.661632;165244.66275
+Switzerland;Mülenen;N;10;Mülenen;41;Espace Mittelland;30;619369.613483;165192.848502
+Switzerland;Cinuos-chel;N;10;Cinuos-chel-Brail;41;Ostschweiz;30;797847.210515;168465.905307
+Switzerland;Andermatt;N;10;Andermatt;41;Zentralschweiz;36;688561.15411;165914.526214
+Switzerland;Eclépens;N;10;Eclépens;41;Genferseeregion;30;531745.799978;165661.302725
+Switzerland;Echallens;N;10;Echallens;41;Genferseeregion;30;538392.580386;165689.422382
+Switzerland;Sâles;N;10;Sâles;41;Espace Mittelland;30;564326.603597;165745.933424
+Switzerland;Echallens;N;10;Sur Roche;41;Genferseeregion;30;538993.616772;166061.263351
+Switzerland;Andermatt;N;10;Nätschen;41;Zentralschweiz;30;690769.296051;166747.981979
+Switzerland;Lieu;N;10;le Lieu;41;Genferseeregion;30;511514.640879;166726.032353
+Switzerland;Rueyres-Treyfayes;N;10;Rueyres-Treyfayes;41;Espace Mittelland;30;563173.310446;166208.692976
+Switzerland;Oberwil;N;10;Enge im Simmental;41;Espace Mittelland;30;598412.788458;166351.404542
+Switzerland;Echallens;N;10;Grésaley;41;Genferseeregion;30;539918.776278;166696.719883
+Switzerland;Stugl;N;4;Stuls;41;Ostschweiz;30;774946.236417;169156.003997
+Switzerland;Aeschi;N;10;Heustrich Emdthal;41;Espace Mittelland;30;618951.022619;166814.542788
+Switzerland;Vuisternens-devant-Romont;N;10;Vuisternens-devant-Romont;41;Espace Mittelland;30;561118.915522;166988.721364
+Switzerland;Chavannes-sur-Moudon;N;10;Bressonnaz;41;Genferseeregion;30;550548.722541;167166.624892
+Switzerland;Sugnens;N;10;Sugnens;41;Genferseeregion;30;540836.524248;167376.858974
+Switzerland;Leissigen;N;10;Leissigen;41;Espace Mittelland;30;625930.292825;167296.382938
+Switzerland;Oberwil;N;10;Oberwil im Simmental;41;Espace Mittelland;30;599783.15576;167251.633759
+Switzerland;Bavois;N;10;Bavois;41;Genferseeregion;30;532228.166973;167690.297687
+Switzerland;Séchey;N;10;Sèchey;41;Genferseeregion;30;513348.147371;168033.398706
+Switzerland;Sarraz;N;10;la Sarraz;41;Genferseeregion;30;529650.028687;167820.039703
+Switzerland;Tschamut;N;10;Tschamut-Selva;41;Ostschweiz;30;697284.77943;168195.301058
+Switzerland;Ringoldingen;N;10;Ringoldingen;41;Espace Mittelland;30;606641.220547;167444.246937
+Switzerland;Siviriez;N;10;Siviriez;41;Espace Mittelland;30;557609.677889;167612.813435
+Switzerland;Därstetten;N;10;Därstetten;41;Espace Mittelland;30;604413.810398;167542.257481
+Switzerland;Weissenburg;N;10;Weissenberg;41;Espace Mittelland;30;602898.290417;167619.159058
+Switzerland;Erlenbach;N;10;Erlenbach im Simmental;41;Espace Mittelland;30;609021.355234;167636.32144
+Switzerland;Därligen;N;10;Därligen;41;Espace Mittelland;30;628859.684135;167765.523934
+Switzerland;Oey;N;10;Oey-Diemtigen;41;Espace Mittelland;30;610865.78809;167717.183322
+Switzerland;Tschamut;N;10;Oberalppasshöhe-Calmot;41;Zentralschweiz;30;694201.062526;168601.950958
+Switzerland;Charbonnières;N;10;Charbonnières;41;Genferseeregion;30;514107.088453;168645.075267
+Switzerland;Tiefencastel;N;4;Tiefencastel;41;Ostschweiz;30;763527.00172;170324.154412
+Switzerland;Wilderswil;N;10;Wilderswil;41;Espace Mittelland;30;633065.64436;168431.973959
+Switzerland;Göschenen;Y;10;Göschenen;41;Zentralschweiz;30;688087.228299;168987.177959
+Switzerland;Göschenen;Y;10;Göschenen;41;Zentralschweiz;30;688094.880404;168987.290269
+Switzerland;Surava;N;4;Surava;41;Ostschweiz;30;767166.918386;170758.090343
+Switzerland;Burgholz;N;10;Burgholz;41;Espace Mittelland;30;612815.901993;168465.83346
+Switzerland;Pont;N;10;le Pont;41;Genferseeregion;30;514796.219773;169202.2488
+Switzerland;Fermeda-Carolina;N;10;Carolina;41;Ostschweiz;30;800538.743496;172058.901669
+Switzerland;Moudon;N;10;Moudon;41;Genferseeregion;30;551543.045984;168959.454503
+Switzerland;Faulensee;N;10;Faulensee;41;Espace Mittelland;30;621056.601485;168867.013722
+Switzerland;Alvaneu;N;4;Alvaneu;41;Ostschweiz;30;769478.642899;171312.272626
+Switzerland;Rueras;N;10;Dieni;41;Ostschweiz;30;699823.048258;169771.277161
+Switzerland;Mézières;N;10;Mézières FR;41;Espace Mittelland;30;560498.670675;169282.842963
+Switzerland;Fey;N;10;Fey;41;Genferseeregion;30;542372.885852;169529.735601
+Switzerland;Filisur;N;4;Filisur;41;Ostschweiz;30;771836.171641;171857.548092
+Switzerland;Wimmis;N;10;Wimmis;41;Espace Mittelland;30;615109.219387;169471.654151
+Switzerland;Interlaken;N;10;Interlaken West;41;Espace Mittelland;30;631535.844248;169735.524002
+Switzerland;Rueras;N;10;Rueras;41;Ostschweiz;30;700735.394761;170587.030649
+Switzerland;Salins;N;4;Salins;41;Ostschweiz;30;759602.940975;172209.06188
+Switzerland;Mompé Tujetsch;N;10;Mompé Tujetsch;41;Ostschweiz;30;705999.571956;171055.74438
+Switzerland;Sedrun;N;10;Sedrun;41;Ostschweiz;36;702280.395787;171080.133625
+Switzerland;Bugnei;N;10;Bugnei;41;Ostschweiz;30;703160.07964;171095.19489
+Switzerland;Spiez;N;10;Eifeld;41;Espace Mittelland;30;615581.249142;170384.423839
+Switzerland;Spiez;N;10;Spiez;41;Espace Mittelland;30;618387.863077;170736.971696
+Switzerland;Interlaken;Y;10;Interlaken Ost;41;Espace Mittelland;30;633280.254434;171134.53596
+Switzerland;Interlaken;Y;10;Interlaken Ost;41;Espace Mittelland;30;633448.416698;171157.704093
+Switzerland;Interlaken;Y;10;Interlaken Ost;41;Espace Mittelland;30;633188.277627;171167.377164
+Switzerland;Segnes;N;10;Segnas;41;Ostschweiz;30;706325.869455;172073.288275
+Switzerland;Spiez;N;10;Lattigen bei Spiez;41;Espace Mittelland;30;616328.715918;171220.157139
+Switzerland;Romont;N;10;Romont;41;Espace Mittelland;30;559556.310717;171379.097998
+Switzerland;Spiezmoos;N;10;Spiezmoos Süd;41;Espace Mittelland;30;616963.416273;171288.615152
+Switzerland;Bercher;N;10;Bercher;41;Genferseeregion;30;543807.994053;171606.127786
+Switzerland;Spiezmoos;N;10;Spiezmoos Nord;41;Espace Mittelland;30;617184.542918;171533.810122
+Switzerland;Disentis;N;10;Acla da Fontauna;41;Ostschweiz;30;707411.1959;172559.596809
+Switzerland;Wiesen;N;10;Wiesen;41;Ostschweiz;30;774272.926042;174140.983906
+Switzerland;Zernez;N;10;Zernez;41;Ostschweiz;30;802805.178318;175227.278975
+Switzerland;Croy;N;10;Croy-Romainmôtier;41;Genferseeregion;30;526550.837424;172270.815117
+Switzerland;Arnex-sur-Orbe;N;10;Arnex-sur-Orbe;41;Genferseeregion;30;529625.441583;172245.041562
+Switzerland;Thusis;N;4;Thusis;41;Ostschweiz;36;753104.805069;174030.196069
+Switzerland;Innertkirchen;N;10;Innertkirchen MIB;41;Espace Mittelland;30;660905.014094;172529.719808
+Switzerland;Sils im Domleschg;N;4;Sils im Domleschg;41;Ostschweiz;30;754530.817028;174211.340382
+Switzerland;Ringgenberg;N;10;Ringgenberg;41;Espace Mittelland;30;635382.565584;172658.4458
+Switzerland;Einigen;N;10;Kumm;41;Espace Mittelland;30;616317.353442;172587.47651
+Switzerland;Disentis;N;10;Disentis;41;Ostschweiz;30;708287.091978;173620.47872
+Switzerland;Innertkirchen;N;10;Innertkirchen Hof;41;Espace Mittelland;30;660470.585916;173136.771044
+Switzerland;Chavornay;N;10;Chavornay;41;Genferseeregion;30;533376.674882;173224.960502
+Switzerland;Lucens;N;10;Lucens;41;Genferseeregion;30;554514.393199;173271.780001
+Switzerland;Einigen;N;10;Einigen;41;Espace Mittelland;30;615428.186037;173385.528383
+Switzerland;Vallorbe;N;10;Vallorbe;41;Genferseeregion;30;518266.950725;173967.883317
+Switzerland;;N;10;Vallorbe Rail;41;Genferseeregion;3;516625.436369;174157.264598
+Switzerland;Bretonnières;N;10;Bretonnières;41;Genferseeregion;30;526330.022636;174219.08343
+Switzerland;Niederried;N;10;Niederried;41;Espace Mittelland;30;637545.945653;174027.846823
+Switzerland;Thun;N;10;Gwattstutz;41;Espace Mittelland;30;614669.798271;173950.579657
+Switzerland;Vallorbe;N;10;le Day;41;Genferseeregion;30;520675.230141;174502.516025
+Switzerland;Orbe;N;10;les Granges (Orbe);41;Genferseeregion;30;532365.319681;174414.729675
+Switzerland;Cazis;N;10;Cazis;41;Ostschweiz;30;752559.19604;176229.214045
+Switzerland;Villaz-Saint-Pierre;N;10;Villaz-Saint-Pierre;41;Espace Mittelland;30;563461.101282;174477.846092
+Switzerland;Orbe;N;10;St-Eloi;41;Genferseeregion;30;531558.867373;174768.526918
+Switzerland;Somvix;N;10;Sumvitg-Cumpadials;41;Ostschweiz;30;714065.188218;175862.378887
+Switzerland;Orbe;N;10;Orbe;41;Genferseeregion;30;530593.396308;175246.565613
+Switzerland;Thun;N;10;Gwatt;41;Espace Mittelland;30;613902.750887;175015.957694
+Switzerland;Meiringen;N;10;Meiringen MIB;41;Espace Mittelland;30;657099.785043;175360.520931
+Switzerland;Essert-Pittet;N;10;Essert-Pittet;41;Genferseeregion;30;534387.818568;175470.618299
+Switzerland;Meiringen;N;10;Meiringen SSB;41;Espace Mittelland;30;656839.152159;175435.865025
+Switzerland;Davos Monstein;N;10;Davos Monstein;41;Ostschweiz;30;778578.738012;178071.246657
+Switzerland;Rabius;N;10;Rabius-Surrein;41;Ostschweiz;30;716179.574209;176836.958112
+Switzerland;Henniez;N;10;Henniez;41;Genferseeregion;30;556630.994967;176213.190449
+Switzerland;Rodels;N;10;Rodels Realta;41;Ostschweiz;30;752443.762078;178061.117084
+Switzerland;Oberried;N;10;Oberried am Brienzersee;41;Espace Mittelland;30;639847.294926;176343.888904
+Switzerland;Thun;N;10;Dürrenast;41;Espace Mittelland;30;614280.822169;176762.166401
+Switzerland;Trun;N;10;Trun;41;Ostschweiz;30;718693.842774;178042.581194
+Switzerland;Glaris;N;10;Davos Glaris;41;Ostschweiz;30;778948.18117;179783.874403
+Switzerland;Brienzwiler;N;10;Unterbach;41;Espace Mittelland;30;649882.191514;177330.564212
+Switzerland;Ependes;N;10;Ependes;41;Genferseeregion;30;536597.149741;177636.931925
+Switzerland;Chénens;N;10;Chénens;41;Espace Mittelland;30;566514.002884;177639.412939
+Switzerland;Susch;N;10;Susch;41;Ostschweiz;30;801743.79245;181064.375223
+Switzerland;Cottens;N;10;Cottens;41;Espace Mittelland;30;569334.816331;177868.863845
+Switzerland;Brienz;N;10;Brienz;41;Espace Mittelland;30;646007.83544;178311.230011
+Switzerland;Tavanasa;N;10;Tavanasa-Breil/Brigels;41;Ostschweiz;30;723992.347893;179450.803097
+Switzerland;Thun;N;10;Thun;41;Espace Mittelland;30;614475.659997;178363.440505
+Switzerland;Brünig;N;10;Brünig-Hasliberg;41;Espace Mittelland;30;653553.549357;178685.174195
+Switzerland;Marnand;N;10;Granges-Marnand;41;Genferseeregion;30;558421.216096;178657.337335
+Switzerland;Thun;N;10;Schwäbis;41;Espace Mittelland;30;613824.378688;179173.427184
+Switzerland;Neyruz;N;10;Neyruz;41;Espace Mittelland;30;571466.485541;179436.908234
+Switzerland;Frauenkirch;N;10;Davos-Frauenkirch;41;Ostschweiz;30;780381.631319;182195.791435
+Switzerland;Rothenbrunnen;N;10;Rothenbrunnen;41;Ostschweiz;30;751342.477804;181402.629416
+Switzerland;Waltensburg;N;10;Waltensburg;41;Ostschweiz;30;728357.938846;181143.917877
+Switzerland;Amsteg;N;10;Amsteg;41;Zentralschweiz;30;694334.826076;180522.566651
+Switzerland;Lavin;N;10;Lavin;41;Ostschweiz;30;804122.80544;183269.500647
+Switzerland;Guarda;Y;10;Guarda;41;Ostschweiz;30;807244.591396;183610.33752
+Switzerland;Steffisburg;N;10;Steffisburg;41;Espace Mittelland;30;613539.449945;180184.401357
+Switzerland;Thun;N;10;Lerchenfeld;41;Espace Mittelland;30;611927.801489;180214.333913
+Switzerland;Ardez;N;10;Ardez;41;Ostschweiz;30;810953.034249;183995.703366
+Switzerland;Baulmes;N;10;Six-Fontaines;41;Genferseeregion;30;528273.978418;180743.691266
+Switzerland;Schnaus;N;10;Schnaus-Strada;41;Ostschweiz;30;732766.434483;181829.350865
+Switzerland;Uetendorf;N;10;Uetendorf Allmend;41;Espace Mittelland;30;610499.223594;180389.53489
+Switzerland;Rueun;N;10;Rueun;41;Ostschweiz;30;730406.501676;181799.735406
+Switzerland;Uetendorf;N;10;Uetendorf;41;Espace Mittelland;30;610247.070133;180455.799979
+Switzerland;Ilanz;N;10;Ilanz;41;Ostschweiz;30;735092.562053;182003.687806
+Switzerland;Davos Platz;N;10;Davos-Islen;41;Ostschweiz;30;781010.622439;183382.55829
+Switzerland;Castrisch;N;10;Castrisch;41;Ostschweiz;30;737046.738901;182403.919132
+Switzerland;Trey;N;10;Trey;41;Genferseeregion;30;560125.909663;181091.468006
+Switzerland;Yverdon-les-Bains;Y;10;Yverdon-les-Bains;41;Genferseeregion;30;539013.41116;181525.117416
+Switzerland;Yverdon-les-Bains;Y;10;Yverdon-les-Bains;41;Genferseeregion;30;539051.704981;181535.844542
+Switzerland;Rosé;N;10;Rosé;41;Espace Mittelland;30;571345.628706;181316.233336
+Switzerland;Lädeli;N;10;Lädeli;41;Espace Mittelland;30;613055.921579;181261.655327
+Switzerland;Arosa;N;10;Arosa;41;Ostschweiz;30;771157.802894;184071.452964
+Switzerland;Lungern;N;10;Lungern;41;Zentralschweiz;30;655441.079479;181948.556435
+Switzerland;Seftigen;N;10;Seftigen;41;Espace Mittelland;30;607893.032272;181741.789818
+Switzerland;Ftan;N;10;Ftan;41;Ostschweiz;30;815218.897382;185660.39483
+Switzerland;Matran;N;10;Matran;41;Espace Mittelland;30;573899.047269;181960.435964
+Switzerland;Baulmes;N;10;Baulmes;41;Genferseeregion;30;530232.474241;182321.4578
+Switzerland;Burgistein;N;10;Burgistein-Wattenwil;41;Espace Mittelland;30;606342.639856;182040.107687
+Switzerland;Yverdon-les-Bains;N;10;William-Barbey YSteC;41;Genferseeregion;30;538411.333465;182387.318354
+Switzerland;Villars-sur-Glâne;N;10;Villars-sur-Glâne;41;Espace Mittelland;30;575411.575508;182120.77614
+Switzerland;Davos Platz;N;10;Davos Platz;41;Ostschweiz;30;781933.495525;184945.346885
+Switzerland;Heimberg;N;10;Heimberg;41;Espace Mittelland;30;612794.244382;182217.133562
+Switzerland;Valendas;N;10;Valendas-Sagogn;41;Ostschweiz;30;740301.714544;184002.710134
+Switzerland;Scuol;N;10;Scuol-Tarasp;41;Ostschweiz;30;817398.362326;186451.106205
+Switzerland;Yverdon-les-Bains;N;10;la Brinaz;41;Genferseeregion;30;537676.41182;182939.679138
+Switzerland;Uttigen;N;10;Uttigen;41;Espace Mittelland;30;611044.977466;182647.214528
+Switzerland;Essert-sous-Champvent;N;10;Essert-sous-Champvent;41;Genferseeregion;30;534531.813166;183039.970577
+Switzerland;Valeyres-sous-Montagny;N;10;Valeyres-sous-Montagny;41;Genferseeregion;30;536960.895324;183147.288869
+Switzerland;Litzirüti;N;10;Litzirüti;41;Ostschweiz;30;772927.612034;185479.123488
+Switzerland;Baulmes;N;10;Troix-Villes;41;Genferseeregion;30;530812.257577;183593.236796
+Switzerland;Rhäzüns;N;10;Rhäzüns;41;Ostschweiz;30;749705.71528;185131.238288
+Switzerland;Yvonand;N;10;Yvonand;41;Genferseeregion;30;547431.664569;183546.380159
+Switzerland;Vuiteboeuf;N;10;Vuiteboeuf;41;Genferseeregion;30;532495.891237;183951.994357
+Switzerland;Fribourg;N;10;Fribourg;41;Espace Mittelland;30;578166.156673;183710.902625
+Switzerland;Grandson;N;10;Grandson;41;Genferseeregion;30;539185.511754;184180.405859
+Switzerland;Versam;N;10;Versam-Safien;41;Ostschweiz;30;742756.851402;185773.220179
+Switzerland;Davos Platz;N;10;Davos Dorf;41;Ostschweiz;30;783540.760607;187085.347379
+Switzerland;Bonaduz;N;10;Bonaduz;41;Ostschweiz;30;749446.517376;186336.864691
+Switzerland;Erstfeld;N;10;Erstfeld;41;Zentralschweiz;30;693144.175791;185362.537474
+Switzerland;Thürnen;N;10;Thürnen;41;Espace Mittelland;30;605797.973889;184685.348391
+Switzerland;Kaiserstuhl;N;10;Kaiserstuhl;41;Zentralschweiz;30;656335.591618;185080.848502
+Switzerland;Cugy;N;10;Cugy FR;41;Espace Mittelland;30;558199.294356;185162.334386
+Switzerland;Belfaux;N;10;Belfaux CFF;41;Espace Mittelland;30;574736.84893;185069.557644
+Switzerland;Givisiez;N;10;Givisiez;41;Espace Mittelland;30;575927.378669;185064.642439
+Switzerland;Trin;N;10;Trin;41;Ostschweiz;30;746508.980953;186886.949132
+Switzerland;Cheyres;N;10;Cheyres;41;Espace Mittelland;30;550370.911021;185400.067044
+Switzerland;Brenzikofen;N;10;Brenzikofen;41;Espace Mittelland;30;613176.926471;185275.078789
+Switzerland;Cousset;N;10;Cousset;41;Espace Mittelland;30;564840.275212;185386.393172
+Switzerland;Schwarzenburg;N;10;Schwarzenburg;41;Espace Mittelland;30;592824.198656;185331.691708
+Switzerland;Engelberg;N;10;Engelberg;41;Zentralschweiz;30;673591.683394;185779.51405
+Switzerland;Kiesen;N;10;Kiesen;41;Espace Mittelland;30;610482.928009;185347.585576
+Switzerland;Sainte-Croix;N;10;Sainte-Croix;41;Genferseeregion;30;528410.899897;185800.53612
+Switzerland;Langwies;N;10;Langwies GR;41;Ostschweiz;30;773163.058428;187899.277052
+Switzerland;Payerne;N;10;Payerne;41;Genferseeregion;30;562163.277985;185647.313391
+Switzerland;Belfaux;N;10;Belfaux-Village;41;Espace Mittelland;30;574922.527029;185669.087143
+Switzerland;Reichenau;N;10;Reichenau-Tamins;41;Ostschweiz;30;750804.419489;187894.41295
+Switzerland;Corcelles-près-Payerne;N;10;Corcelles-Sud;41;Genferseeregion;30;563358.872942;186484.756834
+Switzerland;Léchelles;N;10;Léchelles;41;Espace Mittelland;30;567402.792431;186483.563982
+Switzerland;Domat;N;10;Ems Werk;41;Ostschweiz;30;751953.143659;188346.054114
+Switzerland;Sankt Peter;N;10;Sankt Peter Molinis;41;Ostschweiz;30;769134.222615;188907.263408
+Switzerland;Peist;N;10;Peist;41;Ostschweiz;30;770482.559682;189001.148125
+Switzerland;Grolley;N;10;Grolley;41;Espace Mittelland;30;571554.837098;186762.512222
+Switzerland;Castiel;N;10;Lüen-Castiel;41;Ostschweiz;30;766007.479313;189086.573976
+Switzerland;Wolfgang;N;10;Davos Wolfgang;41;Ostschweiz;30;784369.827841;189668.908919
+Switzerland;Onnens;N;10;Onnens-Bonvillars;41;Genferseeregion;30;542961.9395;187155.984298
+Switzerland;Obermatt;N;10;Grünenwald;41;Zentralschweiz;30;671862.782598;187392.79388
+Switzerland;Domat;N;10;Domat;41;Ostschweiz;30;753708.131906;188958.034864
+Switzerland;Corcelles-près-Payerne;N;10;Corcelles-Nord;41;Genferseeregion;30;563454.441683;187140.075356
+Switzerland;Giswil;N;10;Giswil;41;Zentralschweiz;30;657167.179662;187512.302291
+Switzerland;Chur;N;10;Sassal;41;Ostschweiz;30;760845.805884;189457.100742
+Switzerland;Kaufdorf;N;10;Kaufdorf;41;Espace Mittelland;30;604879.944085;187374.799781
+Switzerland;Oberdiessbach;N;10;Oberdiessbach;41;Espace Mittelland;30;613698.333128;187532.962877
+Switzerland;Lanzenhäusern;N;10;Lanzenhäusern;41;Espace Mittelland;30;593071.259755;187788.213931
+Switzerland;Niederwichtrach;N;10;Wichtrach;41;Espace Mittelland;30;609982.792205;187814.666524
+Switzerland;Pensier;N;10;Pensier;41;Espace Mittelland;30;577052.8714;187995.070713
+Switzerland;Obermatt;N;10;Obermatt LSE;41;Zentralschweiz;30;671400.886746;188376.73146
+Switzerland;Felsberg;N;10;Felsberg;41;Ostschweiz;30;755716.65454;190077.56152
+Switzerland;Estavayer-le-Lac;N;10;Estavayer-le-Lac;41;Espace Mittelland;30;554575.201089;188312.683559
+Switzerland;Chur;N;10;Chur Stadt;41;Ostschweiz;30;760115.350466;190516.218032
+Switzerland;Laret;N;10;Davos Laret;41;Ostschweiz;30;785764.163412;191469.357695
+Switzerland;Düdingen;N;10;Düdingen;41;Espace Mittelland;30;581037.377304;188848.203032
+Switzerland;Concise;N;10;Concise;41;Genferseeregion;30;545436.73262;189133.993339
+Switzerland;Dompierre;N;10;Dompierre;41;Espace Mittelland;30;565496.589368;189351.336564
+Switzerland;Chur;Y;10;Chur;41;Ostschweiz;30;759501.866797;191489.572384
+Switzerland;Chur;Y;10;Chur;41;Ostschweiz;30;759478.700165;191500.075187
+Switzerland;Toffen;N;10;Toffen;41;Espace Mittelland;30;604428.162413;189675.635189
+Switzerland;Riedburg;N;10;Schwarzwasserbrücke;41;Espace Mittelland;30;594217.740223;190110.408637
+Switzerland;Schmitten;N;10;Schmitten;41;Espace Mittelland;30;585929.347998;190190.920658
+Switzerland;Fillistorf;N;10;Fillistorf;41;Espace Mittelland;30;583772.211477;190474.322037
+Switzerland;Courtepin;N;10;Courtepin;41;Espace Mittelland;30;575950.176993;190723.058105
+Switzerland;Grafenort;N;10;Grafenort;41;Zentralschweiz;30;671176.730038;191186.819981
+Switzerland;Domdidier;N;10;Domdidier;41;Espace Mittelland;30;567434.309761;190863.488594
+Switzerland;Altdorf;N;10;Altdorf;41;Zentralschweiz;30;691085.751342;191712.651138
+Switzerland;Sachseln;N;10;Sachseln;41;Zentralschweiz;30;661034.264347;191341.530416
+Switzerland;Klosters Platz;N;10;Cavadürli;41;Ostschweiz;30;785261.130362;193911.750354
+Switzerland;Klosters Platz;N;10;Klosters;41;Ostschweiz;30;786175.56579;193940.166285
+Switzerland;Wünnewil;N;10;Wünnewil;41;Espace Mittelland;30;587990.02065;191131.34873
+Switzerland;Stalden;N;10;Stalden im Emmental;41;Espace Mittelland;30;614109.39093;191146.899344
+Switzerland;Münsingen;N;10;Münsingen;41;Espace Mittelland;30;609244.893482;191448.697423
+Switzerland;Riedburg;N;10;Mittelhäusern;41;Espace Mittelland;30;594653.816156;191710.829364
+Switzerland;Vaumarcus;N;10;Vaumarcus;41;Espace Mittelland;30;548170.162345;192111.323324
+Switzerland;Haldenstein;N;10;Haldenstein;41;Ostschweiz;30;759637.642656;194117.708724
+Switzerland;Konolfingen;N;10;Konolfingen;41;Espace Mittelland;30;613984.918273;192213.83052
+Switzerland;Tägertschi;N;10;Tägertschi;41;Espace Mittelland;30;610920.394089;192363.09962
+Switzerland;Klosters Dorf;N;10;Klosters Dorf;41;Ostschweiz;30;785749.645686;195372.80428
+Switzerland;Avenches;N;10;Avenches;41;Genferseeregion;30;569753.798281;192696.713796
+Switzerland;Niederscherli;N;10;Niederscherli;41;Espace Mittelland;30;596163.872402;192754.647899
+Switzerland;Flamatt;N;10;Flamatt;41;Espace Mittelland;30;591065.210281;192971.347363
+Switzerland;Buttes;N;10;Buttes;41;Espace Mittelland;30;532633.008453;193400.351864
+Switzerland;Belp;N;10;Belp;41;Espace Mittelland;30;604639.104427;193021.973114
+Switzerland;Flamatt;N;10;Flamatt Dorf;41;Espace Mittelland;30;590250.181142;193261.666145
+Switzerland;Thörishaus;N;10;Thörishaus Dorf;41;Espace Mittelland;30;593420.838737;193490.770233
+Switzerland;Flüelen;N;10;Flüelen;41;Zentralschweiz;30;690505.626252;194272.135996
+Switzerland;Freiburghaus;N;10;Freiburghaus;41;Espace Mittelland;30;587232.993606;193634.227497
+Switzerland;Serneus;N;10;Serneus;41;Ostschweiz;30;783268.9966;196441.780417
+Switzerland;Sarnen;N;10;Sarnen;41;Zentralschweiz;30;661731.529343;193961.29396
+Switzerland;Neuenegg;N;10;Neuenegg;41;Espace Mittelland;30;589435.467743;193685.498872
+Switzerland;Belp;N;10;Belp Steinbach;41;Espace Mittelland;30;604249.908332;193733.167841
+Switzerland;Dörfli;N;10;Dörfli;41;Zentralschweiz;30;672563.780847;194383.152404
+Switzerland;Rubigen;N;10;Rubigen;41;Espace Mittelland;30;608257.779441;194126.431665
+Switzerland;;N;10;Meudon Rail;41;Espace Mittelland;3;525346.900732;194665.468993
+Switzerland;Saint-Aubin-Sauges;N;10;Gorgier-Saint-Aubin;41;Espace Mittelland;30;549859.404499;194464.885135
+Switzerland;Cressier;N;10;Cressier FR;41;Espace Mittelland;30;578037.233334;194305.792883
+Switzerland;Zäziwil;N;10;Zäziwil;41;Espace Mittelland;30;617165.026543;194345.436372
+Switzerland;Wiggen;N;10;Wiggen;41;Zentralschweiz;30;635337.798477;194469.653202
+Switzerland;Bowil;N;10;Bowil;41;Espace Mittelland;30;619854.617769;194409.338739
+Switzerland;Gasel;N;10;Gasel;41;Espace Mittelland;30;597147.87386;194388.276758
+Switzerland;Laupen;N;10;Laupen;41;Espace Mittelland;30;584804.323939;194551.514853
+Switzerland;Thörishaus;N;10;Thörishaus;41;Espace Mittelland;30;593719.168727;194546.554719
+Switzerland;Grosshöchstetten;N;10;Grosshöchstetten;41;Espace Mittelland;30;614999.647249;194884.350737
+Switzerland;Fleurier;N;10;Fleurier;41;Espace Mittelland;30;534810.261656;195255.058445
+Switzerland;Faoug;N;10;Faoug;41;Genferseeregion;30;572280.898168;195241.359607
+Switzerland;Saas;N;10;Saas;41;Ostschweiz;30;780731.454128;197910.431063
+Switzerland;Wolfenschiessen;N;10;Wolfenschiessen;41;Zentralschweiz;30;672929.165403;195666.14038
+Switzerland;Kehrsatz;N;10;Kehrsatz;41;Espace Mittelland;30;602572.726568;195288.589079
+Switzerland;Trimmis;N;10;Trimmis;41;Ostschweiz;30;760995.885244;197479.304201
+Switzerland;Gasel;Y;10;Moos;41;Espace Mittelland;30;597155.986561;195411.030216
+Switzerland;Courgevaux;N;10;Münchenwiler-Courgevaux;41;Espace Mittelland;30;575390.997528;195639.048495
+Switzerland;Môtiers;N;10;Môtiers;41;Espace Mittelland;30;536967.634198;196076.824925
+Switzerland;Oberwangen;N;10;Oberwangen;41;Espace Mittelland;30;594238.633298;195924.528332
+Switzerland;Küblis;N;10;Küblis;41;Ostschweiz;30;777798.930872;198612.063406
+Switzerland;Worb;N;10;Worb SBB;41;Espace Mittelland;30;609771.123703;195996.352756
+Switzerland;Kehrsatz;N;10;Kehrsatz Nord;41;Espace Mittelland;30;602122.955389;196077.717671
+Switzerland;Escholzmatt;N;10;Escholzmatt;41;Zentralschweiz;30;638031.722054;196220.456391
+Switzerland;Signau;N;10;Signau;41;Espace Mittelland;30;621888.88123;196550.89978
+Switzerland;Untervaz;N;10;Untervaz;41;Ostschweiz;30;761639.095073;198775.592234
+Switzerland;Trubschachen;N;10;Trubschachen;41;Espace Mittelland;30;631134.790246;196791.999908
+Switzerland;Fideris;N;10;Fideris;41;Ostschweiz;30;774893.681762;199449.374418
+Switzerland;Couvet;N;10;Couvet RVT;41;Espace Mittelland;30;538922.629645;197279.429403
+Switzerland;Dallenwil;N;10;Niederrickenbach SW;41;Zentralschweiz;30;673105.198446;197469.371122
+Switzerland;Biglen;N;10;Biglen;41;Espace Mittelland;30;614499.075407;197084.279025
+Switzerland;Köniz;N;10;Köniz;41;Espace Mittelland;30;598284.006427;197100.369289
+Switzerland;Murten;N;10;Murten;41;Espace Mittelland;30;575496.428853;197195.00069
+Switzerland;Niederwangen;N;10;Niederwangen;41;Espace Mittelland;30;595306.095992;197157.569952
+Switzerland;Linthal;N;10;Linthal;41;Ostschweiz;30;718649.300013;198367.217534
+Switzerland;Worb;N;10;Langenloh;41;Espace Mittelland;30;608192.505916;197283.555959
+Switzerland;Linthal;N;10;Linthal Braunwaldbahn;41;Ostschweiz;30;718933.786174;198617.49787
+Switzerland;Bern;N;10;Wabern bei Bern;41;Espace Mittelland;30;600568.846519;197500.347159
+Switzerland;Bern;N;10;Muri bei Bern;41;Espace Mittelland;30;603478.034316;197545.783795
+Switzerland;Rüfenacht;N;10;Rüfenacht;41;Espace Mittelland;30;607103.072938;197571.208408
+Switzerland;Bevaix;N;10;Bevaix;41;Espace Mittelland;30;552301.577075;197791.179698
+Switzerland;Köniz;N;10;Liebefeld;41;Espace Mittelland;30;598527.855606;197611.683259
+Switzerland;Worb;N;10;Worb Dorf;41;Espace Mittelland;30;609463.766442;197674.522381
+Switzerland;Jenaz;N;10;Jenaz;41;Ostschweiz;30;773658.928444;200247.45998
+Switzerland;Couvet;N;10;la Presta;41;Espace Mittelland;30;540073.184448;198079.34457
+Switzerland;Rüfenacht;N;10;Scheyenholz;41;Espace Mittelland;30;606767.746062;197782.043492
+Switzerland;Rüplisried;N;10;Rüplisried-Mauss;41;Espace Mittelland;30;585696.489749;198006.688015
+Switzerland;Gümligen;N;10;Siloah;41;Espace Mittelland;30;605967.920889;197992.417814
+Switzerland;Bern;N;10;Seidenberg;41;Espace Mittelland;30;604163.115382;198024.248126
+Switzerland;Gümligen;Y;10;Gümligen;41;Espace Mittelland;30;605160.632776;198091.723042
+Switzerland;Gümligen;Y;10;Gümligen;41;Espace Mittelland;30;605183.448981;198125.093624
+Switzerland;Dallenwil;N;10;Dallenwil;41;Zentralschweiz;30;672680.554819;198564.851125
+Switzerland;Rosshäusern;N;10;Rosshäusern;41;Espace Mittelland;30;589298.73281;198165.878512
+Switzerland;Bern;N;10;Bern Egghölzli;41;Espace Mittelland;30;602655.242754;198223.501647
+Switzerland;Gümligen;N;10;Melchenbühl;41;Espace Mittelland;30;604589.40688;198224.663781
+Switzerland;Bern;N;10;Bern Bümpliz Süd;41;Espace Mittelland;30;596586.288607;198323.975737
+Switzerland;Bern;N;10;Bern Weissenbühl;41;Espace Mittelland;30;599358.036764;198323.017957
+Switzerland;Rüti;N;10;Rüti GL;41;Ostschweiz;30;720102.837427;199574.909128
+Switzerland;Zizers;N;10;Zizers;41;Ostschweiz;30;761598.578418;200553.861352
+Switzerland;Muntelier;N;10;Muntelier-Löwenberg;41;Espace Mittelland;30;576796.40805;198534.964172
+Switzerland;Langnau im Emmental;N;10;Langnau;41;Espace Mittelland;30;626510.712838;198659.612421
+Switzerland;Alpnach Dorf;N;10;Alpnach Dorf;41;Zentralschweiz;30;663802.239761;199163.828624
+Switzerland;Furna;N;10;Furna;41;Ostschweiz;30;772949.241144;201339.023172
+Switzerland;Riedbach;N;10;Riedbach;41;Espace Mittelland;30;592002.963453;198861.998706
+Switzerland;Bern;N;10;Bern Beunardernstrasse;41;Espace Mittelland;30;601687.935876;199034.695693
+Switzerland;Bern;N;10;Bern Ausserholligen;41;Espace Mittelland;30;597812.523135;199045.997665
+Switzerland;Büren;N;10;Büren NW;41;Zentralschweiz;30;672509.31542;199496.665539
+Switzerland;Gümmenen;N;10;Gümmenen;41;Espace Mittelland;30;584496.111816;199088.042931
+Switzerland;Travers;N;10;Travers;41;Espace Mittelland;30;542005.245227;199405.47222
+Switzerland;Bern;N;10;Bern Helvetiaplatz;41;Espace Mittelland;30;600911.287323;199323.573134
+Switzerland;Bern;N;10;Bern Bümpliz Nord;41;Espace Mittelland;30;596175.792465;199402.575505
+Switzerland;Bern;N;10;Bern Stöckacker;41;Espace Mittelland;30;597119.881737;199479.85878
+Switzerland;Betschwanden;N;10;Diesbach-Betschwanden;41;Ostschweiz;30;720688.74017;200732.007019
+Switzerland;Walkringen;N;10;Walkringen;41;Espace Mittelland;30;613746.908943;199594.94931
+Switzerland;Vechigen;N;10;Vechigen;41;Espace Mittelland;30;609019.087819;199652.663008
+Switzerland;Emmenmatt;N;10;Emmenmatt;41;Espace Mittelland;30;623567.352591;199725.641562
+Switzerland;Stans;N;10;Oberdorf NW;41;Zentralschweiz;30;672006.68278;200135.41681
+Switzerland;Sisikon;N;10;Sisikon;41;Zentralschweiz;30;690100.281473;200425.504299
+Switzerland;Bern;N;10;Bern;41;Espace Mittelland;30;600127.096633;199890.476824
+Switzerland;Bern;N;10;Bern RBS;41;Espace Mittelland;30;600119.483782;199901.593722
+Switzerland;Galmiz;N;10;Galmiz;41;Espace Mittelland;30;578286.446948;199963.452335
+Switzerland;Schüpfheim;N;10;Schüpfheim;41;Zentralschweiz;30;643990.466944;200130.152804
+Switzerland;Igis;N;10;Igis;41;Ostschweiz;30;761935.750541;202164.434055
+Switzerland;Boll;N;10;Boll-Utzigen;41;Espace Mittelland;30;608393.950083;200274.308071
+Switzerland;Alpnachstad;N;10;Alpnachstad;41;Zentralschweiz;30;663953.666143;200666.329675
+Switzerland;Gurbrü;N;10;Ferenbalm-Gurbrü;41;Espace Mittelland;30;583243.477069;200381.013127
+Switzerland;Bern;N;10;Ostermundigen;41;Espace Mittelland;30;603400.247691;200436.158567
+Switzerland;Noiraigue;N;10;Noirague;41;Espace Mittelland;30;545489.626389;200762.29953
+Switzerland;Stettlen;N;10;Stettlen;41;Espace Mittelland;30;606642.711956;200661.208241
+Switzerland;Deisswill;N;10;Deisswill;41;Espace Mittelland;30;605835.859746;200671.486465
+Switzerland;Stans;N;10;Stans;41;Zentralschweiz;30;670668.968812;201231.21507
+Switzerland;Boudry;N;10;Boudry;41;Espace Mittelland;30;554170.986429;201222.899358
+Switzerland;Champ-du-Moulin;N;10;Champ-du-Moulin;41;Espace Mittelland;30;549452.749669;201327.733491
+Switzerland;Sugiez;N;10;Sugiez;41;Espace Mittelland;30;575863.748162;201384.645783
+Switzerland;Hätzingen;N;10;Luchsingen-Hätzingen;41;Ostschweiz;30;721606.128921;202796.580034
+Switzerland;Obermatt;Y;10;Neumühle;41;Espace Mittelland;30;623727.067598;201682.884942
+Switzerland;Bigenthal;N;10;Bigenthal;41;Espace Mittelland;30;614137.769979;201719.217398
+Switzerland;Colombier;Y;10;Colombier;41;Espace Mittelland;30;555128.469318;202027.18384
+Switzerland;Bern;N;10;Bern Felsenau;41;Espace Mittelland;30;600492.355167;201858.207552
+Switzerland;Chambrelien;N;10;Chambrelien;41;Espace Mittelland;30;552388.973972;202059.549035
+Switzerland;Schiers;N;10;Schiers;41;Ostschweiz;30;771268.607269;204426.854296
+Switzerland;Bolligen;N;10;Bolligen;41;Espace Mittelland;30;604540.821598;202059.998148
+Switzerland;Landquart;N;10;Landquart;41;Ostschweiz;30;761056.892026;204253.657283
+Switzerland;Landquart;N;10;Landquart Ried;41;Ostschweiz;30;761094.627595;204265.797182
+Switzerland;Bôle;N;10;Bôle;41;Espace Mittelland;30;554430.391846;202299.295732
+Switzerland;Bern;N;10;Bern Tiefenau;41;Espace Mittelland;30;600629.311913;202125.028765
+Switzerland;Ittigen;N;10;Ittigen bei Bern;41;Espace Mittelland;30;603452.379139;202448.372368
+Switzerland;Ittigen;Y;10;Papiermühle;41;Espace Mittelland;30;602881.597511;202603.711562
+Switzerland;Kerzers;N;10;Kerzers;41;Espace Mittelland;30;581286.936023;202732.545734
+Switzerland;Zollbrück;N;10;Zollbrück;41;Espace Mittelland;30;623045.110203;202880.866629
+Switzerland;Stansstad;N;10;Stansstad;41;Zentralschweiz;30;668385.320604;203228.055831
+Switzerland;Hasle;N;10;Hasle LU;41;Zentralschweiz;30;646364.967873;203160.920719
+Switzerland;Seewis im Prättigau;N;10;Seewis Valzeina;41;Ostschweiz;30;767041.233948;205319.043852
+Switzerland;Malans;N;10;Malans;41;Ostschweiz;30;762489.302953;205326.767358
+Switzerland;Leuggelbach;N;10;Leuggelbach;41;Ostschweiz;30;722446.487073;204503.91133
+Switzerland;Auvernier;N;10;Auvernier;41;Espace Mittelland;30;557398.645226;203411.314437
+Switzerland;Worblaufen;N;10;Worblaufen;41;Espace Mittelland;30;601648.712223;203303.625857
+Switzerland;Grüsch;N;10;Grüsch;41;Ostschweiz;30;768057.677915;205714.603079
+Switzerland;Hergiswil;Y;10;Hergiswil;41;Zentralschweiz;30;666355.416345;203749.912765
+Switzerland;Hergiswil;Y;10;Hergiswil;41;Zentralschweiz;30;666363.024116;203749.997358
+Switzerland;Neuchâtel;N;10;Neuchâtel-Serrières;41;Espace Mittelland;30;559173.5671;203721.294649
+Switzerland;Peseux;N;10;Corcelles-Peseux;41;Espace Mittelland;30;557880.633456;203785.878805
+Switzerland;Haslen;N;10;Nidfurn-Haslen;41;Ostschweiz;30;722793.482777;205022.536878
+Switzerland;Zollikofen;N;10;Steinbach;41;Espace Mittelland;30;601504.025082;203826.091085
+Switzerland;Neuchâtel;N;10;les Deurres;41;Espace Mittelland;30;559168.62524;204110.435484
+Switzerland;Hergiswil;Y;10;Hergiswil Matt;41;Zentralschweiz;30;666491.540945;204507.436134
+Switzerland;Hergiswil;Y;10;Hergiswil Matt;41;Zentralschweiz;30;666476.079656;204529.499424
+Switzerland;Zollikofen;N;10;Unterzollikofen;41;Espace Mittelland;30;601488.666142;204415.292939
+Switzerland;Neuchâtel;N;10;Neuchâtel-Vauseyon;41;Espace Mittelland;30;560313.128791;204614.10088
+Switzerland;Montmollin;N;10;Montmollin-Montezillon;41;Espace Mittelland;30;554753.177687;204720.428956
+Switzerland;Müntschemier;N;10;Müntschemier;41;Espace Mittelland;30;577543.173844;204735.457189
+Switzerland;Entlebuch;N;10;Entlebuch;41;Zentralschweiz;30;647544.714676;205026.811493
+Switzerland;Schafhausen im Emmental;N;10;Schafhausen im Emmental;41;Espace Mittelland;30;616670.573946;204971.938959
+Switzerland;Neuchâtel;N;10;Neuchâtel;41;Espace Mittelland;30;561457.294295;205095.752568
+Switzerland;Ramsei;N;10;Ramsei;41;Espace Mittelland;30;620701.014869;205229.121795
+Switzerland;Zollikofen;N;10;Oberzollikofen;41;Espace Mittelland;30;601823.104083;205304.751908
+Switzerland;Schwanden;N;10;Schwanden;41;Ostschweiz;30;724768.944956;206620.26052
+Switzerland;Ingenbohl;N;10;Brunnen;41;Zentralschweiz;30;689117.532002;206069.967827
+Switzerland;Ins;N;10;Ins;41;Espace Mittelland;30;574176.721608;205493.956899
+Switzerland;Fräschels;N;10;Fräschels;41;Espace Mittelland;30;582436.368055;205463.859328
+Switzerland;Ponts-de-Martel;N;10;les Ponts-de-Martel;41;Espace Mittelland;30;546669.122308;205821.221532
+Switzerland;Zollikofen;Y;10;Zollikofen;41;Espace Mittelland;30;601997.872543;205805.077015
+Switzerland;Zollikofen;Y;10;Zollikofen;41;Espace Mittelland;30;601959.839616;205827.298856
+Switzerland;Maienfeld;N;10;Maienfeld;41;Ostschweiz;30;759050.156365;208136.669947
+Switzerland;Goldbach;N;10;Lützelflüh-Goldbach;41;Espace Mittelland;30;618758.894966;206056.495262
+Switzerland;Ponts-de-Martel;N;10;le Stand;41;Espace Mittelland;30;547335.092451;206304.470695
+Switzerland;Ins;N;10;Ins-dorf;41;Espace Mittelland;30;574886.851111;206157.95274
+Switzerland;Marin-Epagnier;N;10;Zihlbrüche;41;Espace Mittelland;30;569192.783174;206540.441592
+Switzerland;Gampelen;N;10;Gampelen;41;Espace Mittelland;30;570972.27866;206553.735947
+Switzerland;Grünenmatt;N;10;Grünenmatt;41;Espace Mittelland;30;621761.138999;206522.484276
+Switzerland;Marin-Epagnier;N;10;Marin-Epagnier;41;Espace Mittelland;30;567580.933306;206593.467149
+Switzerland;Mitlödi;N;10;Mitlödi;41;Ostschweiz;30;724972.14223;207814.308065
+Switzerland;Vitznau;N;10;Vitznau;41;Zentralschweiz;30;679368.170076;207066.328274
+Switzerland;Petit-Martel;N;10;Petit-Martel;41;Espace Mittelland;30;548031.564229;206809.762673
+Switzerland;Bad Ragaz;N;10;Bad Ragaz;41;Ostschweiz;30;757146.353145;208786.810297
+Switzerland;Moosseedorf;N;10;Moosseedorf;41;Espace Mittelland;30;602704.673595;206872.596021
+Switzerland;Petit-Martel;N;10;Petit-Martel-Est;41;Espace Mittelland;30;548810.693767;207214.366595
+Switzerland;Saint-Blaise;N;10;Saint-Blaise;41;Espace Mittelland;30;565356.413371;207206.327293
+Switzerland;Geneveys-sur-Coffrane;N;10;les Geneveys-sur-Coffrane;41;Espace Mittelland;30;555556.392673;207360.33278
+Switzerland;Schönbühl;N;10;Schönbühl Shoppyland;41;Espace Mittelland;30;603556.061492;207273.25526
+Switzerland;Hasle;N;10;Hasle Rüegsau;41;Espace Mittelland;30;616466.285485;207339.329119
+Switzerland;Horw;Y;10;Horw;41;Zentralschweiz;30;665983.63699;207781.548498
+Switzerland;Horw;Y;10;Horw;41;Zentralschweiz;30;666014.047504;207781.885029
+Switzerland;Schönbühl;N;10;Schönbühl SBB;41;Espace Mittelland;30;604544.285675;207540.732504
+Switzerland;Vitznau;N;10;Mittlerschwanden;41;Zentralschweiz;30;679330.42302;208188.756847
+Switzerland;Brüttelen;N;10;Brüttelen;41;Espace Mittelland;30;577964.998274;207724.408721
+Switzerland;Münchenbuchsee;N;10;Münchenbuchsee;41;Espace Mittelland;30;601267.38516;207705.911755
+Switzerland;Schönbühl;N;10;Schönbühl RBS;41;Espace Mittelland;30;604521.284429;207796.409775
+Switzerland;Schwyz;N;10;Schwyz;41;Zentralschweiz;30;690811.299612;208730.580365
+Switzerland;Kallnach;N;10;Kallnach;41;Espace Mittelland;30;584459.054298;208215.292476
+Switzerland;Sumiswald;N;10;Sumiswald-Grünen;41;Espace Mittelland;30;622659.12203;208349.0498
+Switzerland;Rigi Kaltbad;N;10;Grubisbalm;41;Zentralschweiz;30;679381.471948;208923.23386
+Switzerland;Schönbühl;N;10;Mattstetten;41;Espace Mittelland;30;606215.974546;208464.956297
+Switzerland;Doppleschwand;N;10;Doppelschwand-Romoos;41;Zentralschweiz;30;647833.947304;208797.952888
+Switzerland;Siselen;N;10;Finsterhennen;41;Espace Mittelland;30;580218.837446;208750.391857
+Switzerland;Schönbühl;N;10;Urtenen;41;Espace Mittelland;30;604763.809375;208752.673848
+Switzerland;Coeudres;N;10;les Coeudres;41;Espace Mittelland;30;550756.747858;208987.886076
+Switzerland;Rigi Kaltbad;N;10;Freibergen;41;Zentralschweiz;30;679109.5307;209364.345539
+Switzerland;Ennenda;N;10;Ennenda;41;Ostschweiz;30;724730.440474;210277.79597
+Switzerland;Siselen;N;10;Siselen BE;41;Espace Mittelland;30;580546.78807;209082.827578
+Switzerland;Sumiswald;N;10;Gammenthal;41;Espace Mittelland;30;622754.132274;209349.964381
+Switzerland;Rigi Kaltbad;N;10;Romiti Felsentor;41;Zentralschweiz;30;678834.835852;210016.678088
+Switzerland;Schachen;N;10;Schachen LV;41;Zentralschweiz;30;653616.942357;209869.962417
+Switzerland;Malters;N;10;Malters;41;Zentralschweiz;30;656359.78841;209973.081969
+Switzerland;Goldau;N;10;Fruttli;41;Zentralschweiz;30;681035.290348;210301.903564
+Switzerland;Oberburg;N;10;Oberburg;41;Espace Mittelland;30;614589.843713;209813.589013
+Switzerland;Cornaux;N;10;Cornaux;41;Espace Mittelland;30;568511.01691;209912.555586
+Switzerland;Glarus;N;10;Glarus;41;Ostschweiz;30;724201.586874;211211.918448
+Switzerland;Bargen;N;10;Bargen;41;Espace Mittelland;30;586621.948961;209944.317378
+Switzerland;Goldau;N;10;Kräbel;41;Zentralschweiz;30;682955.30795;210517.325278
+Switzerland;Coeudres;N;10;les Coeudres-Est;41;Espace Mittelland;30;551739.600176;210202.771133
+Switzerland;Schüpfen;N;10;Schüpfen;41;Espace Mittelland;30;595893.91966;210097.417121
+Switzerland;Rigi Kaltbad;N;10;Rigi Klösterli;41;Zentralschweiz;30;679661.748099;210705.880628
+Switzerland;Aarberg;N;10;Aarberg;41;Espace Mittelland;30;587831.057376;210297.469462
+Switzerland;Goldau;N;10;Goldau N4;41;Zentralschweiz;30;684196.383026;210901.631177
+Switzerland;Rigi Kaltbad;N;10;Rigi Kaltbad-First;41;Zentralschweiz;30;678078.553168;210885.058679
+Switzerland;Sargans;N;10;Sargans;41;Ostschweiz;30;752641.861029;212406.371399
+Switzerland;Neueg;Y;10;Griesbach;41;Espace Mittelland;30;623137.19496;210529.869014
+Switzerland;Jegenstorf;N;10;Jegenstorf;41;Espace Mittelland;30;605271.392653;210698.608136
+Switzerland;Lüscherz;N;10;Lüscherz BTI;41;Espace Mittelland;30;580210.256516;210740.409447
+Switzerland;Rigi Kaltbad;N;10;Rigi First;41;Zentralschweiz;30;678849.204985;211228.749265
+Switzerland;Luzern;Y;10;Luzern HB;41;Zentralschweiz;30;666235.848732;211086.351012
+Switzerland;Rigi Kaltbad;N;10;Rigi Staffelhöhe;41;Zentralschweiz;30;677898.843783;211260.724777
+Switzerland;Hauts-Geneveys;N;10;les Hauts-Geneveys;41;Espace Mittelland;30;557163.692711;210939.499371
+Switzerland;Steinen;Y;10;Steinen;41;Zentralschweiz;30;688740.335088;211479.002491
+Switzerland;Luzern;Y;10;Luzern HB;41;Zentralschweiz;30;666211.571649;211219.496121
+Switzerland;Goldau;N;10;Arth-Goldau AB;41;Zentralschweiz;30;685039.341371;211480.634378
+Switzerland;Goldau;N;10;Arth-Goldau;41;Zentralschweiz;30;685039.182752;211491.750465
+Switzerland;Meggen;N;10;Meggen;41;Zentralschweiz;30;671726.931175;211361.142368
+Switzerland;Col-des-Roches;N;10;le Locle-Col-des-Roches;41;Espace Mittelland;30;545478.863044;211224.045778
+Switzerland;;N;10;Col-des-Roches Rail;41;Espace Mittelland;3;545319.504241;211247.74269
+Switzerland;Hindelbank;N;10;Hindelbank;41;Espace Mittelland;30;608264.947143;211002.156353
+Switzerland;Sagne;N;10;la Sagne;41;Espace Mittelland;30;552994.967814;211337.836615
+Switzerland;Burgdorf;N;10;Burgdorf Steinhof;41;Espace Mittelland;30;613781.110119;211167.971763
+Switzerland;Littau;N;10;Littau;41;Zentralschweiz;30;662089.71807;211519.787608
+Switzerland;Cressier;N;10;Cressier NE;41;Espace Mittelland;30;569848.438369;211373.120928
+Switzerland;Steinerberg;N;10;Steinerberg;41;Zentralschweiz;30;687107.39134;211933.002604
+Switzerland;Rigi Kaltbad;N;10;Rigi Staffel;41;Zentralschweiz;30;678649.859706;211937.679533
+Switzerland;Mels;N;10;Mels;41;Ostschweiz;30;750490.340227;213319.14566
+Switzerland;Wolhusen;N;10;Wolhusen;41;Zentralschweiz;30;648691.547106;211762.167257
+Switzerland;Rigi Kaltbad;N;10;Rigi Kulm;41;Zentralschweiz;30;679437.906558;212103.787206
+Switzerland;Frêtes;N;10;les Frêtes;41;Espace Mittelland;30;544922.353481;211851.759721
+Switzerland;Locle;Y;10;Le Locle;41;Espace Mittelland;30;546814.813805;211912.374472
+Switzerland;Locle;Y;10;Le Locle;41;Espace Mittelland;30;546776.926395;211923.830788
+Switzerland;Landeron;N;10;le Landeron;41;Espace Mittelland;30;571864.026052;211807.942454
+Switzerland;Werthenstein;N;10;Werthenstein;41;Zentralschweiz;30;650414.402829;211987.724199
+Switzerland;Suberg;N;10;Suberg-Grossaffoltern;41;Espace Mittelland;30;592483.935351;211890.637091
+Switzerland;Locle;N;10;le Châlet NE;41;Espace Mittelland;30;545875.369805;212209.902413
+Switzerland;Sagne;N;10;la Sagne-Eglise;41;Espace Mittelland;30;553563.992293;212200.541237
+Switzerland;Burgdorf;N;10;Burgdorf;41;Espace Mittelland;30;613565.8067;212290.322584
+Switzerland;Neuveville;N;10;la Neuveville;41;Espace Mittelland;30;573849.661732;212410.3369
+Switzerland;Affoltern;N;10;Affoltern Weier;41;Espace Mittelland;30;623699.266798;212510.957677
+Switzerland;Netstal;N;10;Netstal;41;Ostschweiz;30;723227.701743;213827.047153
+Switzerland;Lyssach;N;10;Lyssach;41;Espace Mittelland;30;610913.966991;212573.937768
+Switzerland;Burgdorf;N;10;Burgdorf Buchmatt;41;Espace Mittelland;30;612995.194076;212678.158391
+Switzerland;Brenets;N;10;les Brenets;41;Espace Mittelland;30;544531.396979;213111.693449
+Switzerland;Hagneck;N;10;Hagneck;41;Espace Mittelland;30;581820.212106;212892.023924
+Switzerland;Merlischachen;N;10;Merlischachen;41;Zentralschweiz;30;673692.458204;213419.731338
+Switzerland;Corbatière;N;10;la Corbatière;41;Espace Mittelland;30;554264.974279;213451.400531
+Switzerland;Emmenbrücke;N;10;Emmenbrücke;41;Zentralschweiz;30;663973.144427;213741.047058
+Switzerland;Trübbach;N;10;Trübbach;41;Ostschweiz;30;755377.005923;215668.808593
+Switzerland;Täuffelen;N;10;Täuffelen;41;Espace Mittelland;30;582005.346371;213825.315561
+Switzerland;Crêt-du-Locle;N;10;le Crêt-du-Locle;41;Espace Mittelland;30;550115.242393;214073.977613
+Switzerland;Emmen;Y;10;Emmen;41;Zentralschweiz;30;665439.617487;214390.696541
+Switzerland;Lyss;N;10;Lyss;41;Espace Mittelland;30;589897.050421;214140.168786
+Switzerland;Häusernmoos;N;10;Häusernmoos;41;Espace Mittelland;30;623684.870133;214222.973487
+Switzerland;Grafenried;N;10;Grafenried;41;Espace Mittelland;30;605518.88028;214256.352931
+Switzerland;Sattel;N;10;Sattel-Aegeri;41;Zentralschweiz;30;690372.756339;215083.701836
+Switzerland;Menznau;N;10;Menznau;41;Zentralschweiz;30;645795.827493;214841.026636
+Switzerland;Ligerz;N;10;Ligerz;41;Espace Mittelland;30;576988.510406;214720.891883
+Switzerland;Kirchberg;N;10;Kirchberg-Alchenflüh;41;Espace Mittelland;30;610788.567497;214708.230545
+Switzerland;Chaux-de-Fonds;N;10;Convers;41;Espace Mittelland;30;556456.005082;214958.072412
+Switzerland;Gerolfingen;N;10;Gerolfingen;41;Espace Mittelland;30;582729.804625;214834.843808
+Switzerland;Ebikon;N;10;Ebikon;41;Zentralschweiz;30;668620.078946;215215.862551
+Switzerland;Küssnacht am Rigi;N;10;Küssnacht am Rigi;41;Zentralschweiz;30;675620.064716;215367.330131
+Switzerland;Fraubrunnen;N;10;Fraubrunnen;41;Espace Mittelland;30;606368.598211;215057.642031
+Switzerland;Chaux-de-Fonds;N;10;le Reymond;41;Espace Mittelland;30;554924.904157;215336.358496
+Switzerland;Mörigen;N;10;Mörigen;41;Espace Mittelland;30;583027.258577;215289.798061
+Switzerland;Rothenburg;N;10;Rothenburg;41;Zentralschweiz;30;661416.33978;215659.772575
+Switzerland;Rothenburg;N;10;Rothenburg Dorf;41;Zentralschweiz;30;663283.2848;215757.14134
+Switzerland;Dürrenroth;N;10;Mussachen;41;Espace Mittelland;30;625426.083651;215519.7627
+Switzerland;Weite;N;10;Weite;41;Ostschweiz;30;756685.173345;217638.166973
+Switzerland;Dürrenroth;N;10;Dürrenroth;41;Espace Mittelland;30;626875.598108;215681.765749
+Switzerland;Immensee;N;10;Immensee;41;Zentralschweiz;30;677743.956638;216139.59834
+Switzerland;Twann;N;10;Twann;41;Espace Mittelland;30;578678.358733;215837.445985
+Switzerland;Biberegg;N;10;Biberegg;41;Zentralschweiz;30;693538.885412;216600.251678
+Switzerland;Eplatures;N;10;les Eplatures;41;Espace Mittelland;30;552888.467111;216119.257162
+Switzerland;Emmen;N;10;Emmerfeld;41;Zentralschweiz;30;666434.917019;216402.952402
+Switzerland;Aefligen;N;10;Aefligen;41;Espace Mittelland;30;609290.498103;216050.909857
+Switzerland;Büren zum Hof;N;10;Büren zum Hof;41;Espace Mittelland;30;606101.74328;216124.627234
+Switzerland;Lattrigen;N;10;Lattrigen;41;Espace Mittelland;30;582991.999102;216234.87515
+Switzerland;Daiwil;N;10;Daiwil;41;Zentralschweiz;30;643908.645749;216394.404618
+Switzerland;Chaux-de-Fonds;N;10;La Chaux-de-Fonds-Ouest;41;Espace Mittelland;30;553285.783187;216438.535949
+Switzerland;Näfels;N;10;Näfels-Mollis;41;Ostschweiz;30;723923.480768;217633.300516
+Switzerland;Flums;N;10;Flums;41;Ostschweiz;30;744886.432536;218106.629819
+Switzerland;Chaux-de-Fonds;N;10;La Chaux-de-Fonds-Grenier;41;Espace Mittelland;30;554250.856223;216553.328466
+Switzerland;Walchwil;N;10;Walchwil;41;Zentralschweiz;30;681878.299254;216984.412781
+Switzerland;Busswil bei Büren;N;10;Busswil;41;Espace Mittelland;30;590887.891894;216450.967787
+Switzerland;Chaux-de-Fonds;Y;10;La Chaux-de-Fonds;41;Espace Mittelland;30;553781.914861;216779.307723
+Switzerland;Chaux-de-Fonds;Y;10;La Chaux-de-Fonds;41;Espace Mittelland;30;553850.407785;216801.011181
+Switzerland;Creux;N;10;le Creux;41;Espace Mittelland;30;556917.309305;216789.119934
+Switzerland;Sutz;N;10;Sutz;41;Espace Mittelland;30;583335.004838;216723.067668
+Switzerland;Chaux-de-Fonds;N;10;La Chaux-de-Fonds-Est;41;Espace Mittelland;30;554476.625015;217285.362339
+Switzerland;Wynigen;N;10;Wynigen;41;Espace Mittelland;30;617016.182089;217135.204894
+Switzerland;Rothenthurm;N;10;Rothenthurm;41;Zentralschweiz;30;693903.425648;218040.305022
+Switzerland;Waldibrücke;N;10;Waldibrücke;41;Zentralschweiz;30;666888.987432;217886.735273
+Switzerland;Schalunen;N;10;Schalunen;41;Espace Mittelland;30;606555.447521;217781.592795
+Switzerland;Murg;N;10;Murg;41;Ostschweiz;30;734853.633737;219516.670283
+Switzerland;Mols;N;10;Mols;41;Ostschweiz;30;739397.043163;219688.08657
+Switzerland;Tüscherz-Alfermée;N;10;Tüscherz;41;Espace Mittelland;30;581631.346899;218140.003244
+Switzerland;Unterterzen;N;10;Unterterzen;41;Ostschweiz;30;738113.213709;219724.873372
+Switzerland;Huttwil;N;10;Huttwil;41;Espace Mittelland;30;630825.615309;218269.027972
+Switzerland;Sempach Station;N;10;Sempach-Neuenkirch;41;Zentralschweiz;30;657720.873873;218535.69635
+Switzerland;Ipsach;N;10;Ipsach Herdi;41;Espace Mittelland;30;584599.676566;218465.085182
+Switzerland;Mühlehorn;N;10;Mühlehorn;41;Ostschweiz;30;731548.772425;219976.461773
+Switzerland;Bellevue;Y;10;Bellevue;41;Espace Mittelland;30;556453.644036;218782.558792
+Switzerland;Root;N;10;Gisikon-Root;41;Zentralschweiz;30;672414.997407;219141.031416
+Switzerland;Walenstadt;N;10;Walenstadt;41;Ostschweiz;30;742219.32418;220399.861414
+Switzerland;Biel;N;10;Ipsach;41;Espace Mittelland;30;584957.092271;218753.221638
+Switzerland;Dotzigen;N;10;Dotzigen;41;Espace Mittelland;30;592500.304422;218816.708447
+Switzerland;Biel;N;10;Nidau Beunden;41;Espace Mittelland;30;585048.435943;218864.165097
+Switzerland;Willisau-Stadt;N;10;Willisau;41;Zentralschweiz;30;642423.971991;219118.586721
+Switzerland;Cibourg;N;10;la Cibourg;41;Espace Mittelland;30;557944.156907;219216.534248
+Switzerland;Oberurnen;N;10;Niederurnen-unt Oberurnen;41;Ostschweiz;30;723319.634709;220389.579787
+Switzerland;Meierskappel;N;10;Meierskappel-Risch;41;Zentralschweiz;30;676825.822388;219618.824233
+Switzerland;Biel;N;10;Nidau;41;Espace Mittelland;30;585117.540821;219186.396884
+Switzerland;Brügg;N;10;Brügg BE;41;Espace Mittelland;30;587758.195035;219180.361447
+Switzerland;Renan;N;10;Renan BE;41;Espace Mittelland;30;560958.441739;219473.912694
+Switzerland;Sevelen;N;10;Sevelen;41;Ostschweiz;30;756044.538153;221502.634042
+Switzerland;Gondiswil;N;10;Gondiswil;41;Espace Mittelland;30;633708.998736;219718.813716
+Switzerland;Weesen;N;10;Weesen;41;Ostschweiz;30;726014.365873;221090.994602
+Switzerland;Hüswil;N;10;Hüswil;41;Zentralschweiz;30;635521.524406;219873.878811
+Switzerland;Utzenstorf;N;10;Utzenstorf;41;Espace Mittelland;30;608745.892766;219852.232732
+Switzerland;Bätterkinden;N;10;Bätterkinden;41;Espace Mittelland;30;607281.488783;219905.855761
+Switzerland;Einsiedeln;N;10;Einsiedeln;41;Zentralschweiz;30;699285.950761;220762.834271
+Switzerland;Dritte Altmatt;N;10;Altmatt;41;Zentralschweiz;30;695445.059065;220844.528017
+Switzerland;Eschenbach;N;10;Eschenbach;41;Zentralschweiz;30;667079.89411;220479.39955
+Switzerland;Biel;Y;10;Biel;41;Espace Mittelland;30;585036.67898;220220.522628
+Switzerland;Ferrière;N;10;la Seignant;41;Espace Mittelland;30;558089.522422;220460.688599
+Switzerland;Ziegelbrücke;N;10;Ziegelbrücke;41;Ostschweiz;30;723130.868371;221809.004644
+Switzerland;Zell;N;10;Zell;41;Zentralschweiz;30;636988.053706;220749.983761
+Switzerland;Rohrbachberg;N;10;Rohrbach;41;Espace Mittelland;30;628612.711386;220759.433179
+Switzerland;Büren an der Aare;N;10;Büren an der Aare;41;Espace Mittelland;30;594884.757293;220715.244514
+Switzerland;Nottwil;N;10;Nottwil;41;Zentralschweiz;30;653068.423683;221093.9861
+Switzerland;Gettnau;N;10;Gettnau;41;Zentralschweiz;30;640407.10924;221105.739629
+Switzerland;Riedtwil;N;10;Riedtwil;41;Espace Mittelland;30;619363.880809;221144.650573
+Switzerland;Sonvilier;N;10;Sonvilier;41;Espace Mittelland;30;564505.150522;221263.845268
+Switzerland;Ferrière;N;10;la Ferrière;41;Espace Mittelland;30;558741.241898;221445.604081
+Switzerland;Rotkreuz;N;10;Rotkreuz;41;Zentralschweiz;30;675508.28768;221781.153418
+Switzerland;Kleindietwil;N;10;Kleindietwil;41;Espace Mittelland;30;626810.655441;221673.804843
+Switzerland;Biel;N;10;Biel Mett;41;Espace Mittelland;30;587763.701232;221848.538709
+Switzerland;Zug;N;10;Zug Oberwil;41;Zentralschweiz;30;681257.502628;222412.823078
+Switzerland;Räfis;N;10;Räfis-Burgerau;41;Ostschweiz;30;755296.604869;224274.491941
+Switzerland;Saint-Imier;N;10;Saint-Imier;41;Espace Mittelland;30;566824.919743;222362.201848
+Switzerland;Küttigkofen;N;10;Küttigkofen-Krälligen;41;Espace Mittelland;30;606884.215879;222284.519291
+Switzerland;Bilten;N;10;Bilten;41;Ostschweiz;30;720773.359839;223562.073362
+Switzerland;Ballwil;N;10;Ballwil;41;Zentralschweiz;30;666620.451515;222886.876061
+Switzerland;Oberkirch;Y;10;Oberkirch;41;Zentralschweiz;30;651278.240889;222834.915947
+Switzerland;Lindenholz;N;10;Lindenholz;41;Espace Mittelland;30;626745.231631;222729.680616
+Switzerland;Wiler bei Utzenstorf;N;10;Wiler bei Utzenstorf;41;Espace Mittelland;30;609098.035978;222776.65081
+Switzerland;Schänis;N;10;Schänis;41;Ostschweiz;30;721798.500736;224250.169774
+Switzerland;Biberbrugg;N;10;Biberbrugg;41;Zentralschweiz;30;697467.743983;223823.839494
+Switzerland;Villeret;N;10;Villeret;41;Espace Mittelland;30;568271.114049;223332.652753
+Switzerland;Lüterkofen;N;10;Lohn-Lüterkofen;41;Espace Mittelland;30;606738.826201;223429.455137
+Switzerland;;N;10;Buchs Rail;41;Ostschweiz;3;755605.793897;225795.072589
+Switzerland;Oberrüti;N;10;Oberrüti;41;Nordwestschweiz;30;673277.605161;224277.120357
+Switzerland;Madiswil;N;10;Madiswil;41;Espace Mittelland;30;627103.269076;224043.17778
+Switzerland;Buchs;N;10;Buchs SG;41;Ostschweiz;30;754826.298867;226019.387875
+Switzerland;Sursee;N;10;Sursee;41;Zentralschweiz;30;650188.917733;224304.306917
+Switzerland;Hochdorf;N;10;Hochdorf;41;Zentralschweiz;30;664320.541297;224462.577224
+Switzerland;Frinvillier;N;10;Frinvillier-Taubenloch;41;Espace Mittelland;30;586320.490003;224219.723381
+Switzerland;Pieterlen;N;10;Pieterlen;41;Espace Mittelland;30;592446.721139;224397.743334
+Switzerland;Gerlafingen;N;10;Gerlafingen;41;Espace Mittelland;30;609633.592254;224556.294006
+Switzerland;Reichenburg;N;10;Reichenburg;41;Zentralschweiz;30;717286.80372;225727.342221
+Switzerland;Cormoret;N;10;Cormoret;41;Espace Mittelland;30;570924.373306;224719.891799
+Switzerland;Ammannsegg;N;10;Ammannsegg;41;Espace Mittelland;30;607586.503353;224675.633748
+Switzerland;Courtelary;N;10;Courtelary;41;Espace Mittelland;30;571865.580059;224959.944906
+Switzerland;Schindellegi;N;10;Schindellegi-Feusisberg;41;Zentralschweiz;30;696472.87897;225775.676496
+Switzerland;Schübelbach;N;10;Schübelbach-Buttikon;41;Zentralschweiz;30;713829.061258;226127.151687
+Switzerland;Bois;N;10;les Bois;41;Espace Mittelland;30;559707.606693;225241.242804
+Switzerland;Lengnau;N;10;Lengnau;41;Espace Mittelland;30;594365.599003;225207.183332
+Switzerland;Zug;N;10;Zug;41;Zentralschweiz;30;681681.585349;225776.43325
+Switzerland;Cham;Y;10;Cham;41;Zentralschweiz;30;677330.53917;225740.485556
+Switzerland;Sankt Erhard;N;10;Sankt Erhard-Knutwil;41;Zentralschweiz;30;648138.858167;225599.274648
+Switzerland;Biberist;N;10;Biberist EBT;41;Espace Mittelland;30;609715.392261;225534.771124
+Switzerland;Gutenburg;N;10;Gutenburg;41;Espace Mittelland;30;626898.501265;225732.130847
+Switzerland;Wangen;N;10;Siebnen-Wangen;41;Zentralschweiz;30;710875.241926;226771.851285
+Switzerland;Biberist;N;10;Biberist RBS;41;Espace Mittelland;30;608888.726567;225833.656343
+Switzerland;Wauwil;N;10;Wauwil;41;Zentralschweiz;30;644284.780544;226036.278368
+Switzerland;Baldegg;N;10;Baldegg;41;Zentralschweiz;30;663792.432095;226335.861126
+Switzerland;Herzogenbuchsee;N;10;Herzogenbuchsee;41;Espace Mittelland;30;619847.663734;226204.734276
+Switzerland;Sins;N;10;Sins;41;Nordwestschweiz;30;672708.447262;226794.00475
+Switzerland;Cortébert;N;10;Cortébert;41;Espace Mittelland;30;575048.450454;226502.182634
+Switzerland;Heutte;N;10;la Heutte;41;Espace Mittelland;30;583764.09986;226494.158872
+Switzerland;Lachen;N;10;Lachen;41;Zentralschweiz;30;707079.973947;227458.384564
+Switzerland;Grenchen;N;10;Grenchen Süd;41;Espace Mittelland;30;597383.180737;226505.82482
+Switzerland;Reuchenette;N;10;Reuchenette-Péry;41;Espace Mittelland;30;585310.360714;226567.949029
+Switzerland;Lotzwil;N;10;Lotzwil;41;Espace Mittelland;30;626530.559342;226653.245896
+Switzerland;Nebikon;N;10;Nebikon;41;Zentralschweiz;30;640906.535067;226801.448919
+Switzerland;Grenchen;N;10;Grenchen Nord;41;Espace Mittelland;30;596284.395839;226717.650839
+Switzerland;Solothurn;N;10;Bleichenberg;41;Espace Mittelland;30;609092.003256;226734.486585
+Switzerland;Samstagern;N;10;Samstagern;41;Zürich;30;694496.263638;227545.202179
+Switzerland;Corgémont;N;10;Corgémont;41;Espace Mittelland;30;577725.422206;226936.234645
+Switzerland;Steinhausen;N;10;Steinhausen;41;Zentralschweiz;30;678823.778224;227472.35036
+Switzerland;Altendorf;N;10;Altendorf;41;Zentralschweiz;30;704956.804145;227931.998861
+Switzerland;Boéchet;N;10;Boéchet;41;Espace Mittelland;30;560971.232263;227189.536203
+Switzerland;Samstagern;N;10;Riedmatt SZ;41;Zürich;30;695105.765052;227821.780528
+Switzerland;Sonceboz-Sombeval;N;10;Sonceboz-Sombeval;41;Espace Mittelland;30;579529.648354;227107.616197
+Switzerland;Bettlach;N;10;Bettlach;41;Espace Mittelland;30;599262.783806;227072.279659
+Switzerland;Baar;N;10;Baar;41;Zentralschweiz;30;682095.103198;227672.295281
+Switzerland;Wollerau;N;10;Wollerau;41;Zentralschweiz;30;697505.500103;227994.097216
+Switzerland;Wollerau;N;10;Wilen bei Wollerau;41;Zentralschweiz;30;698259.692181;228217.782587
+Switzerland;Samstagern;N;10;Grüenfeld;41;Zürich;30;694952.031445;228430.868219
+Switzerland;Selzach;N;10;Selzach;41;Espace Mittelland;30;601460.258889;227706.103141
+Switzerland;Bäch;N;10;Bäch;41;Zentralschweiz;30;697760.631292;228609.839509
+Switzerland;Pfäffikon;N;10;Pfäffikon SZ;41;Zentralschweiz;30;701825.336217;228889.368686
+Switzerland;Solothurn;Y;10;Solothurn;41;Espace Mittelland;30;607998.902189;228078.151096
+Switzerland;Creux-des-Biches;N;10;le Creux-des-Biches;41;Espace Mittelland;30;562372.117939;228214.448036
+Switzerland;Solothurn;Y;10;Solothurn;41;Espace Mittelland;30;607938.243887;228111.422953
+Switzerland;Freienbach;N;10;Freienbach SOB;41;Zentralschweiz;30;700171.766109;228983.572745
+Switzerland;Langenthal;N;10;Langenthal Süd;41;Espace Mittelland;30;625955.375793;228207.186833
+Switzerland;Benken;N;10;Benken BL;41;Ostschweiz;30;718965.160354;229385.747714
+Switzerland;Solothurn;Y;10;Solothurn;41;Espace Mittelland;30;607900.183756;228244.783921
+Switzerland;Solothurn;N;10;Solothurn West;41;Espace Mittelland;30;607089.323474;228388.294815
+Switzerland;Haag;N;10;Haag-Gams;41;Ostschweiz;30;754612.052246;230462.347349
+Switzerland;Richterswil;N;10;Richterswil;41;Zürich;30;696325.154618;229275.779359
+Switzerland;Freienbach;N;10;Freienbach SBB;41;Zentralschweiz;30;699938.515002;229335.459178
+Switzerland;Bellach;N;10;Bellach;41;Espace Mittelland;30;604467.724726;228630.34789
+Switzerland;Burghalden;N;10;Burghalden;41;Zürich;30;695147.611785;229468.067597
+Switzerland;Breuleux;N;10;les Breuleux;41;Espace Mittelland;30;567096.339112;228909.029752
+Switzerland;Hurden;N;10;Hurden;41;Zentralschweiz;30;703079.922701;229956.215414
+Switzerland;Breuleux;N;10;Breuleux-Eglise;41;Espace Mittelland;30;567007.223851;229231.941047
+Switzerland;Gelfingen;N;10;Gelfingen;41;Zentralschweiz;30;662599.589757;229480.75564
+Switzerland;Dagmersellen;N;10;Dagmersellen;41;Zentralschweiz;30;640910.141142;229580.942274
+Switzerland;Luterbach;N;10;Luterbach-Attisholz;41;Espace Mittelland;30;610739.19698;229461.0449
+Switzerland;Solothurn;N;10;Solothurn Baseltor;41;Espace Mittelland;30;608481.821353;229479.640763
+Switzerland;Bollingen;N;10;Bollingen;41;Ostschweiz;30;709213.467237;230566.18768
+Switzerland;Langenthal;Y;10;Langenthal;41;Espace Mittelland;30;626183.983972;229631.259332
+Switzerland;Langenthal;Y;10;Langenthal;41;Espace Mittelland;30;626176.360275;229642.343527
+Switzerland;Kaltbrunn;N;10;Kaltbrunn;41;Ostschweiz;30;720163.986671;230810.983166
+Switzerland;Langendorf;Y;10;Langendorf;41;Espace Mittelland;30;605694.099827;229620.859825
+Switzerland;Lommiswil;N;10;Lommiswil;41;Espace Mittelland;30;602444.49418;229685.358491
+Switzerland;Solothurn;N;10;Sankt Katharinen;41;Espace Mittelland;30;608663.297201;229702.254856
+Switzerland;Deitingen;N;10;Deitingen;41;Espace Mittelland;30;613760.994784;229734.084147
+Switzerland;Langenthal;Y;10;Langenthal Gaswerk;41;Espace Mittelland;30;626372.613391;229798.859277
+Switzerland;Langenthal;Y;10;Langenthal Gaswerk;41;Espace Mittelland;30;626364.989553;229809.943233
+Switzerland;Knonau;N;10;Knonau;41;Zürich;30;677883.86968;230373.027161
+Switzerland;Chaux-des-Breuleux;N;10;Chaux-des-Breuleux;41;Espace Mittelland;30;568685.350972;229978.856616
+Switzerland;Tavannes;Y;10;Tavannes;41;Espace Mittelland;30;582281.587448;230011.585828
+Switzerland;Tavannes;Y;10;Tavannes;41;Espace Mittelland;30;582274.046424;230022.726088
+Switzerland;Feldbrunnen;N;10;Feldbrunnen;41;Espace Mittelland;30;608996.079384;230036.277728
+Switzerland;Tramelan;N;10;Tramelan-Dessous;41;Espace Mittelland;30;574086.62912;230130.68289
+Switzerland;Reussilles;N;10;le Pied-d'or;41;Espace Mittelland;30;571072.348077;230189.090816
+Switzerland;Ermensee;N;10;Hitzkirch;41;Zentralschweiz;30;661596.320832;230526.505317
+Switzerland;Tramelan;N;10;Tramelan;41;Espace Mittelland;30;573845.090763;230320.74542
+Switzerland;Bollingen;Y;10;Blumenau;41;Ostschweiz;30;706420.809125;231249.382347
+Switzerland;Noirmont;N;10;le Noirmont;41;Espace Mittelland;30;563582.798006;230419.347534
+Switzerland;Tramelan;N;10;Tramelan-Chalet;41;Espace Mittelland;30;573565.104968;230377.575817
+Switzerland;Reussilles;N;10;les Reussilles;41;Espace Mittelland;30;573004.693812;230391.218235
+Switzerland;Uznach;N;10;Uznach;41;Ostschweiz;30;716656.754266;231552.811652
+Switzerland;Tramelan;N;10;Tramelan-Collège;41;Espace Mittelland;30;573891.219352;230476.191034
+Switzerland;Schmerikon;N;10;Schmerikon;41;Ostschweiz;30;713725.61596;231529.319366
+Switzerland;Mühlau;N;10;Mühlau;41;Nordwestschweiz;30;671885.409367;230920.053188
+Switzerland;Langenthal;N;10;Hard-Mumenthal;41;Espace Mittelland;30;626051.170133;230553.450761
+Switzerland;Nesslau;N;10;Nesslau Neu Sankt Johann;41;Ostschweiz;30;733365.874115;232015.746897
+Switzerland;Rapperswil;N;10;Rapperswil;41;Ostschweiz;30;704945.809328;231556.719243
+Switzerland;Sankt Urban;N;10;Sankt Urban Ziegelei;41;Espace Mittelland;30;630155.031111;230772.970068
+Switzerland;Feldbrunnen;N;10;Bei den Weihern;41;Espace Mittelland;30;609729.510365;230815.667721
+Switzerland;Ermensee;N;10;Ermensee;41;Zentralschweiz;30;660930.68831;231175.619121
+Switzerland;Im Holz;N;10;Im Holz;41;Espace Mittelland;30;602837.706483;231108.592984
+Switzerland;Riedholz;N;10;Riedholz;41;Espace Mittelland;30;610259.101771;231127.851622
+Switzerland;Wädenswil;N;10;Wädenswil;41;Zürich;30;693707.827316;231880.255788
+Switzerland;Jona;N;10;Jona;41;Ostschweiz;30;705815.084883;232083.638128
+Switzerland;Wangen an der Aare;N;10;Wangen an der Aare;41;Espace Mittelland;30;616513.899982;231275.329501
+Switzerland;Emibois;N;10;les Emibois;41;Espace Mittelland;30;565656.036518;231374.236662
+Switzerland;Flumenthal;N;10;Flumenthal;41;Espace Mittelland;30;610955.129232;231495.975455
+Switzerland;Oberdorf;N;10;Oberdorf SO;41;Espace Mittelland;30;604177.77967;231576.319988
+Switzerland;Reconvilier;N;10;Reconvilier;41;Espace Mittelland;30;584179.462756;231618.28457
+Switzerland;Uerikon;N;10;Uerikon;41;Zürich;30;699763.714429;232523.742077
+Switzerland;Kaltenherberg;N;10;Kaltenherberg;41;Espace Mittelland;30;627393.119365;231893.61893
+Switzerland;Roggwil;N;10;Roggwil Dorf;41;Espace Mittelland;30;628483.362326;231920.978962
+Switzerland;Sihlbrugg;N;10;Sihlbrugg;41;Zürich;30;686170.321968;232522.194522
+Switzerland;Bévilard;N;10;Malleray-Bévilard;41;Espace Mittelland;30;587701.266661;231954.572715
+Switzerland;Sorvilier;N;10;Sorvilier;41;Espace Mittelland;30;589965.29148;231983.653613
+Switzerland;Attiswil;N;10;Attiswil;41;Espace Mittelland;30;612044.539967;231998.376899
+Switzerland;Pontenet;N;10;Pontenet;41;Espace Mittelland;30;585937.170461;232014.088844
+Switzerland;Feldbach;Y;10;Feldbach;41;Zürich;30;701824.893025;232892.308876
+Switzerland;Court;N;10;Court;41;Espace Mittelland;30;592668.56258;232101.978356
+Switzerland;Sankt Urban;N;10;Sankt Urban;41;Espace Mittelland;30;629186.342158;232168.9819
+Switzerland;Burg;N;10;Menziken-Burg;41;Nordwestschweiz;30;656874.029853;232469.583689
+Switzerland;Stäfa;N;10;Stäfa;41;Zürich;30;697233.800035;233015.499866
+Switzerland;Aarwangen;N;10;Aarwangen;41;Espace Mittelland;30;625112.151413;232317.140277
+Switzerland;Reiden;N;10;Reiden;41;Zentralschweiz;30;640109.74371;232566.212735
+Switzerland;Salez;N;10;Salez-Sennwald;41;Ostschweiz;30;756392.483211;234512.713165
+Switzerland;Mosen;N;10;Mosen;41;Zentralschweiz;30;659443.872837;232928.359859
+Switzerland;Muriaux;N;10;Muriaux;41;Espace Mittelland;30;565717.271975;232796.973469
+Switzerland;Bannwil;N;10;Bannwil;41;Espace Mittelland;30;622899.56418;232764.035779
+Switzerland;Aarwangen;N;10;Aarwangen Schloss;41;Espace Mittelland;30;624655.980544;232771.061382
+Switzerland;Mettmenstetten;N;10;Mettmenstetten;41;Zürich;30;677081.538111;233242.288843
+Switzerland;Benzenschwil;N;10;Benzenschwil;41;Nordwestschweiz;30;670252.681471;233202.046161
+Switzerland;Au;N;10;Au ZH;41;Zürich;30;691704.085813;233628.024863
+Switzerland;Krummenau;N;10;Krummenau;41;Ostschweiz;30;730968.323304;234586.805963
+Switzerland;Reinach;N;10;Reinach Lindenplatz;41;Nordwestschweiz;30;656485.533008;233510.990553
+Switzerland;Holzhäusern;N;10;Holzhäusern;41;Espace Mittelland;30;621617.476566;233481.893551
+Switzerland;Roggwil;N;10;Roggwil-Wynau;41;Espace Mittelland;30;628755.557862;233567.732877
+Switzerland;Wiedlisbach;N;10;Wiedlisbach;41;Espace Mittelland;30;615652.074627;233596.612204
+Switzerland;Männedorf;N;10;Männedorf;41;Zürich;30;695152.894827;234338.327365
+Switzerland;Reinach;N;10;Reinach;41;Nordwestschweiz;30;656391.105823;233888.113748
+Switzerland;Saignelégier;N;10;Saignelégier;41;Espace Mittelland;30;566503.150206;233870.920343
+Switzerland;Niederbipp;N;10;Scharnageln;41;Espace Mittelland;30;620645.832645;234256.687689
+Switzerland;Horgen;N;10;Horgen Oberdorf;41;Zürich;30;687112.567848;234882.038325
+Switzerland;Uetikon am See;N;10;Uetikon;41;Zürich;30;693999.271979;234998.217486
+Switzerland;Rüti;N;10;Rüti ZH;41;Zürich;30;707347.223786;235313.567989
+Switzerland;Wikon;N;10;Brittnau-Wikon;41;Zentralschweiz;30;639315.871709;234684.443368
+Switzerland;Horgen;N;10;Horgen;41;Zürich;30;687629.348274;235256.571371
+Switzerland;Ebnat-Kappel;N;10;Ebnat-Kappel;41;Ostschweiz;30;727455.303876;235978.218788
+Switzerland;Bémont;N;10;le Bémont;41;Espace Mittelland;30;567999.83628;234885.502363
+Switzerland;Niederbipp;N;10;Niederbipp Dorf;41;Espace Mittelland;30;620053.510999;234832.787793
+Switzerland;Gänsbrunnen;N;10;Gänsbrunnen;41;Espace Mittelland;30;602018.546483;234966.118741
+Switzerland;Murgenthal;N;10;Murgenthal;41;Nordwestschweiz;30;629890.867978;235107.60752
+Switzerland;Beinwil am See;N;10;Beinwil am See;41;Nordwestschweiz;30;657798.877107;235469.330071
+Switzerland;Sihlwald;N;10;Sihlwald;41;Zürich;30;684705.979608;235903.507142
+Switzerland;Tann;N;10;Tann-Dürnten;41;Zürich;30;706776.993519;236292.925928
+Switzerland;Bubikon;N;10;Bubikon;41;Zürich;30;704928.656809;236382.27159
+Switzerland;Meilen;N;10;Meilen;41;Zürich;30;691163.50414;236288.28097
+Switzerland;Wald;N;10;Wald;41;Zürich;30;711650.716384;236727.335182
+Switzerland;Leimbach;N;10;Leimbach;41;Nordwestschweiz;30;655190.753969;235978.188458
+Switzerland;Niederbipp;Y;10;Niederbipp;41;Espace Mittelland;30;619550.686564;235842.838017
+Switzerland;Niederbipp;Y;10;Niederbipp;41;Espace Mittelland;30;619618.678002;235876.415691
+Switzerland;Affoltern am Albis;N;10;Affoltern am Albis;41;Zürich;30;676147.179811;236432.416771
+Switzerland;Gänsbrunnen;N;10;Zoo bei Gänsbrunnen;41;Espace Mittelland;30;600981.575158;235977.583042
+Switzerland;Muri;N;10;Muri AG;41;Nordwestschweiz;30;668245.946017;236525.317705
+Switzerland;Oberrieden;N;10;Oberrieden Dorf;41;Zürich;30;686267.258063;236793.276446
+Switzerland;Pré-Petitjean;N;10;Pré-Petitjean;41;Espace Mittelland;30;571238.31058;236291.997321
+Switzerland;Oberrieden;N;10;Oberrieden;41;Zürich;30;686323.254927;237105.423003
+Switzerland;Moutier;N;10;Moutier;41;Espace Mittelland;30;595556.695831;236535.089814
+Switzerland;Gontenschwil;N;10;Gontenschwil;41;Nordwestschweiz;30;653457.541642;236851.789711
+Switzerland;Zetzwil;N;10;Zetzwil;41;Nordwestschweiz;30;654038.165698;237068.295172
+Switzerland;Herrliberg;N;10;Herrliberg-Feldmeilen;41;Zürich;30;688851.772738;237531.913852
+Switzerland;Grandval;N;10;Grandval;41;Espace Mittelland;30;598840.419291;237022.704317
+Switzerland;Lajoux;N;10;la Combe;41;Espace Mittelland;30;574435.069616;237155.657477
+Switzerland;Corcelles;N;10;Corcelles BE;41;Espace Mittelland;30;600966.26039;237133.835421
+Switzerland;Crémines;N;10;Crémines;41;Espace Mittelland;30;599748.266776;237178.240761
+Switzerland;Oensingen;N;10;Oensingen;41;Espace Mittelland;30;620597.658782;237236.111921
+Switzerland;Wasserauen;N;10;Wasserauen;41;Ostschweiz;30;750633.32051;239112.601913
+Switzerland;Langnau;N;10;Langnau-Gattikon;41;Zürich;30;683647.433445;237978.854254
+Switzerland;Rüthi;N;10;Rüthi;41;Ostschweiz;30;758824.868271;239559.860937
+Switzerland;Zofingen;N;10;Zofingen;41;Nordwestschweiz;30;638192.300081;237567.804804
+Switzerland;Birrwil;N;10;Birrwil;41;Nordwestschweiz;30;657534.303849;237779.377437
+Switzerland;Esslingen;N;10;Esslingen;41;Zürich;30;696381.230081;238416.680316
+Switzerland;Oensingen;N;10;Maiacker;41;Espace Mittelland;30;620435.350403;238236.165317
+Switzerland;Thalwil;N;10;Thalwil;41;Zürich;30;685322.076186;238847.746509
+Switzerland;Meisterschwanden;N;10;Fahrwangen-Meisterschwanden;41;Nordwestschweiz;30;660589.918518;238588.081108
+Switzerland;Langwies;Y;10;Langwies;41;Zürich;30;695097.896104;239185.440216
+Switzerland;Wattwil;N;10;Wattwil;41;Ostschweiz;30;724854.858655;239759.444168
+Switzerland;Saulcy;N;10;Bollement;41;Espace Mittelland;30;576233.458986;238504.558833
+Switzerland;Adliswil;N;10;Wildpark-Höfli;41;Zürich;30;683027.366512;239037.565321
+Switzerland;Erlenbach;N;10;Winkel;41;Zürich;30;687797.30546;239250.795023
+Switzerland;Oensingen;N;10;Klus;41;Espace Mittelland;30;620063.185316;238690.732678
+Switzerland;Oberkulm;N;10;Oberkulm;41;Nordwestschweiz;30;651888.421434;238916.985591
+Switzerland;Hedingen;N;10;Hedingen;41;Zürich;30;676148.905248;239245.489104
+Switzerland;Schwende;N;10;Schwende;41;Ostschweiz;30;751135.906025;240771.369606
+Switzerland;Roches;N;10;Roches BE;41;Espace Mittelland;30;595785.37989;238914.145683
+Switzerland;Egg;N;10;Egg;41;Zürich;30;694742.0266;239680.114734
+Switzerland;Hinwil;N;10;Hinwil;41;Zürich;30;705963.582602;239881.106436
+Switzerland;Adliswil;N;10;Sihlau;41;Zürich;30;682170.017332;239770.598338
+Switzerland;Boswil;N;10;Boswil-Bünzen;41;Nordwestschweiz;30;666249.852831;239771.558524
+Switzerland;Schöftland;N;10;Schöftland;41;Nordwestschweiz;30;646263.430081;239604.267793
+Switzerland;Oberbuchsiten;N;10;Oberbuchsiten;41;Espace Mittelland;30;625285.942507;239511.169145
+Switzerland;Rothrist;N;10;Rothrist;41;Nordwestschweiz;30;633248.621543;239594.900978
+Switzerland;Küngoldingen;N;10;Küngoldingen;41;Nordwestschweiz;30;638148.748045;239635.494722
+Switzerland;Erlenbach;N;10;Erlenbach;41;Zürich;30;687216.222227;240187.347124
+Switzerland;Rüschlikon;N;10;Rüschlikon;41;Zürich;30;684455.230353;240225.221043
+Switzerland;Sarmenstorf;N;10;Sarmenstorf;41;Nordwestschweiz;30;661035.38132;240138.117539
+Switzerland;Balsthal;N;10;Thalbrücke;41;Espace Mittelland;30;618871.876009;239909.804937
+Switzerland;Weissbad;N;10;Weissbad;41;Ostschweiz;30;751122.128679;241905.415829
+Switzerland;Adliswil;N;10;Adliswil;41;Zürich;30;682112.024594;240681.552473
+Switzerland;Hinteregg;N;10;Hinteregg;41;Zürich;30;693594.765912;240962.858872
+Switzerland;Gibswil-Ried;N;10;Gibswil;41;Zürich;30;711701.249541;241276.306163
+Switzerland;Balsthal;N;10;Balsthal;41;Espace Mittelland;30;619558.045459;240501.278585
+Switzerland;Egerkingen;N;10;Egerkingen;41;Espace Mittelland;30;627254.967848;240542.742345
+Switzerland;Boniswil;N;10;Boniswil-Seengen;41;Nordwestschweiz;30;656368.478287;241048.120104
+Switzerland;Wetzikon;N;10;Wetzikon;41;Zürich;30;702445.547732;241676.26621
+Switzerland;Lichtensteig;N;10;Lichtensteig;41;Ostschweiz;30;724283.688128;242104.966362
+Switzerland;Urnäsch;N;10;Urnäsch;41;Ostschweiz;30;739762.481541;242505.296999
+Switzerland;Hirschthal;N;10;Hirschthal;41;Nordwestschweiz;30;646448.029561;241140.032387
+Switzerland;Zürich;N;10;Sood Oberleimbach;41;Zürich;30;681918.896117;241523.926431
+Switzerland;Striegel;N;10;Walterswil-Striegel;41;Nordwestschweiz;30;639658.749885;241135.23121
+Switzerland;Scheuren;N;10;Scheuren;41;Zürich;30;692818.295567;241773.48363
+Switzerland;Jakobsbad;N;10;Jakobsbad;41;Ostschweiz;30;742924.854497;242769.762203
+Switzerland;Küsnacht;N;10;Küsnacht;41;Zürich;30;686369.854642;241698.281042
+Switzerland;Aarburg;N;10;Aarburg-Oftringen;41;Nordwestschweiz;30;635553.080123;241198.152363
+Switzerland;Steinegg;N;10;Steinegg;41;Ostschweiz;30;750699.665649;243051.303703
+Switzerland;Safenwil;N;10;Safenwil;41;Nordwestschweiz;30;641252.38069;241368.463413
+Switzerland;Choindez;N;10;Choindez;41;Espace Mittelland;30;595288.22194;241404.941219
+Switzerland;Oberriet;N;10;Oberriet;41;Ostschweiz;30;761278.321938;243674.498128
+Switzerland;Bonstetten;N;10;Bonstetten-Wettswil;41;Zürich;30;677828.961799;242058.136979
+Switzerland;Forch;N;10;Forch;41;Zürich;30;692137.226447;242296.587939
+Switzerland;Kölliken;N;10;Kölliken Oberdorf;41;Nordwestschweiz;30;644114.724946;241767.08105
+Switzerland;Kilchberg;N;10;Kilchberg;41;Zürich;30;683874.63544;242240.651711
+Switzerland;Küsnacht;N;10;Küsnacht Goldbach;41;Zürich;30;686018.714503;242449.278513
+Switzerland;Zürchersmühle;N;10;Zürchersmühle;41;Ostschweiz;30;740355.943227;243631.429415
+Switzerland;Appenzell;N;10;Appenzell;41;Ostschweiz;30;749135.803004;243890.348544
+Switzerland;Teufenthal;N;10;Teufenthal;41;Nordwestschweiz;30;651065.594758;242245.353457
+Switzerland;Gonten;N;10;Gonten;41;Ostschweiz;30;744420.175955;243784.679868
+Switzerland;Glovelier;N;10;Combe-Tabeillon;41;Espace Mittelland;30;581266.966263;242077.603172
+Switzerland;Hallwil;N;10;Hallwil-Dürrenäsch;41;Nordwestschweiz;30;655668.184228;242353.484657
+Switzerland;Hirschberg;N;10;Hirschberg;41;Ostschweiz;30;750281.300989;244041.622862
+Switzerland;Hägendorf;N;10;Hägendorf;41;Espace Mittelland;30;630716.353072;242305.191621
+Switzerland;Gontenbad;N;10;Gontenbad;41;Ostschweiz;30;746576.440043;244037.802732
+Switzerland;Kempten;N;10;Kempten;41;Zürich;30;703303.067427;243236.779523
+Switzerland;Zumikon;N;10;Maiacher;41;Zürich;30;689645.721765;243070.096778
+Switzerland;Fischenthal;N;10;Fischenthal;41;Zürich;30;712330.260418;243601.144471
+Switzerland;Hilfikon;N;10;Hilfikon;41;Nordwestschweiz;30;661052.358753;242895.6943
+Switzerland;Courfaivre;N;10;Courfaivre;41;Espace Mittelland;30;588728.893395;242736.868015
+Switzerland;Zürich;N;10;Zürich Leimbach;41;Zürich;30;681750.886667;243289.535895
+Switzerland;Zumikon;N;10;Zumikon;41;Zürich;30;689201.356724;243463.687064
+Switzerland;Glovelier;Y;10;Glovelier;41;Espace Mittelland;30;582561.765613;242829.671312
+Switzerland;Glovelier;Y;10;Glovelier;41;Espace Mittelland;30;582471.13641;242852.175386
+Switzerland;Bassecourt;N;10;Bassecourt;41;Espace Mittelland;30;585501.882837;242855.084682
+Switzerland;Aathal-Seegräben;N;10;Aathal;41;Zürich;30;700400.09251;243687.279822
+Switzerland;Muhen;N;10;Muhen;41;Nordwestschweiz;30;646500.900479;243075.035845
+Switzerland;Kölliken;N;10;Kölliken;41;Nordwestschweiz;30;644490.072091;243126.318418
+Switzerland;Brunnadern;N;10;Brunnadern-Neckertal;41;Ostschweiz;30;727940.948843;244340.161759
+Switzerland;Courrendlin;N;10;Courrendlin;41;Espace Mittelland;30;594745.320059;242973.038676
+Switzerland;Zollikon;N;10;Zollikon;41;Zürich;30;685533.569363;243587.532962
+Switzerland;Waltikon;N;10;Waltikon;41;Zürich;30;688795.666213;243802.2931
+Switzerland;Wangen bei Olten;N;10;Wangen bei Olten;41;Espace Mittelland;30;632508.838164;243493.2699
+Switzerland;Courtételle;N;10;Courtételle;41;Espace Mittelland;30;590800.94198;243467.066801
+Switzerland;Zürich;N;10;Zürich Mannegg;41;Zürich;30;681746.177596;244178.99771
+Switzerland;Bleien;N;10;Bleien;41;Nordwestschweiz;30;651021.582582;243846.027872
+Switzerland;Dietfurt;N;10;Dietfurt;41;Ostschweiz;30;723995.979212;245012.497232
+Switzerland;Bremgarten;N;10;Bremgarten West;41;Nordwestschweiz;30;667930.417107;244249.168901
+Switzerland;Villmergen;N;10;Villmergen;41;Nordwestschweiz;30;661114.641108;244186.095547
+Switzerland;Zollikerberg;N;10;Zollikerberg;41;Zürich;30;687968.652025;244523.832373
+Switzerland;Seon;N;10;Seon;41;Nordwestschweiz;30;654419.098196;244198.677617
+Switzerland;Zollikerberg;N;10;Spital Neumünster;41;Zürich;30;687468.658322;244605.385866
+Switzerland;Wohlen;N;10;Wohlen Oberdorf;41;Nordwestschweiz;30;663969.436874;244349.640894
+Switzerland;Zollikerberg;N;10;Waldburg;41;Zürich;30;686892.960356;244696.990124
+Switzerland;Olten;N;10;Olten Hammer;41;Espace Mittelland;30;634892.947735;244173.910447
+Switzerland;Wohlen;N;10;Wohlen;41;Nordwestschweiz;30;662887.631864;244460.370039
+Switzerland;Gais;N;10;Sammelplatz;41;Ostschweiz;30;750735.261211;246110.655274
+Switzerland;Zürich;N;10;Zürich Wollishofen;41;Zürich;30;682765.281479;244804.69366
+Switzerland;Zürich;N;10;Zürich Tiefenbrünnen;41;Zürich;30;685054.086005;244870.458826
+Switzerland;Bremgarten;N;10;Bremgarten;41;Nordwestschweiz;30;668737.966939;244992.320068
+Switzerland;Zürich;N;10;Zürich Rehalp;41;Zürich;30;686181.886297;245264.807122
+Switzerland;Olten;N;10;Olten;41;Espace Mittelland;30;635516.650253;244755.762472
+Switzerland;Zufikon;N;10;Zufikon;41;Nordwestschweiz;30;669182.813314;245075.328065
+Switzerland;Uetliberg;N;10;Uetliberg;41;Zürich;30;679298.790237;245213.176729
+Switzerland;Zürich;N;10;Zürich Brunau;41;Zürich;30;682229.768948;245275.361776
+Switzerland;Uster;N;10;Uster;41;Zürich;30;696583.654395;245491.940632
+Switzerland;Däniken;N;10;Däniken;41;Espace Mittelland;30;640200.125329;244919.086944
+Switzerland;Dulliken;N;10;Dulliken;41;Espace Mittelland;30;638439.243067;244985.236953
+Switzerland;Steg;N;10;Steg;41;Zürich;30;712867.461495;245957.683945
+Switzerland;Zufikon;N;10;Zufikon Hammergut;41;Nordwestschweiz;30;669277.260177;245398.877558
+Switzerland;Gränichen;N;10;Gränichen;41;Nordwestschweiz;30;650517.9884;245298.233963
+Switzerland;Waldstatt;N;10;Waldstatt;41;Ostschweiz;30;739696.992781;246885.47641
+Switzerland;Birmensdorf;N;10;Birmensdorf ZH;41;Zürich;30;675453.387415;245752.27305
+Switzerland;Zürich;N;10;Zürich Saalsporthalle;41;Zürich;30;681919.737744;245838.144018
+Switzerland;Bütschwil;N;10;Bütschwil;41;Ostschweiz;30;723743.443249;246608.569968
+Switzerland;Delémont;N;10;Delémont;41;Espace Mittelland;30;592881.552472;245454.323452
+Switzerland;Oberentfelden;N;10;Oberentfelden;41;Nordwestschweiz;30;645852.632658;245782.874304
+Switzerland;Gais;N;10;Gais;41;Ostschweiz;30;752043.589836;247556.552263
+Switzerland;Ringlikon;N;10;Ringlikon;41;Zürich;30;678439.984561;246157.985862
+Switzerland;Rietli;N;10;Stoss AR;41;Ostschweiz;30;754836.908585;247662.28547
+Switzerland;Heinrüti;N;10;Heinrüti;41;Nordwestschweiz;30;669141.177407;246053.300204
+Switzerland;Zürich;N;10;Zürich Giesshübel;41;Zürich;30;681703.0108;246213.202774
+Switzerland;Mutschellen;N;10;Berikon-Widen;41;Nordwestschweiz;30;670100.11666;246097.923934
+Switzerland;Rietli;N;10;Rietli;41;Ostschweiz;30;754004.477494;247707.31263
+Switzerland;Gais;N;10;Schachen AB;41;Ostschweiz;30;753347.189141;247701.37943
+Switzerland;Gais;N;10;Hebrig;41;Ostschweiz;30;752704.718278;247707.023007
+Switzerland;Altstätten;N;10;Kreuzstrasse;41;Ostschweiz;30;755732.645807;247796.990564
+Switzerland;Zürich;N;10;Zürich Binz;41;Zürich;30;681541.324767;246433.358488
+Switzerland;Mogelsberg;N;10;Mogelsberg;41;Ostschweiz;30;728844.766141;247273.367841
+Switzerland;Zürich;N;10;Zürich Enge;41;Zürich;30;682521.863328;246547.007653
+Switzerland;Gais;N;10;Zweibrücken;41;Ostschweiz;30;750787.050614;247935.932383
+Switzerland;Rudolfstetten;N;10;Rudolfstetten Hofacker;41;Nordwestschweiz;30;670934.324168;246463.656728
+Switzerland;Zürich;N;10;Friesenberg;41;Zürich;30;680745.345234;246633.720535
+Switzerland;Zürich;N;10;Triemli;41;Zürich;30;679861.484407;246632.859312
+Switzerland;Zürich;Y;10;Schweighof;41;Zürich;30;680518.601756;246641.753685
+Switzerland;Trimbach;N;10;Trimbach;41;Espace Mittelland;30;635114.875125;246254.337857
+Switzerland;Altstätten;N;10;Warmesberg;41;Ostschweiz;30;756681.111804;248222.399432
+Switzerland;Uitikon Waldegg;N;10;Uitikon Waldegg;41;Zürich;30;677677.327505;246703.891468
+Switzerland;Zürich;N;10;Zürich Stadelhofen FB;41;Zürich;30;683953.343212;246822.862052
+Switzerland;Zürich;N;10;Zürich Stadelhofen;41;Zürich;30;683990.634552;246856.748348
+Switzerland;Saint-Ursanne;N;10;Saint-Ursanne;41;Espace Mittelland;30;579528.128538;246363.841348
+Switzerland;Pfäffikon;N;10;Pfäffikon ZH;41;Zürich;30;701713.968229;247290.22917
+Switzerland;Bauma;N;10;Bauma;41;Zürich;30;708840.963471;247539.222309
+Switzerland;Zürich;N;10;Zürich Selnau;41;Zürich;30;682438.286662;247124.042296
+Switzerland;Schönenwerd;N;10;Schönenwerd SO;41;Espace Mittelland;30;642385.822638;246735.488465
+Switzerland;Unterentfelden;N;10;Unterentfelden Post;41;Nordwestschweiz;30;645776.744296;246805.184437
+Switzerland;Rudolfstetten;N;10;Rudolfstetten;41;Nordwestschweiz;30;671312.181798;247079.733482
+Switzerland;Greifensee;N;10;Nänikon-Greifensee;41;Zürich;30;694225.195898;247444.358843
+Switzerland;Suhr;N;10;Suhr;41;Nordwestschweiz;30;648660.651697;246983.822601
+Switzerland;Bühler;N;10;Strahlholz;41;Ostschweiz;30;750661.818292;248700.145053
+Switzerland;Altstätten;N;10;Alter Zoll;41;Ostschweiz;30;758113.401626;248916.671716
+Switzerland;Suhr;N;10;Suhr Ausweiche;41;Nordwestschweiz;30;648622.341199;247050.219167
+Switzerland;Degersheim;N;10;Degersheim;41;Ostschweiz;30;733201.794807;248403.997985
+Switzerland;Zürich;N;10;Zürich Wiedikon;41;Zürich;30;681881.117727;247538.844302
+Switzerland;Dintikon;N;10;Dottikon-Dintikon;41;Nordwestschweiz;30;660266.905754;247290.642645
+Switzerland;Altstätten;N;10;Altstätten SG;41;Ostschweiz;30;760022.427881;249290.499628
+Switzerland;Wilen;N;10;Wilen;41;Ostschweiz;30;739130.148738;248818.344783
+Switzerland;Aarau;N;10;Distelberg;41;Nordwestschweiz;30;646134.780165;247386.12147
+Switzerland;Altstätten;N;10;Altstätten Stadt;41;Ostschweiz;30;758608.651072;249608.36815
+Switzerland;Zürich;Y;10;Zürich HB;41;Zürich;30;683193.02072;248246.517642
+Switzerland;Zürich;Y;10;Zürich HB;41;Zürich;30;683245.721609;248258.377392
+Switzerland;Lenzburg;N;10;Lenzburg;41;Nordwestschweiz;30;655418.725601;248010.496249
+Switzerland;Steigbach;N;10;Steigbach;41;Ostschweiz;30;748107.935338;249614.42235
+Switzerland;Urdorf;N;10;Urdorf Weihermatt;41;Zürich;30;674898.547355;248402.679018
+Switzerland;Rudolfstetten;N;10;Reppischhof;41;Zürich;30;672372.762703;248682.60964
+Switzerland;Schwerzenbach;N;10;Schwerzenbach;41;Zürich;30;692275.167959;248970.390921
+Switzerland;Lütisburg;N;10;Lütisburg;41;Ostschweiz;30;723334.639543;249546.991447
+Switzerland;Schachen bei Herisau;N;10;Schachen BT;41;Ostschweiz;30;736310.674924;249876.003708
+Switzerland;Zürich;N;10;Zürich Hardbrücke;41;Zürich;30;681363.140138;248954.966011
+Switzerland;Fehraltorf;N;10;Fehraltorf;41;Zürich;30;699059.855448;249246.796692
+Switzerland;Waldenburg;N;10;Waldenburg;41;Nordwestschweiz;30;623457.770291;248587.18087
+Switzerland;Hunzenschwil;N;10;Hunzenschwil;41;Nordwestschweiz;30;651899.267643;248901.462925
+Switzerland;Buchs;N;10;Buchs AG;41;Nordwestschweiz;30;647723.018816;248988.649796
+Switzerland;Teufen;N;10;Teufen;41;Ostschweiz;30;747445.00192;250754.527061
+Switzerland;Hendschiken;N;10;Hendschiken;41;Nordwestschweiz;30;657951.440362;249268.907911
+Switzerland;Teufen;N;10;Stofel;41;Ostschweiz;30;746567.800459;250799.472146
+Switzerland;Niederteufen;N;10;Niederteufen;41;Ostschweiz;30;746023.537455;250819.38581
+Switzerland;Urdorf;N;10;Urdorf;41;Zürich;30;675322.212486;249531.079398
+Switzerland;Zürich;N;10;Zürich Wipkingen;41;Zürich;30;682350.014058;249669.120935
+Switzerland;Herisau;Y;10;Herisau;41;Ostschweiz;30;739371.786065;250748.006972
+Switzerland;Zürich;N;10;Zürich Altstetten;41;Zürich;30;679208.64055;249692.981771
+Switzerland;Läufelfingen;N;10;Läufelfingen;41;Nordwestschweiz;30;631571.245603;249258.589123
+Switzerland;Herisau;Y;10;Herisau;41;Ostschweiz;30;739347.572601;250814.164737
+Switzerland;Aarau;N;10;Aarau WSB;41;Nordwestschweiz;30;646874.155113;249393.258309
+Switzerland;Dietikon;N;10;Dietikon Stoffelbach;41;Zürich;30;672594.969781;249652.684608
+Switzerland;Aarau;N;10;Aarau;41;Nordwestschweiz;30;646858.968051;249404.256702
+Switzerland;Rebstein;N;10;Rebstein-Marbach;41;Ostschweiz;30;762192.017471;251451.661944
+Switzerland;Saland;N;10;Saland;41;Zürich;30;706900.586006;250406.200898
+Switzerland;Rohr;N;10;Rohr-Buchs;41;Nordwestschweiz;30;648757.972074;249842.090335
+Switzerland;Herisau;N;10;Gübensee;41;Ostschweiz;30;741982.955805;251455.104728
+Switzerland;Dübendorf;N;10;Stettbach;41;Zürich;30;687420.750109;250408.979538
+Switzerland;Oberdorf;N;10;Oberdorf BL;41;Nordwestschweiz;30;623467.853328;249854.705858
+Switzerland;Schlieren;N;10;Schlieren;41;Zürich;30;675915.186781;250394.824667
+Switzerland;Oberdorf;N;10;Oberdorf Winkelweg;41;Nordwestschweiz;30;623542.636414;250032.895422
+Switzerland;Lustmühle;N;10;Lustmühle;41;Ostschweiz;30;745100.010973;251830.982382
+Switzerland;Dübendorf;N;10;Dübendorf;41;Zürich;30;689491.643673;250762.386054
+Switzerland;Rupperswil;N;10;Rupperswil;41;Nordwestschweiz;30;651967.684856;250569.859255
+Switzerland;Trogen;N;10;Gfeld;41;Ostschweiz;30;752131.325369;252374.570717
+Switzerland;Sankt Gallen;N;10;Sankt Gallen Winkeln;41;Ostschweiz;30;740562.58949;252121.850199
+Switzerland;Courgenay;N;10;Courgenay;41;Espace Mittelland;30;576282.01353;250600.915263
+Switzerland;Dietikon;Y;10;Dietikon;41;Zürich;30;672970.26386;251058.300723
+Switzerland;Dietikon;Y;10;Dietikon;41;Zürich;30;673007.726828;251081.000791
+Switzerland;Riethüsli;N;10;Riethüsli;41;Ostschweiz;30;745846.040147;252505.496281
+Switzerland;Sankt Gallen;N;10;Sankt Gallen Bruggen;41;Ostschweiz;30;742728.615178;252473.973076
+Switzerland;Bendlehn;N;10;Bendlehn;41;Ostschweiz;30;751979.106584;252715.439604
+Switzerland;Othmarsingen;N;10;Othmarsingen;41;Nordwestschweiz;30;658635.176588;251132.472671
+Switzerland;Haggen;N;10;Sankt Gallen Haggen;41;Ostschweiz;30;743405.566934;252579.311306
+Switzerland;Trogen;N;10;Trogen;41;Ostschweiz;30;752865.721546;252882.862847
+Switzerland;Speicher;Y;10;Speicher;41;Ostschweiz;30;751505.319302;252936.850707
+Switzerland;Buckten;N;10;Buckten;41;Nordwestschweiz;30;630919.479542;251178.633072
+Switzerland;Bazenheid;N;10;Bazenheid;41;Ostschweiz;30;723124.679066;252378.384355
+Switzerland;Zürich;N;10;Zürich Oerlikon;41;Zürich;30;683152.003033;251704.04774
+Switzerland;Illnau;N;10;Illnau;41;Zürich;30;696977.156844;251914.413872
+Switzerland;Gossau;Y;10;Gossau SG;41;Ostschweiz;30;736854.788026;252802.313756
+Switzerland;Niederdorf;Y;10;Niederdorf;41;Nordwestschweiz;30;624020.572743;251313.42211
+Switzerland;Gossau;Y;10;Gossau SG;41;Ostschweiz;30;736831.124268;252846.25156
+Switzerland;Speicher;N;10;Schützengarten;41;Ostschweiz;30;751286.669062;253220.42642
+Switzerland;Heerbrugg;N;10;Heerbrugg;41;Ostschweiz;30;765304.267397;253595.447287
+Switzerland;Speicher;N;10;Vögelinsegg;41;Ostschweiz;30;751095.781133;253304.524197
+Switzerland;Wallisellen;N;10;Wallisellen;41;Zürich;30;686980.272591;252126.007474
+Switzerland;Niederdorf;N;10;Hirschlang;41;Nordwestschweiz;30;624177.973153;251580.903001
+Switzerland;Mägenwil;N;10;Mägenwil;41;Nordwestschweiz;30;660159.488574;251914.964848
+Switzerland;Speicher;N;10;Rank;41;Ostschweiz;30;750954.023597;253534.466201
+Switzerland;Wildegg;N;10;Wildegg;41;Nordwestschweiz;30;654769.423636;252073.901978
+Switzerland;Flawil;N;10;Flawil;41;Ostschweiz;30;732034.300825;253326.694147
+Switzerland;Laufen;Y;10;Laufen;41;Espace Mittelland;30;604827.678837;251900.492468
+Switzerland;Speicher;N;10;Notkersegg;41;Ostschweiz;30;750386.987315;253864.805307
+Switzerland;Speicher;N;10;Schwarzer Bären;41;Ostschweiz;30;750634.236859;253937.8268
+Switzerland;Wila;N;10;Wila;41;Zürich;30;706461.477009;252989.262365
+Switzerland;Hölstein;N;10;Hölstein Weidbächli;41;Nordwestschweiz;30;624575.415105;252194.049073
+Switzerland;Zürich;N;10;Zürich Seebach;41;Zürich;30;683643.170563;252733.952373
+Switzerland;Sankt Gallen;N;10;Sankt Gallen TB;41;Ostschweiz;30;745553.39388;253966.350127
+Switzerland;Dietlikon;N;10;Dietlikon;41;Zürich;30;689111.801112;252924.96517
+Switzerland;Sankt Gallen;N;10;Sankt Gallen AB;41;Ostschweiz;30;745845.407389;254062.515131
+Switzerland;Sankt Gallen;N;10;Sankt Gallen;41;Ostschweiz;30;745571.649153;254144.74628
+Switzerland;Speicher;N;10;Schülerhaus;41;Ostschweiz;30;749977.018166;254254.786683
+Switzerland;Porrentruy;N;10;Porrentruy;41;Espace Mittelland;30;572999.416087;252438.41841
+Switzerland;Zürich;N;10;Zürich Affoltern;41;Zürich;30;680780.002953;252949.924579
+Switzerland;Alle;N;10;Alle;41;Espace Mittelland;30;576486.450021;252656.996146
+Switzerland;Speicher;N;10;Spisertor;41;Ostschweiz;30;749329.377752;254494.206704
+Switzerland;Hölstein;N;10;Hölstein Süd;41;Nordwestschweiz;30;624927.924124;252706.968297
+Switzerland;Sankt Gallen;N;10;Sankt Gallen Marktplatz;41;Ostschweiz;30;748470.314691;254739.508098
+Switzerland;Rümlingen;N;10;Rümlingen;41;Nordwestschweiz;30;631158.887478;253014.431117
+Switzerland;Effretikon;N;10;Effretikon;41;Zürich;30;694320.007378;253817.424152
+Switzerland;Hölstein;N;10;Hölstein;41;Nordwestschweiz;30;625121.886425;253230.35343
+Switzerland;Au;N;10;Au SG;41;Ostschweiz;30;766131.996296;255576.228782
+Switzerland;Glattbrugg;N;10;Opfikon;41;Zürich;30;684743.314256;253906.027176
+Switzerland;Mellingen;N;10;Mellingen;41;Nordwestschweiz;30;663084.065942;253679.962662
+Switzerland;Glattbrugg;N;10;Glattbrugg;41;Zürich;30;684598.074563;254037.382578
+Switzerland;Zwingen;N;10;Zwingen;41;Espace Mittelland;30;606765.131339;253625.718963
+Switzerland;Killwangen;N;10;Killwangen-Spreitenbach;41;Nordwestschweiz;30;669167.433116;254148.225821
+Switzerland;Uzwil;N;10;Uzwil;41;Ostschweiz;30;727798.431601;255135.36837
+Switzerland;Turbenthal;N;10;Turbenthal;41;Zürich;30;706163.687233;254863.213256
+Switzerland;Birr;N;10;Birr;41;Nordwestschweiz;30;658815.45183;254258.659295
+Switzerland;Sankt Gallen;N;10;Sankt Gallen Sankt Fiden;41;Ostschweiz;30;747786.87634;255812.333621
+Switzerland;Sommerau;N;10;Sommerau;41;Nordwestschweiz;30;631296.599533;254082.532718
+Switzerland;Regensdorf;N;10;Regensdorf-Watt;41;Zürich;30;678147.39135;254582.472012
+Switzerland;Courchavon;N;10;Courchavon;41;Espace Mittelland;30;571371.49106;254402.932421
+Switzerland;Bassersdorf;N;10;Bassersdorf;41;Zürich;30;689856.688365;255060.076697
+Switzerland;Grellingen;N;10;Grellingen;41;Espace Mittelland;30;611802.721644;254589.776549
+Switzerland;Rämismühle;N;10;Rämismühle-Zell;41;Zürich;30;704319.070594;255497.603241
+Switzerland;Kloten;N;10;Kloten Balsberg;41;Zürich;30;685222.626789;255202.774956
+Switzerland;Ramlinsburg;N;10;Lampenberg-Ramlinsburg;41;Nordwestschweiz;30;624580.216391;254673.479215
+Switzerland;Arnegg;N;10;Arnegg;41;Ostschweiz;30;736942.024275;256207.45572
+Switzerland;Neuenhof;N;10;Neuenhof;41;Nordwestschweiz;30;667797.626886;255177.567914
+Switzerland;Lupfig;N;10;Lupfig;41;Nordwestschweiz;30;658663.309729;255146.662563
+Switzerland;Rikon;N;10;Rikon;41;Zürich;30;702707.842592;255747.408396
+Switzerland;Schinznach Bad;N;10;Schinznach Bad;41;Nordwestschweiz;30;655034.768348;255189.631963
+Switzerland;Schwarzenbach;N;10;Schwarzenbach SG;41;Ostschweiz;30;723073.666375;256280.70532
+Switzerland;Würenlos;N;10;Würenlos;41;Nordwestschweiz;30;669453.11851;255519.226314
+Switzerland;Diepflingen;N;10;Diepflingen;41;Nordwestschweiz;30;630483.654568;255201.262229
+Switzerland;Heiden;N;10;Heiden;41;Ostschweiz;30;758446.061646;257367.369449
+Switzerland;;N;10;Sankt Margarethen Rail;41;Ostschweiz;3;767340.488862;257679.146518
+Switzerland;Dättwil;N;10;Dättwil;41;Nordwestschweiz;30;664374.23379;255761.995619
+Switzerland;Henau;N;10;Algetshausen-Henau;41;Ostschweiz;30;726126.434719;256756.497929
+Switzerland;Rümlang;N;10;Rümlang;41;Zürich;30;683068.628877;256028.33725
+Switzerland;Tecknau;N;10;Tecknau;41;Nordwestschweiz;30;633656.997067;255552.011487
+Switzerland;Bubendorf;N;10;Talhaus;41;Nordwestschweiz;30;623686.561078;255570.434414
+Switzerland;Kloten;N;10;Kloten;41;Zürich;30;686513.594651;256166.678694
+Switzerland;Zürich;N;10;Zürich Flughafen;41;Zürich;30;684710.833149;256173.943418
+Switzerland;Vendlincourt;N;10;Vendlincourt;41;Espace Mittelland;30;578829.423037;255839.123767
+Switzerland;Kemptthal;N;10;Kemptthal;41;Zürich;30;695686.290544;256585.960541
+Switzerland;Sankt Margrethen;N;10;Sankt Margrethen;41;Ostschweiz;30;766458.480592;258188.145552
+Switzerland;Otelfingen;N;10;Otelfingen;41;Nordwestschweiz;30;671050.559979;256283.183384
+Switzerland;Walzenhausen;N;10;Walzenhausen;41;Ostschweiz;30;763176.508364;258196.753725
+Switzerland;Duggingen;N;10;Duggingen;41;Espace Mittelland;30;612508.824546;255981.026365
+Switzerland;Buchs;N;10;Buchs-Dällikon;41;Zürich;30;675226.57294;256457.132579
+Switzerland;Courtemaîche;N;10;Courtemaîche;41;Espace Mittelland;30;571154.321099;256271.902174
+Switzerland;Otelfingen;N;10;Otelfingen-Rietholz;41;Zürich;30;672093.576283;256718.335586
+Switzerland;Kollbrunn;N;10;Kollbrunn;41;Zürich;30;700862.851653;257328.06426
+Switzerland;Bubendorf;N;10;Bubendorf;41;Nordwestschweiz;30;622950.579299;256712.742519
+Switzerland;Wienacht-Tobel;N;10;Schwendi bei Heiden;41;Ostschweiz;30;757910.160353;258787.824505
+Switzerland;Eschlikon;N;10;Eschlikon;41;Ostschweiz;30;714766.788618;257892.95695
+Switzerland;Wil;N;10;Wil;41;Ostschweiz;30;721196.794959;258043.509344
+Switzerland;Sirnach;N;10;Sirnach;41;Ostschweiz;30;718014.185752;258045.849651
+Switzerland;Wittenbach;N;10;Wittenbach;41;Ostschweiz;30;747239.235413;258712.605432
+Switzerland;Wettingen;N;10;Wettingen;41;Nordwestschweiz;30;665880.882264;257279.663554
+Switzerland;Rheineck;Y;10;Rheineck;41;Ostschweiz;30;762634.543266;259249.596537
+Switzerland;Rheineck;Y;10;Rheineck;41;Ostschweiz;30;762641.774454;259260.918196
+Switzerland;Sissach;N;10;Sissach;41;Nordwestschweiz;30;628151.522396;257113.22239
+Switzerland;Kyburg;N;10;Sennhoff-Kyburg;41;Zürich;30;699809.646041;258066.356367
+Switzerland;Wienacht-Tobel;N;10;Wienacht-Tobel;41;Ostschweiz;30;758616.170532;259462.952965
+Switzerland;Gelterkinden;N;10;Gelterkinden;41;Nordwestschweiz;30;631022.282425;257483.369678
+Switzerland;Grandgourt;N;10;Grandgourt;41;Espace Mittelland;30;570708.659789;257641.682458
+Switzerland;Aesch;N;10;Aesch;41;Nordwestschweiz;30;612497.813924;257626.536855
+Switzerland;Itingen;N;10;Itingen;41;Nordwestschweiz;30;626052.985966;257670.660573
+Switzerland;Lausen;Y;10;Lausen;41;Nordwestschweiz;30;624491.538691;257875.246495
+Switzerland;Baden;N;10;Baden Oberstadt;41;Nordwestschweiz;30;665154.462171;258194.505361
+Switzerland;Rorschach;N;10;Wartensee;41;Ostschweiz;30;758252.814413;260076.072745
+Switzerland;Oberglatt;N;10;Oberglatt;41;Zürich;30;680701.852076;258675.368879
+Switzerland;Bonfol;N;10;Bonfol;41;Espace Mittelland;30;578739.879141;258196.573082
+Switzerland;Rorschach;N;10;Sandbüchel;41;Ostschweiz;30;757967.745285;260302.01869
+Switzerland;Guntershausen bei Aadorf;Y;10;Guntershausen;41;Ostschweiz;30;711566.114176;259255.115075
+Switzerland;Rorschach;N;10;Seebleiche;41;Ostschweiz;30;757710.93945;260317.404926
+Switzerland;Liestal;N;10;Altmarkt;41;Nordwestschweiz;30;623064.940644;258325.377196
+Switzerland;Goldach;N;10;Goldach;41;Ostschweiz;30;753240.530613;260266.532304
+Switzerland;Trungen;N;10;Bronschhofen;41;Ostschweiz;30;720426.536727;259573.560524
+Switzerland;Mörschwil;N;10;Mörschwil;41;Ostschweiz;30;749063.189315;260259.791816
+Switzerland;Münchwilen;N;10;Münchwilen TG;41;Ostschweiz;30;717847.906623;259577.189459
+Switzerland;Villnachern;N;10;Villnachern;41;Nordwestschweiz;30;655047.316714;258703.329755
+Switzerland;Baden;Y;10;Baden;41;Nordwestschweiz;30;665569.334307;258855.122667
+Switzerland;Hauptwil;N;10;Hauptwil;41;Ostschweiz;30;736814.774653;260074.770729
+Switzerland;Niederhasli;N;10;Niederhasli;41;Zürich;30;679715.6513;259129.009406
+Switzerland;Rorschach;Y;10;Rorschach;41;Ostschweiz;30;756794.864455;260737.927182
+Switzerland;Buix;N;10;Buix;41;Espace Mittelland;30;569289.741411;258794.113426
+Switzerland;Rodersdorf;N;10;Rodersdorf;41;Espace Mittelland;30;601520.642105;258792.146041
+Switzerland;Rorschach;Y;10;Rorschach;41;Ostschweiz;30;756798.860524;260871.502663
+Switzerland;Brugg;N;10;Brugg AG;41;Nordwestschweiz;30;658125.848869;259177.551337
+Switzerland;Staad;N;10;Staad;41;Ostschweiz;30;758209.174473;261142.666044
+Switzerland;Rorschach;N;10;Rorschach Hafen;41;Ostschweiz;30;754185.377759;261047.425175
+Switzerland;Dielsdorf;N;10;Dielsdorf;41;Zürich;30;677101.702851;259561.35879
+Switzerland;Münchwilen;N;10;Münchwilen Pflegenheim;41;Ostschweiz;30;717056.446207;260328.791392
+Switzerland;Ettingen;N;10;Ettingen;41;Nordwestschweiz;30;608085.223499;259264.420025
+Switzerland;Liestal;Y;10;Liestal;41;Nordwestschweiz;30;622239.395338;259356.24698
+Switzerland;Liestal;Y;10;Liestal;41;Nordwestschweiz;30;622277.037719;259367.507157
+Switzerland;;N;10;Rodersdorf Rail;41;Espace Mittelland;3;602040.545524;259348.22569
+Switzerland;Berg;N;10;Roggwil-Berg;41;Ostschweiz;30;747425.860183;261208.579223
+Switzerland;Witterswil;N;10;Witterswil;41;Espace Mittelland;30;606584.973175;259618.360088
+Switzerland;Winterthur;N;10;Winterthur Seen;41;Zürich;30;700242.89952;260531.230722
+Switzerland;Aadorf;N;10;Aadorf;41;Ostschweiz;30;710344.962714;260855.782411
+Switzerland;Flüh;N;10;Flüh;41;Espace Mittelland;30;605311.084117;259861.69349
+Switzerland;;N;10;Flüh Rail;41;Espace Mittelland;3;604617.693182;259938.944953
+Switzerland;Dornach;Y;10;Dornach;41;Espace Mittelland;30;613020.440583;259951.436575
+Switzerland;Dornach;N;10;Dornach-Arlesheim;41;Espace Mittelland;30;613065.657105;259951.536121
+Switzerland;Winterthur;N;10;Winterthur Töss;41;Zürich;30;695965.633691;260749.351057
+Switzerland;Steinmaur;N;10;Steinmaur;41;Zürich;30;676215.415635;260483.901099
+Switzerland;Rosental;N;10;Rosental;41;Ostschweiz;30;716140.916366;261267.109554
+Switzerland;Turgi;N;10;Turgi;41;Nordwestschweiz;30;661504.452015;260468.194148
+Switzerland;Niederglatt;N;10;Niederglatt;41;Zürich;30;680500.925024;260696.390081
+Switzerland;Bischofszell;N;10;Bischofszell Stadt;41;Ostschweiz;30;736059.951351;261747.813509
+Switzerland;Boncourt;N;10;Boncourt;41;Espace Mittelland;30;568205.30144;260378.710564
+Switzerland;Horn;Y;10;Horn;41;Ostschweiz;30;752734.653044;262333.301954
+Switzerland;Schöfflisdorf;N;10;Schöfflisdorf-Oberweningen;41;Zürich;30;674522.013113;260895.966571
+Switzerland;Arlesheim;N;10;Arlesheim Dorf;41;Nordwestschweiz;30;613622.100127;260486.481803
+Switzerland;Winterthur;N;10;Winterthur;41;Zürich;30;696658.212337;261261.040554
+Switzerland;Boncourt;N;10;Delle;41;Espace Mittelland;30;568139.102412;260679.273389
+Switzerland;Wängi;N;10;Wängi;41;Ostschweiz;30;714315.437392;261731.94231
+Switzerland;Bettwiesen;N;10;Bettwiesen;41;Ostschweiz;30;719351.25918;262042.815158
+Switzerland;Elgg;N;10;Elgg;41;Zürich;30;707507.463441;261871.041636
+Switzerland;Niederweningen;N;10;Niederweningen Dorf;41;Zürich;30;673159.262995;261401.554414
+Switzerland;Räterschen;N;10;Räterschen;41;Zürich;30;702247.588799;261855.521501
+Switzerland;Winterthur;N;10;Winterthur Grüze;41;Zürich;30;698856.492141;261853.413925
+Switzerland;Therwil;N;10;Therwil;41;Nordwestschweiz;30;609017.085183;261055.852967
+Switzerland;Füllinsdorf;N;10;Frenkendorf-Füllinsdorf;41;Nordwestschweiz;30;621215.701765;261086.995446
+Switzerland;Schottikon;N;10;Schottikon;41;Zürich;30;703473.238088;262010.3019
+Switzerland;Bischofszell;N;10;Bischofszell Nord;41;Ostschweiz;30;735510.145787;262713.872254
+Switzerland;Wängi;N;10;Wiesengrund;41;Ostschweiz;30;713941.378665;262369.715972
+Switzerland;;N;10;Boncourt Rail;41;Espace Mittelland;3;567932.106271;261414.232322
+Switzerland;Winden;N;10;Häggenschwil-Winden;41;Ostschweiz;30;744834.664032;263268.788137
+Switzerland;Sitterdorf;N;10;Sitterdorf;41;Ostschweiz;30;736445.64044;263324.849871
+Switzerland;Niederweningen;N;10;Niederweningen;41;Zürich;30;670911.5817;262208.11284
+Switzerland;Winterthur;N;10;Winterthur Wülflingen;41;Zürich;30;693637.29831;262613.52051
+Switzerland;Arbon;N;10;Arbon;41;Ostschweiz;30;750440.919321;263898.292853
+Switzerland;Matzingen;N;10;Jakobstal;41;Ostschweiz;30;713572.579608;263129.941789
+Switzerland;Winterthur;N;10;Oberwinterthur;41;Zürich;30;699839.492683;262993.082916
+Switzerland;Frick;N;10;Frick;41;Nordwestschweiz;30;643502.06726;262354.192942
+Switzerland;Münchenstein;N;10;Münchenstein;41;Nordwestschweiz;30;613511.9361;262532.058041
+Switzerland;Münchenstein;N;10;Münchenstein Dorf;41;Nordwestschweiz;30;613677.606228;262554.675748
+Switzerland;Oberwil;N;10;Oberwil;41;Nordwestschweiz;30;609172.750222;262712.767705
+Switzerland;Dättlikon;N;10;Pfungen-Neftenbach;41;Zürich;30;691257.081529;263543.713298
+Switzerland;Siggenthal Station;N;10;Siggenthal-Würenlingen;41;Nordwestschweiz;30;660406.003515;263236.665026
+Switzerland;Muolen;N;10;Muolen;41;Ostschweiz;30;743163.86361;264729.516737
+Switzerland;Matzingen;N;10;Matzingen;41;Ostschweiz;30;712773.428579;264337.906897
+Switzerland;Winterthur;N;10;Winterthur Wallrüti;41;Zürich;30;699660.494201;264224.407479
+Switzerland;Tobel;N;10;Tobel A;41;Ostschweiz;30;720330.789088;264642.744385
+Switzerland;Rorbas;N;10;Embrach-Rorbas;41;Zürich;30;687338.837101;264118.315674
+Switzerland;Pratteln;N;10;Pratteln;41;Nordwestschweiz;30;619090.035035;263692.64902
+Switzerland;Bülach;N;10;Bülach;41;Zürich;30;682801.075308;264353.196015
+Switzerland;Bottmingen;N;10;Bottmingen;41;Nordwestschweiz;30;610082.355342;263792.757157
+Switzerland;Kradolf;N;10;Kradolf;41;Ostschweiz;30;732888.266782;265356.830569
+Switzerland;Wiesendangen;N;10;Wiesendangen;41;Zürich;30;700826.732032;264744.615318
+Switzerland;Eiken;N;10;Eiken;41;Nordwestschweiz;30;642253.532336;264179.762031
+Switzerland;Matzingen;N;10;Weberei Matzingen;41;Ostschweiz;30;711876.773268;265143.784776
+Switzerland;Münchenstein;N;10;Hofmatt;41;Nordwestschweiz;30;613319.913669;264177.190054
+Switzerland;Winterthur;Y;10;Reutlingen;41;Zürich;30;699133.106973;265127.393805
+Switzerland;Steinebrunn;N;10;Steinebrunn;41;Ostschweiz;30;744081.652771;266331.16494
+Switzerland;Basel;N;10;Binningen;41;Nordwestschweiz;30;610193.907411;264615.732897
+Switzerland;Märwil;N;10;Märwil;41;Ostschweiz;30;722865.57165;265918.259505
+Switzerland;Muttenz;N;10;Muttenz;41;Nordwestschweiz;30;616014.306742;264773.16096
+Switzerland;Rickenbach-Attikon;N;10;Rickenbach-Attikon;41;Zürich;30;701726.810436;265838.72644
+Switzerland;Seuzach;N;10;Seuzach;41;Zürich;30;698005.454452;265909.230454
+Switzerland;Matzingen;N;10;Murkart;41;Ostschweiz;30;711372.657821;266313.050753
+Switzerland;Basel;N;10;Dreispitz;41;Nordwestschweiz;30;612790.242246;265343.490099
+Switzerland;Sulgen;N;10;Sulgen;41;Ostschweiz;30;731500.073274;266804.911066
+Switzerland;Kaiseraugst;N;10;Kaiseraugst;41;Nordwestschweiz;30;621666.632786;265513.888231
+Switzerland;Stein;N;10;Stein-Säckingen;41;Nordwestschweiz;30;638749.146278;265701.278825
+Switzerland;Egnach;N;10;Neukirch-Egnach;41;Ostschweiz;30;746125.694264;267438.009429
+Switzerland;Matzingen;N;10;Lüdem;41;Ostschweiz;30;710242.267336;266758.904865
+Switzerland;Frauenfeld;N;10;Frauenfeld Stadt;41;Ostschweiz;30;710023.55786;266777.066191
+Switzerland;Egnach;N;10;Egnach;41;Ostschweiz;30;746637.57019;267751.003364
+Switzerland;Mumpf;N;10;Mumpf;41;Nordwestschweiz;30;635824.816291;266205.414298
+Switzerland;Hettlingen;N;10;Hettlingen;41;Zürich;30;694699.437098;266856.100013
+Switzerland;Sisseln;N;10;Sisseln;41;Nordwestschweiz;30;641681.589635;266254.954327
+Switzerland;Basel;N;10;Basel SBB;41;Nordwestschweiz;30;611011.363224;266407.316964
+Switzerland;Islikon;N;10;Islikon;41;Ostschweiz;30;706142.861404;267351.012256
+Switzerland;Bürglen;N;10;Bürglen;41;Ostschweiz;30;728891.958686;267948.50541
+Switzerland;Rheinfelden;N;10;Rheinfelden;41;Nordwestschweiz;30;626254.470233;266622.133287
+Switzerland;Basel;N;10;Basel Aeschenplatz;41;Nordwestschweiz;30;611492.649282;266663.964071
+Switzerland;Basel;N;10;Basel Heuwaage;41;Nordwestschweiz;30;611123.716968;266707.7346
+Switzerland;Amriswil;N;10;Amriswil;41;Ostschweiz;30;739905.434794;268377.249135
+Switzerland;Erlen;N;10;Erlen;41;Ostschweiz;30;734726.92039;268301.248605
+Switzerland;Glattfelden;N;10;Glattfelden;41;Zürich;30;681764.705905;267396.706697
+Switzerland;Bissegg;N;10;Oppikon;41;Ostschweiz;30;722323.073651;268108.984984
+Switzerland;Dinhard;N;10;Dinhard;41;Zürich;30;699050.686958;267794.889087
+Switzerland;Oberaach;N;10;Oberaach;41;Ostschweiz;30;737693.49257;268625.517893
+Switzerland;Bussnang;N;10;Bussnang;41;Ostschweiz;30;724067.908756;268556.89253
+Switzerland;Frauenfeld;Y;10;Frauenfeld;41;Ostschweiz;30;710013.191233;268545.069357
+Switzerland;Frauenfeld;Y;10;Frauenfeld;41;Ostschweiz;30;709988.336801;268666.934529
+Switzerland;Laufenburg;N;10;Laufenburg;41;Nordwestschweiz;30;646901.290755;267839.655676
+Switzerland;Weiach;N;10;Weiach Kaiserstuhl;41;Zürich;30;674924.905948;268340.071616
+Switzerland;;Y;10;Basel Rail;41;Nordwestschweiz;3;614801.196671;268094.526742
+Switzerland;Henggart;N;10;Henggart;41;Zürich;30;693982.586149;268846.284786
+Switzerland;Möhlin;N;10;Möhlin;41;Nordwestschweiz;30;630514.041964;268299.319591
+Switzerland;Romanshorn;N;10;Romanshorn;41;Ostschweiz;30;746226.264187;270065.348256
+Switzerland;Weinfelden;N;10;Weinfelden;41;Ostschweiz;30;725768.884636;269638.305739
+Switzerland;Mellikon;N;10;Rümikon-Mellikon;41;Nordwestschweiz;30;669740.183093;268888.118255
+Switzerland;Altikon;N;10;Thalheim-Altikon;41;Zürich;30;699330.437703;269512.133993
+Switzerland;Basel;N;10;Basel Bad Bf;41;Nordwestschweiz;30;612647.443017;268745.543424
+Switzerland;Zweidlen;N;10;Zweidlen;41;Zürich;30;677238.169397;269292.831776
+Switzerland;Döttingen;N;10;Döttingen-Klingnau;41;Nordwestschweiz;30;661692.622767;269143.224525
+Switzerland;Rekingen;N;10;Rekingen AG;41;Nordwestschweiz;30;666446.374486;269339.380596
+Switzerland;Kehlhof;N;10;Kehlhof;41;Ostschweiz;30;730409.581366;270484.194347
+Switzerland;Eglisau;N;10;Eglisau;41;Zürich;30;680896.637115;269764.403413
+Switzerland;;Y;10;Basel Rail;41;Nordwestschweiz;3;609741.487953;269562.84469
+Switzerland;Felben;N;10;Felben-Wellhausen;41;Ostschweiz;30;713352.23143;270676.747925
+Switzerland;Hüntwangen;N;10;Hüntwangen-Wil;41;Zürich;30;680782.935329;270374.442451
+Switzerland;Märstetten Station;N;10;Märstetten;41;Ostschweiz;30;722367.469161;271412.92046
+Switzerland;Hüttlingen;N;10;Hüttlingen;41;Ostschweiz;30;715665.097494;271311.055943
+Switzerland;Andhausen;Y;10;Berg;41;Ostschweiz;30;730677.106713;271657.886684
+Switzerland;Riehen;N;10;Riehen;41;Nordwestschweiz;30;616112.071691;270343.974414
+Switzerland;;N;10;Klein-Basel Rail;41;Nordwestschweiz;3;612478.072268;270557.567332
+Switzerland;Bonau;N;10;Mettendorf;41;Ostschweiz;30;720335.111497;271815.960603
+Switzerland;Uttwil;N;10;Uttwil;41;Ostschweiz;30;743098.519818;272391.052169
+Switzerland;Wigoltingen;N;10;Müllheim-Wigoltingen;41;Ostschweiz;30;718698.582532;272005.224425
+Switzerland;Zurzach;N;10;Zurzach;41;Nordwestschweiz;30;664377.246605;271384.689529
+Switzerland;;N;10;Riehen Rail;41;Nordwestschweiz;3;616469.944724;271501.334927
+Switzerland;Andelfingen;N;10;Andelfingen;41;Zürich;30;693236.70867;272226.14534
+Switzerland;Rietheim;N;10;Rietheim;41;Nordwestschweiz;30;663701.949486;271922.220649
+Switzerland;Kesswil;N;10;Kesswil;41;Ostschweiz;30;741402.897793;273440.127556
+Switzerland;Koblenz;N;10;Koblenz;41;Nordwestschweiz;30;659408.906541;272489.003567
+Switzerland;Rafz;N;10;Rafz;41;Zürich;30;683277.606734;273278.102316
+Switzerland;;N;10;Koblenz Rail;41;Nordwestschweiz;3;659925.824353;273428.276854
+Switzerland;Koblenz;N;10;Koblenz Dorf;41;Nordwestschweiz;30;660309.174453;273443.303731
+Switzerland;Güttingen;N;10;Güttingen;41;Ostschweiz;30;739420.530013;274872.167262
+Switzerland;Siegershausen;N;10;Siegershausen;41;Ostschweiz;30;730186.204114;274805.596238
+Switzerland;Ossingen;N;10;Ossingen;41;Zürich;30;696785.432459;274629.737962
+Switzerland;;N;10;Rafz Rail;41;Zürich;3;684345.925134;274827.869771
+Switzerland;Altnau;N;10;Altnau;41;Ostschweiz;30;737472.814418;276149.956231
+Switzerland;Lengwil;N;10;Lengwil;41;Ostschweiz;30;731787.653372;276509.459028
+Switzerland;Marthalen;N;10;Marthalen;41;Zürich;30;691406.228588;276756.856379
+Switzerland;Unterstammheim;N;10;Stammheim;41;Zürich;30;701586.919568;277012.511886
+Switzerland;Kreuzlingen;N;10;Kreuzlingen Bernrain;41;Ostschweiz;30;729628.79726;278263.318797
+Switzerland;Kreuzlingen;N;10;Bottighofen;41;Ostschweiz;30;733053.33336;278395.269879
+Switzerland;Mammern;N;10;Mammern;41;Ostschweiz;30;710889.084398;278003.16818
+Switzerland;Eschenz;N;10;Eschenz;41;Ostschweiz;30;708286.07656;278143.814205
+Switzerland;Kreuzlingen;N;10;Kreuzlingen Hafen;41;Ostschweiz;30;731206.392429;278976.679285
+Switzerland;Kreuzlingen;N;10;Kreuzlingen;41;Ostschweiz;30;730053.791468;279440.486468
+Switzerland;Tägerwilen;N;10;Tägerwilen MThB;41;Ostschweiz;30;728272.409689;279457.035742
+Switzerland;;N;10;Kreuzlingen Rail;41;Ostschweiz;3;730693.838305;279721.579775
+Switzerland;Stein am Rhein;N;10;Stein am Rhein;41;Ostschweiz;30;706558.323171;279346.749725
+Switzerland;Dachsen;N;10;Dachsen;41;Zürich;30;689337.138938;279371.803212
+Switzerland;Tägerwilen;N;10;Tägerwilen SSB;41;Ostschweiz;30;727325.635994;280148.293437
+Switzerland;;N;10;Wilchingen Rail;41;Ostschweiz;3;674657.356815;279356.53353
+Switzerland;Etzwilen;N;10;Etzwilen;41;Ostschweiz;30;703880.996046;279910.583441
+Switzerland;Steckborn;N;10;Steckborn;41;Ostschweiz;30;715982.449764;280414.474573
+Switzerland;Schlattingen;N;10;Schlattingen;41;Ostschweiz;30;700183.229241;280435.938951
+Switzerland;Ermatingen;N;10;Ermatingen;41;Ostschweiz;30;723884.788237;281198.212568
+Switzerland;Trasadingen;N;10;Trasadingen;41;Ostschweiz;30;675560.618488;280391.105803
+Switzerland;;N;10;Neuhausen Rail;41;Ostschweiz;3;687481.912642;280856.35025
+Switzerland;Berlingen;N;10;Berlingen;41;Ostschweiz;30;719042.431804;281420.861523
+Switzerland;Mannenbach;N;10;Mannenbach-Salenstein;41;Ostschweiz;30;721389.901089;281602.245012
+Switzerland;Neuhausen;N;10;Schloss Laufen am Rheinfall;41;Ostschweiz;30;689012.268365;281479.791741
+Switzerland;Neu-Paradies;N;10;Schlatt;41;Ostschweiz;30;693911.830179;281778.30202
+Switzerland;Wilchingen;N;10;Wilchingen-Hallau;41;Ostschweiz;30;677316.047931;281703.837074
+Switzerland;Neuhausen;N;10;Neuhausen Bad BF;41;Ostschweiz;30;688276.263125;281980.260303
+Switzerland;Neuhausen;N;10;Neuhausen;41;Ostschweiz;30;689150.657855;282260.328509
+Switzerland;Diessenhofen;N;10;Diessenhofen;41;Ostschweiz;30;698826.949468;282470.39082
+Switzerland;Langwiesen;N;10;Langwiesen;41;Zürich;30;691687.020065;282377.121471
+Switzerland;Neunkirch;N;10;Neunkirch;41;Ostschweiz;30;679136.574992;282584.287514
+Switzerland;Feuerthalen;N;10;Feuerthalen;41;Zürich;30;690872.219891;283109.577369
+Switzerland;Beringen;N;10;Beringen Sonne;41;Ostschweiz;30;685342.519808;283360.441446
+Switzerland;Schaffhausen;N;10;Schaffhausen;41;Ostschweiz;30;689646.674273;283713.54761
+Switzerland;Schaffhausen;N;10;Herblingen;41;Ostschweiz;30;692111.460273;285964.64326
+Switzerland;Thayngen;N;10;Thayngen;41;Ostschweiz;30;694806.975404;289143.582336
+Switzerland;;N;10;Thayngen Rail;41;Ostschweiz;3;696741.128079;289208.443194

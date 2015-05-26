@@ -166,26 +166,17 @@ class CSVParser(Parser):
         return s
 
     @classmethod
-    def _parse_easting(cls, ix, s, df, types, type_arg):
-        if ix > 0 and types[ix - 1] != 'northing':
-            iy = types[ix:].index('northing')
-            return cls._parse_point(df, ix, iy)
-
-    @classmethod
-    def _parse_northing(cls, iy, s, df, types, type_arg):
-        if iy > 0 and types[iy - 1] != 'easting':
-            ix = types[iy:].index('easting')
-            return cls._parse_point(df, ix, iy)
-
-    @classmethod
     def _parse_point(cls, i, s, df, types, type_arg):
         type_other = 'x' if type_arg == 'y' else 'y'
-        i_other = types[i:].index(('point', type_other))
-        loc = [i, i_other] if type_arg == 'x' else [i_other, i]
 
-        s = OdhType.FLOAT.convert(df.iloc[:, loc]).apply(shapely.geometry.Point, axis=1)
-        s.crs = df.crs
-        return s
+        i_other = types.index(('point', type_other))
+        if i_other > i:  # only generate one point object
+            loc = [i, i_other] if type_arg == 'x' else [i_other, i]
+
+            s = OdhType.FLOAT.convert(df.iloc[:, loc]).apply(shapely.geometry.Point, axis=1)
+            s.crs = df.crs
+            s.name = 'Point'
+            return s
 
     @classmethod
     def _parse_coordx(cls, i, s, df, types, type_arg):
@@ -213,8 +204,14 @@ class CSVParser(Parser):
                 parse_method = getattr(cls, '_parse_' + type_, None)
                 if not parse_method:
                     raise ParsingException('Unknown GeoCSV type "{}"'.format(type_))
-                series.append(parse_method(i, s, df, types, type_arg=arg))
 
-            df = OdhSeries.concat([s for s in series if s is not None], axis=1)
+                s_parsed = parse_method(i, s, df, types, type_arg=arg)
+
+                if s_parsed is not None:
+                    if not getattr(s_parsed, 'name', None):
+                        s_parsed.name = s.name
+                    series.append(s_parsed)
+
+            df = OdhSeries.concat(series, axis=1)
 
         return df
