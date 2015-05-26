@@ -19,7 +19,7 @@ env:
     - PATH: "$HOME/interlis:$PATH"
     - CI=true
     - DJANGO_DEBUG=true
-    - secure: "RC8P0y4q2g8ErB7MnTz4w5q1PK79rYeLN7YHfqaLZ4QeL+FF5cIVw9YP4iCI3I4mq7zm++jSQFoZj75G3iX8VZgJSqJjsriZKi6jXBqkF2q9CUWTJI935sNrRfaTC+Dxgcve5xK7ddIGuCmusN2foYSaon5Zlrq1xSTCcnMjV/M="
+    - secure: "WElppC1NXTvOjA2jyyc5L24tJ04wr9J3I03LwXse89e3KUtfpi9XNR7k1LDwz6jujO4RAslvzbHhS2rQGJvsFwvpI2DmyqlbQiv5gySybYu+r0yt4/ud226FBncxURlAd81RjkISiU/blBH3aZu+WQi3CNo3BJVRXpcufsOSOjY="
 
 install:
   - pip install pybuilder > /dev/null
@@ -66,7 +66,7 @@ deploy:
   strategy: git
   skip_cleanup: true
   api_key:
-    secure: Qb2O3PviVvKvxUxDuxxz8bxbVniNHgBYJxCzDBpLC56d7i5/yiZX9X2sBrFvBhFyh2naidzp0s9EgoN3U2HISaoThzM8/075pIlTnI7dir6R1623ngv7+COXAqoFRNME0A6ghJhTIfxEnDdNrztfQ8WcnVXuNU37kWIHGYryiJk=
+    secure: BCuTUZg6yUw/pbfgtpSf5vJz+95eTdf0oo/xhG9YQn52bqUnFuTmw0GDVhVX91WpOiSmn26uj+gDTqTzUlz9xCkyGZxSQQegvGn92CIaalX1Mo0A9YPvpKHs8oSSUiivikHBNW3QiihN1bM+NKBpPqtToPNBeyyXupFNlMg6TOk=
   app:
     master: opendatahub-hsr-dev
   run:
