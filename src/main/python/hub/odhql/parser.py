@@ -345,7 +345,7 @@ class OdhQLParser(DocMixin):
         filter_alternative.setParseAction(FilterAlternative.parse)
 
         single_filter <<= (null_condition | binary_condition | in_condition | predicate_condition |
-                          Suppress('(') + filter_alternative + Suppress(')'))
+                           Suppress('(') + filter_alternative + Suppress(')'))
 
         # 'as' is optional here in sql - let's do that too
         data_source_alias_blacklist = NotAny(
