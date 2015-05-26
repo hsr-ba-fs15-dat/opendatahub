@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import zipfile
 import json
 import abc
+import logging
 
 import re
 from django.db.models import Q
@@ -12,9 +13,9 @@ from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from django.http.response import HttpResponse, HttpResponseServerError, HttpResponseNotFound, JsonResponse
 from django.utils.text import slugify
+import os
 
 from opendatahub.utils.cache import cache
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -117,12 +118,11 @@ class DataDownloadMixin(viewsets.GenericViewSet):
         return response
 
     def sanitize_name(self, name):
-        import os
         parts = [slugify(unicode(s)) for s in os.path.splitext(name)]
 
         if not parts or len(parts[0].strip()) == 0:
             return 'odh'
-        return '{}.{}'.format(parts[0][:196], parts[1])
+        return '{}{}'.format(parts[0][:196], parts[1])
 
     def get_cache_key(self, pk, format_name=None):
         if format_name:
