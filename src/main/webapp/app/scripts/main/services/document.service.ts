@@ -1,13 +1,18 @@
 /// <reference path='../../all.d.ts' />
 
-
+/**
+ * @module odh.main
+ */
 module odh.main {
     'use strict';
-
+    /**
+     * Represents a Document
+     * @alias DocumentService
+     */
     export class DocumentService {
         private documents:restangular.IElement;
 
-
+        /** @constructor */
         constructor(private $log:ng.ILogService, private Restangular:restangular.IService,
                     private ToastService:utils.ToastService) {
 
@@ -22,6 +27,7 @@ module odh.main {
             return this.documents.getList();
         }
 
+        /** searches for Documents. */
         public search(query:string, mineOnly:boolean = false, page:number = 1) {
             var params:any = {page: page};
             if (query) {

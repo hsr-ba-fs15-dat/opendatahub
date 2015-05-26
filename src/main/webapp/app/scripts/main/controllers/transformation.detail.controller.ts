@@ -2,28 +2,41 @@
 
 module odh.main {
     'use strict';
-
-    enum transType {Template, Final}
+    export interface IOwner {
+        id: number;
+        username: string;
+        first_name: string;
+        last_name: string
+    }
+    export interface ITransformationObject extends restangular.IElement {
+        id: number;
+        url: string;
+        name: string;
+        description: string;
+        transformation: string;
+        'private': boolean;
+        owner: main.IOwner;
+        is_template: boolean;
+        //preview: string;
+        //referenced_transformations: string;
+        type: string;
+    }
     class TransformationDetailController implements main.ITransformation {
-        public pkg;
+        public pkg:ng.IPromise<ITransformationObject>;
         public name;
         public description;
         public transformationId;
         public transformation;
-        public file_groups;
         public 'private';
-        public loadedTablesArray:any[] = [];
-        public usedTables:any[];
-        public selected;
-        public transformationType:transType = transType.Template;
+        public loadedTablesArray:main.ITable[] = [];
+        public usedTables:main.ITable[];
+        public selected:any;
         public availableFormats;
         public showExpertPanel = false;
-
         public allowDelete:boolean;
         public transformationPrefix:string;
         public packagePrefix:string;
-        public isOwn:boolean;
-        public transformationObject:any;
+        public transformationObject:main.ITransformationObject;
         public modifiedTransformation:string;
         public previewTransformation:string;
         public templateTransformation:string;
@@ -38,12 +51,8 @@ module odh.main {
                     private $auth:any,
                     private $modal:ng.ui.bootstrap.IModalService,
                     private AppConfig:odh.IAppConfig,
-                    private FileGroupService:main.FileGroupService,
-                    private UrlService:odh.utils.UrlService,
                     private $window:ng.IWindowService,
                     private PackageService:main.PackageService,
-                    private $q:ng.IQService,
-                    private $filter:ng.IFilterService,
                     private $log:ng.ILogService) {
             // controller init
             AppConfig.then(config => {
@@ -52,7 +61,9 @@ module odh.main {
             });
             this.transformationId = $stateParams.id;
             this.pkg = this.TransformationService.get(this.transformationId);
+            console.log(this.pkg);
             this.pkg.then(data => {
+                console.log(data);
                 this.transformationObject = data;
                 this.name = data.name;
                 this.description = data.description;
@@ -76,8 +87,10 @@ module odh.main {
 
             this.FormatService.getAvailableFormats().then(data => {
                 var results = this.FormatService.sortByLabel(data.data);
-                results.push({name: null, label: 'Original', description: 'Unveränderte Daten', example: null,
-                    extension: null});
+                results.push({
+                    name: null, label: 'Original', description: 'Unveränderte Daten', example: null,
+                    extension: null
+                });
                 this.availableFormats = results;
             });
 
@@ -91,7 +104,9 @@ module odh.main {
             return this.$auth.isAuthenticated();
         }
 
-
+        /**
+         * generates a new Transformation from selected tables
+         */
         public generateNewTransformation() {
             var modifiedTransformation = '';
             this.chosenTables = [];
@@ -141,15 +156,24 @@ module odh.main {
 
         }
 
+        /**
+         * checks if the table name is formatted like a ODH table name. (ODHxx_name || TRFxx_name)
+         * @param table
+         * @returns {boolean}
+         */
         public checkIfOurTable(table:main.ITable) {
             var rxQry = '^({0}|{1})\\d+_.*$'.format(this.packagePrefix, this.transformationPrefix);
             var regEx = new RegExp(rxQry);
             return regEx.test(table.name);
         }
 
+        /**
+         * Loads a table if its used and named like an ODH table.
+         * @param table
+         */
         public loadIfPackageUsed(table:main.ITable) {
             if (this.checkIfOurTable(table)) {
-                this.PackageService.getPreviewByUniqueName(table.name, {}).then(result => {
+                this.PackageService.getPreviewByUniqueName(table.name, {}).then((result:main.ITable) => {
                     if (result) {
                         this.loadedTablesArray.push(result);
                         this.selected[table.name] = result;
@@ -159,9 +183,15 @@ module odh.main {
             }
         }
 
+
         public preview() {
             this.previewTransformation = this.transformation;
         }
+
+        /**
+         * loads or unloads a table
+         * @param table
+         */
         public addRemoveTable(table:main.ITable) {
             var index = this.loadedTablesArray.indexOf(table);
 
@@ -172,11 +202,11 @@ module odh.main {
             }
         }
 
+        /**
+         * Checks if the Table is selected.
+         * @returns boolean
+         */
         public checkTableSelected(table) {
-            /**
-             * Checks if the Table is selected.
-             * @returns boolean
-             */
             return this.loadedTablesArray.indexOf(table) !== -1;
         }
 
@@ -186,13 +216,16 @@ module odh.main {
             console.log(val);
         }
 
+
         public parse() {
             this.TransformationService.parse(this.transformation).then((data:any) => {
                 angular.forEach(data.data.tables, table => {
                     table.isOwn = this.loadIfPackageUsed(table);
                 });
                 this.usedTables = data.data.tables;
-            }).catch(this.displayError);
+            }).catch(() => {
+                this.ToastService.failure("Beim parsen ist ein Fehler aufgetreten.")
+            });
         }
 
         public saveTransformation() {
@@ -203,7 +236,7 @@ module odh.main {
                 this.ToastService.success('Transformation gespeichert');
                 this.$state.reload();
             }).catch((error) => {
-                this.ToastService.failure('Es ist ein Fehler aufgetreten');
+                this.ToastService.failure('Beim Speichern ist ein Fehler aufgetreten');
                 console.error(error);
             });
         }
@@ -228,24 +261,54 @@ module odh.main {
         }
 
         public remove() {
-            var instance = this.$modal.open({
-                templateUrl: 'views/deleteconfirmation.html',
-                controller: 'DeleteTransformationController as vm'
-            });
-            instance.result.then(() => {
-                    this.TransformationService.remove({id: this.transformationId}).then(() =>
-                            this.$state.go('packages')
-                    ).catch((err) =>
-                            this.ToastService.failure('Beim Löschen der Transformation ist ein Fehler aufgetreten.')
-                    );
+            var modalInstance;
+            var odhModal:utils.IOdhModal = {
+                buttons: [{
+                    text: 'Löschen',
+                    cls: 'btn-warning',
+                    action: () => {
+                        modalInstance.close();
+                    }
+                },
+                    {
+                        text: 'Abbrechen',
+                        cls: 'btn-primary',
+                        action: () => {
+                            modalInstance.dismiss();
+                        }
+                    }],
+                question: 'Möchten Sie diese Transformation wirklich löschen?',
+                title: 'Sind Sie sicher?'
+
+
+            };
+            modalInstance = this.$modal.open({
+                animation: true,
+                templateUrl: 'views/helpers/confirmation.html',
+                controller: 'ConfirmationController as cc',
+                resolve: {
+                    odhModal: () => {
+                        return odhModal;
+                    }
+
                 }
-            );
+            });
+            modalInstance.result.then(result => {
+                this.TransformationService.remove({id: this.transformationId}).then(() => {
+                        this.$state.go('packages');
+                        this.ToastService.failure('Transformation erfolgreich gelöscht');
+                    }
+                ).catch((err) =>
+                        this.ToastService.failure('Beim Löschen der Transformation ist ein Fehler aufgetreten.')
+                );
+            });
         }
 
-        private displayError(error) {
-            console.log(error, '<== display error');
-        }
-
+        /**
+         * checks if field needs to use quotes (non UTF8 chars)
+         * @param field
+         * @returns {string}
+         */
         private quote(field:string) {
             var regEx = new RegExp('^[A-z_][A-z0-9_]*$');
             if (!regEx.test(field)) {
@@ -256,18 +319,11 @@ module odh.main {
         }
     }
 
-    class DeleteTransformationController {
-        constructor(private $modalInstance:ng.ui.bootstrap.IModalServiceInstance) {
-        }
-
-        public ok() {
-            this.$modalInstance.close();
-        }
-
-        public cancel() {
-            this.$modalInstance.dismiss('cancel');
-        }
-    }
+    /**
+     * Filters already added tables from assistant
+     * @returns {function(any, any): any}
+     * @type filter
+     */
     export function filterAlreadyAdded() {
         return function (inputArray, filterCriteria) {
             return inputArray.filter(function (item) {
@@ -279,6 +335,5 @@ module odh.main {
 
     angular.module('openDataHub.main')
         .controller('TransformationDetailController', TransformationDetailController)
-        .controller('DeleteTransformationController', DeleteTransformationController)
         .filter('filterAlreadyAdded', filterAlreadyAdded);
 }

@@ -437,7 +437,6 @@ class ToChar(VectorizedFunction):
 
          TO_CHAR(TO_DATE(ODH30.baubeginn, '%d%m%Y'), '%Y-%m-%d') AS baubeginn
     """
-    # FIXME strftime-link
     name = 'TO_CHAR'
 
     def apply(self, values, format=None):

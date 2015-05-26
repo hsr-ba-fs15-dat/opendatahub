@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+
+# this is a collection of unit tests after all... that rule makes no sense here.
+# pylint: disable=too-many-public-methods
+
 from __future__ import unicode_literals
 
 import logging

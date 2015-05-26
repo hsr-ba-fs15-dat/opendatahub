@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+
+""" Rest API for documents. """
+
 from __future__ import unicode_literals
 
 from urllib import unquote
@@ -21,6 +24,7 @@ from hub.views.mixins import FilterablePackageListViewSet, PreviewMixin
 
 
 class DocumentViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet, PreviewMixin):
+    """ ViewSet for documents. """
     queryset = DocumentModel.objects.all()
     serializer_class = DocumentSerializer
     paginate_by_param = 'count'
@@ -50,6 +54,15 @@ class DocumentViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet, Previ
 
     @detail_route()
     def filegroup(self, request, pk, *args, **kwargs):
+        """
+        Lists the file groups of a document.
+
+        :type request: rest_framework.request.Request
+        :type pk: unicode
+        :param args: ignored
+        :param kwargs: ignored
+        :return: response containing information about the filegroups for the selected document.
+        """
         file_group = FileGroupModel.objects.filter(
             Q(document__id=pk) & (Q(document__private=False) | Q(document__owner=request.user.id)))
         if not file_group:
@@ -58,10 +71,22 @@ class DocumentViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet, Previ
         serializer = FileGroupSerializer(file_group, many=True, context={'request': request})
         return Response(serializer.data)
 
-    def get_preview_view_name(self, pk, request):
+    def get_preview_view(self, pk, request):
+        """
+        Gets the view for previews for this object.
+        :param pk: id of the object.
+        :param request: django request.
+        :return: url for previews
+        """
         return reverse('documentmodel-preview', kwargs={'pk': pk}, request=request)
 
     def get_dfs_for_preview(self, pk, request):
+        """
+        Gets the data frames for preview.
+        :param pk: id of the object.
+        :param request: django request
+        :return: dataframes for the object.
+        """
         file_groups = FileGroupModel.objects.filter(
             Q(document__id=pk) & (Q(document__private=False) | Q(document__owner=request.user.id)))
 

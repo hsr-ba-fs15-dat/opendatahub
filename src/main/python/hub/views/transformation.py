@@ -110,7 +110,7 @@ class TransformationViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet,
         serializer = TransformationSerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data)
 
-    def get_preview_view_name(self, pk, request):
+    def get_preview_view(self, pk, request):
         if pk:
             return reverse('transformationmodel-preview', kwargs={'pk': pk}, request=request)
         else:

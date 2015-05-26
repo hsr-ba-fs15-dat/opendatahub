@@ -20,15 +20,30 @@ module.exports = function (grunt) {
         app: require('./bower.json').appPath || 'app',
         dist: 'dist'
     };
-
+    grunt.loadNpmTasks('grunt-typedoc');
     // Define the configuration for all the tasks
     grunt.initConfig({
 
         // Project settings
         yeoman: appConfig,
-
+        typedoc: {
+            build: {
+                options: {
+                    module: 'commonjs',
+                    out: './docs',
+                    name: 'my-project',
+                    target: 'es5',
+                    mode: 'file'
+                },
+                src: ['<%= yeoman.app %>/scripts/**/*.ts']
+            }
+        },
         // Watches files for changes and runs tasks based on the changed files
         watch: {
+            typedoc: {
+                files: ['<%= yeoman.app %>/scripts/**/*.ts'],
+                tasks: ['typedoc']
+            },
             bower: {
                 files: ['bower.json'],
                 tasks: ['wiredep']
@@ -642,6 +657,7 @@ module.exports = function (grunt) {
         'ts',
         'tslint',
         'test',
-        'build'
+        'build',
+        'typedoc'
     ]);
 };
