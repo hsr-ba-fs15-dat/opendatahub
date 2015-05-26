@@ -53,17 +53,12 @@ client = APIClient()
 fixtures = find_fixtures(client)
 format_list = [fmt['name'].lower() for fmt in client.get('/api/v1/format/').data]
 
-# FIXME GDAL2: Those two are only supported in theory in GDAL 1.11.1
-if 'geopackage' in format_list:
+if 'geopackage' in format_list:  # GDAL >= 2.0.0 - support in 1.11.x is basically unusable
     format_list.remove('geopackage')
-if 'interlis1' in format_list:
+if 'interlis1' in format_list:  # GDAL < 1.11.0 - results in segfault from 1.11.0 onwards (not fixed in 2.0.0beta1)
     format_list.remove('interlis1')
 
 for (id, url) in fixtures:
-    # FIXME GDAL2: Interlis1 fixture
-    if id.lower() == 'odh15':
-        continue
-
     for fmt in format_list:
         test = get_fixture_test(id, url, fmt)
         test_name = 'test_{}_{}'.format(id.lower(), fmt.lower())
