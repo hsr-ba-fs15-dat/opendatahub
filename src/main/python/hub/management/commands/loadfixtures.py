@@ -148,7 +148,7 @@ class Command(BaseCommand):
         """ Entrypoint for django-admin. """
 
         if not options.get('no_perfdata', False):
-            self.IMPORT += (
+            self.__class__.IMPORT += (
                 (formats.CSV, 'perf/employees.csv',),
                 (formats.CSV, 'perf/children.csv',),
             )
