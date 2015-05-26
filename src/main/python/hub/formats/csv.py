@@ -98,7 +98,7 @@ class CSVFormatter(Formatter):
 class CSVParser(Parser):
     accepts = CSV,
 
-    CSVT_RE = re.compile('\s*(\w+)\s*\(.*\)\s*', re.IGNORECASE)
+    CSVT_RE = re.compile(r'\s*(\w+)\s*\(.*\)\s*', re.IGNORECASE)
 
     @classmethod
     def _parse_prj(cls, fg):
@@ -194,7 +194,7 @@ class CSVParser(Parser):
             assert len(df.columns) == len(types)
 
             series = []
-            for i, (c, s) in enumerate(df.iteritems()):
+            for i, (_, s) in enumerate(df.iteritems()):
                 type_ = types[i]
                 parse_method = getattr(cls, '_parse_' + type_, None)
                 if not parse_method:
