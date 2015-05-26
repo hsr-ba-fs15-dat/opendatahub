@@ -118,7 +118,8 @@ module odh {
 
         private createFailure(data) {
             // todo validation
-            this.ToastService.failure('Ups! Irgendwas ist schief gelaufen!');
+            this.ToastService.failure('Ihre Datei wurde vom System nicht erkannt. ' +
+                'Bitte senden Sie diese an devs@opendatahub.ch um das Problem beheben zu lassen.');
         }
 
     }
