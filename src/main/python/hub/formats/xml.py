@@ -54,7 +54,5 @@ class GenericXMLParser(Parser):
 
     @classmethod
     def parse(cls, file, format, *args, **kwargs):
-        from lxml import etree
-
         et = etree.parse(file.stream)
         return pd.DataFrame([dict(text=e.text, **e.attrib) for e in et.getroot()])
