@@ -28,13 +28,12 @@
                 <p><strong>Enthaltene Dateien:</strong></p>
 
                 <p ng-repeat="fg in doc.fileGroups">
-                    <span ng-repeat="file in fg.files">{{ file.file_name }} ({{fg.file_format}}){{ $last ? '' : ', ' }}</span>
+
+                    <span ng-repeat="file in fg.files">{{ file.file_name }} ({{file.file_format}}){{ $last ? '' : ', ' }}</span>
                 </p>
-
                 <p ng-repeat="fg in doc.fileGroups">
-
-                <p ng-repeat="url in fg.urls"><strong>{{url.url_format}} :</strong>{{url.source_url}}
-                    ({{doc.getRefreshRate(url.refresh_after)}})</p>
+                <span ng-repeat="url in fg.urls"><strong>{{url.type}}:</strong> {{url.source_url}}
+                    (Aktualisierungsinterval: {{doc.getRefreshRate(url.refresh_after)}})</span>
                 </p>
             </div>
 
@@ -57,14 +56,14 @@
 
 <odh-spinner show-while="doc.loading">
 
-    <div ng-repeat="group in doc.fileGroups">
-        <div class="panel panel-default" ng-repeat="preview in group.preview">
-            <div class="panel-heading">
-                {{ preview.unique_name }}
-                <span ng-repeat="file in group.files">{{$first ? '(' : ''}}{{ file.file_name }}{{ $last ? ')' : ', ' }}</span>
+    <div class="panel panel-default" ng-repeat="group in doc.fileGroups">
 
-            </div>
-            <div class="panel-body">
+        <div class="panel-heading">
+            <span ng-repeat="file in group.files">{{ file.file_name }}{{ $last ? '' : ', ' }}</span>
+            <span ng-repeat="url in group.urls">{{ url.source_url }}{{ $last ? '' : ', ' }}</span>
+        </div>
+        <div class="panel-body">
+            <div class="row-same-height row-full-height">
                 <div class="btn-group pull-right" ng-if="doc.previewSuccess">
                     <a data-target="#" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
                         Herunterladen
@@ -78,11 +77,11 @@
                         </li>
                     </ul>
                 </div>
-                <div class="row" ng-class="$last?'':'bottom-buffer'">
-                    <div class="col-md-12">
-                        <odh-preview pkg="preview" success="doc.previewSuccess"></odh-preview>
-                    </div>
-                </div>
+            </div>
+
+            <div class="well" ng-repeat="preview in group.preview">
+                <legend>{{preview.unique_name}}</legend>
+                <odh-preview pkg="preview" success="doc.previewSuccess"></odh-preview>
             </div>
         </div>
     </div>
