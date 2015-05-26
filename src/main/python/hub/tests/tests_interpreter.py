@@ -80,7 +80,7 @@ class TestInterpreterBase(TestBase):
         df = self.interpreter.execute(query)
         self.time = round(time.time() - t0, 2)
         logger.info('Query result: %s', df)
-        logger.info('"{}" took {}s.'.format(query, self.time))
+        logger.info('"%s" took %f s.', query, self.time)
         return df
 
 
