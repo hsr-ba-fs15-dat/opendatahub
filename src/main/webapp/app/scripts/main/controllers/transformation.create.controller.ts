@@ -109,7 +109,7 @@ module odh.main {
 
                     }
                 }, {
-                    heading: 'Manuelles bearbeiten',
+                    heading: 'Manuelles Bearbeiten',
                     icon: 'fa-pencil',
                     template: 'views/transformation.create/manual.html',
                     content: null,
@@ -234,7 +234,6 @@ module odh.main {
         }
 
         public generate() {
-            //this.transformationPreview = '';
             this.fieldIsModified = false;
             this.previewObject = null;
             this.forceManualEdit = false;
