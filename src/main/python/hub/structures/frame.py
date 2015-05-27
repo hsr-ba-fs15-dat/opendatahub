@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
+
+"""
+Custom extensions to Series/GeoSeries and DataFrame/GeoDataFrame from pandas/geopandas.
+"""
+
 from __future__ import unicode_literals
 from types import NoneType
 
-"""
-
-"""
 import datetime as dt
 import collections
 
@@ -26,6 +28,7 @@ if shapely.speedups.available:
 
 
 class OdhType(RegistrationMixin):
+    """ Base class for the supported data types. """
     dtypes = ()
     ptypes = ()
     name = ''
@@ -38,6 +41,7 @@ class OdhType(RegistrationMixin):
 
     @classmethod
     def register_child(cls, name, bases, own_dict):
+        """ Implementation for RegistrationMixin """
         if not own_dict.get('_is_abstract'):
             instance = cls()
 
@@ -55,6 +59,10 @@ class OdhType(RegistrationMixin):
 
     @classmethod
     def identify_value(cls, value):
+        """ Tries to guess the data type of a single value.
+        :param value: Value to examine.
+        :return: Data type, if one was detected. Otherwise, None is returned.
+        """
         type_ = type(value)
         if issubclass(type_, np.generic):
             return cls.by_dtype[type_]
@@ -66,6 +74,10 @@ class OdhType(RegistrationMixin):
 
     @classmethod
     def identify_series(cls, s):
+        """ Tries to guess the data type of a series.
+        :param s: Series to examine.
+        :return: Data type, if one was detected. If the series contained no not-None values, TEXT is returned.
+        """
         by_dtype = cls.by_dtype[s.dtype.type]
         if len(by_dtype) == 1:
             return by_dtype[0]
@@ -78,6 +90,10 @@ class OdhType(RegistrationMixin):
             return cls.TEXT
 
     def convert(self, series):
+        """ Convert a series to a different data type.
+        :param series: Series to convert.
+        :return: Converted series.
+        """
         return series._constructor(series.values.astype(self.dtypes[0]), index=series.index).__finalize__(series)
 
     def __repr__(self):
@@ -99,62 +115,83 @@ class OdhType(RegistrationMixin):
 
 
 class IntegerType(OdhType):
+    """ 32-bit integer type and base for other integer types. """
     name = 'INTEGER'
     dtypes = np.int32,
     ptypes = int,
 
     def convert(self, series):
+        """ Converts the series to integer.
+        :type series: hub.structures.frame.OdhSeries
+        :return: Converted series.
+        """
         return series._constructor(series.values.astype(np.float_).astype(self.dtypes[0]),
                                    index=series.index).__finalize__(series)
 
 
 class BigIntType(IntegerType):
+    """ 64-bit integer type. """
     name = 'BIGINT'
     dtypes = np.int64,
     ptypes = int,
 
 
 class SmallIntType(IntegerType):
+    """ 16-bit integer type. """
     name = 'SMALLINT'
     dtypes = np.int16,
     ptypes = int,
 
 
 class FloatType(OdhType):
+    """ 64-bit floating point type. """
     name = 'FLOAT'
     dtypes = np.float64,
     ptypes = float,
 
 
 class DateTimeType(OdhType):
+    """ Date/time type. """
     name = 'DATETIME'
     dtypes = np.datetime64,
     ptypes = pd.Timestamp,
 
     def convert(self, series):
+        """ Converts the series to datetime. This interprets the series as unix epoch (seconds from
+        1970-01-01T00:00:00), so this only works for integer/float types.
+        :type series: hub.structures.frame.OdhSeries
+        :return: converted series.
+        """
         if series.odh_type.ptype not in (int, float):
             raise OdhQLExecutionException('Unable to convert from {} to {}'.format(str(series.odh_type), str(self)))
         return series._constructor(pd.to_datetime(series, unit='s'), index=series.index).__finalize__(series)
 
 
 class IntervalType(OdhType):
+    """ Date/time interval type. """
     name = 'INTERVAL'
     dtypes = pd.Timedelta,
     ptypes = dt.timedelta,
 
 
 class BooleanType(OdhType):
+    """ Boolean type. """
     name = 'BOOLEAN'
     dtypes = np.bool_,
     ptypes = bool,
 
 
 class TextType(OdhType):
+    """ Text type. This is also used for all-None series.. """
     name = 'TEXT'
     dtypes = np.object_,
     ptypes = unicode, str, NoneType
 
     def convert(self, series):
+        """ Convert the series to text.
+        :type series: hub.structures.frame.OdhSeries
+        :return: Converted series.
+        """
         try:
             return series._constructor(series.values.astype(unicode).astype(object), index=series.index).__finalize__(
                 series)
@@ -163,6 +200,7 @@ class TextType(OdhType):
 
 
 class GeometryType(OdhType):
+    """ Geometry type. Supported are Point, LineString, Polygon, LinearRing and their Multi* versions. """
     name = 'GEOMETRY'
     dtypes = np.object_,
     ptypes = (
@@ -175,15 +213,26 @@ from shapely.geometry.base import GEOMETRY_TYPES
 
 
 class OdhFrame(pd.DataFrame):
+    """ Custom extensions for pandas' DataFrame. """
     _metadata = ['name']
 
     @classmethod
     def from_df(cls, df, name=None):
+        """ Wrap a data frame.
+        :param df: Data frame to wrap.
+        :param name: The data frame's name.
+        :return: Newly created OdhFrame instance.
+        """
         odf = cls(df, index=df.index).__finalize__(df)
         odf.name = name or getattr(df, 'name', None)
         return odf
 
     def rename(self, *args, **kwargs):
+        """ Rename a data frame.
+        :param args:
+        :param kwargs:
+        :return: Renamed data frame.
+        """
         old = self.copy() if kwargs.get('inplace', False) else self
         df = super(OdhFrame, self).rename(*args, **kwargs)
         df = df or self
@@ -207,6 +256,9 @@ class OdhFrame(pd.DataFrame):
 
     @property
     def has_geoms(self):
+        """
+        :return: True if this data frame contains geometry columns.
+        """
         return OdhType.GEOMETRY in [s.odh_type for c, s in self.iteritems()]
 
     def to_gdf(self, supported_geoms=set(GEOMETRY_TYPES)):
@@ -294,6 +346,7 @@ class OdhFrame(pd.DataFrame):
 
 
 class OdhSeries(pd.Series):
+    """ Custom extensions for pandas' Series. """
     _metadata = ['name', '_odh_type', 'crs']
 
     def __init__(self, data, *args, **kwargs):
@@ -379,6 +432,7 @@ class OdhSeries(pd.Series):
 
 
 class EmptyGeometryMarker(shapely.geometry.Point):
+    """ Replacement for empty geometry values - certain file formats don't handle those well at all. """
     def __init__(self, geom_type='Point'):
         self.__geom_type = geom_type
         super(EmptyGeometryMarker, self).__init__()
@@ -388,6 +442,7 @@ class EmptyGeometryMarker(shapely.geometry.Point):
 
 
 def monkey_patch_geopandas():
+    """ Fix None handling in geopandas/shapely. """
     import geopandas.geodataframe as geodataframe
 
     original_mapping = geodataframe.mapping
