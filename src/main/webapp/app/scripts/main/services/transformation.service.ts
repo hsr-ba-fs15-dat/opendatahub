@@ -1,22 +1,26 @@
 /// <reference path='../../all.d.ts' />
 
-
+/**
+ * @module odh.main
+ */
 module odh.main {
     'use strict';
     export     interface IField {
         name: string;
         alias: string;
     }
+
     export interface ITransformation {
         name: string;
         description: string;
         transformation: string;
         'private': boolean;
-        file_groups: any;
     }
+
     export interface IFileGroup {
 
     }
+
     export interface ITable {
         uniqueId: string;
         unique_name: string;
@@ -80,8 +84,7 @@ module odh.main {
 
         constructor(private $log:ng.ILogService, private Restangular:restangular.IService,
                     private $http:ng.IHttpService,
-                    private UrlService:odh.utils.UrlService, private $q:ng.IQService,
-                    private ToastService:odh.utils.ToastService) {
+                    private UrlService:odh.utils.UrlService, private $q:ng.IQService) {
             (<any>Restangular).extendModel('transformation', function (transformation) {
                 transformation.canDownload = function (formatName) {
                     return $http.get(this.data, {params: {fmt: formatName}});

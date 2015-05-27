@@ -3,19 +3,51 @@
 module odh.main {
 
     class DocumentDetailController {
+        /**
+         * @identifier
+         */
         public documentId:number;
-
+        /**
+         * Document container
+         * @type {Object}
+         */
         public pkg;
-        public fileGroups;
-        public loading = true;
-        public allowDelete = false;
-        public availableFormats;
+        /**
+         * fileGroups corresponding with this document
+         * @type {Array}
+         */
+        public fileGroups:any[];
+        /**
+         * document is loading
+         * @type {boolean}
+         */
+        public loading:boolean = true;
+        /**
+         * deletion by this user is allowed. (Also editing)
+         * @type {boolean}
+         */
+        public allowDelete:boolean = false;
+        /**
+         * List of available formats
+         * @type {Array}
+         */
+        public availableFormats:{
+            name: string;
+            label: string;
+            description: string;
+            example: string;
+            extension: string;
+        }[];
+        /**
+         * Preview rendered successful
+         * @type {boolean}
+         */
         public previewSuccess:boolean = false;
 
         constructor(private $log:ng.ILogService, private $stateParams:any, private $window:ng.IWindowService,
                     private DocumentService:odh.main.DocumentService, private ToastService:odh.utils.ToastService,
                     private FormatService:odh.main.FormatService, private FileGroupService:odh.main.FileGroupService,
-                    private PackageService:main.PackageService, private $auth:any,
+                    private $auth:any,
                     private $modal:ng.ui.bootstrap.IModalService,
                     private $state:ng.ui.IStateService) {
             this.documentId = $stateParams.id;
@@ -30,7 +62,12 @@ module odh.main {
             });
         }
 
-        public downloadAs(group, formatName) {
+        /**
+         *
+         * @param group fileGroup
+         * @param formatName
+         */
+        public downloadAs(group, formatName:string) {
             this.$log.debug('Triggered download of ', group, 'as', formatName);
             group.canDownload(formatName).then(() => {
                 this.$window.location.href = group.data + ( formatName ? '?fmt=' + formatName : '');
@@ -39,17 +76,47 @@ module odh.main {
             });
         }
 
+        /**
+         * opens Modal window and asks for deletion.
+         */
         public remove() {
-            var instance = this.$modal.open({
-                templateUrl: 'views/deleteconfirmation.html',
-                controller: 'DeleteTransformationController as vm',
+            var modalInstance;
+            var odhModal:utils.IOdhModal = {
+                buttons: [{
+                    text: 'Löschen',
+                    cls: 'btn-warning',
+                    action: () => {
+                        modalInstance.close();
+                    }
+                },
+                    {
+                        text: 'Abbrechen',
+                        cls: 'btn-primary',
+                        action: () => {
+                            modalInstance.dismiss();
+                        }
+                    }],
+                question: 'Möchten Sie dieses Dokument wirklich löschen?',
+                title: 'Sind Sie sicher?'
+
+
+            };
+            modalInstance = this.$modal.open({
+                animation: true,
+                templateUrl: 'views/helpers/confirmation.html',
+                controller: 'ConfirmationController as cc',
                 resolve: {
-                    docId: this.documentId
+                    odhModal: () => {
+                        return odhModal;
+                    }
+
                 }
             });
-            instance.result.then(() => {
-                    this.DocumentService.remove({id: this.documentId}).then(() =>
-                            this.$state.go('packages')
+            modalInstance.result.then(() => {
+                    this.DocumentService.remove({id: this.documentId}).then(() => {
+                            this.$state.go('packages');
+                            this.ToastService.success('Dokument gelöscht.');
+                        }
                     ).catch((err) =>
                             this.ToastService.failure('Beim Löschen des Dokumentes ist ein Fehler aufgetreten.')
                     );
@@ -57,10 +124,18 @@ module odh.main {
             );
         }
 
+        /**
+         * updates current package in the database
+         */
         public update() {
             this.DocumentService.update(this.pkg);
         }
 
+        /**
+         * calculates refresh rate based on entered seconds
+         * @param refreshrate
+         * @returns {string}
+         */
         public getRefreshRate(refreshrate:number) {
             refreshrate = refreshrate / 60;
             if (refreshrate < 60) {
@@ -76,9 +151,12 @@ module odh.main {
 
         }
 
+        /**
+         * fetches data from API
+         */
         private retrieveData() {
             if (typeof(this.documentId) !== 'undefined') {
-                this.pkg = this.DocumentService.get(this.documentId)
+                this.DocumentService.get(this.documentId)
                     .then(data => {
                         this.$log.debug('Document ' + this.documentId, data);
                         this.pkg = data;
@@ -90,7 +168,7 @@ module odh.main {
                         this.$log.error(error);
                     });
 
-                this.fileGroups = this.FileGroupService.getAll(this.documentId, true)
+                this.FileGroupService.getAll(this.documentId, true)
                     .then(data => {
                         this.$log.debug('File Groups for Document ' + this.documentId, data);
                         this.fileGroups = data;

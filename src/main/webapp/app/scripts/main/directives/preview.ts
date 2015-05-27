@@ -18,7 +18,6 @@ module odh.main {
         alerts = [];
         restrict = 'AE';
         templateUrl = 'views/directives/preview.html';
-
         scope = {
             pkg: '=',
             query: '=',

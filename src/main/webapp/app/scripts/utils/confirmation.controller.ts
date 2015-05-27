@@ -1,7 +1,7 @@
-/// <reference path='../../all.d.ts' />
+/// <reference path='../all.d.ts' />
 
 
-module odh.main {
+module odh.utils {
     'use strict';
     export interface IOdhModal {
         buttons: {
@@ -12,20 +12,21 @@ module odh.main {
         question: string;
         title: string;
     }
+    /**
+     * OpenDataHub Modal Controller
+     */
     class ConfirmationController {
 
         public buttons;
         public question;
         public title;
 
-        constructor(private $log:ng.ILogService, private $state:ng.ui.IStateService, public odhModal:IOdhModal) {
+        constructor(public odhModal:IOdhModal) {
             // controller init
             this.buttons = odhModal.buttons;
             this.question = odhModal.question;
             this.title = odhModal.title;
         }
-
-
     }
-    angular.module('openDataHub.main').controller('ConfirmationController', ConfirmationController);
+    angular.module('openDataHub.utils').controller('ConfirmationController', ConfirmationController);
 }

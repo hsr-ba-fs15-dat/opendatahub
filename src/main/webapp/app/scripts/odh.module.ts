@@ -1,7 +1,7 @@
 /// <reference path='all.d.ts' />
 
 
-module openDataHub {
+module odh {
     'use strict';
     angular
         .module('openDataHub', [

@@ -1,6 +1,6 @@
 /// <reference path='../all.d.ts' />
 
-module odh.utils {
+module odh {
     'use strict';
 
     angular
