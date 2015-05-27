@@ -44,10 +44,9 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     Vorschau
-                </div>
-                <div class="panel-body">
-                    <div class="btn-group pull-right" ng-if="vm.previewSuccess">
-                        <a data-target="#" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+                    <div class="btn-group btn-primary pull-right btn-in-header btn-sm" ng-if="vm.previewSuccess">
+                        <a data-target="#" class="btn btn-primary btn-in-header btn-sm dropdown-toggle"
+                           data-toggle="dropdown">
                             Herunterladen
                             <span class="caret"></span>
                         </a>
@@ -58,7 +57,10 @@
                             </li>
                         </ul>
                     </div>
-                    <odh-preview pkg="vm.pkg" query="vm.previewTransformation"
+                </div>
+                <div class="panel-body">
+
+                <odh-preview pkg="vm.pkg" query="vm.previewTransformation"
                                  success="vm.previewSuccess"></odh-preview>
 
                 </div>

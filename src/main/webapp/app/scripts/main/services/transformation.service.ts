@@ -5,22 +5,36 @@
  */
 module odh.main {
     'use strict';
-    export     interface IField {
+    /**
+     * @interface
+     * the column of a table with its name and alias.
+     */
+    export interface IField {
         name: string;
         alias: string;
     }
 
+    /**
+     * @interface
+     * the meta data of a transformation
+     */
     export interface ITransformation {
         name: string;
         description: string;
         transformation: string;
         'private': boolean;
     }
-
+    /**
+     * @interface
+     * the filegroup of a transformation
+     */
     export interface IFileGroup {
 
     }
 
+    /**
+     * the table of a transformation
+     */
     export interface ITable {
         uniqueId: string;
         unique_name: string;
@@ -33,47 +47,8 @@ module odh.main {
         cols: any[];
         count: number;
     }
-    export interface IExpression {
-        foreignKey?: IField;
-        joinField?: IField;
-        joinTable?: any;
-        operation: IOperation;
-    }
-    export interface IOperation {
-        label: string;
-        operation:string;
-    }
 
-    export interface IOperations {
-        join: IOperation;
-        none: IOperation;
-        union: IOperation;
-    }
-    export interface ITransformationSelection {
-        fileGroups: IFileGroup[];
-        items: ITable[];
-        fields: {};
-        expression: {[name:string]: IExpression};
-        joinTargets: ITable[];
-        master: string;
-        removeTable (item:ITable):void;
-        addTable (item:ITable):void;
-        addRemoveField(col:any, table:main.ITable):void;
-        addField(col:any, table:main.ITable):void;
-        generateTransformation():string;
-        setQuotes(value:boolean):void;
-        getQuotes():boolean;
-        addRemoveTable(item:main.ITable):void;
-        getTableByName(tableName:string):main.ITable;
-        tableSelected(table:main.ITable):boolean;
-        allTables():ITable[];
-        getFields(tableName:string):main.IField[];
-        getJoinOperation(table:main.ITable);
-        getSelectedFields(table:main.ITable):main.IField[];
-        isPrivate():boolean;
-        getFileGroups():main.IFileGroup[];
 
-    }
     export class TransformationService {
 
         public name;
