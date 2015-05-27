@@ -35,11 +35,11 @@ class Round(VectorizedFunction):
     """
     Rundet auf die angegebene Anzahl Nachkommastellen.
 
-    Parameter:
+    Parameter
         - `col`: Spalte oder Wert der gerundet werden soll. Muss vom Datentyp FLOAT sein.
         - `decimals`: Anzahl Nachkommastellen, auf die gerundet werden soll.
 
-    Beispiel:
+    Beispiel
         .. code:: sql
 
          ROUND(ODH20.fraction, 4) AS fraction
