@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 """
-Example CONCAT function used in ODHQL. Copy this file and use a valid Python module name (e.g. my_function.py).
+Example function for ODHQL. Copy this file and use a valid Python module name (e.g. my_function.py).
 Your function will then be automatically loaded and made available within the ODH Query Language Interpreter.
 See hub.odhql.function package for more concrete implementation examples.
 """
@@ -10,24 +10,22 @@ See hub.odhql.function package for more concrete implementation examples.
 from hub.odhql.functions.core import VectorizedFunction
 
 
-class Concat(VectorizedFunction):
+class ExampleFunction(VectorizedFunction):
     # __doc__ is used to generate function documentation (formatted as reStructured Text)
     # By convention, function names and other keywords should be written in all-caps.
     """
-    Konkateniert eine Liste von TEXT-Spalten oder Werten.
+    Beispiel-Funktion für ODHQL, welche prüft, ob ein Integer-Feld den Wert 42 enthält.
 
     Parameter
-        - `args`: Liste von TEXT-Spalten oder -Werten
+        - `values`: Integer-Spalte
 
     Beispiel
         .. code:: sql
 
-            CONCAT(ODH5.given_name, ' ', ODH5.surname) AS name
+            IS42(t.some_field) AS is42
     """
-    name = 'CONCAT'
+    name = 'IS42'
 
-    def apply(self, a, b, *args):
-        args = [self.expand(arg) for arg in [a, b] + list(args)]
-        for arg in args:
-            self.assert_str('string', arg)
-        return args[0].str.cat(args[1:])
+    def apply(self, values):
+        self.assert_int(0, values)
+        return values == 42
