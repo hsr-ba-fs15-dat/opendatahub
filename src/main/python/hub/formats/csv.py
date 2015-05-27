@@ -104,7 +104,7 @@ class CSVParser(Parser):
     """ Parser for (Geo)CSV. """
     accepts = CSV,
 
-    CSVT_RE = re.compile('\s*"?(\w+)\s*(\((.*)\))?"?\s*', re.IGNORECASE)
+    CSVT_RE = re.compile(r'\s*"?(\w+)\s*(\((.*)\))?"?\s*', re.IGNORECASE)
 
     @classmethod
     def _parse_prj(cls, fg):
