@@ -21,8 +21,7 @@ class GeoJSON(Format):
 
     @classmethod
     def is_format(cls, file, *args, **kwargs):
-        return file.extension == cls.extension or (
-            file.extension == 'json' and '"geometry"' in file)  # todo figure out a better way
+        return file.extension == cls.extension or (file.extension == 'json' and '"geometry"' in file)
 
 
 class GeoJSONFormatter(GeoFormatterBase):

@@ -99,7 +99,10 @@ class TestInterpreter(TestInterpreterBase):
 
     def test_select_literal(self):
         df = self.execute('SELECT 3.14159265359 AS myfloat, 42 AS myint, \'foobar\' AS mystr, e.id FROM employee AS e')
-        # self.assertListEqual([3.14159265359] * len(df), df.myfloat.tolist())  # todo precision
+
+        for v in df.myfloat:
+            self.assertAlmostEqual(3.1416, v, places=4)
+
         self.assertListEqual([42] * len(df), df.myint.tolist())
         self.assertListEqual(['foobar'] * len(df), df.mystr.tolist())
 

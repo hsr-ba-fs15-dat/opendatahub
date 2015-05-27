@@ -50,7 +50,6 @@ class GeomFromText(VectorizedGeometryFunction):
 
     def apply(self, wkts, srid=None):
         wkts = self.expand(wkts)
-        # todo figure better assertions
         self.assert_str('wkt', wkts)
         crs = self.get_crs(srid) if srid else {}
         try:
