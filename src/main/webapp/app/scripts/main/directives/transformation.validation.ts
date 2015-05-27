@@ -4,6 +4,9 @@
 module odh.main {
     'use strict';
 
+    /**
+     * validates a transformation and generates its preview if possible
+     */
     export class OdhValidateTransformation implements ng.IDirective {
         static $inject = ['$q', 'TransformationService'];
 

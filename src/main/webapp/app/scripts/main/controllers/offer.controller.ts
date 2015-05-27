@@ -3,7 +3,11 @@
 
 module odh.main {
     'use strict';
-
+    /**
+     * responsible for creation of Documents
+     * - upload files
+     * - provide URL
+     */
     export class OfferController {
 
         public dataSource:string = 'online';

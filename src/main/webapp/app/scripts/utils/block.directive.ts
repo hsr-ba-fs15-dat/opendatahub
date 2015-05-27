@@ -3,7 +3,11 @@
 
 module odh.utils {
     'use strict';
-
+    /**
+     * provides a centered spinner within an overlay
+     * blocks the GUI
+     * @returns {{restrict: string, link: (function(ng.IScope, any, any): undefined)}}
+     */
     function odhBlock():ng.IDirective {
         return {
             restrict: 'A',

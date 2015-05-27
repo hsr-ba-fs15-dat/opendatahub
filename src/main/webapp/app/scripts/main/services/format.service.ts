@@ -12,6 +12,9 @@ module odh.main {
         extension:string;
     }
 
+    /**
+     * Provides the available Formats
+     */
     export class FormatService {
 
         constructor(private $http:ng.IHttpService, private UrlService:odh.utils.UrlService) {

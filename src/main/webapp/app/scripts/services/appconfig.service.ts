@@ -7,8 +7,10 @@ module odh {
 
     export interface IAppConfig extends ng.IPromise<any> {
 
-    };
-
+    }
+    /**
+     * Fetches the Configuration from the API
+     */
     class AppConfigProvider {
 
         public deferred:ng.IDeferred<any>;

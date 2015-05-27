@@ -3,7 +3,10 @@
 
 module odh.utils {
     'use strict';
-
+    /**
+     * provides the loading spinner
+     * @returns {{restrict: string, transclude: boolean, template: string, scope: {showWhile: string}}}
+     */
     function odhSpinner():ng.IDirective {
         return {
             restrict: 'E',

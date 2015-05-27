@@ -3,7 +3,9 @@
 
 module odh.utils {
     'use strict';
-
+    /**
+     * is responsible for loading the application
+     */
     export class AppLoader {
 
         public isLoaded:boolean = false;

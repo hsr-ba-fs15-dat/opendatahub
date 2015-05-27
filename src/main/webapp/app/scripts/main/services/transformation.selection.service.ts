@@ -60,7 +60,8 @@ module odh.main {
     }
 
     /**
-     * the assistant's logic
+     * Represents a to be created transformation.
+     * Contains the Assistants logic
      * - provides table addition/removal
      * - provides field addition/removal
      * - provides field-name generation

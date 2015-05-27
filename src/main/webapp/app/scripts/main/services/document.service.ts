@@ -7,12 +7,11 @@ module odh.main {
     'use strict';
     /**
      * Represents a Document
-     * @alias DocumentService
+     * handles all rest requests to the API
      */
     export class DocumentService {
         private documents:restangular.IElement;
 
-        /** @constructor */
         constructor(private $log:ng.ILogService, private Restangular:restangular.IService,
                     private ToastService:utils.ToastService) {
 
@@ -58,6 +57,10 @@ module odh.main {
         }
     }
 
+    /**
+     * represents a FileGroup
+     * handles all REST requests against the API
+     */
     export class FileGroupService {
         constructor(private $log:ng.ILogService, private $http:ng.IHttpService,
                     private Restangular:restangular.IService, private $q:ng.IQService) {

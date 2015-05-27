@@ -4,7 +4,10 @@
 
 module odh.main {
     'use strict';
-
+    /**
+     * represents the Packages (Transformations AND Documents)
+     *
+     */
     export class PackageService {
         public transformationPrefix:string;
         public packagePrefix:string;

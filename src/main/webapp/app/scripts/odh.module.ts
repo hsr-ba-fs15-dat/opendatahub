@@ -3,6 +3,9 @@
 
 module odh {
     'use strict';
+    /**
+     * configures the odh module
+     */
     angular
         .module('openDataHub', [
             'ngAnimate',

@@ -2,12 +2,10 @@
 
 module odh.main {
     'use strict';
-    export interface IOwner {
-        id: number;
-        username: string;
-        first_name: string;
-        last_name: string
-    }
+
+    /**
+     *
+     */
     export interface ITransformationObject extends restangular.IElement {
         id: number;
         url: string;
@@ -15,25 +13,42 @@ module odh.main {
         description: string;
         transformation: string;
         'private': boolean;
-        owner: main.IOwner;
+        owner: auth.IUser;
         is_template: boolean;
         type: string;
     }
+
+    /**
+     * Provides the Transformation Details (CRUD)
+     *
+     *
+     */
     class TransformationDetailController implements main.ITransformation {
-        public pkg:ng.IPromise<ITransformationObject>;
-        public name;
-        public description;
-        public transformationId;
-        public transformation;
-        public 'private';
+        public promise:ng.IPromise<ITransformationObject>;
+        public name:string;
+        public description:string;
+        public transformationId:number;
+        public transformation:string;
+        public 'private':boolean;
+        /**
+         * contains all loaded tables (manually and automatically)
+         * @type {Array}
+         */
         public loadedTablesArray:main.ITable[] = [];
+        /**
+         * handles all used tables for duplication detection
+         */
         public usedTables:main.ITable[];
-        public selected:any;
-        public availableFormats;
+        /**
+         * stores the newly generated query serialized.
+         */
+        public selected:Object;
+        public availableFormats:any[];
         public showExpertPanel = false;
         public allowDelete:boolean;
         public transformationPrefix:string;
         public packagePrefix:string;
+
         public transformationObject:main.ITransformationObject;
         public modifiedTransformation:string;
         public previewTransformation:string;
@@ -46,7 +61,7 @@ module odh.main {
                     private FormatService:odh.main.FormatService,
                     private $state:ng.ui.IStateService,
                     private ToastService:odh.utils.ToastService,
-                    private $auth:any,
+                    private UserService:auth.UserService,
                     private $modal:ng.ui.bootstrap.IModalService,
                     private AppConfig:odh.IAppConfig,
                     private $window:ng.IWindowService,
@@ -58,10 +73,8 @@ module odh.main {
                 this.packagePrefix = config.PACKAGE_PREFIX;
             });
             this.transformationId = $stateParams.id;
-            this.pkg = this.TransformationService.get(this.transformationId);
-            console.log(this.pkg);
-            this.pkg.then(data => {
-                console.log(data);
+            this.promise = this.TransformationService.get(this.transformationId);
+            this.promise.then(data => {
                 this.transformationObject = data;
                 this.name = data.name;
                 this.description = data.description;
@@ -73,7 +86,7 @@ module odh.main {
                 }
                 this.private = data.private;
                 this.templateTransformation = data.transformation;
-                this.allowDelete = $auth.isAuthenticated() && data.owner.id === $auth.getPayload().user_id;
+                this.allowDelete = UserService.isAuthenticated() && data.owner.id === UserService.getPayload().user_id;
                 this.selected = {};
                 this.parse();
             }).catch(
@@ -99,7 +112,7 @@ module odh.main {
         }
 
         public isAuthenticated() {
-            return this.$auth.isAuthenticated();
+            return this.UserService.isAuthenticated();
         }
 
         /**
@@ -181,7 +194,9 @@ module odh.main {
             }
         }
 
-
+        /**
+         * triggers the preview generation
+         */
         public preview() {
             this.previewTransformation = this.transformation;
         }
@@ -208,13 +223,9 @@ module odh.main {
             return this.loadedTablesArray.indexOf(table) !== -1;
         }
 
-        public aceBlurred(editor) {
-            console.log(editor);
-            var val = editor.getEditor().getSession();
-            console.log(val);
-        }
-
-
+        /**
+         * parses the entered query for used packages and syntax errors
+         */
         public parse() {
             this.TransformationService.parse(this.transformation).then((data:any) => {
                 angular.forEach(data.data.tables, table => {
@@ -239,6 +250,9 @@ module odh.main {
             });
         }
 
+        /**
+         * redirects to the create transformation state with current transformation
+         */
         public duplicateTransformation() {
             this.TransformationService.description = this.description;
             this.TransformationService.forceManualEdit = true;
@@ -249,6 +263,11 @@ module odh.main {
             });
         }
 
+        /**
+         * triggers the download
+         * @param group
+         * @param formatName
+         */
         public downloadAs(group, formatName) {
             this.$log.debug('Triggered download of ', group, 'as', formatName);
             group.canDownload(formatName).then(() => {
@@ -258,6 +277,9 @@ module odh.main {
             });
         }
 
+        /**
+         * tries to remove the current transfromation.
+         */
         public remove() {
             var modalInstance;
             var odhModal:utils.IOdhModal = {

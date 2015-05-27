@@ -14,6 +14,7 @@ module odh.utils {
     }
     /**
      * OpenDataHub Modal Controller
+     * Asks the user for confirmation.
      */
     class ConfirmationController {
 

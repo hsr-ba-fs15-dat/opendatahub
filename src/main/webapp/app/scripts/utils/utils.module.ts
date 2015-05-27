@@ -1,5 +1,7 @@
 /// <reference path='../all.d.ts' />
-
+/**
+ * contains some helper classes and functions for the OpenDataHub Application.
+ */
 module odh.utils {
     'use strict';
 

@@ -11,6 +11,20 @@ module odh.auth {
         authenticate(provider, args):ng.IPromise<any>;
         isAuthenticated():boolean;
         logout():void;
+        removeToken():void;
+        getPayload():{
+            username: string;
+            user_id: number;
+        };
+    }
+    /**
+     * provides public user interface
+     */
+    export interface IUser {
+        id: number;
+        username: string;
+        first_name: string;
+        last_name: string
     }
     /**
      * responsible for handling the user authentication.
@@ -39,6 +53,14 @@ module odh.auth {
 
         public logout() {
             return this.$auth.logout();
+        }
+
+        public removeToken() {
+            this.$auth.removeToken();
+        }
+
+        public getPayload() {
+            return this.$auth.getPayload();
         }
 
     }

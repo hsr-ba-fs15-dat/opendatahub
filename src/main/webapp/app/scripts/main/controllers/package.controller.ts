@@ -2,7 +2,10 @@
 
 module odh.main {
     'use strict';
-
+    /**
+     * lists all packages (Transformations, templates and documents)
+     * links to detail view
+     */
     class PackageListController {
 
         public tableParams:any;
