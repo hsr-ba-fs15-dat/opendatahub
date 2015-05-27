@@ -22,7 +22,7 @@
             <div class="panel-heading">Vorschau
                 <button type="button" id="preview" name="preview"
                         class="btn btn-primary pull-right btn-sm btn-in-header"
-                        ng-click="vm.preview()" ng-disabled="vm.transformationPreview !== ''">
+                        ng-click="vm.preview()">
                     <i class="fa fa-refresh"></i> Vorschau
                 </button>
             </div>
@@ -37,7 +37,8 @@
                     <p>{{vm.errorMessage.error}} (Line: {{vm.errorMessage.lineno}},
                         Col: {{vm.errorMessage.col}}) at {{vm.errorMessage.line}}</p>
                 </alert>
-                <odh-preview preview="vm.previewObject"></odh-preview>
+                <odh-preview preview="vm.previewObject"
+                             ng-if="!(form.odhqlinput.$invalid && vm.transformationPreview !== '')"></odh-preview>
 
             </div>
         </div>
@@ -121,7 +122,7 @@
             </div>
             <div class="panel-footer"> &nbsp;
                 <button id="add" name="add" class="btn btn-primary pull-right btn-sm btn-in-header"
-                        ng-disabled="form.$invalid || form.$pending">
+                        ng-disabled="form.$invalid || form.$pending || vm.fieldIsModified">
                     <i class="fa fa-floppy-o"></i> Speichern
                 </button>
             </div>

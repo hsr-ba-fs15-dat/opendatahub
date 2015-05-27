@@ -29,22 +29,20 @@ module odh.main {
         public quotes = false;
         public forceManualEdit:boolean = false;
         public transformationPreview:string = '';
-        public errorMessage = 'errorStringTester';
+        public errorMessage;
+        public fieldIsModified:boolean = false;
         public tabs:any[] = [];
         public previewObject:any;
         public leaveState = false;
         public transformationPrivate:boolean = false;
-
         constructor(private $state:ng.ui.IStateService,
                     private ToastService:odh.utils.ToastService,
                     private $log:ng.ILogService,
-                    private ngTableParams,
                     private $auth:any,
                     private TransformationService:main.TransformationService,
                     private TransformationSelection:main.TransformationSelection,
                     private JOIN_OPERATIONS,
                     private $stateParams:{loadTransformation:boolean},
-                    private $q:ng.IQService,
                     private $modal:ng.ui.bootstrap.IModalService,
                     private $scope:any) {
             this.tabs = [
@@ -111,7 +109,7 @@ module odh.main {
 
                     }
                 }, {
-                    heading: 'Manuelles bearbeiten',
+                    heading: 'Manuelles Bearbeiten',
                     icon: 'fa-pencil',
                     template: 'views/transformation.create/manual.html',
                     content: null,
@@ -211,12 +209,11 @@ module odh.main {
         public addRemoveField(col, table:main.ITable) {
             this.selection.addRemoveField(col, table);
             this.generate();
-
         }
 
         public manualChange() {
             this.lockAssistant();
-            this.transformationPreview = '';
+            this.fieldIsModified = true;
             this.previewObject = null;
         }
 
@@ -237,7 +234,7 @@ module odh.main {
         }
 
         public generate() {
-            this.transformationPreview = '';
+            this.fieldIsModified = false;
             this.previewObject = null;
             this.forceManualEdit = false;
             this.odhqlInputString = this.selection.generateTransformation();
@@ -279,8 +276,10 @@ module odh.main {
         }
 
         public preview() {
+
             this.previewObject = null;
             this.transformationPreview = this.odhqlInputString;
+            this.fieldIsModified = false;
         }
 
         public cancel() {
