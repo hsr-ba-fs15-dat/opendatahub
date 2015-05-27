@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+"""
+Support for CSV and GeoCSV (see http://giswiki.hsr.ch/GeoCSV for further information).
+"""
+
 from __future__ import unicode_literals, absolute_import
 
 from osgeo import osr
@@ -42,6 +46,7 @@ class CSV(Format):
 
 
 class CSVFormatter(Formatter):
+    """ Formatter for CSV. Output is compatible to GeoCSV. """
     targets = CSV,
 
     FALLBACK_TYPE = 'String'
@@ -96,6 +101,7 @@ class CSVFormatter(Formatter):
 
 
 class CSVParser(Parser):
+    """ Parser for (Geo)CSV. """
     accepts = CSV,
 
     CSVT_RE = re.compile('\s*"?(\w+)\s*(\((.*)\))?"?\s*', re.IGNORECASE)

@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
+""" Interlis 2 support. Currently disabled. """
+
 from __future__ import unicode_literals
 
-"""
-"""
+# Note: Interlis 2 is not supported at this time due to issues with the format support in ogr2ogr.
 
 # from hub.formats import Format
 # from hub.utils import ogr2ogr
