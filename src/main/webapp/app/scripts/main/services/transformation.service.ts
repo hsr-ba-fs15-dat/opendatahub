@@ -48,7 +48,10 @@ module odh.main {
         count: number;
     }
 
-
+    /**
+     * represents a Transformation
+     * handles REST Calls against the API
+     */
     export class TransformationService {
 
         public name;

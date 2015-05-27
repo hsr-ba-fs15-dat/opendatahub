@@ -3,26 +3,32 @@
 
 module odh.main {
     'use strict';
-
+    /**
+     * provides the navbar
+     * - shows username if logged in
+     * - checks if authenticated
+     * - logs out the user
+     */
     class NavBarController {
 
-        constructor(private $auth) {
+        constructor(private UserService:auth.UserService) {
 
         }
 
         public isAuthenticated() {
-            return this.$auth.isAuthenticated();
+            return this.UserService.isAuthenticated();
         }
 
-        public loginName() {
+        public loginName():string {
+            var username = null;
             if (this.isAuthenticated()) {
-                return this.$auth.getPayload().username;
+                username = this.UserService.getPayload().username;
             }
-            return false;
+            return username;
         }
 
         public logout() {
-            this.$auth.logout();
+            this.UserService.logout();
         }
     }
 

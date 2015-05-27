@@ -3,7 +3,9 @@
 
 module odh.utils {
     'use strict';
-
+    /**
+     * generates API Urls
+     */
     export class UrlService {
 
         private apiPrefix:string = '';

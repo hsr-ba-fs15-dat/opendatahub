@@ -4,7 +4,9 @@
 module odh.utils {
     'use strict';
 
-
+    /**
+     * Intercepts HTTP-Requests for errors and displays a warning in the GUI
+     */
     export class WarningHttpInterceptor {
 
         constructor(private $q:ng.IQService, private ToastService:odh.utils.ToastService) {

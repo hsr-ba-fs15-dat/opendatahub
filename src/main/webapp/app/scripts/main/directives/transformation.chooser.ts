@@ -3,14 +3,19 @@
 
 module odh.main {
     'use strict';
-
+    /**
+     * provides the transformationchooser directive.
+     * - adds and removes tables
+     * - checks if tables are already selected
+     * - (optional) as modal window
+     */
     export class OdhChooseTransformation implements ng.IDirective {
         static $inject = ['private DocumentService:main.DocumentService', 'ngTableParams:any',
             'FileGroupService:main.FileGroupService', '$auth:any', 'ToastService:odh.utils.ToastService'];
         public modal:boolean = false;
 
         constructor(private TransformationService:main.TransformationService, private ngTableParams:any,
-                    private $auth:any, private FileGroupService:main.FileGroupService,
+                    private UserService:auth.UserService, private FileGroupService:main.FileGroupService,
                     private ToastService:odh.utils.ToastService, private PackageService:main.PackageService,
                     private $filter:ng.IFilterService) {
         }
@@ -65,7 +70,7 @@ module odh.main {
                 }
             });
             scope.isAuthenticated = () => {
-                return this.$auth.isAuthenticated();
+                return this.UserService.isAuthenticated();
             };
 
             scope.getFileGroup = (pkg, count = 3) => {

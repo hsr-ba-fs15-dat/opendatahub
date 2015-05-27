@@ -2,7 +2,12 @@
 
 module odh.utils {
     'use strict';
-
+    /**
+     * sets focus to an element
+     * @param $timeout
+     * @returns {{restrict: string, require: string,
+     * link: (function(ng.IScope, JQuery, any, ng.IFormController): undefined)}}
+     */
     function odhFocus($timeout:ng.ITimeoutService):ng.IDirective {
         return {
             restrict: 'A',

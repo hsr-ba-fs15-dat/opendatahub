@@ -3,7 +3,13 @@
 
 module odh.utils {
     'use strict';
-
+    /**
+     * overwrites the default pagination of ngTable for non scrolling pagination
+     *
+     * @param $compile
+     * @returns {{restrict: string, scope: {params: string, templateUrl: string}, replace: boolean,
+     * link: (function(any, any, any): undefined)}}
+     */
     function odhTablePagination($compile:ng.ICompileService):ng.IDirective {
         return {
             restrict: 'A',
