@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+
+# Get rid of "FormatSerializer:Method 'create' is abstract in class 'BaseSerializer' but is not overridden"
+# FormatSerializer is read only anyway
+# pylint: disable=abstract-method
 from __future__ import unicode_literals
 
 from rest_framework import serializers
