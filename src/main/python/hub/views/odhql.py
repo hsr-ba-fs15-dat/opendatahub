@@ -45,7 +45,7 @@ class ParseView(View):
                                 status=HttpResponseBadRequest.status_code)
         except MultiValueDictKeyError:
             return JsonResponse({'error': 'Es wurde keine ODHQL Abfrage angegeben.',
-                                 'type': 'execution'},  # todo check in frontend
+                                 'type': 'execution'},
                                 status=HttpResponseBadRequest.status_code)
 
         return JsonResponse(data_sources)

@@ -3,7 +3,71 @@
 
 module odh.main {
     'use strict';
+    /**
+     * the connection between two tables
+     */
+    export interface IExpression {
+        foreignKey?: IField;
+        joinField?: IField;
+        joinTable?: any;
+        operation: IOperation;
+    }
 
+    /**
+     * the connection between two tables
+     */
+    export interface IOperation {
+        label: string;
+        operation:string;
+    }
+
+    /**
+     * the possible connections between two tables
+     */
+    export interface IOperations {
+        join: IOperation;
+        none: IOperation;
+        union: IOperation;
+    }
+
+    /**
+     *  interfaces the logic behind the assistant.
+     */
+    export interface ITransformationSelection {
+        fileGroups: main.IFileGroup[];
+        items: ITable[];
+        fields: {};
+        expression: {[name:string]: IExpression};
+        joinTargets: ITable[];
+        master: string;
+        removeTable (item:ITable):void;
+        addTable (item:ITable):void;
+        addRemoveField(col:any, table:main.ITable):void;
+        addField(col:any, table:main.ITable):void;
+        generateTransformation():string;
+        setQuotes(value:boolean):void;
+        getQuotes():boolean;
+        addRemoveTable(item:main.ITable):void;
+        getTableByName(tableName:string):main.ITable;
+        tableSelected(table:main.ITable):boolean;
+        allTables():ITable[];
+        getFields(tableName:string):main.IField[];
+        getJoinOperation(table:main.ITable);
+        getSelectedFields(table:main.ITable):main.IField[];
+        isPrivate():boolean;
+        getFileGroups():main.IFileGroup[];
+
+    }
+
+    /**
+     * the assistant's logic
+     * - provides table addition/removal
+     * - provides field addition/removal
+     * - provides field-name generation
+     * - provides table-alias generation
+     * - checks if tables are odh values
+     * - automatically quotes field names
+     */
     export class TransformationSelection implements main.ITransformationSelection {
 
         public fileGroups:main.IFileGroup[];
@@ -17,7 +81,7 @@ module odh.main {
         private itemCounter:number = 1;
 
         constructor(private JOIN_OPERATIONS:main.IOperations, private ngTableParams:any,
-                    private FileGroupService:main.FileGroupService, private PackageService:main.PackageService) {
+                    private PackageService:main.PackageService) {
             this.items = [];
             this.expression = {};
             this.fields = {};
@@ -103,11 +167,12 @@ module odh.main {
             return this.fields[table.unique_name];
         }
 
+        /**
+         * Checks if the Table is selected.
+         * @returns boolean
+         */
         public tableSelected(table) {
-            /**
-             * Checks if the Table is selected.
-             * @returns boolean
-             */
+
             return this.items.indexOf(table) > -1;
         }
 
@@ -195,6 +260,7 @@ module odh.main {
                 this.fields[table.unique_name].push(col);
             }
         }
+
         public getFileGroups() {
             return this.fileGroups;
         }

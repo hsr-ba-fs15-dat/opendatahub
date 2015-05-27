@@ -213,11 +213,11 @@ class TestGeometryFunctions(TestInterpreterBase):
         self.assertAlmostEqual(df.hsr[0].y, 6244089.40913, 4)
 
     def test_union(self):
-        self.execute('SELECT ST_SetSRID(ST_GeomFromText(\'POINT(7.2234283 48.8183157)\'), 4326) AS hsr '
-                     'FROM child AS c UNION '
-                     'SELECT ST_SetSRID(ST_GeomFromText(\'POINT(804108.360138 6244089.40913)\'), 3857) AS hsr '
-                     'FROM child AS c')
-        # todo assert
+        df = self.execute('SELECT ST_SetSRID(ST_GeomFromText(\'POINT(7.2234283 48.8183157)\'), 4326) AS hsr '
+                          'FROM child AS c UNION '
+                          'SELECT ST_SetSRID(ST_GeomFromText(\'POINT(804108.360138 6244089.40913)\'), 3857) AS hsr '
+                          'FROM child AS c')
+        self.assertEquals(2 * len(self.children), len(df))
 
     def test_st_x(self):
         df = self.execute('SELECT c.prename, ST_X(ST_GeomFromText(\'POINT(7.2234283 48.8183157)\')) AS hsrx '

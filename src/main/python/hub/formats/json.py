@@ -18,7 +18,7 @@ class JSON(Format):
 
     @classmethod
     def is_format(cls, file, *args, **kwargs):
-        return file.extension == cls.extension and '"geometry"' not in file  # todo figure out a better way
+        return file.extension == cls.extension and '"geometry"' not in file
 
 
 class JSONFormatter(Formatter):

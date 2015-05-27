@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+
+""" Format stuff for MS Excel files (both xls and xlsx). """
+
 from __future__ import unicode_literals
 
 import tempfile

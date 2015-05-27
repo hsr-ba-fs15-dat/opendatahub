@@ -115,7 +115,7 @@ try:
     import django_extensions  # noqa
 
     INSTALLED_APPS += ('django_extensions',)
-except:  # noqa
+except ImportError:
     pass
 
 MIDDLEWARE_CLASSES = (

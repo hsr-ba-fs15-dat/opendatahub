@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+""" General views not directly involved in data hub business. """
 from __future__ import unicode_literals
 
 import json
@@ -14,7 +15,12 @@ from opendatahub.settings import TRANSFORMATION_PREFIX, PACKAGE_PREFIX
 
 
 class ConfigView(ViewSet):
+    """ View for configuration settings (API keys, configuration settings, etc.) """
     def list(self, request):
+        """ Returns configuration settings.
+        :type request: rest_framework.request.Request
+        :return: Response with configuration settings as JSON.
+        """
         return JsonResponse({
             'FACEBOOK_PUBLIC': FACEBOOK_PUBLIC,
             'GITHUB_PUBLIC': GITHUB_PUBLIC,
@@ -29,6 +35,7 @@ class ConfigView(ViewSet):
 
 
 class AngularErrorHandler(View):
+    """ Accepts error reports from the client. Those are then sent via mail to a configured admin mail address. """
     def post(self, request):
         data = json.loads(request.body)
         stacktrace = data.get('stacktrace', '')

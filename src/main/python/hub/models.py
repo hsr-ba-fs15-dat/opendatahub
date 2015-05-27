@@ -4,7 +4,6 @@ from __future__ import unicode_literals
 from django.db import models
 from django.db.models.fields.related import SingleRelatedObjectDescriptor
 from django.db.models.query import QuerySet
-
 from django.utils.text import slugify
 
 from opendatahub import settings
@@ -14,7 +13,6 @@ from hub.formats import Format, Other
 """
 Django models.
 """
-
 
 AUTH_USER_MODEL = getattr(settings, 'AUTH_USER_MODEL', 'auth.User')
 
@@ -41,11 +39,17 @@ class PackageModel(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def __unicode__(self):
+        return '<{} id={}>'.format(self.__class__.__name__, self.id)
+
 
 class DocumentModel(PackageModel):
     """
     Metadata for a document.
     """
+
+    def __unicode__(self):
+        return '<{} id={}>'.format(self.__class__.__name__, self.id)
 
 
 class FileGroupModel(models.Model):
@@ -62,6 +66,9 @@ class FileGroupModel(models.Model):
         group.add(*[u.to_file(group) for u in self.urls.all()])
 
         return group
+
+    def __unicode__(self):
+        return '<{} id={}>'.format(self.__class__.__name__, self.id)
 
 
 class FileModel(models.Model):
@@ -81,6 +88,9 @@ class FileModel(models.Model):
             file.format = fmt
 
         return file
+
+    def __unicode__(self):
+        return '<{} id={}>'.format(self.__class__.__name__, self.id)
 
 
 class UrlModel(models.Model):
@@ -105,6 +115,9 @@ class UrlModel(models.Model):
             return Url(document_name, self.source_url, format=self.format, cache_timeout=self.refresh_after,
                        file_group=file_group)
 
+    def __unicode__(self):
+        return '<{} id={}>'.format(self.__class__.__name__, self.id)
+
 
 class TransformationModel(PackageModel):
     """
@@ -116,6 +129,9 @@ class TransformationModel(PackageModel):
 
     referenced_file_groups = models.ManyToManyField(FileGroupModel)
     referenced_transformations = models.ManyToManyField('TransformationModel')
+
+    def __unicode__(self):
+        return '<{} id={}>'.format(self.__class__.__name__, self.id)
 
 
 class InheritanceQuerySet(QuerySet):

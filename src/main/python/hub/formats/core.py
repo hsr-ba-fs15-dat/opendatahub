@@ -1,34 +1,35 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 
 """
 Base/infrastructure classes for formats and basic/builtin formats
 """
 
+from __future__ import unicode_literals
+
 import sys
 import traceback
 import logging
+import collections
 
 from hub.structures.frame import OdhFrame
 import hub.utils.common as com
-
 from opendatahub.utils.plugins import RegistrationMixin
-import collections
 
 logger = logging.getLogger(__name__)
 
 
 class NoFormatterException(Exception):
+    """ No formatter found for the requested format """
     pass
 
 
 class FormattingException(Exception):
+    """ Formatting failed. """
     pass
 
 
 class Format(RegistrationMixin):
-    """ Format base class. All classes that inherit from Format are automatically registered as formats.
-    """
+    """ Format base class. All classes that inherit from Format are automatically registered as formats. """
 
     # tells not to register as format
     _is_abstract = True
@@ -48,7 +49,9 @@ class Format(RegistrationMixin):
 
     @classmethod
     def register_child(cls, name, bases, dct):
-        # remove training whitespace cause by being a docstring/multiline comment
+        """ Implementation for RegistrationMixin. """
+
+        # remove trailing whitespace caused by being a docstring/multiline comment
         cls.description = cls.description.strip()
         cls.example = cls.example.strip()
         cls.name = name
@@ -67,6 +70,10 @@ class Format(RegistrationMixin):
 
     @staticmethod
     def from_string(format):
+        """
+        Tries to find the format instance for a given format name.
+        :param format: format instance or name.
+        """
         if isinstance(format, basestring):
             format = str(format).lower()
             try:
@@ -77,10 +84,14 @@ class Format(RegistrationMixin):
 
     @classmethod
     def is_format(cls, file, *args, **kwargs):
+        """
+        Checks if a file is of a given format.
+        """
         raise NotImplementedError
 
 
 class Other(Format):
+    """ Format type for when we have no better match. """
     label = 'Original'
 
     description = """
@@ -89,6 +100,7 @@ class Other(Format):
 
     @classmethod
     def is_format(cls, file, *args, **kwargs):
+        """ Always returns False - this is our fallback, so everything else is automatically better. """
         return False
 
 
@@ -96,6 +108,7 @@ Format.DEFAULT_FORMAT = Other
 
 
 class Formatter(RegistrationMixin):
+    """ Base class for formatters. """
     _is_abstract = True
 
     formatters = {}
@@ -105,6 +118,7 @@ class Formatter(RegistrationMixin):
 
     @classmethod
     def register_child(cls, name, bases, dct):
+        """ Implementation for RegistrationMixin. """
         if not dct.get('_is_abstract'):
             cls.formatters[name] = cls
             for format in cls.targets:
@@ -112,6 +126,15 @@ class Formatter(RegistrationMixin):
 
     @classmethod
     def format(cls, dfs, name, format, *args, **kwargs):
+        """
+        Format a list of data frames with a given format.
+        :param dfs: list of data frames
+        :param name: name to be used for the resulting file(s)
+        :param format: expected format.
+        :param args: further arguments
+        :param kwargs: further keyword arguments
+        :return: formatted result.
+        """
         assert all([df.name for df in dfs]), 'DataFrame must have a name'
         exc_infos = []
 
@@ -132,10 +155,12 @@ class Formatter(RegistrationMixin):
 
 
 class NoParserException(Exception):
+    """ No parser found for that format. """
     pass
 
 
 class ParsingException(Exception):
+    """ Parsing failed. """
     pass
 
 
@@ -148,6 +173,7 @@ class Parser(RegistrationMixin):
 
     @classmethod
     def register_child(cls, name, bases, dct):
+        """ Implementation for RegistrationMixin. """
         if not dct.get('_is_abstract'):
             cls.parsers[name] = cls
             for format in cls.accepts:
@@ -155,6 +181,13 @@ class Parser(RegistrationMixin):
 
     @classmethod
     def parse(cls, file, format, *args, **kwargs):
+        """ Parse a file.
+        :param file: input file
+        :param format: file format
+        :param args: further arguments
+        :param kwargs: further keyword arguments
+        :return: list of data frames resulting from the parse.
+        """
         exc_infos = []
         for parser in cls.parsers_by_format[format]:
             try:

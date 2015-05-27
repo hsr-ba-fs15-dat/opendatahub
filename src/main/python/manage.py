@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+
+""" Wrapper around django-admin to allow easier calling of commands. """
+
 import os
 import sys
 

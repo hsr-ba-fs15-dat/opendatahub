@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=wildcard-import
 
+""" Format support: Identification, parsing, formatting. """
+
 from __future__ import unicode_literals
 
 from .core import *  # noqa

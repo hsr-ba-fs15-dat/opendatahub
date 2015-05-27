@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+
+""" URL route configuration. """
+
 from __future__ import unicode_literals
 
 from django.conf.urls import patterns, include, url

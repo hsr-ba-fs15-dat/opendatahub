@@ -3,16 +3,22 @@
 
 module odh.auth {
     'use strict';
-    interface IModel {
+    /**
+     * interface for the form model. planned for future usage of editing the user object.
+     */
+    interface IUser {
         username:string;
         description:string;
     }
+
+    /**
+     * displays the user profile. the photo is stored as a link to the authentication provider.
+     */
     class UserProfileController {
 
         public complete:boolean;
-        public model:IModel;
+        public model:IUser;
         public errors:any;
-        public error:any;
         public username:string;
         public first_name:string;
         public last_name:string;
@@ -34,9 +40,8 @@ module odh.auth {
                 this.profile_photo_origin = data.data.profile_photo_origin;
                 this.email = data.data.email;
                 this.model.username = data.data.username;
-                this.model.description = data.data.username;
+                this.model.description = data.data.description;
                 this.providers = data.data.social_auth;
-                console.log(data.data);
             });
         }
 
