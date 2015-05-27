@@ -7,9 +7,12 @@ import shutil
 import tempfile
 
 import os
+
 from shapely.geometry.base import GEOMETRY_TYPES
 
 from hub.formats import Parser, Formatter
+from hub.formats.csv import CSV
+
 from hub.formats.kml import KML
 from hub.structures.file import FileGroup
 from hub.utils import ogr2ogr
@@ -17,6 +20,7 @@ from hub.utils import ogr2ogr
 
 class GenericOGRParser(Parser):
     """ Uses ogr2ogr as parser. """
+
     @classmethod
     def parse(cls, file, format, *args, **kwargs):
 
@@ -71,7 +75,7 @@ class GeoFormatterBase(Formatter):
                 finally:
                     shutil.rmtree(temp_dir)
             else:
-                formatted.extend(list(GenericOGRFormatter.format(dfs, name, format)))
+                formatted.extend(list(cls.no_geometry_fallback(df, format, name)))
                 continue
                 # formatted = list(Formatter.format(dfs, df.name, formats.CSV, *args, **kwargs))
                 # file_group = ogr2ogr.ogr2ogr(formatted[0], ogr2ogr.CSV)[0]
@@ -80,17 +84,23 @@ class GeoFormatterBase(Formatter):
 
         return formatted
 
+    @classmethod
+    def no_geometry_fallback(cls, df, format, name):
+        return GenericOGRFormatter.format([df], name, format)
+
 
 class GenericOGRFormatter(Formatter):
     """ Uses ogr2ogr as formatter. """
 
     @classmethod
     def format(cls, dfs, name, format, *args, **kwargs):
+        from hub.formats.geojson import GeoJSON
+
         formatted = []
 
-        # see comment about intermediate format choice in GenericOGRParser.
-
-        for fg in Formatter.format(dfs, name, KML, skip_kml_attrs=True, *args, **kwargs):
-            formatted.extend(ogr2ogr.ogr2ogr(fg, format.ogr_format))
+        for df in dfs:
+            intermediate = GeoJSON if df.has_geoms else CSV
+            for fg in Formatter.format([df], name, intermediate, *args, **kwargs):
+                formatted.extend(ogr2ogr.ogr2ogr(fg, format.ogr_format))
 
         return formatted

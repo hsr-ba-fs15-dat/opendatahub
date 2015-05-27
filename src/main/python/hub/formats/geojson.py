@@ -5,6 +5,7 @@ import os
 import geopandas as gp
 
 from hub.formats import Format, Parser
+from hub.structures.file import File
 from hub.utils import ogr2ogr
 from hub.formats.geobase import GeoFormatterBase
 
@@ -29,7 +30,17 @@ class GeoJSONFormatter(GeoFormatterBase):
 
     @classmethod
     def format(cls, dfs, name, format, *args, **kwargs):
-        return super(GeoJSONFormatter, cls).format(dfs, name, format, 'GeoJSON', 'json', *args, **kwargs)
+        formatted = []
+
+        for df in dfs:
+            if df.has_geoms:
+                gdf = df.to_gdf(supported_geoms=cls.supported_types)
+                formatted.append(File.from_string(df.name + '.json', gdf.to_json()).file_group)
+            else:
+                formatted.append(
+                    File.from_string(df.name + '.json', df.as_safe_serializable().to_json(orient='records')).file_group)
+
+        return formatted
 
 
 class GeoJSONParser(Parser):
