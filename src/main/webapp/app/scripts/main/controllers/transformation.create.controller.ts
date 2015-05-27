@@ -3,17 +3,14 @@
 
 module odh.main {
     'use strict';
-    interface IField {
-        name: string;
-        alias: string;
-    }
 
-    interface IExpression {
-        foreignKey: IField;
-        joinField: IField;
-        joinTable: any;
-        operation: any;
-    }
+    /**
+     * responsible for creation of transformations.
+     * - provides assistant
+     * - provides manual editor
+     * - saves new transformations
+     * - accepts existing transformations for duplication
+     */
     export class TransformationCreateController {
         public name:string;
         public description:string;
@@ -23,21 +20,20 @@ module odh.main {
         public submitted:boolean = false;
         public documents:Object[];
         public odhqlInputString = '';
-        public manualEdit:boolean = false;
-        public count:number = 3;
-        public editor:any;
+        /**
+         * ngTableContainer
+         */
         public tableParams:any;
         public alerts:Object[] = [];
         public selection:main.ITransformationSelection;
         public quotes = false;
-        public fileGroupTable;
         public forceManualEdit:boolean = false;
         public transformationPreview:string = '';
         public errorMessage = 'errorStringTester';
         public tabs:any[] = [];
         public previewObject:any;
         public leaveState = false;
-        private transformationPrivate:boolean = false;
+        public transformationPrivate:boolean = false;
 
         constructor(private $state:ng.ui.IStateService,
                     private ToastService:odh.utils.ToastService,
@@ -78,14 +74,14 @@ module odh.main {
                                     text: 'OK',
                                     cls: 'btn-warning',
                                     action: () => {
-                                        modalInstance.close();
+                                        modalInstance.dismiss();
                                     }
                                 },
                                     {
                                         text: 'Abbrechen',
                                         cls: 'btn-primary',
                                         action: () => {
-                                            modalInstance.dismiss();
+                                            modalInstance.close(1);
                                         }
                                     }],
                                 question: 'Sie haben manuelle Änderungen am Query vorgenommen. Wenn Sie den ' +
@@ -129,27 +125,12 @@ module odh.main {
             if ($stateParams.loadTransformation) {
                 this.name = TransformationService.name;
                 this.description = TransformationService.description;
-                this.manualEdit = true;
                 this.odhqlInputString = TransformationService.transformation;
                 this.forceManualEdit = TransformationService.forceManualEdit;
                 this.tabs[2].active = true;
             }
 
             this.selection = angular.copy(TransformationSelection);
-            this.fileGroupTable = new ngTableParams({
-                    page: 1,
-                    count: 10
-                }, {
-                    counts: [],
-                    total: 0,
-                    getData: ($defer, params) => {
-                        params.total(this.selection.allTables().length);
-                        $defer.resolve(this.selection.allTables());
-
-                    }
-                }
-            );
-
             this.$scope.$on('$stateChangeStart',
                 (event, toState, toParams, fromState, fromParams) => {
                     if (this.odhqlInputString) {
