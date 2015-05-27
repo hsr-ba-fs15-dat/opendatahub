@@ -657,7 +657,6 @@ module.exports = function (grunt) {
         'ts',
         'tslint',
         'test',
-        'build',
-        'typedoc'
+        'build'
     ]);
 };
