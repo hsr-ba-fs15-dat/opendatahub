@@ -44,14 +44,7 @@ class TransformationViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet,
 
         statement = request.data.get('transformation')
 
-        file_group_ids = []
-        transformation_ids = []
-        is_template = False
-
-        try:
-            file_group_ids, transformation_ids = OdhQLInterpreter.parse_sources(statement)
-        except OdhQLExecutionException:
-            is_template = True
+        is_template, file_group_ids, transformation_ids = self._check_template(statement)
 
         with transaction.atomic():
             transformation = TransformationModel(name=request.data['name'], description=request.data['description'],
@@ -60,10 +53,7 @@ class TransformationViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet,
             transformation.save()
 
             if not is_template:
-                transformation.referenced_file_groups.add(
-                    *FileGroupModel.objects.filter(id__in=file_group_ids.values()))
-                transformation.referenced_transformations.add(
-                    *TransformationModel.objects.filter(id__in=transformation_ids.values()))
+                self._update_references(transformation, file_group_ids, transformation_ids)
                 transformation.save()
 
         serializer = TransformationSerializer(TransformationModel.objects.get(id=transformation.id),
@@ -71,11 +61,39 @@ class TransformationViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet,
 
         return Response(serializer.data)
 
-    def update(self, request, *args, **kwargs):
-        id = self.get_object().id
-        cache.delete((settings.TRANSFORMATION_PREFIX, id))
+    def _check_template(self, statement):
+        try:
+            file_group_ids, transformation_ids = OdhQLInterpreter.parse_sources(statement)
+            return False, file_group_ids, transformation_ids
+        except OdhQLExecutionException:
+            return True, [], []
 
-        return super(TransformationViewSet, self).update(request, *args, **kwargs)
+    def _update_references(self, transformation, file_group_ids, transformation_ids):
+        transformation.referenced_file_groups.add(*FileGroupModel.objects.filter(id__in=file_group_ids.values()))
+        transformation.referenced_transformations.add(
+            *TransformationModel.objects.filter(id__in=transformation_ids.values()))
+
+    def update(self, request, *args, **kwargs):
+
+        with transaction.atomic():
+            super(TransformationViewSet, self).update(request, *args, **kwargs)
+
+            instance = self.get_object()
+            cache.delete((settings.TRANSFORMATION_PREFIX, instance.id))
+
+            is_template, file_group_ids, transformation_ids = self._check_template(instance.transformation)
+
+            instance.is_template = is_template
+
+            instance.referenced_file_groups.clear()
+            instance.referenced_transformations.clear()
+
+            if not is_template:
+                self._update_references(instance, file_group_ids, transformation_ids)
+
+            instance.save()
+
+        return Response(self.get_serializer(instance).data)
 
     def format_object(self, model, format):
         import hub.formats as formats
