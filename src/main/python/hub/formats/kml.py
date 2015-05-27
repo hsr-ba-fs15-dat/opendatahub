@@ -16,6 +16,10 @@ from hub.structures.file import File
 from hub.structures.frame import OdhType, OdhSeries
 from hub.utils import ogr2ogr
 
+from hub.exceptions import warn
+
+from hub.utils.common import ensure_tuple
+
 logger = logging.getLogger(__name__)
 
 
@@ -75,11 +79,26 @@ class KMLFormatter(Formatter):
         kml.append(doc)
 
         for i, df in enumerate(dfs):
-            df_attrs = df[[c for c in df if df[c].odh_type != OdhType.GEOMETRY]]
-            df_geoms = df[[c for c in df if df[c].odh_type == OdhType.GEOMETRY]]
-            # TODO
-            # for c, s in df_geoms.iteritems():
-            # df_geoms[c] = s.to_crs(cls.CRS)
+            df_attrs = df.loc[:, ensure_tuple([c for c in df if df[c].odh_type != OdhType.GEOMETRY])]
+            df_geoms = df.loc[:, ensure_tuple([c for c in df if df[c].odh_type == OdhType.GEOMETRY])]
+
+            df_geoms_copy = df_geoms.copy()
+
+            for c, s in df_geoms.iteritems():
+                # assigning a series to a dataframe 'sanitizes' away the crs, so we need to dance around that
+                if not s.crs:
+                    warn('The column "{}" does not have a valid coordinate reference system (CRS) set. As KML requires'
+                         ' EPSG 4326 to be used, this may lead to an invalid file.'.format(c))
+                    s_new = s
+                else:
+                    s_new = s.to_crs(cls.CRS)
+
+                df_geoms_copy[c] = s_new
+
+                df_geoms_copy.__finalize__(df_geoms)
+                df_geoms_copy[c].__finalize__(s_new)
+
+            df_geoms = df_geoms_copy
 
             folder = fastkml.Folder(ns, str(i), df.name)
             doc.append(folder)

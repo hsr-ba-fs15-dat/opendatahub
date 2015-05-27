@@ -405,6 +405,10 @@ class OdhSeries(pd.Series):
     def to_crs(self, crs):
         if not self.crs:
             raise OdhQLExecutionException('Missing SRID on source column')
+
+        if sorted(self.crs.items()) == sorted(crs.items()):
+            return self
+
         return self.geom_op('to_crs', crs)
 
     def geom_op(self, op, *args, **kwargs):

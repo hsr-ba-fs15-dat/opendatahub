@@ -117,8 +117,6 @@ class OdhQLParser(DocMixin):
     Mehrere Abfragen können kombiniert werden mithilfe von Union. In diesem Fall ist nur eine Sortier-Klausel am Ende
     der kombinierten Abfrage erlaubt.
 
-    Beispiel:
-
     .. code:: sql
 
         SELECT NULL AS userid,                                                               -- Null-Ausdruck
@@ -152,7 +150,6 @@ class OdhQLParser(DocMixin):
         Feld
             Bezieht sich direkt auf ein Feld einer Datenquelle. Der Name des Feldes muss mit dem Namen oder Alias
             der Datenquelle prefixed werden. Optional kann ein Alias angegeben werden.
-            Beispiel:
 
             .. code:: sql
 
@@ -165,7 +162,6 @@ class OdhQLParser(DocMixin):
             "\\\\".
         Funktion
             Besteht aus einem Namen und einer Liste von Argumenten. Es muss zwingend ein Alias angegeben werden.
-            Beispiel:
 
             .. code:: sql
 
@@ -175,7 +171,6 @@ class OdhQLParser(DocMixin):
             Kann verwendet werden, um Werte zu übersetzen. Es muss mindestens eine Bedingung angegeben werden.
             Das Format ist 'when <Bedingung> then <Ausdruck>', wobei alle unten beschriebenen Bedingungs-Arten sowie
             hier beschriebenen Ausdrücke erlaubt sind.
-            Beispiel:
 
             .. code:: sql
 
@@ -230,8 +225,6 @@ class OdhQLParser(DocMixin):
             Prüft ob ein Feld (nicht) null ist
         `in`, `not in`
             Prüft ob ein Ausdruck (nicht) in einer Liste enthalten ist.
-            Beispiel:
-
             .. code:: sql
 
                 country IN ('CH', 'DE', 'AT')
@@ -246,8 +239,6 @@ class OdhQLParser(DocMixin):
 
     Mehrere Bedingungen können mit 'and' und 'or' verknüpft und mit runden Klammern gruppiert werden.
 
-    Beispiel:
-
     .. code:: sql
 
         WHERE t.a IS NOT NULL
@@ -257,8 +248,6 @@ class OdhQLParser(DocMixin):
     ---------------
 
     Es kann sortiert werden nach Feld-Name, Alias oder Position in der Feld-Liste.
-
-    Beispiel:
 
     .. code:: sql
 

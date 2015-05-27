@@ -34,7 +34,7 @@ module odh.utils {
          * @param msg
          */
         public warning(msg:string):void {
-            this.ngToast.create({className: 'warning shadow-z-3', content: msg});
+            this.ngToast.create({className: 'warning shadow-z-3', timeout: 10000, dismissButton: true, content: msg});
         }
 
     }
