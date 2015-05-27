@@ -130,7 +130,7 @@ def install_typings(project, logger):
 @depends('install_build_dependencies', 'install_runtime_dependencies')
 @after(('run_unit_tests',), only_once=True)
 def grunt(project, logger):
-    custom_exec(project, logger, ['grunt'], cwd=WEBAPP_DIR)
+    custom_exec(project, logger, ['grunt'], cwd=WEBAPP_DIR, fail_stderr=False)
 
 
 @task
