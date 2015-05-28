@@ -14,7 +14,7 @@ if 'ESRI Shapefile' in ogr2ogr.SUPPORTED_DRIVERS:
         ogr_format = ogr2ogr.SHP
 
         description = """
-        Ist ein ursprünglich für die Firma ESRI entwickeltes Format für Geodaten.
+        Ein ursprünglich für die Firma ESRI entwickeltes Format für Geodaten.
         """
 
         extension = 'shp'

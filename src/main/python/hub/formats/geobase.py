@@ -30,7 +30,8 @@ class GenericOGRParser(Parser):
         #
         # ESRI Shapefile: various issues (cuts off names, limited geometry support, etc.
         #   see http://giswiki.hsr.ch/Shapefile)
-        # GeoJSON: doesn't support multiple layers
+        # GeoJSON: doesn't support multiple layers. This is an issue in the parser, because we have no way to influence
+        #   the number of layers ourselves.
         # GeoPackage: ogr2ogr has no driver for that in version 1.10.x, the driver in 1.11.x sucks and 2.0.0
         #   is not released yet
         # Interlis1: No support in fiona
@@ -77,8 +78,6 @@ class GeoFormatterBase(Formatter):
             else:
                 formatted.extend(list(cls.no_geometry_fallback(df, format, name)))
                 continue
-                # formatted = list(Formatter.format(dfs, df.name, formats.CSV, *args, **kwargs))
-                # file_group = ogr2ogr.ogr2ogr(formatted[0], ogr2ogr.CSV)[0]
 
             formatted.append(file_group)
 
@@ -97,6 +96,18 @@ class GenericOGRFormatter(Formatter):
         from hub.formats.geojson import GeoJSON
 
         formatted = []
+
+        # This formatter uses an intermediate format as well. However, because we now have full control over the data
+        # we try to stuff into that format, we have more options.
+        # For data WITH geometry, a really good option is GeoJSON. We just can't stuff multiple DFs into it at once,
+        # but that's really not a problem.
+        # But because GeoJSON actually requires geometry data, we can't use it for non-geo stuff. However, when there 
+        # is no geometry and only one DF per operation, CSV actually works fairly well.
+
+        # Also: Never try to use ogr2ogr's KML-Driver for anything serious. Use LIBKML instead. Your chance of actually
+        # getting data OUT of the files you want to read is much, MUCH bigger. As you may guess, we found that out the
+        # hard way (LIBKML was not enabled on some systems we needed it on), which is why we even tried 
+        # GeoJSON/CSV here :)
 
         for df in dfs:
             intermediate = GeoJSON if df.has_geoms else CSV
