@@ -11,5 +11,5 @@ select b.ansprechperson as userid,
        b.strassenname as object_name,
        'street' as object_type,
        'closed' as trob_type,
-       b.geometry as trobdb_point
+       ST_SetSRID(ST_Centroid(b.geometry), 4326) as trobdb_point
   from ODH1002_baustellen_detailansicht as b
