@@ -6,6 +6,7 @@ from django.conf.urls import patterns, include, url
 
 from authentication.views import SocialView, CurrentUserView, PublicKeysView
 
+""" URL route configuration. """
 
 router = routers.DefaultRouter()
 

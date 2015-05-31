@@ -1,8 +1,14 @@
+"""
+Authentication config for opendatahub project.
+It contains the public and secret keys for authentication of different used social networks
+"""
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
 import os
+
 from opendatahub.settings import PRODUCTION
+
 
 FACEBOOK_SECRET = os.environ.get('FACEBOOK_SECRET') or 'Facebook Client Secret'
 GITHUB_SECRET = os.environ.get('GITHUB_SECRET') or 'GitHub Client Secret'

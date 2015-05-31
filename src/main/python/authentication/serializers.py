@@ -9,6 +9,9 @@ from authentication.models import UserProfile
 
 
 class UserSocialAuthSerializer(ModelSerializer):
+    """
+    Gets the login name from different social media profiles.
+    """
     login = serializers.SerializerMethodField('get_the_login')
 
     class Meta(object):
@@ -24,6 +27,9 @@ class UserSocialAuthSerializer(ModelSerializer):
 
 
 class UserSerializer(ModelSerializer):
+    """
+    Contains the full user profile.
+    """
     social_auth = UserSocialAuthSerializer(
         many=True,
         read_only=True,
@@ -37,6 +43,9 @@ class UserSerializer(ModelSerializer):
 
 
 class UserDisplaySerializer(ModelSerializer):
+    """
+    Contains the limited user profile. Viewed by other users.
+    """
     class Meta(object):
         model = UserProfile
         fields = (
