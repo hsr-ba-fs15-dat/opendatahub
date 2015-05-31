@@ -5,23 +5,21 @@ Custom extensions to Series/GeoSeries and DataFrame/GeoDataFrame from pandas/geo
 """
 
 from __future__ import unicode_literals
-from types import NoneType
-
 import datetime as dt
 import collections
 
+from types import NoneType
 import pandas as pd
 import geopandas as gp
 import numpy as np
 import shapely.geometry
 import os
-from hub.exceptions import warn
-
-from hub.odhql.exceptions import OdhQLExecutionException
-
-from opendatahub.utils.plugins import RegistrationMixin
-
 import shapely.speedups
+from shapely.geometry.base import GEOMETRY_TYPES
+
+from hub.exceptions import warn
+from hub.odhql.exceptions import OdhQLExecutionException
+from opendatahub.utils.plugins import RegistrationMixin
 
 if shapely.speedups.available:
     shapely.speedups.enable()
@@ -209,16 +207,13 @@ class GeometryType(OdhType):
     )
 
 
-from shapely.geometry.base import GEOMETRY_TYPES
-
-
 class OdhFrame(pd.DataFrame):
     """ Custom extensions for pandas' DataFrame. """
     _metadata = ['name']
 
     @classmethod
     def from_df(cls, df, name=None):
-        """ Wrap a data frame.
+        """ Convert a DataFrame into a OdhFrame.
         :param df: Data frame to wrap.
         :param name: The data frame's name.
         :return: Newly created OdhFrame instance.
@@ -262,6 +257,10 @@ class OdhFrame(pd.DataFrame):
         return OdhType.GEOMETRY in [s.odh_type for c, s in self.iteritems()]
 
     def to_gdf(self, supported_geoms=set(GEOMETRY_TYPES)):
+        """
+        Converts the OdhFrame into a geopandas.GeoDataFrame for exporting it via Fiona (to GeoJSON, Shapefile, ...)
+        :param supported_geoms: Set of supported geometry types. Others are dropped.
+        """
         supported_geom_types = set(supported_geoms)
 
         # if we have multiple geometry columns and none of them is called "geometry" we pick the first
@@ -437,6 +436,7 @@ class OdhSeries(pd.Series):
 
 class EmptyGeometryMarker(shapely.geometry.Point):
     """ Replacement for empty geometry values - certain file formats don't handle those well at all. """
+
     def __init__(self, geom_type='Point'):
         self.__geom_type = geom_type
         super(EmptyGeometryMarker, self).__init__()

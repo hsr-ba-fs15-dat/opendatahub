@@ -25,11 +25,17 @@ logger = logging.getLogger(__name__)
 class Ogr2OgrException(Exception):
     pass
 
-
+# drivers/formats supported by the currently installed GDAL version
+# will usually vary depending on how GDAL was compiled as it required many third party libraries/dependencies
+# for various file formats.
 SUPPORTED_DRIVERS = {ogr.GetDriver(i).GetName() for i in xrange(ogr.GetDriverCount())}
 
 
 class OgrFormat(object):
+    """
+    Describes an ogr2ogr/GDAL supported format.
+    """
+
     formats = []
 
     def __init__(self, extension, identifier, list_all, addtl_args=(), allowed_return_codes=()):
@@ -71,6 +77,13 @@ def _rand_string(n):
 
 
 def _ogr2ogr_cli(arguments, log_on_error=True, allowed_return_codes=(), *args, **kwargs):
+    """ Executes ogr2ogr CLI installed on system. Make sure this binary is available and in PATH.
+    :param log_on_error: Whether we should log errors
+    :param allowed_return_codes: Return codes which should not be regarded as errors
+    :type arguments: list
+    :type log_on_error: bool
+    :type allowed_return_codes: tuple
+    """
     cmd = ['ogr2ogr'] + arguments
     logger.debug('Running ogr2ogr: %s', ' '.join(cmd))
     try:
@@ -84,6 +97,15 @@ def _ogr2ogr_cli(arguments, log_on_error=True, allowed_return_codes=(), *args, *
 
 
 def ogr2ogr(file_group, to_type, addtl_args=(), *args, **kwargs):
+    """
+    Helper utitility for converting in-memory files with ogr2ogr. These are temporarily written to file system in order
+    order to make the accessible to ogr2ogr.
+    :type file_group: hub.structures.file.FileGroup
+    :type to_type: hub.utils.ogr2ogr.OgrFormat
+    :type addtl_args: tuple or list
+    :param args: Additional args passed to _ogr2ogr_cli function.
+    :param kwargs: Additional args passed to _ogr2ogr_cli function.
+    """
     kwargs.setdefault('allowed_return_codes', to_type.allowed_return_codes)
     assert isinstance(file_group, FileGroup)
 
@@ -138,7 +160,7 @@ def ogr2ogr(file_group, to_type, addtl_args=(), *args, **kwargs):
 
 def sort_by_extension_index(from_format, a, b):
     """
-    force main file(s) to appear a) first and b) in the order specified in the format
+    Force main file(s) to appear a) first and b) in the order specified in the format
     this is a hack to get interlis 1 to work reliably, as ogr2ogr appears to be a bit... touchy about that.
 
     :param from_format: detected format. used to get the extension list

@@ -1,6 +1,15 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+"""
+Extensions to djangos caching mechanism adopted to allow faster caching and cascading deletions.
+
+- Faster: No pickling/unpicklung for local memory cache.
+- Cascading deletion: A tuple is used as cache key (e.g. ('a', 'b', 'c'), now, when you delete ('a',) all cache entries
+that start with ('a', ...) are dropped. This allows for more flexible caching/invalidation when dealing data converted
+from/to different types as in OpenDataHub.
+"""
+
 from threading import Thread, Condition
 import logging
 
@@ -9,11 +18,13 @@ from django.db import connections, router
 from django.core.cache.backends.base import DEFAULT_TIMEOUT
 import types
 
-
 logger = logging.getLogger(__name__)
 
 
 class AsyncCachingThread(Thread):
+    """ Helper thread for async. caching in fire & forget fashion in order to get a response to the client without
+    having to wait until caching is done.
+    """
     _threads = []
     _condition = Condition()
 
@@ -40,6 +51,8 @@ class AsyncCachingThread(Thread):
 
 
 class CacheWrapper(object):
+    """ General wrapper base class for django caches.
+    """
     _threads = []
 
     def __init__(self, django_cache):
@@ -67,6 +80,9 @@ class CacheWrapper(object):
 
 
 class LocalCacheWrapper(CacheWrapper):
+    """ Adds cascading deletes to local memory cache.
+    """
+
     def delete(self, key, version=None, cascade=True):
         key = self._cache.make_key(self.make_key(key))
         if cascade:
@@ -77,6 +93,9 @@ class LocalCacheWrapper(CacheWrapper):
 
 
 class DatabaseCacheWrapper(CacheWrapper):
+    """ Adds cascading deletes and async. caching to database cache.
+    """
+
     def set(self, key, value, version=None, timeout=DEFAULT_TIMEOUT):
         key = self.make_key(key)
         AsyncCachingThread(target=super(DatabaseCacheWrapper, self).set, args=(key, value),
@@ -92,12 +111,13 @@ class DatabaseCacheWrapper(CacheWrapper):
         else:
             super(DatabaseCacheWrapper, self).delete(key, version=version)
 
-
+# see settings.py for configuration of these caches.
 L1 = LocalCacheWrapper(caches['L1'])
 L2 = LocalCacheWrapper(default_cache)
 L3 = DatabaseCacheWrapper(caches['L3'])
 
 
+# accessor/setter functions
 def set(key, value, l1=False, l2=True, l3=True, version=None, timeout=DEFAULT_TIMEOUT):
     for cache in [c for c, do in ((L1, l1), (L2, l2), (L3, l3)) if do]:
         cache.set(key, value, version=version, timeout=timeout)
