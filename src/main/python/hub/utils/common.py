@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-""" Misc. utility functions. """
 from __future__ import unicode_literals
+
+""" Misc. utility functions. """
 
 import types
 
@@ -18,7 +19,7 @@ def str2bool(v):
     """
     Converts the strings 'true' and 'false' to their (python) boolean counterparts and returns the input
     unchanged for other values.
-    :param v: String.
+    :param v: str.
     :return: True/False if the input was 'true'/'false', v otherwise.
     """
     if v.lower() in ('true', 'false'):

@@ -5,6 +5,9 @@ from hub.formats import Format
 """
 Fixture loading command. We don't use django fixtures because we want to verify that the input data are actually
 parseable.
+
+Usage:
+    ./manage.py loadfixtures [--no-perfdata]
 """
 
 import logging

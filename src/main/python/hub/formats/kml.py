@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+"""
+KML format support. Uses fastkml library to read/write KML file to/from DataFrames.
+"""
+
 import collections
 import logging
 
@@ -9,15 +13,14 @@ from fiona.crs import from_epsg
 from lxml.etree import CDATA
 import pygeoif
 import shapely
+
 from shapely.geometry.proxy import CachingGeometryProxy
 
 from hub.formats import Format, Formatter, Parser
 from hub.structures.file import File
 from hub.structures.frame import OdhType, OdhSeries
 from hub.utils import ogr2ogr
-
 from hub.exceptions import warn
-
 from hub.utils.common import ensure_tuple
 
 logger = logging.getLogger(__name__)
@@ -34,6 +37,12 @@ class KML(Format):
 
     extension = ogr_format.extension[0]
 
+    # Attributes always present in a KML file (per row/placemark)
+    KML_ATTRS = ('name', 'description', 'address', 'author', 'begin', 'end')
+
+    # KML uses SRID 4326 by definition
+    CRS = from_epsg(4326)
+
     @classmethod
     def is_format(cls, file, *args, **kwargs):
         return file.extension == cls.extension
@@ -41,8 +50,6 @@ class KML(Format):
 
 class KMLFormatter(Formatter):
     targets = KML,
-
-    KML_ATTRS = ('name', 'description', 'address', 'author', 'begin', 'end')
 
     TYPE_MAP = {
         OdhType.INTEGER: 'int',
@@ -55,13 +62,16 @@ class KMLFormatter(Formatter):
         OdhType.FLOAT: 'float',
     }
 
-    CRS = from_epsg(4326)
-
     @classmethod
     def _create_schema(cls, df, skip_kml_attrs):
+        """
+        Creates a KML simpledata schema (used for extended non-default-KML attributes)
+        :param skip_kml_attrs: if true, kml attributes are regarded as/included as extended attributes
+        :return: fastkml.Schema
+        """
         schema = fastkml.Schema(fastkml.config.NS, df.name, df.name)
         for c, s in df.iteritems():
-            if c not in cls.KML_ATTRS or skip_kml_attrs:
+            if c not in KML.KML_ATTRS or skip_kml_attrs:
                 try:
                     type_ = cls.TYPE_MAP[s.odh_type]
                 except KeyError:
@@ -91,7 +101,7 @@ class KMLFormatter(Formatter):
                          ' EPSG 4326 to be used, this may lead to an invalid file.'.format(c))
                     s_new = s
                 else:
-                    s_new = s.to_crs(cls.CRS)
+                    s_new = s.to_crs(KML.CRS)
 
                 df_geoms_copy[c] = s_new
 
@@ -110,16 +120,20 @@ class KMLFormatter(Formatter):
                 folder.append(placemark)
                 row = row.to_dict()
 
+                # if skip_kml_attrs is false, use the default KML attrs for matching column names in the dataframe,
+                # otherwise they are just exported as simple data (exteded attributes)
                 if not skip_kml_attrs:
                     id_ = str(row.pop('id', i))
                     placemark.id = id_
 
-                    for key in cls.KML_ATTRS:
+                    for key in KML.KML_ATTRS:
                         value = row.pop(key, None)
                         if value:
                             setattr(placemark, key, CDATA(unicode(value)))
 
+                # all other attributes are key value pairs
                 if row:
+                    # CDATA ensures no XML errors are thrown, we don't want to escape everything
                     properties = [{'name': unicode(k), 'value': v if v is None else CDATA(unicode(v))} for k, v in
                                   row.iteritems()]
                     schema_data = fastkml.SchemaData(ns, schema_url, properties)
@@ -137,7 +151,7 @@ class KMLFormatter(Formatter):
                 if geometry:
                     placemark.geometry = geometry
 
-        return [File.from_string(name + '.kml', kml.to_string()).file_group]
+        return [File.from_string(name + '.' + KML.extension, kml.to_string()).file_group]
 
 
 class KMLParser(Parser):
@@ -145,6 +159,11 @@ class KMLParser(Parser):
 
     @classmethod
     def proxy_to_obj(cls, proxy):
+        """
+        Converts a shapely proxy object usually returned by the fastkml parser into a *real* (full) shapely object
+        :param proxy: Shapely geometry proxy object
+        :return: Shapely geometry
+        """
         res = proxy
         if isinstance(proxy, CachingGeometryProxy):
             res = getattr(shapely.geometry, proxy.geom_type)(proxy)
@@ -152,6 +171,11 @@ class KMLParser(Parser):
 
     @classmethod
     def _get_geoms(cls, geometry):
+        """
+        Converts whatever geometry is returned by fastkml into a shapely geometry required by geopandas.
+        :return: Shapely geometries
+        :rtype: dict
+        """
         if isinstance(geometry, pygeoif.GeometryCollection):
             result = {}
             for i, g in enumerate(geometry.geoms):
@@ -179,7 +203,7 @@ class KMLParser(Parser):
                 data = collections.defaultdict(constructor)
 
                 for i, placemark in enumerate(placemarks):
-                    for key in ('id', 'name', 'description', 'address', 'author', 'begin', 'end'):
+                    for key in KML.KML_ATTRS:
                         value = getattr(placemark, key, None)
                         if enforce_kml_attrs or value:
                             data[key][i] = value
@@ -199,7 +223,7 @@ class KMLParser(Parser):
 
                 for c, s in df.iteritems():
                     if s.odh_type == OdhType.GEOMETRY:
-                        s.crs = from_epsg(4326)  # KML uses SRID 4326 by definition
+                        s.crs = KML.CRS
 
                 df.name = folder.name or file.basename
                 dfs.append(df)
