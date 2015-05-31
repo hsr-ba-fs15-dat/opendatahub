@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 
 """
 ogr2ogr (GDAL) command line interface wrapper
 Requires ogr2ogr to be installed (e.g. sudo apt-get install gdal-bin)
 """
+
+from __future__ import unicode_literals
+
 from functools import partial
 import subprocess
 import collections
@@ -33,12 +35,18 @@ SUPPORTED_DRIVERS = {ogr.GetDriver(i).GetName() for i in xrange(ogr.GetDriverCou
 
 class OgrFormat(object):
     """
-    Describes an ogr2ogr/GDAL supported format.
+    Configuration for ogr2ogr formats (drivers).
     """
-
     formats = []
 
     def __init__(self, extension, identifier, list_all, addtl_args=(), allowed_return_codes=()):
+        """
+        :type extension: unicode or list
+        :type identifier: unicode
+        :type list_all: bool
+        :type addtl_args: tuple
+        :type allowed_return_codes: tuple or int
+        """
         self.extension = com.ensure_tuple(extension)
         self.identifier = identifier
         self.list_all = list_all
@@ -48,6 +56,7 @@ class OgrFormat(object):
 
     @classmethod
     def get_format(cls, file_group):
+        """ Tries to find the corresponding OgrFormat for the given file group. """
         if len(file_group.files) == 1 and isinstance(file_group[0], WfsUrl):
             return WFS
 
@@ -73,6 +82,10 @@ INTERLIS_1 = OgrFormat(['itf', 'ili', 'imd'], 'Interlis 1', True)
 
 
 def _rand_string(n):
+    """ Generates a random string of length n.
+    :type n: int
+    :return: Random string consisting of n ASCII letters and/or digits.
+    """
     return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(n))
 
 
