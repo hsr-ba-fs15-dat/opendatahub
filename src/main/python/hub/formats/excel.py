@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-""" Format stuff for MS Excel files (both xls and xlsx). """
+""" Format for MS Excel files (both xls and xlsx). """
 
 from __future__ import unicode_literals
 
@@ -34,10 +34,10 @@ class ExcelFormatter(Formatter):
         results = []
 
         for df in dfs:
-            with tempfile.NamedTemporaryFile(suffix=".xlsx") as f:
+            with tempfile.NamedTemporaryFile(suffix='.' + Excel.extension) as f:
                 df.as_safe_serializable().to_excel(f.name, engine='xlsxwriter', index=False)
                 f.seek(0)
-                results.append(File.from_string(df.name + '.xlsx', f.read()).file_group)
+                results.append(File.from_string(df.name + '.' + Excel.extension, f.read()).file_group)
         return results
 
 

@@ -14,12 +14,12 @@ if 'GPKG' in ogr2ogr.SUPPORTED_DRIVERS:
         description = """
         Universelles Format für Vektor- und Raster-basierte Geo-Daten.
         """
-        extension = 'gpkg'
         ogr_format = ogr2ogr.GPKG
+        extension = ogr_format.extension
 
         @classmethod
         def is_format(cls, file, *args, **kwargs):
-            return file.extension == 'gpkg'
+            return file.extension == cls.extension
 
     class GeoPackageFormatter(GeoFormatterBase):
         targets = GeoPackage,
@@ -33,7 +33,8 @@ if 'GPKG' in ogr2ogr.SUPPORTED_DRIVERS:
 
         @classmethod
         def format(cls, dfs, name, format, *args, **kwargs):
-            return super(GeoPackageFormatter, cls).format(dfs, name, format, 'GPKG', 'gpkg', *args, **kwargs)
+            return super(GeoPackageFormatter, cls).format(dfs, name, format, GeoPackage.ogr_format.identifier,
+                                                          GeoPackage.extension, *args, **kwargs)
 
     class GeoPackageParser(Parser):
         accepts = GeoPackage,
@@ -41,4 +42,4 @@ if 'GPKG' in ogr2ogr.SUPPORTED_DRIVERS:
         @classmethod
         def parse(cls, file, format, *args, **kwargs):
             with file.file_group.on_filesystem() as temp_dir:
-                return gp.read_file(os.path.join(temp_dir, file.name), driver='GPKG')
+                return gp.read_file(os.path.join(temp_dir, file.name), driver=GeoPackage.ogr_format.identifier)

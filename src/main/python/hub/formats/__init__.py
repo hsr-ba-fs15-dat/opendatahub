@@ -19,7 +19,6 @@ for name, module in import_submodules('hub.formats').iteritems():
 
 import_submodules(plugins)
 
-
 identify = Format.identify
 format = Formatter.format
 parse = Parser.parse

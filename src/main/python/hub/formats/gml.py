@@ -13,11 +13,11 @@ if 'GML' in ogr2ogr.SUPPORTED_DRIVERS:
         Geometry Markup Language (GML) ist ein Dateiformat zum Austausch von Geodaten.
         """
 
-        extension = 'gml'
+        extension = ogr_format.extension[0]
 
         @classmethod
         def is_format(cls, file, *args, **kwargs):
-            return file.extension == 'gml'
+            return file.extension == cls.extension
 
     class GMLParser(GenericOGRParser):
         accepts = GML,

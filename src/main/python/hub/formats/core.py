@@ -14,17 +14,18 @@ import collections
 from hub.structures.frame import OdhFrame
 import hub.utils.common as com
 from opendatahub.utils.plugins import RegistrationMixin
+from hub.exceptions import OdhNotSupported, OdhException
 
 logger = logging.getLogger(__name__)
 
 
-class NoFormatterException(Exception):
-    """ No formatter found for the requested format """
+class NoFormatterException(OdhNotSupported):
+    """ No formatter found which was able to *successfully* format the given input """
     pass
 
 
-class FormattingException(Exception):
-    """ Formatting failed. """
+class FormattingException(OdhException):
+    """ Formatter is present, but failed to format for some reason. """
     pass
 
 

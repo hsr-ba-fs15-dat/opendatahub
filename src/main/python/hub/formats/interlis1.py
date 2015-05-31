@@ -14,7 +14,7 @@ if 'Interlis 1' in ogr2ogr.SUPPORTED_DRIVERS:
         INTERLIS ist ein Dateiformat zum Austausch von Geodaten.
         """
 
-        extension = 'itf'
+        extension = ogr_format.extension[0]
 
         @classmethod
         def is_format(cls, file, *args, **kwargs):

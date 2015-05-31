@@ -22,7 +22,8 @@ class GeoJSON(Format):
 
     @classmethod
     def is_format(cls, file, *args, **kwargs):
-        return file.extension == cls.extension or (file.extension == 'json' and '"geometry"' in file)
+        return file.extension == cls.extension or \
+            (file.extension == cls.ogr_format.extension[0] and '"geometry"' in file)
 
 
 class GeoJSONFormatter(GeoFormatterBase):
@@ -35,10 +36,12 @@ class GeoJSONFormatter(GeoFormatterBase):
         for df in dfs:
             if df.has_geoms:
                 gdf = df.to_gdf(supported_geoms=cls.supported_types)
-                formatted.append(File.from_string(df.name + '.json', gdf.to_json()).file_group)
+                formatted.append(
+                    File.from_string(df.name + '.' + GeoJSON.ogr_format.extension[0], gdf.to_json()).file_group)
             else:
                 formatted.append(
-                    File.from_string(df.name + '.json', df.as_safe_serializable().to_json(orient='records')).file_group)
+                    File.from_string(df.name + '.' + GeoJSON.ogr_format.extension[0],
+                                     df.as_safe_serializable().to_json(orient='records')).file_group)
 
         return formatted
 
@@ -49,4 +52,4 @@ class GeoJSONParser(Parser):
     @classmethod
     def parse(cls, file, format, *args, **kwargs):
         with file.file_group.on_filesystem() as temp_dir:
-            return gp.read_file(os.path.join(temp_dir, file.name), driver='GeoJSON')
+            return gp.read_file(os.path.join(temp_dir, file.name), driver=GeoJSON.ogr_format.identifier)

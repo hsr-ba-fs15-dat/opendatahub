@@ -30,7 +30,8 @@ class JSONFormatter(Formatter):
 
         for df in dfs:
             results.append(
-                File.from_string(df.name + '.json', df.as_safe_serializable().to_json(orient='records')).file_group)
+                File.from_string(df.name + '.' + JSON.extension,
+                                 df.as_safe_serializable().to_json(orient='records')).file_group)
         return results
 
 

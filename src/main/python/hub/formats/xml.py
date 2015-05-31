@@ -19,7 +19,8 @@ class XML(Format):
 
     @classmethod
     def is_format(cls, file, *args, **kwargs):
-        return file.extension == 'xml'  # or '<?xml' in file  # do not uncomment, GML are xml too (and many more)
+        # do not uncomment below, GML are XML too (and many more)
+        return file.extension == cls.extension  # or '<?xml' in file
 
 
 class XMLFormatter(Formatter):
@@ -40,7 +41,7 @@ class XMLFormatter(Formatter):
 
                 etree.SubElement(root, 'row', attributes)
 
-            results.append(File.from_string(df.name + '.xml',
+            results.append(File.from_string(df.name + '.' + XML.extension,
                                             etree.tostring(root, encoding='UTF-8', xml_declaration=True,
                                                            pretty_print=True)).file_group)
         return results

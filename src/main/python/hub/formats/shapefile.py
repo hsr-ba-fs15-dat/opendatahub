@@ -17,11 +17,11 @@ if 'ESRI Shapefile' in ogr2ogr.SUPPORTED_DRIVERS:
         Ein ursprünglich für die Firma ESRI entwickeltes Format für Geodaten.
         """
 
-        extension = 'shp'
+        extension = ogr_format.extension[0]
 
         @classmethod
         def is_format(cls, file, *args, **kwargs):
-            return file.extension == 'shp'
+            return file.extension == cls.extension
 
     class ShapefileFormatter(GeoFormatterBase):
         targets = Shapefile,
@@ -30,7 +30,8 @@ if 'ESRI Shapefile' in ogr2ogr.SUPPORTED_DRIVERS:
 
         @classmethod
         def format(cls, dfs, name, format, *args, **kwargs):
-            return super(ShapefileFormatter, cls).format(dfs, name, format, 'ESRI Shapefile', 'shp', *args, **kwargs)
+            return super(ShapefileFormatter, cls).format(dfs, name, format, Shapefile.ogr_format.identifier,
+                                                         Shapefile.extension, *args, **kwargs)
 
     class ShapefileParser(Parser):
         accepts = Shapefile,
@@ -38,4 +39,4 @@ if 'ESRI Shapefile' in ogr2ogr.SUPPORTED_DRIVERS:
         @classmethod
         def parse(cls, file, format, *args, **kwargs):
             with file.file_group.on_filesystem() as temp_dir:
-                return gp.read_file(os.path.join(temp_dir, file.name), driver='ESRI Shapefile')
+                return gp.read_file(os.path.join(temp_dir, file.name), driver=Shapefile.ogr_format.identifier)

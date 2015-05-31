@@ -64,6 +64,8 @@ class CSVFormatter(Formatter):
 
     @classmethod
     def _create_csvt(cls, df):
+        """ Creates a csvt file for the  given DataFrame
+        """
         # http://www.gdal.org/drv_csv.html
         # http://giswiki.hsr.ch/GeoCSV
         csvt_line = ','.join('"{}"'.format(cls.TYPE_MAP.get(s.odh_type, cls.FALLBACK_TYPE)) for i, s in df.iteritems())
@@ -71,11 +73,17 @@ class CSVFormatter(Formatter):
 
     @classmethod
     def _create_csv(cls, df):
+        """ Creates a csv file for the given DataFrame
+        """
         return File.from_string(df.name + '.csv',
                                 df.as_safe_serializable().to_csv(index=False, encoding='UTF-8', sep=str(';')))
 
     @classmethod
     def _create_prj(cls, df):
+        """
+        Creates a projection file in WKT format (not ESRI!) for the given DataFrame and only for the first geometry
+        (in case multiple are present).
+        """
         try:
             geometry = next(s for c, s in df.iteritems() if s.odh_type == OdhType.GEOMETRY and s.crs)
             proj = pyproj.Proj(geometry.crs)
@@ -104,6 +112,8 @@ class CSVParser(Parser):
     """ Parser for (Geo)CSV. """
     accepts = CSV,
 
+    # regex used to parse the single line in the CSVT file striping away any surrounding spaces and extracting optional
+    # parameters
     CSVT_RE = re.compile(r'\s*"?(\w+)\s*(\((.*)\))?"?\s*', re.IGNORECASE)
 
     @classmethod
@@ -155,6 +165,8 @@ class CSVParser(Parser):
 
     @classmethod
     def _parse_date(cls, i, s, df, types, type_arg):
+        # we omitted the specific format parameter because we cannot specify the timezone with it, while inferring
+        # the format seems to be able to recognize the timezone correctly.
         return pd.to_datetime(s, infer_datetime_format=True)  # format='%Y-%m-%d'
 
     @classmethod
@@ -173,6 +185,8 @@ class CSVParser(Parser):
 
     @classmethod
     def _parse_point(cls, i, s, df, types, type_arg):
+        """ Parses the special GeoCSV case of a point (x, y coordinate pairs)
+        """
         type_other = 'x' if type_arg == 'y' else 'y'
 
         i_other = types.index(('point', type_other))
@@ -201,6 +215,7 @@ class CSVParser(Parser):
         df = cls._parse_csv(fg)
         df.crs = crs
 
+        # if we have csvt file, ensure types are converted by calling the according _parse_<type> method if present
         if types:
             assert len(df.columns) == len(types)
 
