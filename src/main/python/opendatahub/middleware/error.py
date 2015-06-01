@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 
 """ Django middleware for better handling of errors/warnigns. """
 
@@ -17,6 +18,7 @@ logger = logging.getLogger(__name__)
 
 class ExceptionMiddleware(object):
     """ Wraps exception for better user experience in case of errors. """
+
     def process_exception(self, request, exception):
         """ Wraps exceptions for ajax requests. """
         if request.is_ajax() and not isinstance(exception, Http404):
@@ -27,6 +29,7 @@ class ExceptionMiddleware(object):
 
 class WarningMiddleware(object):
     """ Displays warnings to the user. """
+
     def process_view(self, request, view_func, view_args, view_kwargs):
         if request.is_ajax():
             with warnings.catch_warnings(record=True) as all_warnings:

@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+""" Plugin-mechanism related utils
+"""
+
 import importlib
 import pkgutil
 
 
 class CallbackMeta(type):
     """ Meta class for plugin loading. """
+
     def __init__(cls, name, bases, dct):
         cls.meta_init(name, bases, dct)
         super(CallbackMeta, cls).__init__(name, bases, dct)

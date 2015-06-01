@@ -5,6 +5,10 @@ from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 from hub.models import DocumentModel, FileGroupModel, FileModel, TransformationModel, UrlModel
 
+"""
+Contains the opendatahub specific permission profiles.
+"""
+
 
 class IsOwnerOrReadOnly(BasePermission):
     def has_object_permission(self, request, view, obj):

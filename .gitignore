@@ -56,3 +56,6 @@ target/
 
 # GDAL build folder
 gdal-*
+
+ipython
+datagen

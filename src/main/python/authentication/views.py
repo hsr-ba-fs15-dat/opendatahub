@@ -20,12 +20,18 @@ from authentication.serializers import UserSerializer
 
 
 class PublicKeysView(APIView):
+    """
+    Gets the Public keys for different social media plattforms.
+    """
     def get(self, request):
         return Response({'facebook': config.FACEBOOK_PUBLIC,
                          'github': config.GITHUB_PUBLIC})
 
 
 class CurrentUserView(APIView):
+    """
+    View for getting the current logged in user.
+    """
     permission_classes = (IsAuthenticated,)
     queryset = UserProfile.objects.all()
 
@@ -49,6 +55,12 @@ def auth_by_token(request, backend, auth_token):
 
 
 def get_access_token(request, backend):
+    """
+    Tries to get the access token from an OAuth Provider
+    :param request:
+    :param backend:
+    :return:
+    """
     access_token_url = ''
     secret = ''
 
@@ -76,7 +88,7 @@ def get_access_token(request, backend):
 
 
 class SocialView(APIView):
-    """View to authenticate users through Facebook."""
+    """View to authenticate users through social media."""
 
     permission_classes = (AllowAny,)
 

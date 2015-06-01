@@ -5,7 +5,18 @@ from requests import request, HTTPError
 
 
 def save_profile_picture(strategy, user, response, details, is_new=False, *args, **kwargs):
-    if is_new or True:
+    """
+    fetches the picture of a users social media profile and saves the link.
+    :param strategy:
+    :param user:
+    :param response:
+    :param details:
+    :param is_new:
+    :param args:
+    :param kwargs:
+    :return:
+    """
+    if is_new:
         url = None
         if strategy.request.backend.name == 'facebook':
             url = 'http://graph.facebook.com/{0}/picture'.format(response['id'])
