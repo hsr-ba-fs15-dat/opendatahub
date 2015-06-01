@@ -79,9 +79,7 @@ module odh.main {
                 this.name = data.name;
                 this.description = data.description;
                 this.transformation = data.transformation;
-                if (!data.is_template) {
-                    this.previewTransformation = data.transformation;
-                } else {
+                if (data.is_template) {
                     this.showExpertPanel = true;
                 }
                 this.private = data.private;
@@ -183,6 +181,9 @@ module odh.main {
          * @param table
          */
         public loadIfPackageUsed(table:main.ITable) {
+            if (this.selected[table.name]) {
+                return;
+            }
             if (this.checkIfOurTable(table)) {
                 this.PackageService.getPreviewByUniqueName(table.name, {}).then((result:main.ITable) => {
                     if (result) {
@@ -198,6 +199,7 @@ module odh.main {
          * triggers the preview generation
          */
         public preview() {
+            this.parse();
             this.previewTransformation = this.transformation;
         }
 
