@@ -48,7 +48,7 @@ class GenericOGRParser(Parser):
             # if conversion fails, it's likely due to missing input CRS (ogr2ogr does not know the CRS of the file)
             # in this case just convert file without CRS conversion (ogr2ogr will scale the coordinates)
 
-            # TODO: not that this is suboptimal and should be fixed by actually implementing native parser/formatters
+            # TODO: note that this is suboptimal and should be fixed by actually implementing native parser/formatters
             # for the given file formats (GML, INTERLIS, ...) some time in the future
             file_groups = ogr2ogr.ogr2ogr(file.file_group, ogr2ogr.KML)
 
