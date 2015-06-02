@@ -18,8 +18,7 @@ import sys
 
 import os
 import dj_database_url
-from authentication.config import SOCIAL_AUTH_FACEBOOK_KEY, SOCIAL_AUTH_FACEBOOK_SECRET, SOCIAL_AUTH_GITHUB_KEY, \
-    SOCIAL_AUTH_GITHUB_SECRET
+from authentication.config import *  # noqa
 # SECURITY WARNING: don't run with debug turned on in production!
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 DEBUG = bool(os.environ.get('DJANGO_DEBUG', False))
