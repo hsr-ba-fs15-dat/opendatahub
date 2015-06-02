@@ -15,4 +15,7 @@ class FileViewSet(viewsets.ModelViewSet):
     queryset = FileModel.objects.all()
     serializer_class = FileSerializer
 
+    paginate_by_param = 'count'
+    paginate_by = 20
+
     permission_classes = IsOwnerOrPublic,
