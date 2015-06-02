@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
-from rest_framework.test import APITestCase
 
 '''
 This test tries to format all fixtures with all available formats.
 '''
+
+from __future__ import unicode_literals
+
+from rest_framework.test import APITestCase
+import os
 
 
 class FixtureTest(APITestCase):
@@ -46,22 +48,23 @@ def get_fixture_test(id, url, fmt):
     return fixture_test
 
 
-from rest_framework.test import APIClient
+IS_CI = 'CI' in os.environ
 
-print 'Creating test cases...'
-client = APIClient()
-fixtures = find_fixtures(client)
-format_list = [fmt['name'].lower() for fmt in client.get('/api/v1/format/').data]
+if not IS_CI:
+    from rest_framework.test import APIClient
 
-if 'geopackage' in format_list:  # GDAL >= 2.0.0 - support in 1.11.x is basically unusable
-    format_list.remove('geopackage')
-# if 'interlis1' in format_list:  # GDAL < 1.11.0 - results in segfault from 1.11.0 onwards (not fixed in 2.0.0beta1)
-#    format_list.remove('interlis1')
+    print 'Creating test cases...'
+    client = APIClient()
+    fixtures = find_fixtures(client)
+    format_list = [fmt['name'].lower() for fmt in client.get('/api/v1/format/').data]
 
-for (id, url) in fixtures:
-    for fmt in format_list:
-        test = get_fixture_test(id, url, fmt)
-        test_name = 'test_{}_{}'.format(id.lower(), fmt.lower())
+    if 'geopackage' in format_list:  # GDAL >= 2.0.0 - support in 1.11.x is basically unusable
+        format_list.remove('geopackage')
 
-        setattr(FixtureTest, test_name, test)
-print 'Preparations done.'
+    for (id, url) in fixtures:
+        for fmt in format_list:
+            test = get_fixture_test(id, url, fmt)
+            test_name = 'test_{}_{}'.format(id.lower(), fmt.lower())
+
+            setattr(FixtureTest, test_name, test)
+    print 'Preparations done.'
