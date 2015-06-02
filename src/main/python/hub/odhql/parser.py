@@ -259,8 +259,42 @@ class OdhQLParser(DocMixin):
     Die Resultate mehrerer Abfragen können mithilfe von Union kombiniert werden. Zu beachten sind folgende Punkte:
     - Union verhält sich wie UNION ALL in SQL, d.h. es wird keine Deduplizierung der Einträge vorgenommen
     - Die einzelnen Abfragen müssen kompatible Feldlisten liefern, d.h. gleiche Feld-Zahl und Feld-Typen.
+    - Sollten Geometrie-Spalten vorhanden sein, so werden die Geometrien in das Referenzsystem der ersten Abfrage
+    umgewandelt. Es ist somit nötig, dass für alle Geometrien ein Referenzsystem bekannt ist.
 
     Als Feld-Namen werden im Resultat die Feld-Namen der ersten Abfrage verwendet.
+
+    Datentypen
+    ==========
+
+    ODHQL unterstützt zurzeit folgende Datentypen:
+
+        INTEGER
+            32-Bit Ganzzahl-Wert
+
+        BIGINT
+            64-Bit Ganzzahl-Wert
+
+        SMALLINT
+            16-Bit Ganzzahl-Wert
+
+        FLOAT
+            64-Bit Fliesskommazahl
+
+        DATETIME
+            Datum und Zeit
+
+        TEXT
+            Zeichenkette beliebiger Länge
+
+        GEOMETRY
+            Geometrie-Objekte. Nicht näher spezifiziert, d.h. es können Geometrien verschiedener Art in einer Spalte
+            vorhanden sein. Der Experte ist selbst dafür Verantwortlich, dass gleiche Typen bei einer Transformation
+            herauskommen, sodass diese für alle Zielformate kompatibel ist.
+
+    Hierbei ist wichtig anzumerken, dass diese Typen keine Keywords der Sprache sind, sondern beispielsweise
+    bei der Verwendung der CAST() Funktion als Zeichenkette (z.B. 'INTEGER') übergeben werden müssen.
+
     """
 
     grammar = None
