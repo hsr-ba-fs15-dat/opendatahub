@@ -24,7 +24,7 @@ module odh.auth {
         id: number;
         username: string;
         first_name: string;
-        last_name: string
+        last_name: string;
     }
     /**
      * responsible for handling the user authentication.
