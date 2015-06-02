@@ -104,7 +104,8 @@
                         ng-options="opt as (opt.alias == opt.name?opt.alias+'['+opt.type+']':(opt.alias + ' [' + opt.name + ']'))
                          for opt in vm.selection.expression[table.uniqueId].joinTable.cols
                          | filter:{type:vm.selection.expression[table.uniqueId].joinField.type, }"
-                        ng-model="vm.selection.expression[table.uniqueId].foreignKey">
+                        ng-model="vm.selection.expression[table.uniqueId].foreignKey"
+                        ng-change="vm.generate()">
                 </select>
             </label><br/>
         </div>
