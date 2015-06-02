@@ -7,8 +7,6 @@ from __future__ import unicode_literals
 
 import os
 
-from opendatahub.settings import PRODUCTION
-
 
 FACEBOOK_SECRET = os.environ.get('FACEBOOK_SECRET') or 'Facebook Client Secret'
 GITHUB_SECRET = os.environ.get('GITHUB_SECRET') or 'GitHub Client Secret'
@@ -19,5 +17,5 @@ TWITTER_CONSUMER_KEY = os.environ.get('TWITTER_CONSUMER_KEY') or 'Twitter Consum
 TWITTER_CONSUMER_SECRET = os.environ.get('TWITTER_CONSUMER_SECRET') or 'Twitter Consumer Secret'
 TWITTER_CALLBACK_URL = os.environ.get('TWITTER_CALLBACK_URL') or 'Twitter Redirect URI'
 
-FACEBOOK_PUBLIC = '401520096685508' if PRODUCTION else os.environ.get('FACEBOOK_PUBLIC', '401522313351953')
-GITHUB_PUBLIC = '8ef558ed3fb0f5385da5' if PRODUCTION else os.environ.get('GITHUB_PUBLIC', 'b24753ec88ca98150354')
+FACEBOOK_PUBLIC = os.environ.get('FACEBOOK_PUBLIC', '401522313351953')
+GITHUB_PUBLIC = os.environ.get('GITHUB_PUBLIC', 'b24753ec88ca98150354')
