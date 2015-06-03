@@ -243,6 +243,7 @@ module odh.main {
             this.transformationObject.transformation = this.transformation;
             this.transformationObject.name = this.name;
             this.transformationObject.description = this.description;
+            this.transformationObject.private = this.private;
             this.transformationObject.put().then(() => {
                 this.ToastService.success('Transformation gespeichert');
                 this.$state.reload();
