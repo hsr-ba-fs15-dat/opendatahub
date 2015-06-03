@@ -82,9 +82,18 @@
 
             </div>
 
-            <div class="well" ng-repeat="preview in group.preview">
+            <div class="well" ng-repeat-start="preview in group.preview">
                 <legend>{{preview.unique_name}}</legend>
                 <odh-preview pkg="preview" success="doc.previewSuccess"></odh-preview>
+            </div>
+
+            <div class="well" ng-repeat-end="preview in group.preview"
+                 ng-show="group.related_transformations.length > 0">
+                <h5>Verwendet in folgenden Transformationen</h5>
+                <span ng-repeat="rel in group.related_transformations">
+                        <a ui-sref="transformation-detail({id: rel.id})">{{ rel.name }}</a>{{$last?'':','}}
+                </span>
+
             </div>
         </div>
     </div>
