@@ -127,8 +127,8 @@ class TransformationModel(PackageModel):
 
     is_template = models.BooleanField(default=False, null=False)
 
-    referenced_file_groups = models.ManyToManyField(FileGroupModel)
-    referenced_transformations = models.ManyToManyField('TransformationModel')
+    referenced_file_groups = models.ManyToManyField(FileGroupModel, related_name='related_transformations')
+    referenced_transformations = models.ManyToManyField('TransformationModel', related_name='related_transformations')
 
     def __unicode__(self):
         return '<{} id={}>'.format(self.__class__.__name__, self.id)

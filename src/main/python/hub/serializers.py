@@ -89,6 +89,12 @@ class UrlSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('id', 'url', 'source_url', 'url_format', 'refresh_after', 'type', 'file_group')
 
 
+class TransformationIdSerializer(serializers.ModelSerializer):
+    class Meta(object):
+        model = TransformationModel
+        fields = ('id', 'name')
+
+
 class FileGroupSerializer(serializers.HyperlinkedModelSerializer):
     files = FileSerializer(many=True, read_only=True)
     urls = UrlSerializer(many=True, read_only=True)
@@ -99,10 +105,12 @@ class FileGroupSerializer(serializers.HyperlinkedModelSerializer):
 
     preview = serializers.HyperlinkedIdentityField('filegroupmodel-preview')
 
+    related_transformations = TransformationIdSerializer(read_only=True, many=True)
+
     class Meta(object):
         """ Meta class for FileGroupSerializer. """
         model = FileGroupModel
-        fields = ('id', 'url', 'document', 'files', 'urls', 'data', 'preview')
+        fields = ('id', 'url', 'document', 'files', 'urls', 'data', 'preview', 'related_transformations')
         depth = 1
 
 
@@ -118,6 +126,8 @@ class TransformationSerializer(serializers.HyperlinkedModelSerializer):
     referenced_file_groups = serializers.HyperlinkedIdentityField('transformationmodel-filegroups')
     referenced_transformations = serializers.HyperlinkedIdentityField('transformationmodel-transformations')
 
+    related_transformations = TransformationIdSerializer(read_only=True, many=True)
+
     owner = UserDisplaySerializer(read_only=True)
 
     data = serializers.HyperlinkedIdentityField('transformationmodel-data')
@@ -128,7 +138,7 @@ class TransformationSerializer(serializers.HyperlinkedModelSerializer):
         """ Meta class for TransformationSerializer. """
         model = TransformationModel
         fields = ('id', 'url', 'name', 'description', 'transformation', 'private', 'owner', 'data', 'is_template',
-                  'preview', 'referenced_file_groups', 'referenced_transformations')
+                  'preview', 'referenced_file_groups', 'referenced_transformations', 'related_transformations')
 
     def to_representation(self, instance):
         ret = super(TransformationSerializer, self).to_representation(instance)
