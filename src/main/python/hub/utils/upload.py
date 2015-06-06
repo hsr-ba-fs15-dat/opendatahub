@@ -103,8 +103,8 @@ class UrlHandler(object):
 
         if refresh < 60:
             refresh = 60
-        if refresh > 86400:
-            refresh = 86400
+        if refresh > 604800:
+            refresh = 604800
 
         is_wfs = self.check_wfs(url)
         type = 'wfs' if is_wfs else 'auto'
