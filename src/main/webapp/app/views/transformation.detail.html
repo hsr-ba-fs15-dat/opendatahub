@@ -41,7 +41,7 @@
 
                 </div>
             </div>
-            <div class="panel panel-default">
+            <div class="panel panel-default"> <!-- Vorschau -->
                 <div class="panel-heading">
                     Vorschau
                     <div class="btn-group btn-primary pull-right btn-in-header btn-sm" ng-if="vm.previewSuccess">
@@ -63,6 +63,18 @@
                     <odh-preview pkg="vm.promise" query="vm.previewTransformation"
                                  success="vm.previewSuccess"></odh-preview>
 
+                </div>
+            </div>
+
+            <div class="panel panel-default"
+                 ng-show="vm.transformationObject.related_transformations.length > 0">
+                <div class="panel-heading">
+                    Diese Transformation wird verwendet in folgenden Transformationen:
+                </div>
+                <div class="panel-body">
+                    <span ng-repeat="rel in vm.transformationObject.related_transformations">
+                        <a ui-sref="transformation-detail({id: rel.id})">{{ rel.name }}</a>{{$last?'':','}}
+                    </span>
                 </div>
             </div>
 
