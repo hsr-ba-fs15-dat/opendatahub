@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 
 from rest_framework import serializers
 from rest_framework.reverse import reverse
+from django.db.models import Q
 
 from authentication.serializers import UserDisplaySerializer
 from hub.models import PackageModel, DocumentModel, FileGroupModel, FileModel, TransformationModel, UrlModel
@@ -89,29 +90,47 @@ class UrlSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('id', 'url', 'source_url', 'url_format', 'refresh_after', 'type', 'file_group')
 
 
-class TransformationIdSerializer(serializers.ModelSerializer):
+class TransformationIdSerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
+    url = serializers.HyperlinkedIdentityField(view_name='transformationmodel-detail')
+    name = serializers.CharField(read_only=True)
+
     class Meta(object):
-        model = TransformationModel
-        fields = ('id', 'name')
+        fields = ('id', 'url', 'name')
 
 
-class FileGroupSerializer(serializers.HyperlinkedModelSerializer):
+class RelatedTransformationMixin(object):
+    def _get_related_transformations(self, obj, request):
+        filter = Q(private=False)
+        if request.user:
+            filter |= Q(owner=request.user.id)
+
+        related_transformations = obj.related_transformations.filter(filter)
+
+        serializer = TransformationIdSerializer(related_transformations, many=True, context={'request': request})
+        return serializer.data
+
+
+class FileGroupSerializer(serializers.HyperlinkedModelSerializer, RelatedTransformationMixin):
     files = FileSerializer(many=True, read_only=True)
     urls = UrlSerializer(many=True, read_only=True)
 
     document = DocumentSerializer(read_only=True)
 
+    related_transformations = serializers.SerializerMethodField()
+
     data = serializers.HyperlinkedIdentityField('filegroupmodel-data')
 
     preview = serializers.HyperlinkedIdentityField('filegroupmodel-preview')
-
-    related_transformations = TransformationIdSerializer(read_only=True, many=True)
 
     class Meta(object):
         """ Meta class for FileGroupSerializer. """
         model = FileGroupModel
         fields = ('id', 'url', 'document', 'files', 'urls', 'data', 'preview', 'related_transformations')
         depth = 1
+
+    def get_related_transformations(self, obj):
+        return self._get_related_transformations(obj, self.context['request'])
 
 
 class FormatSerializer(serializers.Serializer):
@@ -122,11 +141,11 @@ class FormatSerializer(serializers.Serializer):
     extension = serializers.CharField(read_only=True)
 
 
-class TransformationSerializer(serializers.HyperlinkedModelSerializer):
+class TransformationSerializer(serializers.HyperlinkedModelSerializer, RelatedTransformationMixin):
     referenced_file_groups = serializers.HyperlinkedIdentityField('transformationmodel-filegroups')
     referenced_transformations = serializers.HyperlinkedIdentityField('transformationmodel-transformations')
 
-    related_transformations = TransformationIdSerializer(read_only=True, many=True)
+    related_transformations = serializers.SerializerMethodField()
 
     owner = UserDisplaySerializer(read_only=True)
 
@@ -144,3 +163,6 @@ class TransformationSerializer(serializers.HyperlinkedModelSerializer):
         ret = super(TransformationSerializer, self).to_representation(instance)
         ret['type'] = 'transformation'
         return ret
+
+    def get_related_transformations(self, obj):
+        return self._get_related_transformations(obj, self.context['request'])
