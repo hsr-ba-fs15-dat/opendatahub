@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 import json
+import logging
 
 from rest_framework import viewsets
 from rest_framework.decorators import detail_route, list_route
@@ -12,6 +13,7 @@ from django.http.response import JsonResponse
 from django.http import HttpResponseNotFound, HttpResponseServerError, HttpResponseBadRequest
 from django.utils.text import slugify
 from pyparsing import ParseException
+
 from rest_framework.reverse import reverse
 
 from hub.odhql.interpreter import OdhQLInterpreter
@@ -79,7 +81,7 @@ class TransformationViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet,
             super(TransformationViewSet, self).update(request, *args, **kwargs)
 
             instance = self.get_object()
-            cache.delete((settings.TRANSFORMATION_PREFIX, instance.id))
+            self._invalidate_cache(instance.id)
 
             is_template, file_group_ids, transformation_ids = self._check_template(instance.transformation)
 
@@ -94,6 +96,28 @@ class TransformationViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet,
             instance.save()
 
         return Response(self.get_serializer(instance).data)
+
+    def _invalidate_cache(self, transformation_id):
+        from django.db import connection, DatabaseError
+
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute('''with recursive related(id) as (
+                  select %s as id
+                   union
+                  select t.from_transformationmodel_id
+                    from hub_transformationmodel_referenced_transformations t
+                    join related r on t.to_transformationmodel_id = r.id )
+                 select id
+                   from related''', [transformation_id])
+
+                for (id,) in cursor.fetchall():
+                    cache.delete((settings.TRANSFORMATION_PREFIX, id))
+
+                cursor.close()
+            except DatabaseError:
+                logging.error('Failed to read related transformations from database - raw query may be written for '
+                              'different database')
 
     def format_object(self, model, format):
         import hub.formats as formats
