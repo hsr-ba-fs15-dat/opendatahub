@@ -5,14 +5,18 @@
 from __future__ import unicode_literals
 
 import itertools
+import logging
 
 from django.db.models import Q
 from django.utils.text import slugify
+
+from django.db import connection, DatabaseError
 
 from hub.odhql.interpreter import OdhQLInterpreter
 from hub.odhql.exceptions import OdhQLExecutionException
 from hub.models import FileGroupModel, TransformationModel
 from opendatahub.utils import cache
+from opendatahub import settings
 
 
 class TransformationUtil(object):
@@ -81,3 +85,57 @@ class TransformationUtil(object):
             cache.set(cache_key, df)
 
         return df
+
+    @staticmethod
+    def invalidate_related_cache(file_groups=set(), transformations=set()):
+        """ Fetches all related transformations for both file groups and transformations, in order to remove them from
+        the cache. This uses a recursive CTE in PostgreSQL syntax.
+
+        The statement might look like this;
+
+        with recursive related(id) as (
+          values (2005), (2001)
+           union
+          select g.transformationmodel_id
+            from hub_transformationmodel_referenced_file_groups g
+          where g.filegroupmodel_id in (8)
+           union
+          select t.from_transformationmodel_id
+            from hub_transformationmodel_referenced_transformations t
+            join related r on t.to_transformationmodel_id = r.id )
+         select id
+           from related;
+
+        :param file_groups: Set of ids
+        :param transformations: Set of ids
+        :return: None
+        """
+
+        parts = ['with recursive related(id) as (']
+
+        if not len(file_groups) and not len(transformations):
+            return
+
+        if len(file_groups):
+            parts.append('select g.transformationmodel_id from hub_transformationmodel_referenced_file_groups g '
+                         'where g.filegroupmodel_id in ({}) union '.format(', '.join([str(id) for id in file_groups])))
+
+        if len(transformations):
+            parts.append('values ')
+            parts.append(', '.join(['({})'.format(id) for id in transformations]))
+            parts.append(' union ')
+
+        parts.append('select t.from_transformationmodel_id from hub_transformationmodel_referenced_transformations t '
+                     'join related r on t.to_transformationmodel_id = r.id ) select id from related')
+
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute(''.join(parts))
+
+                for (id,) in cursor.fetchall():
+                    cache.delete((settings.TRANSFORMATION_PREFIX, id))
+
+                cursor.close()
+            except DatabaseError:
+                logging.error('Failed to read related transformations from database - raw query may be written for '
+                              'different database')

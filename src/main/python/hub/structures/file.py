@@ -194,6 +194,10 @@ class File(object):
 
             cache.set(('FG', id_), self.dfs, **params)
 
+            from hub.utils.odhql import TransformationUtil
+
+            TransformationUtil.invalidate_related_cache(file_groups={id_})
+
         assert all([df.name for df in self.dfs]), 'DataFrame must have a name'
         return self.dfs
 
@@ -233,7 +237,6 @@ class Url(File):
         data = UrlHelper().fetch_url(self.url, self.cache_timeout)
 
         return StringIO(data)
-
 
 # leave at end to avoid circular imports
 from hub import formats
