@@ -63,7 +63,8 @@ module odh.main {
      */
     export class FileGroupService {
         constructor(private $log:ng.ILogService, private $http:ng.IHttpService,
-                    private Restangular:restangular.IService, private $q:ng.IQService) {
+                    private Restangular:restangular.IService, private $q:ng.IQService,
+        private $window:ng.IWindowService, private ToastService:odh.utils.ToastService) {
 
             (<any>Restangular).extendModel('filegroup', function (filegroup) {
                 filegroup.canDownload = function (formatName) {
@@ -72,6 +73,8 @@ module odh.main {
                 return filegroup;
             });
         }
+
+
 
         public getAll(documentId:any = false, withPreview = false, count = 3) {
             var promise:ng.IPromise<any>;

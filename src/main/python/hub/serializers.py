@@ -120,13 +120,13 @@ class FileGroupSerializer(serializers.HyperlinkedModelSerializer, RelatedTransfo
     related_transformations = serializers.SerializerMethodField()
 
     data = serializers.HyperlinkedIdentityField('filegroupmodel-data')
-
+    token = serializers.HyperlinkedIdentityField('filegroupmodel-token')
     preview = serializers.HyperlinkedIdentityField('filegroupmodel-preview')
 
     class Meta(object):
         """ Meta class for FileGroupSerializer. """
         model = FileGroupModel
-        fields = ('id', 'url', 'document', 'files', 'urls', 'data', 'preview', 'related_transformations')
+        fields = ('id', 'url', 'document', 'files', 'urls', 'data', 'preview', 'related_transformations', 'token')
         depth = 1
 
     def get_related_transformations(self, obj):
@@ -144,6 +144,7 @@ class FormatSerializer(serializers.Serializer):
 class TransformationSerializer(serializers.HyperlinkedModelSerializer, RelatedTransformationMixin):
     referenced_file_groups = serializers.HyperlinkedIdentityField('transformationmodel-filegroups')
     referenced_transformations = serializers.HyperlinkedIdentityField('transformationmodel-transformations')
+    token = serializers.HyperlinkedIdentityField('transformationmodel-token')
 
     related_transformations = serializers.SerializerMethodField()
 
@@ -157,7 +158,7 @@ class TransformationSerializer(serializers.HyperlinkedModelSerializer, RelatedTr
         """ Meta class for TransformationSerializer. """
         model = TransformationModel
         fields = ('id', 'url', 'name', 'description', 'transformation', 'private', 'owner', 'data', 'is_template',
-                  'preview', 'referenced_file_groups', 'referenced_transformations', 'related_transformations')
+                  'preview', 'referenced_file_groups', 'referenced_transformations', 'related_transformations', 'token')
 
     def to_representation(self, instance):
         ret = super(TransformationSerializer, self).to_representation(instance)

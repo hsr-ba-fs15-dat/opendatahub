@@ -60,7 +60,6 @@ module odh.main {
                         var data = result.results;
                         var data_hidden = this.$filter('filter')(result.results, {template: true});
                         data = this.$filter('filter')(data, {template: false});
-                        console.log(result.count - data_hidden.length);
                         if (data_hidden.length > 0) {
                             scope.data_hidden = data_hidden;
                         }

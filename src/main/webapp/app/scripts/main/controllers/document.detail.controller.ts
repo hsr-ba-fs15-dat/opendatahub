@@ -47,6 +47,7 @@ module odh.main {
         constructor(private $log:ng.ILogService, private $stateParams:any, private $window:ng.IWindowService,
                     private DocumentService:odh.main.DocumentService, private ToastService:odh.utils.ToastService,
                     private FormatService:odh.main.FormatService, private FileGroupService:odh.main.FileGroupService,
+                    private PackageService:odh.main.PackageService,
                     private $auth:any,
                     private $modal:ng.ui.bootstrap.IModalService,
                     private $state:ng.ui.IStateService) {
@@ -69,11 +70,14 @@ module odh.main {
          */
         public downloadAs(group, formatName:string) {
             this.$log.debug('Triggered download of ', group, 'as', formatName);
-            group.canDownload(formatName).then(() => {
-                this.$window.location.href = group.data + ( formatName ? '?fmt=' + formatName : '');
-            }).catch(() => {
-                this.ToastService.failure('Die Datei konnte nicht ins gewünschte Format konvertiert werden.');
-            });
+
+            this.PackageService.download(group, formatName);
+
+            //group.canDownload(formatName).then(() => {
+            //    this.$window.location.href = group.data + ( formatName ? '?fmt=' + formatName : '');
+            //}).catch(() => {
+            //    this.ToastService.failure('Die Datei konnte nicht ins gewünschte Format konvertiert werden.');
+            //});
         }
 
         /**

@@ -272,12 +272,7 @@ module odh.main {
          * @param formatName
          */
         public downloadAs(group, formatName) {
-            this.$log.debug('Triggered download of ', group, 'as', formatName);
-            group.canDownload(formatName).then(() => {
-                this.$window.location.href = group.data + ( formatName ? '?fmt=' + formatName : '');
-            }).catch(() => {
-                this.ToastService.failure('Die Datei konnte nicht ins gewünschte Format konvertiert werden.');
-            });
+            this.PackageService.download(group, formatName);
         }
 
         /**
