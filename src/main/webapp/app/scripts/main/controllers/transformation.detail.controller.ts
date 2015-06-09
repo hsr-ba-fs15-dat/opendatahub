@@ -272,6 +272,7 @@ module odh.main {
          * @param formatName
          */
         public downloadAs(group, formatName) {
+            this.$log.debug('Triggered download of ', group, 'as', formatName);
             this.PackageService.download(group, formatName);
         }
 

@@ -15,7 +15,7 @@ module odh.main {
 
         constructor(private $log:ng.ILogService, private Restangular:restangular.IService,
                     private $q:ng.IQService, private $http:ng.IHttpService, private AppConfig:odh.IAppConfig,
-        private $window:ng.IWindowService, private ToastService:odh.utils.ToastService) {
+                    private $window:ng.IWindowService, private ToastService:odh.utils.ToastService) {
 
             this.packages = this.Restangular.all('package');
             this.AppConfig.then(config => {
@@ -52,7 +52,8 @@ module odh.main {
         public download(filegroup, format) {
             this.Restangular.oneUrl(filegroup.route, filegroup.token).get({fmt: format}).then(res => {
                 filegroup.canDownload(format).then(() => {
-                    this.$window.location.href = filegroup.data + ( format ? '?fmt=' + format : '') + '&token=' + res.token;
+                    this.$window.location.href = filegroup.data +
+                    ( format ? '?fmt=' + format : '') + '&token=' + res.token;
                 }).catch(() => {
                     this.ToastService.failure('Die Datei konnte nicht ins gewünschte Format konvertiert werden.');
                 });

@@ -70,14 +70,7 @@ module odh.main {
          */
         public downloadAs(group, formatName:string) {
             this.$log.debug('Triggered download of ', group, 'as', formatName);
-
             this.PackageService.download(group, formatName);
-
-            //group.canDownload(formatName).then(() => {
-            //    this.$window.location.href = group.data + ( formatName ? '?fmt=' + formatName : '');
-            //}).catch(() => {
-            //    this.ToastService.failure('Die Datei konnte nicht ins gewünschte Format konvertiert werden.');
-            //});
         }
 
         /**
