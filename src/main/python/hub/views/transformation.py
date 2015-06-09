@@ -94,6 +94,11 @@ class TransformationViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet,
 
         return Response(self.get_serializer(instance).data)
 
+    def destroy(self, request, *args, **kwargs):
+        TransformationUtil.invalidate_related_cache(transformations={kwargs['pk']})
+
+        return super(TransformationViewSet, self).destroy(request, *args, **kwargs)
+
     def format_object(self, model, format):
         import hub.formats as formats
         from hub.formats.csv import CSV

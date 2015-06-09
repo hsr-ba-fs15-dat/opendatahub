@@ -21,6 +21,7 @@ from hub.models import DocumentModel, FileGroupModel
 from authentication.permissions import IsOwnerOrPublic, IsOwnerOrReadOnly
 from hub.utils.upload import UploadHandler
 from hub.views.mixins import FilterablePackageListViewSet, PreviewMixin
+from hub.utils.odhql import TransformationUtil
 
 
 class DocumentViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet, PreviewMixin):
@@ -70,6 +71,12 @@ class DocumentViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet, Previ
 
         serializer = FileGroupSerializer(file_group, many=True, context={'request': request})
         return Response(serializer.data)
+
+    def destroy(self, request, *args, **kwargs):
+        file_groups = {fg.id for fg in FileGroupModel.objects.filter(document__id=self.get_object().id)}
+        TransformationUtil.invalidate_related_cache(file_groups=file_groups)
+
+        return super(DocumentViewSet, self).destroy(request, *args, **kwargs)
 
     def get_preview_view(self, pk, request):
         """
