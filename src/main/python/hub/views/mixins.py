@@ -2,10 +2,8 @@
 
 """ Mixin classes for shared view functionality. """
 from __future__ import unicode_literals
-import ast
 import calendar
 import pickle
-
 import zipfile
 import json
 import logging
@@ -16,13 +14,12 @@ import re
 from django.db.models import Q
 from rest_framework import mixins, viewsets
 from rest_framework.decorators import detail_route
-from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from django.http.response import HttpResponse, HttpResponseServerError, HttpResponseNotFound, JsonResponse, \
-    HttpResponseForbidden
+from django.http.response import HttpResponse, HttpResponseServerError, HttpResponseNotFound, JsonResponse
 from django.utils.text import slugify
 import os
 from django.core import signing
+
 from authentication.permissions import IsOwnerOrPublic
 from hub.utils.common import str2bool
 from opendatahub.utils.cache import cache
@@ -77,6 +74,7 @@ class FilterablePackageListViewSet(mixins.ListModelMixin, viewsets.GenericViewSe
 class DataDownloadMixin(viewsets.GenericViewSet):
     """ Allows downloading of formattable data. """
     cache_prefix = None
+
     @detail_route(permission_classes=[IsOwnerOrPublic])
     def token(self, request, pk, *args, **kwargs):
         """
@@ -92,7 +90,7 @@ class DataDownloadMixin(viewsets.GenericViewSet):
             return JsonResponse({'error': 'Object does not exist'}, status=HttpResponseNotFound.status_code)
         valid = datetime.datetime.utcnow() + datetime.timedelta(minutes=10)
         token = signing.dumps({'pk': pk, 'valid_until': calendar.timegm(valid.timetuple()),
-                              'owner': pickle.dumps(request.user)})
+                               'owner': pickle.dumps(request.user)})
         return JsonResponse({'token': token})
 
     @detail_route(permission_classes=[IsOwnerOrPublic])
@@ -106,9 +104,6 @@ class DataDownloadMixin(viewsets.GenericViewSet):
         :return: Response with formatted data.
         """
         from hub.formats import Format
-
-
-
         format_name = request.query_params.get('fmt').lower() if 'fmt' in request.query_params else None
 
         cache_key = self.get_cache_key(pk, format_name)
@@ -133,28 +128,26 @@ class DataDownloadMixin(viewsets.GenericViewSet):
             token = ''
             return JsonResponse({'url': token})  # just signal that it can be downloaded (200)
 
+        response = HttpResponse()
+        response['Content-Type'] = 'application/octet-stream'
 
-        if True:
-            response = HttpResponse()
-            response['Content-Type'] = 'application/octet-stream'
+        if len(result_list) > 1 or len(result_list) > 0 and len(result_list[0].files) > 1:
+            response['Content-Disposition'] = 'attachment; filename="{}"'.format(
+                self.sanitize_name(self.get_name(model) + '.zip'))
 
-            if len(result_list) > 1 or len(result_list) > 0 and len(result_list[0].files) > 1:
-                response['Content-Disposition'] = 'attachment; filename="{}"'.format(
-                    self.sanitize_name(self.get_name(model) + '.zip'))
+            zip = zipfile.ZipFile(response, 'w')
+            for result in result_list:
+                for file in result:
+                    zip.writestr(self.sanitize_name(file.name), file.stream.getvalue())
+            zip.close()
+        else:
+            file = result_list[0][0]
+            response['Content-Disposition'] = 'attachment; filename="{}"'.format(self.sanitize_name(file.name))
+            response.write(file.stream.getvalue())
 
-                zip = zipfile.ZipFile(response, 'w')
-                for result in result_list:
-                    for file in result:
-                        zip.writestr(self.sanitize_name(file.name), file.stream.getvalue())
-                zip.close()
-            else:
-                file = result_list[0][0]
-                response['Content-Disposition'] = 'attachment; filename="{}"'.format(self.sanitize_name(file.name))
-                response.write(file.stream.getvalue())
+        response.flush()
 
-            response.flush()
-
-            return response
+        return response
 
     def sanitize_name(self, name):
         """

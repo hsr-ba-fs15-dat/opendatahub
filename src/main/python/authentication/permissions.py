@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-import ast
 import calendar
 import datetime
-import json
 import pickle
+
 from django.core import signing
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 from hub.models import DocumentModel, FileGroupModel, FileModel, TransformationModel, UrlModel
+
 
 """
 Contains the opendatahub specific permission profiles.
@@ -49,5 +49,4 @@ class IsOwnerOrPublic(BasePermission):
         valid = token['valid_until'] > calendar.timegm(datetime.datetime.utcnow().timetuple())
         if not valid:
             return False
-        print token
         return pickle.loads(token['owner'])
