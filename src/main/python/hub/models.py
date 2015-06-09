@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+
+"""
+Django models.
+"""
+
 from __future__ import unicode_literals
 
 from django.db import models
@@ -10,9 +15,6 @@ from opendatahub import settings
 from hub.structures.file import File, FileGroup
 from hub.formats import Format, Other
 
-"""
-Django models.
-"""
 
 AUTH_USER_MODEL = getattr(settings, 'AUTH_USER_MODEL', 'auth.User')
 
