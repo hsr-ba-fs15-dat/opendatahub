@@ -77,10 +77,19 @@ class FilterablePackageListViewSet(mixins.ListModelMixin, viewsets.GenericViewSe
 class DataDownloadMixin(viewsets.GenericViewSet):
     """ Allows downloading of formattable data. """
     cache_prefix = None
-
     @detail_route(permission_classes=[IsOwnerOrPublic])
     def token(self, request, pk, *args, **kwargs):
+        """
+
+        :param request: rest_framework.request.Request
+        :param pk: pk: unicode
+        :param args: args: ignored
+        :param kwargs: kwargs: ignored
+        :return: Response with signed token
+        """
         model = self.get_object()
+        if not model:
+            return JsonResponse({'error': 'Object does not exist'}, status=HttpResponseNotFound.status_code)
         valid = datetime.datetime.utcnow() + datetime.timedelta(minutes=10)
         token = signing.dumps({'pk': pk, 'valid_until': calendar.timegm(valid.timetuple()),
                               'owner': pickle.dumps(request.user)})

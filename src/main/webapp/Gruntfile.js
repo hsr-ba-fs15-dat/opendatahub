@@ -55,10 +55,10 @@ module.exports = function (grunt) {
                     livereload: '<%= connect.options.livereload %>'
                 }
             },
-            jsTest: {
-                files: ['test/spec/{,*/}*.js'],
-                tasks: ['newer:jshint:test', 'karma']
-            },
+            //jsTest: {
+            //    files: ['test/spec/{,*/}*.js'],
+            //    tasks: ['newer:jshint:test', 'karma']
+            //},
             compass: {
                 files: ['<%= yeoman.app %>/styles/{,*/}*.{scss,sass}'],
                 tasks: ['compass:server', 'autoprefixer']
@@ -109,22 +109,22 @@ module.exports = function (grunt) {
                     }
                 }
             },
-            test: {
-                options: {
-                    port: 9001,
-                    middleware: function (connect) {
-                        return [
-                            connect.static('.tmp'),
-                            connect.static('test'),
-                            connect().use(
-                                '/bower_components',
-                                connect.static('./bower_components')
-                            ),
-                            connect.static(appConfig.app)
-                        ];
-                    }
-                }
-            },
+            //test: {
+            //    options: {
+            //        port: 9001,
+            //        middleware: function (connect) {
+            //            return [
+            //                connect.static('.tmp'),
+            //                connect.static('test'),
+            //                connect().use(
+            //                    '/bower_components',
+            //                    connect.static('./bower_components')
+            //                ),
+            //                connect.static(appConfig.app)
+            //            ];
+            //        }
+            //    }
+            //},
             dist: {
                 options: {
                     open: true,
@@ -215,22 +215,22 @@ module.exports = function (grunt) {
                     'bower_components/bootstrap-material-design/dist/css/material.css'
                 ]
             },
-            test: {
-                devDependencies: true,
-                src: '<%= karma.unit.configFile %>',
-                ignorePath: /\.\.\//,
-                fileTypes: {
-                    js: {
-                        block: /(([\s\t]*)\/{2}\s*?bower:\s*?(\S*))(\n|\r|.)*?(\/{2}\s*endbower)/gi,
-                        detect: {
-                            js: /'(.*\.js)'/gi
-                        },
-                        replace: {
-                            js: '\'{{filePath}}\','
-                        }
-                    }
-                }
-            },
+            //test: {
+            //    devDependencies: true,
+            //    src: '<%= karma.unit.configFile %>',
+            //    ignorePath: /\.\.\//,
+            //    fileTypes: {
+            //        js: {
+            //            block: /(([\s\t]*)\/{2}\s*?bower:\s*?(\S*))(\n|\r|.)*?(\/{2}\s*endbower)/gi,
+            //            detect: {
+            //                js: /'(.*\.js)'/gi
+            //            },
+            //            replace: {
+            //                js: '\'{{filePath}}\','
+            //            }
+            //        }
+            //    }
+            //},
             sass: {
                 src: ['<%= yeoman.app %>/styles/{,*/}*.{scss,sass}'],
                 ignorePath: /(\.\.\/){1,2}bower_components\//,
@@ -287,29 +287,29 @@ module.exports = function (grunt) {
                 files: {
                     '<%= yeoman.app %>/index.html': ['<%= yeoman.app %>/scripts/**/*.ts']
                 }
-            },
-            jstest: {
-                options: {
-                    starttag: '// injector:js',
-                    endtag: '// endinjector',
-                    sort: function (a, b) {
-                        var va = a.search('.module.ts') === -1 ? 0 : 100;
-                        var vb = b.search('.module.ts') === -1 ? 0 : 100;
-                        va -= a.split('/').length;
-                        vb -= b.split('/').length;
-                        return vb - va;
-                    },
-                    transform: function (file, i, length) {
-                        if (file.search('.d.ts') === -1) {
-                            file = file.replace('/app/', 'app/').replace('.ts', '.js');
-                            return "'" + file + "',";
-                        }
-                    }
-                },
-                files: {
-                    'test/karma.conf.js': ['<%= yeoman.app %>/scripts/**/*.ts']
-                }
             }
+            //jstest: {
+            //    options: {
+            //        starttag: '// injector:js',
+            //        endtag: '// endinjector',
+            //        sort: function (a, b) {
+            //            var va = a.search('.module.ts') === -1 ? 0 : 100;
+            //            var vb = b.search('.module.ts') === -1 ? 0 : 100;
+            //            va -= a.split('/').length;
+            //            vb -= b.split('/').length;
+            //            return vb - va;
+            //        },
+            //        transform: function (file, i, length) {
+            //            if (file.search('.d.ts') === -1) {
+            //                file = file.replace('/app/', 'app/').replace('.ts', '.js');
+            //                return "'" + file + "',";
+            //            }
+            //        }
+            //    },
+            //    files: {
+            //        'test/karma.conf.js': ['<%= yeoman.app %>/scripts/**/*.ts']
+            //    }
+            //}
         },
 
         // Compiles Sass to CSS and generates necessary files if requested
@@ -563,10 +563,10 @@ module.exports = function (grunt) {
                 //'compass:server',
                 'less:server'
             ],
-            test: [
-                //'compass',
-                'less'
-            ],
+            //test: [
+            //    //'compass',
+            //    'less'
+            //],
             dist: [
                 //'compass:dist',
                 'less:dist',
@@ -577,12 +577,12 @@ module.exports = function (grunt) {
         },
 
         // Test settings
-        karma: {
-            unit: {
-                configFile: 'test/karma.conf.js',
-                singleRun: true
-            }
-        },
+        //karma: {
+        //    unit: {
+        //        configFile: 'test/karma.conf.js',
+        //        singleRun: true
+        //    }
+        //},
 
         typescript: {
             base: {
@@ -619,15 +619,15 @@ module.exports = function (grunt) {
         grunt.task.run(['serve:' + target]);
     });
 
-    grunt.registerTask('test', [
-        'clean:server',
-        'wiredep',
-        'ts',
-        'concurrent:test',
-        'autoprefixer',
-        'connect:test',
-        'karma'
-    ]);
+    //grunt.registerTask('test', [
+    //    'clean:server',
+    //    'wiredep',
+    //    'ts',
+    //    'concurrent:test',
+    //    'autoprefixer',
+    //    'connect:test',
+    //    'karma'
+    //]);
 
     grunt.registerTask('build', [
         'clean:dist',
@@ -653,10 +653,10 @@ module.exports = function (grunt) {
     ]);
 
     grunt.registerTask('default', [
-        //'newer:jshint', // We use TypeScript
+        // 'newer:jshint', // We use TypeScript
         'ts',
         'tslint',
-        'test',
+        // 'test',
         'build'
     ]);
 };
