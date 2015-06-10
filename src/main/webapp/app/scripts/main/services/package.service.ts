@@ -50,7 +50,7 @@ module odh.main {
 
 
         public download(filegroup, format) {
-            this.Restangular.oneUrl(filegroup.route, filegroup.token).get({fmt: format}).then(res => {
+            return this.Restangular.oneUrl(filegroup.route, filegroup.token).get({fmt: format}).then(res => {
                 filegroup.canDownload(format).then(() => {
                     this.$window.location.href = filegroup.data +
                     ( format ? '?fmt=' + format : '') + '&token=' + res.token;

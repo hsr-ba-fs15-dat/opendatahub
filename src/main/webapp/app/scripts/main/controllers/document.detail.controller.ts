@@ -44,6 +44,12 @@ module odh.main {
          */
         public previewSuccess:boolean = false;
 
+        /**
+         * Download has started
+         * @type {boolean}
+         */
+        public downloading:boolean = false;
+
         constructor(private $log:ng.ILogService, private $stateParams:any, private $window:ng.IWindowService,
                     private DocumentService:odh.main.DocumentService, private ToastService:odh.utils.ToastService,
                     private FormatService:odh.main.FormatService, private FileGroupService:odh.main.FileGroupService,
@@ -69,8 +75,11 @@ module odh.main {
          * @param formatName
          */
         public downloadAs(group, formatName:string) {
+            this.downloading = true;
             this.$log.debug('Triggered download of ', group, 'as', formatName);
-            this.PackageService.download(group, formatName);
+            this.PackageService.download(group, formatName).finally(() => {
+                this.downloading = false;
+            });
         }
 
         /**

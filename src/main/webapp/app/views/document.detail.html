@@ -64,6 +64,7 @@
 
             <div class="btn-group pull-right btn-in-header btn-primary" ng-if="doc.previewSuccess">
                 <a data-target="#" class="btn btn-primary btn-sm btn-in-header" data-toggle="dropdown">
+                    <i class="fa fa-spinner fa-pulse" ng-show="doc.downloading"></i>
                     Herunterladen
                     <span class="caret"></span>
                 </a>

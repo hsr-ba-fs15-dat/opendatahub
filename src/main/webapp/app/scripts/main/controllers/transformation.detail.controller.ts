@@ -55,7 +55,7 @@ module odh.main {
         public templateTransformation:string;
         public chosenTables:string[] = [];
         public previewSuccess:boolean = false;
-
+        public downloading:boolean = false;
         constructor(private $stateParams:any,
                     private TransformationService:main.TransformationService,
                     private FormatService:odh.main.FormatService,
@@ -272,8 +272,11 @@ module odh.main {
          * @param formatName
          */
         public downloadAs(group, formatName) {
+            this.downloading = true;
             this.$log.debug('Triggered download of ', group, 'as', formatName);
-            this.PackageService.download(group, formatName);
+            this.PackageService.download(group, formatName).then(() => {
+                this.downloading = false;
+            });
         }
 
         /**

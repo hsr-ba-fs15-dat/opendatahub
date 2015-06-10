@@ -128,7 +128,7 @@ module odh.main {
                 this.tabs[2].active = true;
             }
 
-            this.selection = angular.copy(TransformationSelection);
+            this.selection = TransformationSelection;
             this.$scope.$on('$stateChangeStart',
                 (event, toState, toParams, fromState, fromParams) => {
                     if (this.odhqlInputString) {
