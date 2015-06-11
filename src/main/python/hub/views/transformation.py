@@ -141,7 +141,7 @@ class TransformationViewSet(viewsets.ModelViewSet, FilterablePackageListViewSet,
     def get_dfs_for_preview(self, pk, request):
         if pk is not None:
             return [('{}{}'.format(settings.TRANSFORMATION_PREFIX, pk),
-                     TransformationUtil.df_for_transformation(self.get_object()))]
+                     TransformationUtil.df_for_transformation(self.get_object(), user_id=request.user.id))]
         else:
             body = json.loads(request.body, encoding=request.encoding)
             params = body['params']

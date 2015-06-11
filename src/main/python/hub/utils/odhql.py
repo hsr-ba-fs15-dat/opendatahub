@@ -9,7 +9,6 @@ import logging
 
 from django.db.models import Q
 from django.utils.text import slugify
-
 from django.db import connection, DatabaseError
 
 from hub.odhql.interpreter import OdhQLInterpreter
@@ -77,9 +76,9 @@ class TransformationUtil(object):
         if df is None:
             if model is None:
                 model = TransformationModel.objects.get(id=id)
-                if model.private and (not user_id or model.owner != user_id):
+                if model.private and (not user_id or model.owner.id != user_id):
                     raise OdhQLExecutionException('Fehlende Berechtigung')
-            df = TransformationUtil.interpret(model.transformation)
+            df = TransformationUtil.interpret(model.transformation, user_id=user_id)
             df.name = slugify(unicode(model.name))
 
             cache.set(cache_key, df)
