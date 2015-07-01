@@ -129,6 +129,7 @@ module odh.main {
             }
 
             this.selection = TransformationSelection;
+            this.selection.init();
             this.$scope.$on('$stateChangeStart',
                 (event, toState, toParams, fromState, fromParams) => {
                     if (this.odhqlInputString) {

@@ -83,15 +83,20 @@ module odh.main {
 
         constructor(private JOIN_OPERATIONS:main.IOperations, private ngTableParams:any,
                     private PackageService:main.PackageService) {
+            this.init();
+
+        }
+        /* @ngInject */
+        public $get() {
+            return this;
+        }
+
+        public init() {
             this.items = [];
             this.expression = {};
             this.fields = {};
             this.joinTargets = [];
             this.fileGroups = [];
-        }
-
-        public $get() {
-            return this;
         }
 
         public addTable(item:main.ITable) {
@@ -200,7 +205,7 @@ module odh.main {
                     this.joinTargets.push(table);
                     var unionFields = this.createFieldNames(this.fields[key], table.uniqueIdAlias);
                     unionStatements.push(' \nUNION \n SELECT '.concat(unionFields.join(',\n'),
-                        ' FROM ', this.quote(this.aliasedTable(table))));
+                        ' FROM ', this.aliasedTable(table)));
                 }
                 if (value.operation.operation === 'join') {
                     this.joinTargets.push(table);
