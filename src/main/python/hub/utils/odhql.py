@@ -81,7 +81,12 @@ class TransformationUtil(object):
             df = TransformationUtil.interpret(model.transformation, user_id=user_id)
             df.name = slugify(unicode(model.name))
 
-            cache.set(cache_key, df)
+            timeout = TransformationUtil.get_cache_timeout(id)
+            params = {}
+            if timeout:
+                params['timeout'] = timeout
+
+            cache.set(cache_key, df, **params)
 
         return df
 
@@ -138,3 +143,33 @@ class TransformationUtil(object):
             except DatabaseError:
                 logging.error('Failed to read related transformations from database - raw query may be written for '
                               'different database')
+
+    @staticmethod
+    def get_cache_timeout(transformation_id):
+        """
+        Returns the minimum cache timeout needed for linked url resources or None if there are, well, none.
+        :param transformation_id: Transformation id to check.
+        :return: Timeout in seconds or None
+        """
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute('''with recursive transformations(id) as (
+                       values({})
+                        union
+                        select to_transformationmodel_id
+                          from hub_transformationmodel_referenced_transformations
+                          join transformations t on from_transformationmodel_id = t.id
+                    )
+                    select min(u.refresh_after)
+                       from transformations t
+                       join hub_transformationmodel_referenced_file_groups fg on t.id = fg.transformationmodel_id
+                       join hub_urlmodel u on u.file_group_id = fg.filegroupmodel_id;'''.format(transformation_id))
+                result = cursor.fetchone()
+                cursor.close()
+
+                if result:
+                    return result[0]
+            except DatabaseError:
+                logging.error('Failed to read related transformations from database - raw query may be written for '
+                              'different database')
+        return None
