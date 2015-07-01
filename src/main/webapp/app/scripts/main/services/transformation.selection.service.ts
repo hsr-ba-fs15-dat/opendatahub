@@ -40,6 +40,7 @@ module odh.main {
         expression: {[name:string]: IExpression};
         joinTargets: ITable[];
         master: string;
+        init ():void;
         removeTable (item:ITable):void;
         addTable (item:ITable):void;
         addRemoveField(col:any, table:main.ITable):void;
