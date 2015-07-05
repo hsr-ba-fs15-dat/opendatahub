@@ -24,6 +24,7 @@ from authentication.config import *  # noqa
 DEBUG = bool(os.environ.get('DJANGO_DEBUG', False))
 TEMPLATE_DEBUG = DEBUG
 PRODUCTION = os.getenv('DJANGO_CONFIG') == 'PRODUCTION'
+USE_SSL = bool(os.getenv('DJANGO_SSLIFY', False))
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 WEBAPP_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'webapp')
@@ -262,7 +263,7 @@ if EMAIL_HOST_PASSWORD:
     DEFAULT_FROM_EMAIL = 'noreply@opendatahub.ch'
     ADMINS = (('Developers', 'devs@opendatahub.ch'),)
 
-if not PRODUCTION:
+if not USE_SSL:
     SSLIFY_DISABLE = True
 
 # ODHQL Table naming prefixes
