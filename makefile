@@ -5,7 +5,7 @@ clean:
 
 env:
 	virtualenv ~/env && \
-	source ~/env/bin/activate && \
+	. ~/env/bin/activate && \
 	pip install pybuilder && \
 	pyb -v install_dependencies install_build_dependencies grunt
 
