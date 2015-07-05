@@ -1,10 +1,13 @@
-.PHONY: dev clean gdal gdal-travis
+.PHONY: clean gdal env
 
 clean:
 	rm -rf env target src/main/webapp/node_modules src/main/webapp/bower_components
 
-dev: gdal
-	scripts/install_dev.sh
+env:
+	virtualenv ~/env && \
+	source ~/env/bin/activate && \
+	pip install pybuilder && \
+	pyb -v install_dependencies install_build_dependencies grunt
 
 gdal:
 	sudo apt-get install libkml0 libkml-dev libxerces-c-dev libxerces-c3.1 libproj0 libproj-dev proj-bin -y && \

@@ -109,17 +109,19 @@ def django_exec(project, logger, args, **kwargs):
 
 
 @task('install_runtime_dependencies')
+@depends('prepare')
 def install_bower_packages(project, logger):
     custom_exec(project, logger, ['bower', 'install', '--config.analytics=false', '--allow-root', '--no-interactive'],
                 cwd=WEBAPP_DIR, fail_stderr=False)
 
-
 @task('install_build_dependencies')
+@depends('prepare')
 def install_npm_packages(project, logger):
     custom_exec(project, logger, ['npm', 'install'], cwd=WEBAPP_DIR, fail_stderr=False)
 
 
 @task('install_build_dependencies')
+@depends('prepare')
 def install_typings(project, logger):
     shutil.rmtree(os.path.join(WEBAPP_DIR, 'typings'), ignore_errors=True)
     custom_exec(project, logger, ['tsd', 'reinstall'], cwd=WEBAPP_DIR)
@@ -130,7 +132,7 @@ def install_typings(project, logger):
 @depends('install_build_dependencies', 'install_runtime_dependencies')
 @after(('run_unit_tests',), only_once=True)
 def grunt(project, logger):
-    custom_exec(project, logger, ['grunt'], cwd=WEBAPP_DIR, fail_stderr=False)
+    custom_exec(project, logger, ['grunt', '--force'], cwd=WEBAPP_DIR, fail_stderr=False)
 
 
 @task
